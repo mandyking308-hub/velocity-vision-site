@@ -213,14 +213,172 @@ const docs: Record<string, LegalDoc> = {
     effectiveDate: "1 March 2026",
     lastUpdated: "1 March 2026",
     sections: [
-      { heading: "1. Parties", paragraphs: [`This Client Services Agreement ("Agreement") is entered into between ${ENTITY} ("Service Provider") and the customer ("Client") identified in the applicable order form or subscription agreement.`] },
-      { heading: "2. Scope of Services", paragraphs: ["The Service Provider agrees to provide marketing campaign management, analytics, reporting, and related professional services as described in the applicable service order."], bullets: ["Campaign strategy and planning", "Campaign execution and management", "Performance monitoring and optimisation", "Client reporting and analytics"] },
-      { heading: "3. Client Obligations", paragraphs: ["The Client agrees to provide accurate information, timely feedback, and necessary access to assets and materials required for campaign execution. The Client is responsible for ensuring that all materials provided comply with applicable laws."] },
-      { heading: "4. Fees and Payment", paragraphs: ["Fees for services are as set out in the applicable order form or subscription plan. Payments are due within 30 days of invoice date unless otherwise agreed. Late payments may incur interest at 1.5% per month."] },
-      { heading: "5. Confidentiality", paragraphs: ["Both parties agree to maintain the confidentiality of any proprietary or confidential information disclosed during the term of this Agreement. This obligation survives termination for a period of two years."] },
-      { heading: "6. Term and Termination", paragraphs: ["This Agreement is effective from the date of acceptance and continues for the initial term specified in the order form. Either party may terminate with 30 days written notice. Early termination may be subject to fees for committed services."] },
-      { heading: "7. Warranties and Disclaimers", paragraphs: ["The Service Provider warrants that services will be performed in a professional and workmanlike manner. Except as expressly stated, all warranties are disclaimed to the maximum extent permitted by law."] },
-      { heading: "8. Indemnification", paragraphs: ["Each party agrees to indemnify and hold harmless the other party from any claims, damages, or expenses arising from a breach of this Agreement or negligent acts."] },
+      {
+        heading: "1. Service Provider",
+        paragraphs: [
+          `Velocity Influence Agency is a trading name of ${ENTITY}.`,
+          `Throughout this agreement, the terms "Velocity Influence", "the Agency", "the Platform", "we", "our", and "us" refer to Global Solutions Management LLC.`,
+          `This Client Services Agreement ("Agreement") defines the contractual relationship between Velocity Influence and customers who purchase marketing services or subscribe to the Platform.`,
+        ],
+      },
+      {
+        heading: "2. Scope of Services",
+        paragraphs: [
+          "Velocity Influence provides marketing services and campaign infrastructure including:",
+        ],
+        bullets: [
+          "Marketing campaign strategy and planning",
+          "Digital advertising management and optimisation",
+          "Outreach campaign tools and automation",
+          "Marketing automation workflows",
+          "Campaign analytics, reporting, and performance dashboards",
+        ],
+      },
+      {
+        heading: "3. Customer Responsibilities",
+        paragraphs: [
+          "Customers are responsible for:",
+        ],
+        bullets: [
+          "Providing accurate and complete campaign information and briefs",
+          "Supplying approved marketing materials and brand assets",
+          "Ensuring campaign instructions comply with applicable laws and regulations",
+          "Reviewing and approving campaign deliverables in a timely manner",
+        ],
+      },
+      {
+        heading: "4. Agency Use of the Platform",
+        paragraphs: [
+          "Agencies and consultants may use Velocity Influence to run campaigns on behalf of their own clients. However:",
+        ],
+        bullets: [
+          "Velocity Influence contracts only with the agency account holder",
+          "Velocity Influence has no contractual relationship with the agency's end clients",
+          "The agency remains fully responsible for its own client relationships, data, and compliance obligations",
+          "The agency shall ensure that all data provided by its clients complies with applicable laws",
+        ],
+      },
+      {
+        heading: "5. Campaign Performance Disclaimer",
+        paragraphs: [
+          "Velocity Influence provides marketing strategy and campaign execution tools. Marketing outcomes depend on multiple external factors including:",
+        ],
+        bullets: [
+          "Market conditions and competitive landscape",
+          "Audience behaviour and engagement patterns",
+          "Advertising platform algorithms and policy changes",
+          "Quality and relevance of campaign content",
+          "Budget allocation and campaign duration",
+        ],
+      },
+      {
+        heading: "6. Client Data and Marketing Lists",
+        paragraphs: [
+          "Customers may upload marketing lists or campaign data to the Platform. By uploading data, customers confirm that:",
+        ],
+        bullets: [
+          "They have lawful authority to use and process the data",
+          "The data was obtained in compliance with applicable marketing and data protection laws",
+          "All necessary consents have been obtained from data subjects where required",
+          "The data does not include information obtained through unlawful means",
+        ],
+      },
+      {
+        heading: "7. Intellectual Property and Creative Work",
+        paragraphs: [
+          "Customers retain ownership of:",
+        ],
+        bullets: [
+          "Their marketing content and brand assets",
+          "Campaign creative materials provided by the customer",
+          "Customer data and contact lists",
+        ],
+      },
+      {
+        heading: "8. Fees and Payment Terms",
+        paragraphs: [
+          "Customers agree to pay all applicable fees associated with their use of the Platform and marketing services. Payments may include:",
+        ],
+        bullets: [
+          "Monthly or annual subscription plan fees",
+          "Campaign execution and management fees",
+          "Additional marketing services as agreed in service orders",
+          "Advertising spend passed through at cost where applicable",
+        ],
+      },
+      {
+        heading: "9. Campaign Changes and Approvals",
+        paragraphs: [
+          "Customers are responsible for reviewing and approving campaign materials before launch. Velocity Influence will present campaign deliverables for approval before execution where practicable.",
+          "Velocity Influence is not responsible for delays caused by late approvals, incomplete briefs, or failure to provide required materials. Campaign timelines may be adjusted accordingly.",
+        ],
+      },
+      {
+        heading: "10. Confidentiality",
+        paragraphs: [
+          "Both parties agree to maintain the confidentiality of sensitive business information exchanged during the course of the relationship. Confidential information includes, but is not limited to:",
+        ],
+        bullets: [
+          "Business strategies and plans",
+          "Customer lists and contact data",
+          "Campaign performance data and analytics",
+          "Pricing, financial, and commercial terms",
+          "Proprietary methodologies and processes",
+        ],
+      },
+      {
+        heading: "11. Limitation of Liability",
+        paragraphs: [
+          "To the maximum extent permitted by applicable law, Velocity Influence's total aggregate liability for any and all claims arising under or in connection with this Agreement shall not exceed the total fees paid by the customer during the twelve (12) months immediately preceding the event giving rise to the claim.",
+          "Velocity Influence shall not be liable for:",
+        ],
+        bullets: [
+          "Loss of profits, revenue, or anticipated savings",
+          "Loss of data or data corruption",
+          "Loss of business opportunity or goodwill",
+          "Any indirect, incidental, special, consequential, or punitive damages, howsoever arising",
+        ],
+      },
+      {
+        heading: "12. Indemnification",
+        paragraphs: [
+          "Customers agree to indemnify, defend, and hold harmless Velocity Influence, its officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, costs, and expenses arising from:",
+        ],
+        bullets: [
+          "Unlawful marketing practices conducted through the Platform",
+          "Improper collection, use, or processing of personal data",
+          "Violations of applicable marketing, advertising, or data protection regulations",
+          "Campaign content that infringes third-party rights",
+        ],
+      },
+      {
+        heading: "13. Termination of Services",
+        paragraphs: [
+          "Either party may terminate services in accordance with the applicable billing and subscription terms.",
+          "Velocity Influence may suspend services if:",
+        ],
+        bullets: [
+          "Payments are overdue and remain unpaid after reasonable notice",
+          "Platform policies or these Terms are violated",
+          "The Platform is being used in a manner inconsistent with its intended purpose",
+          "Required by law or regulatory order",
+        ],
+      },
+      {
+        heading: "14. Governing Law",
+        paragraphs: [
+          "This Agreement shall be governed by and construed in accordance with the laws of the State of Delaware, United States, without regard to its conflict of law principles.",
+          "Any disputes arising under or in connection with this Agreement shall be subject to the exclusive jurisdiction of the state and federal courts located in the State of Delaware.",
+        ],
+      },
+      {
+        heading: "15. Contact Information",
+        paragraphs: [
+          "For contractual or legal enquiries relating to this Agreement, please contact us at:",
+          "Global Solutions Management LLC\nTrading as Velocity Influence Agency\nState of Delaware, United States",
+          "Email: legal@velocityinfluence.com\nGeneral enquiries: hello@velocityinfluence.com",
+        ],
+      },
     ],
   },
   "data-processing-agreement": {
