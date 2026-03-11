@@ -19,6 +19,7 @@ const navItems = [
   { label: "Billing", path: "/portal/billing", icon: CreditCard },
   { label: "Request Campaign", path: "/portal/request", icon: PlusCircle },
   { label: "Notifications", path: "/portal/notifications", icon: Bell },
+  { label: "Legal", path: "/portal/legal", icon: Scale },
 ];
 
 const PortalSidebar = () => {
