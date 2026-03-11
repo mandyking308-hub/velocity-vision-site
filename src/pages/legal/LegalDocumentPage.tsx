@@ -19,6 +19,7 @@ type LegalDoc = {
   title: string;
   effectiveDate: string;
   lastUpdated: string;
+  version: string;
   sections: LegalSection[];
 };
 
