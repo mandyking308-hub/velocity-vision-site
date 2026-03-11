@@ -120,7 +120,12 @@ const PortalOnboarding = () => {
   // Save agency profile
   const saveAgencyProfile = useMutation({
     mutationFn: async () => {
-      if (!companyId) throw new Error("No company");
+      if (!companyId || !user) throw new Error("No company");
+      if (legalAccepted) {
+        await supabase.from("legal_acceptances" as any).insert({
+          user_id: user.id, ip_address: null, document_versions: { terms: "2026-03-01", privacy: "2026-03-01" },
+        } as any);
+      }
       await supabase.from("companies").update({ account_type: "agency" } as any).eq("id", companyId);
       const payload = {
         ...form,
