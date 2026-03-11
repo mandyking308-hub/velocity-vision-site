@@ -127,6 +127,30 @@ const TEST_SEED: { category: string; tests: { name: string; description: string 
     ],
   },
   {
+    category: "Demo Environment",
+    tests: [
+      { name: "Demo login", description: "Demo login page loads and demo credentials work" },
+      { name: "Demo banner", description: "Demo banner appears at top of screen with CTA" },
+      { name: "Sample data loads", description: "Sample contacts, campaigns and analytics load correctly" },
+      { name: "Upload blocked", description: "Uploading marketing lists shows disabled message" },
+      { name: "Send blocked", description: "Sending campaigns shows disabled message" },
+      { name: "Billing blocked", description: "Modifying billing settings shows disabled message" },
+      { name: "Account creation blocked", description: "Creating new accounts shows disabled message" },
+      { name: "Create Account CTA", description: "Create My Account button redirects to signup page" },
+    ],
+  },
+  {
+    category: "Legal Acceptance",
+    tests: [
+      { name: "Signup checkbox", description: "Legal acceptance checkbox required during account creation" },
+      { name: "Document links", description: "All 9 legal document links open in new tabs" },
+      { name: "Acceptance logging", description: "Acceptance record created with user ID, email, IP, version" },
+      { name: "Admin compliance view", description: "Legal compliance dashboard shows acceptance records" },
+      { name: "Portal legal section", description: "Client portal shows accepted versions and dates" },
+      { name: "Version tracking", description: "Legal documents display version numbers correctly" },
+    ],
+  },
+  {
     category: "Security",
     tests: [
       { name: "Client data isolation", description: "Clients only see own company data" },
