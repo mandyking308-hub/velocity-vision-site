@@ -540,15 +540,151 @@ const docs: Record<string, LegalDoc> = {
     effectiveDate: "1 March 2026",
     lastUpdated: "1 March 2026",
     sections: [
-      { heading: "1. Introduction", paragraphs: [`${ENTITY} ("we", "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, store, and share your personal information.`] },
-      { heading: "2. Information We Collect", paragraphs: ["We collect information from the following sources:"], bullets: ["Information you provide directly (name, email, company details, payment information)", "Information collected automatically (IP address, browser type, usage data)", "Information from third parties (social media platforms, analytics providers)"] },
-      { heading: "3. How We Use Your Information", paragraphs: ["We use your information to:"], bullets: ["Provide and improve our services", "Process payments", "Communicate with you", "Personalise your experience", "Ensure security and prevent fraud", "Comply with legal obligations"] },
-      { heading: "4. Legal Basis for Processing", paragraphs: ["We process personal data on the following legal bases: performance of a contract, legitimate interests, consent (where applicable), and compliance with legal obligations."] },
-      { heading: "5. Data Sharing", paragraphs: ["We may share your information with service providers, professional advisors, and law enforcement when required by law. We do not sell your personal data."] },
-      { heading: "6. International Transfers", paragraphs: ["Your data may be transferred to countries outside your jurisdiction. We ensure appropriate safeguards are in place, including standard contractual clauses where required."] },
-      { heading: "7. Your Rights", paragraphs: ["Depending on your jurisdiction, you may have rights to access, correct, delete, restrict processing of, or port your data. Contact us to exercise your rights."] },
-      { heading: "8. Data Retention", paragraphs: ["We retain personal data for as long as necessary to fulfil the purposes for which it was collected."] },
-      { heading: "9. Contact", paragraphs: ["For privacy enquiries, contact our Data Protection Officer at privacy@velocityinfluence.com."] },
+      {
+        heading: "1. Introduction",
+        paragraphs: [
+          "This Privacy Policy describes how Velocity Influence collects, uses, and protects personal information when individuals interact with our website, platform, and related services.",
+          "By accessing or using the Velocity Influence platform or website, you acknowledge that you have read and understood this Privacy Policy.",
+        ],
+      },
+      {
+        heading: "2. Service Provider",
+        paragraphs: [
+          `Velocity Influence Agency is a trading name of ${ENTITY}.`,
+          `Throughout this policy, the terms "Velocity Influence", "we", "our", and "us" refer to Global Solutions Management LLC.`,
+        ],
+      },
+      {
+        heading: "3. Information We Collect",
+        paragraphs: [
+          "We collect the following categories of personal data when you interact with our website or platform:",
+        ],
+        bullets: [
+          "Contact information such as name, email address, and phone number",
+          "Company and job information including company name, job title, and industry",
+          "Account login information including email and password credentials",
+          "Marketing campaign data uploaded by customers, including contact lists and audience segments",
+          "Usage data from interactions with the platform, including pages visited, features used, and session duration",
+          "Technical data such as IP address, browser type, device information, and operating system",
+          "Payment and billing information processed through our payment providers",
+        ],
+      },
+      {
+        heading: "4. How We Use Information",
+        paragraphs: [
+          "We use the personal data we collect for the following purposes:",
+        ],
+        bullets: [
+          "Providing access to the Velocity Influence platform and delivering our services",
+          "Delivering marketing campaign services and managing campaign infrastructure",
+          "Improving platform functionality, performance, and user experience",
+          "Responding to enquiries, support requests, and demo bookings",
+          "Communicating service updates, product announcements, and account notifications",
+          "Processing payments and managing billing and subscriptions",
+          "Ensuring platform security, detecting fraud, and preventing abuse",
+          "Complying with applicable legal and regulatory obligations",
+        ],
+      },
+      {
+        heading: "5. Marketing Communications",
+        paragraphs: [
+          "You may receive communications from us related to:",
+        ],
+        bullets: [
+          "Service updates and platform changes",
+          "Account notifications and security alerts",
+          "Marketing insights, industry reports, and thought leadership content",
+          "Product announcements and feature releases",
+        ],
+      },
+      {
+        heading: "6. Cookies and Tracking Technologies",
+        paragraphs: [
+          "The Velocity Influence website uses cookies and similar technologies to:",
+        ],
+        bullets: [
+          "Analyse website traffic and visitor behaviour",
+          "Improve user experience and platform performance",
+          "Remember user preferences and session settings",
+          "Deliver relevant content and measure marketing effectiveness",
+        ],
+      },
+      {
+        heading: "7. Sharing of Information",
+        paragraphs: [
+          "We may share personal data with trusted third-party service providers who assist in delivering our platform and services. These may include:",
+        ],
+        bullets: [
+          "Cloud infrastructure providers for hosting and data storage",
+          "Analytics providers for platform usage analysis and performance monitoring",
+          "Payment processors for subscription and invoice management",
+          "Email delivery providers for transactional and campaign communications",
+          "Professional advisors including legal, accounting, and compliance consultants",
+        ],
+      },
+      {
+        heading: "8. Data Security",
+        paragraphs: [
+          "Velocity Influence implements appropriate technical and organisational measures to protect personal data against unauthorised access, loss, destruction, or damage. These measures include:",
+        ],
+        bullets: [
+          "Encrypted data transmission using TLS 1.2 or higher",
+          "Secure authentication with multi-factor access controls",
+          "Role-based access control systems with the principle of least privilege",
+          "Continuous system monitoring and intrusion detection",
+          "Regular security updates, vulnerability assessments, and penetration testing",
+        ],
+      },
+      {
+        heading: "9. International Data Transfers",
+        paragraphs: [
+          "Personal data may be transferred to and processed in countries outside your jurisdiction as necessary to deliver the Velocity Influence platform and services.",
+          "Velocity Influence uses recognised safeguards to ensure appropriate protection of personal data during international transfers, including standard contractual clauses approved by relevant data protection authorities and adequacy decisions where applicable.",
+        ],
+      },
+      {
+        heading: "10. Data Retention",
+        paragraphs: [
+          "Personal data is retained only as long as necessary to fulfil the purposes for which it was collected, provide our services, or comply with applicable legal obligations.",
+          "When a customer account is closed, customers may request deletion of their stored personal data. Velocity Influence will process verified deletion requests within 30 days, except where retention is required by law.",
+        ],
+      },
+      {
+        heading: "11. Your Privacy Rights",
+        paragraphs: [
+          "Depending on your jurisdiction, you may have the following rights regarding your personal data:",
+        ],
+        bullets: [
+          "Right of access — to request a copy of the personal data we hold about you",
+          "Right to rectification — to request correction of inaccurate or incomplete personal data",
+          "Right to erasure — to request deletion of your personal data where there is no compelling reason for continued processing",
+          "Right to restriction — to request that we restrict the processing of your personal data in certain circumstances",
+          "Right to data portability — to request transfer of your personal data in a structured, commonly used format",
+          "Right to object — to object to processing based on legitimate interests or for direct marketing purposes",
+        ],
+      },
+      {
+        heading: "12. Third-Party Links",
+        paragraphs: [
+          "The Velocity Influence platform and website may contain links to external websites and third-party services that are not operated or controlled by us.",
+          "Velocity Influence is not responsible for the privacy practices, content, or security of third-party websites. We encourage you to review the privacy policies of any external sites you visit.",
+        ],
+      },
+      {
+        heading: "13. Updates to This Policy",
+        paragraphs: [
+          "Velocity Influence may update this Privacy Policy periodically to reflect changes in our practices, legal requirements, or platform functionality.",
+          "When significant changes are made, we will notify registered users via email or in-platform notification and update the \"Last Updated\" date at the top of this page.",
+        ],
+      },
+      {
+        heading: "14. Contact Information",
+        paragraphs: [
+          "For privacy-related enquiries, data subject requests, or questions about this Privacy Policy, please contact us at:",
+          "Global Solutions Management LLC\nTrading as Velocity Influence Agency\nState of Delaware, United States",
+          "Privacy enquiries: privacy@velocityinfluence.com\nLegal enquiries: legal@velocityinfluence.com\nGeneral enquiries: hello@velocityinfluence.com",
+        ],
+      },
     ],
   },
   "acceptable-use-policy": {
