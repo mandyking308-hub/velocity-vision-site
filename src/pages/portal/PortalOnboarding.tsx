@@ -55,6 +55,7 @@ const PortalOnboarding = () => {
 
   const [campaignObjective, setCampaignObjective] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [legalAccepted, setLegalAccepted] = useState(false);
 
   const steps = accountType === "agency" ? agencySteps : businessSteps;
 
