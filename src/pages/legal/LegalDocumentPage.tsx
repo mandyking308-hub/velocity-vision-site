@@ -28,6 +28,7 @@ const docs: Record<string, LegalDoc> = {
     title: "Platform Terms of Service",
     effectiveDate: "1 March 2026",
     lastUpdated: "1 March 2026",
+    version: "1.0",
     sections: [
       {
         heading: "1. Service Provider",
