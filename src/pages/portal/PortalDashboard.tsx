@@ -114,8 +114,13 @@ const PortalDashboard = () => {
         <h1 className="text-2xl font-display font-bold text-foreground">Welcome back{profile?.first_name ? `, ${profile.first_name}` : ""}</h1>
         <p className="text-muted-foreground text-sm mt-1">Your campaign overview and performance summary</p>
       </div>
+      {isAgency && (
+        <div className="bg-card border border-border/50 rounded-xl p-6 shadow-card">
+          <WorkspaceManager onSelectWorkspace={setSelectedWorkspace} selectedWorkspaceId={selectedWorkspace} />
+        </div>
+      )}
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+
         {stats.map((stat, i) => (
           <motion.div
             key={stat.label}

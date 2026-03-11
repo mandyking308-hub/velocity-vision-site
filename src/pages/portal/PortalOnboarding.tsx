@@ -27,6 +27,7 @@ const PortalOnboarding = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
+  const [accountType, setAccountType] = useState<"business" | "agency">("business");
   const [form, setForm] = useState({
     business_description: "", marketing_goals: "", target_audience: "",
     target_regions: "", competitors: "", existing_channels: "",
