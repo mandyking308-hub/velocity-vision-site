@@ -386,14 +386,153 @@ const docs: Record<string, LegalDoc> = {
     effectiveDate: "1 March 2026",
     lastUpdated: "1 March 2026",
     sections: [
-      { heading: "1. Purpose", paragraphs: [`This Data Processing Agreement ("DPA") sets out the terms under which ${ENTITY} ("Processor") processes personal data on behalf of the customer ("Controller") in connection with the provision of marketing services.`] },
-      { heading: "2. Definitions", paragraphs: [`"Personal Data", "Processing", "Data Subject", "Controller", and "Processor" have the meanings given to them under applicable data protection legislation, including the GDPR, UK GDPR, and CCPA where applicable.`] },
-      { heading: "3. Processing Instructions", paragraphs: ["The Processor shall process personal data only on documented instructions from the Controller, except where required by applicable law."], bullets: ["Campaign targeting and audience segmentation", "Analytics and performance measurement", "Communication delivery"] },
-      { heading: "4. Security Measures", paragraphs: ["The Processor implements appropriate technical and organisational measures to ensure a level of security appropriate to the risk."], bullets: ["Encryption of data in transit and at rest", "Access controls and authentication", "Regular security assessments and audits"] },
-      { heading: "5. Sub-processors", paragraphs: ["The Processor may engage sub-processors to assist with processing. The Controller will be notified of new sub-processors and may object within 14 days."] },
-      { heading: "6. Data Subject Rights", paragraphs: ["The Processor shall assist the Controller in responding to data subject requests, including rights of access, rectification, erasure, and portability, within the timeframes required by law."] },
-      { heading: "7. Data Breach Notification", paragraphs: ["The Processor shall notify the Controller without undue delay upon becoming aware of a personal data breach."] },
-      { heading: "8. Data Retention", paragraphs: ["Personal data will be retained only for as long as necessary to fulfil the purposes of processing. Upon termination, the Processor shall delete or return all personal data within 30 days."] },
+      {
+        heading: "1. Service Provider",
+        paragraphs: [
+          `Velocity Influence Agency is a trading name of ${ENTITY}.`,
+          `For the purposes of this Data Processing Agreement ("DPA"), the terms "Velocity Influence", "the Platform", "we", "our", and "us" refer to Global Solutions Management LLC.`,
+          "This DPA governs how personal data is processed within the Velocity Influence platform and forms part of the contractual agreement between Velocity Influence and its customers.",
+        ],
+      },
+      {
+        heading: "2. Definitions",
+        paragraphs: [
+          "The following terms have the meanings set out below, aligned with internationally recognised data protection frameworks including the GDPR, UK GDPR, and CCPA:",
+        ],
+        bullets: [
+          "Personal Data — any information relating to an identified or identifiable natural person",
+          "Processing — any operation performed on personal data, including collection, storage, use, disclosure, and deletion",
+          "Data Controller — the party that determines the purposes and means of processing personal data",
+          "Data Processor — the party that processes personal data on behalf of the Data Controller",
+          "Subprocessor — a third party engaged by the Data Processor to assist with processing activities",
+          "Data Subject — an identified or identifiable natural person whose personal data is processed",
+        ],
+      },
+      {
+        heading: "3. Roles of the Parties",
+        paragraphs: [
+          "The relationship between the parties for data protection purposes is as follows:",
+        ],
+        bullets: [
+          "The customer acts as the Data Controller, determining the purposes and means of processing personal data uploaded to the Platform",
+          "Velocity Influence acts as the Data Processor, processing personal data on behalf of the customer solely to deliver the Platform services",
+        ],
+      },
+      {
+        heading: "4. Scope of Data Processing",
+        paragraphs: [
+          "Velocity Influence processes personal data solely for the purpose of providing Platform services, including:",
+        ],
+        bullets: [
+          "Campaign management and execution",
+          "Customer relationship management (CRM) tools",
+          "Marketing analytics and performance tracking",
+          "Reporting dashboards and campaign insights",
+        ],
+      },
+      {
+        heading: "5. Customer Responsibilities",
+        paragraphs: [
+          "Customers agree that:",
+        ],
+        bullets: [
+          "They have lawful authority to process and upload personal data to the Platform",
+          "They comply with all applicable privacy and data protection laws in the jurisdictions in which they operate",
+          "They maintain appropriate privacy notices and legal bases for data subjects whose data is processed through the Platform",
+          "They obtain all necessary consents from data subjects where required by law",
+        ],
+      },
+      {
+        heading: "6. Security Measures",
+        paragraphs: [
+          "Velocity Influence implements appropriate technical and organisational measures to protect personal data against unauthorised access, loss, destruction, or damage. These measures include:",
+        ],
+        bullets: [
+          "Encrypted data transmission using TLS 1.2 or higher",
+          "Secure authentication and multi-factor access controls",
+          "Role-based access control policies with the principle of least privilege",
+          "Continuous system monitoring and intrusion detection",
+          "Regular security updates, vulnerability assessments, and penetration testing",
+          "Encrypted backups stored in geographically separate locations",
+        ],
+      },
+      {
+        heading: "7. Subprocessors",
+        paragraphs: [
+          "Velocity Influence may engage third-party service providers (subprocessors) to assist in delivering the Platform. Examples of subprocessors include:",
+        ],
+        bullets: [
+          "Cloud infrastructure providers for hosting and data storage",
+          "Analytics services for campaign performance measurement",
+          "Payment processors for subscription and invoice management",
+          "Email delivery providers for campaign communications",
+        ],
+      },
+      {
+        heading: "8. International Data Transfers",
+        paragraphs: [
+          "Personal data may be transferred between jurisdictions as necessary to deliver Platform services. Velocity Influence will ensure that international transfers comply with recognised safeguards, including:",
+        ],
+        bullets: [
+          "Standard contractual clauses approved by relevant data protection authorities",
+          "Adequacy decisions where applicable",
+          "Other recognised international data transfer mechanisms as required by law",
+        ],
+      },
+      {
+        heading: "9. Data Breach Notification",
+        paragraphs: [
+          "Velocity Influence will notify customers without undue delay upon becoming aware of a security incident that may affect personal data processed on the Platform. Notification will include:",
+        ],
+        bullets: [
+          "A description of the nature of the breach",
+          "The categories and approximate number of data subjects affected",
+          "The likely consequences of the breach",
+          "Measures taken or proposed to address and mitigate the breach",
+        ],
+      },
+      {
+        heading: "10. Data Retention and Deletion",
+        paragraphs: [
+          "Personal data will be retained only as long as necessary to provide Platform services and fulfil the purposes for which it was collected.",
+          "Upon account termination, customers may request deletion of their stored personal data. Velocity Influence will delete or return all personal data within 30 days of a verified request, except where retention is required by law.",
+        ],
+      },
+      {
+        heading: "11. Audit Rights",
+        paragraphs: [
+          "Customers may request reasonable information regarding the Platform's data protection practices to verify compliance with this DPA.",
+          "Velocity Influence may provide compliance documentation, security summaries, or relevant certifications to satisfy audit requests. On-site audits may be arranged at the customer's expense with reasonable advance notice.",
+        ],
+      },
+      {
+        heading: "12. Confidentiality",
+        paragraphs: [
+          "All personnel handling personal data on behalf of Velocity Influence are subject to appropriate confidentiality obligations. Access to personal data is restricted to authorised personnel on a need-to-know basis.",
+        ],
+      },
+      {
+        heading: "13. Liability",
+        paragraphs: [
+          "Liability for data protection matters under this DPA is subject to the limitations described in the Platform Terms of Service and the Client Services Agreement.",
+          "Each party shall be liable for damages caused by processing that infringes applicable data protection laws, to the extent attributable to that party's breach of its obligations.",
+        ],
+      },
+      {
+        heading: "14. Governing Law",
+        paragraphs: [
+          "This Data Processing Agreement shall be governed by and construed in accordance with the laws of the State of Delaware, United States, without regard to its conflict of law principles.",
+          "Any disputes arising under or in connection with this DPA shall be subject to the exclusive jurisdiction of the state and federal courts located in the State of Delaware.",
+        ],
+      },
+      {
+        heading: "15. Contact Information",
+        paragraphs: [
+          "For privacy or data protection enquiries relating to this DPA, please contact us at:",
+          "Global Solutions Management LLC\nTrading as Velocity Influence Agency\nState of Delaware, United States",
+          "Data Protection enquiries: privacy@velocityinfluence.com\nLegal enquiries: legal@velocityinfluence.com\nGeneral enquiries: hello@velocityinfluence.com",
+        ],
+      },
     ],
   },
   "privacy-policy": {
