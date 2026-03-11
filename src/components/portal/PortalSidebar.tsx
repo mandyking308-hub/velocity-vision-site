@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Megaphone, FileText, MessageSquare,
-  CreditCard, Bell, PlusCircle, LogOut, ChevronLeft, ChevronRight, Compass, Briefcase
+  CreditCard, Bell, PlusCircle, LogOut, ChevronLeft, ChevronRight, Compass, Briefcase, Scale
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
@@ -19,6 +19,7 @@ const navItems = [
   { label: "Billing", path: "/portal/billing", icon: CreditCard },
   { label: "Request Campaign", path: "/portal/request", icon: PlusCircle },
   { label: "Notifications", path: "/portal/notifications", icon: Bell },
+  { label: "Legal", path: "/portal/legal", icon: Scale },
 ];
 
 const PortalSidebar = () => {

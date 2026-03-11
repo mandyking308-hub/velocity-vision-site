@@ -18,6 +18,8 @@ import BookDemo from "./pages/BookDemo.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import AuthPage from "./pages/AuthPage.tsx";
 import ForAgencies from "./pages/ForAgencies.tsx";
+import LegalCentre from "./pages/legal/LegalCentre.tsx";
+import LegalDocumentPage from "./pages/legal/LegalDocumentPage.tsx";
 import CRMLayout from "./pages/CRMLayout.tsx";
 import CRMDashboard from "./pages/crm/CRMDashboard.tsx";
 import CompaniesPage from "./pages/crm/CompaniesPage.tsx";
@@ -41,6 +43,7 @@ import PortalCampaignRequest from "./pages/portal/PortalCampaignRequest.tsx";
 import PortalNotifications from "./pages/portal/PortalNotifications.tsx";
 import PortalOnboarding from "./pages/portal/PortalOnboarding.tsx";
 import PortalWorkspaces from "./pages/portal/PortalWorkspaces.tsx";
+import PortalLegal from "./pages/portal/PortalLegal.tsx";
 
 const queryClient = new QueryClient();
 
@@ -67,6 +70,8 @@ const AnimatedRoutes = () => {
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
         <Route path="/book-demo" element={<PageTransition><BookDemo /></PageTransition>} />
         <Route path="/for-agencies" element={<PageTransition><ForAgencies /></PageTransition>} />
+        <Route path="/legal" element={<PageTransition><LegalCentre /></PageTransition>} />
+        <Route path="/legal/:slug" element={<PageTransition><LegalDocumentPage /></PageTransition>} />
         <Route path="/auth" element={<PageTransition><AuthPage /></PageTransition>} />
 
         {/* CRM (protected - internal team) */}
@@ -96,6 +101,7 @@ const AnimatedRoutes = () => {
           <Route path="notifications" element={<PortalNotifications />} />
           <Route path="onboarding" element={<PortalOnboarding />} />
           <Route path="workspaces" element={<PortalWorkspaces />} />
+          <Route path="legal" element={<PortalLegal />} />
         </Route>
 
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
