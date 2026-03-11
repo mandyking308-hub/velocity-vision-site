@@ -84,6 +84,203 @@ export type Database = {
           },
         ]
       }
+      campaign_metrics: {
+        Row: {
+          ad_spend: number | null
+          campaign_id: string
+          click_through_rate: number | null
+          conversion_rate: number | null
+          cost_per_lead: number | null
+          created_at: string
+          date: string
+          emails_sent: number | null
+          engagement: number | null
+          id: string
+          impressions: number | null
+          leads_generated: number | null
+          open_rate: number | null
+        }
+        Insert: {
+          ad_spend?: number | null
+          campaign_id: string
+          click_through_rate?: number | null
+          conversion_rate?: number | null
+          cost_per_lead?: number | null
+          created_at?: string
+          date?: string
+          emails_sent?: number | null
+          engagement?: number | null
+          id?: string
+          impressions?: number | null
+          leads_generated?: number | null
+          open_rate?: number | null
+        }
+        Update: {
+          ad_spend?: number | null
+          campaign_id?: string
+          click_through_rate?: number | null
+          conversion_rate?: number | null
+          cost_per_lead?: number | null
+          created_at?: string
+          date?: string
+          emails_sent?: number | null
+          engagement?: number | null
+          id?: string
+          impressions?: number | null
+          leads_generated?: number | null
+          open_rate?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_metrics_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaign_requests: {
+        Row: {
+          budget_range: string | null
+          company_id: string
+          created_at: string
+          created_by: string | null
+          id: string
+          notes: string | null
+          objective: string
+          status: Database["public"]["Enums"]["campaign_request_status"]
+          target_audience: string | null
+          timeline: string | null
+          updated_at: string
+        }
+        Insert: {
+          budget_range?: string | null
+          company_id: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          objective: string
+          status?: Database["public"]["Enums"]["campaign_request_status"]
+          target_audience?: string | null
+          timeline?: string | null
+          updated_at?: string
+        }
+        Update: {
+          budget_range?: string | null
+          company_id?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          objective?: string
+          status?: Database["public"]["Enums"]["campaign_request_status"]
+          target_audience?: string | null
+          timeline?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_requests_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaigns: {
+        Row: {
+          company_id: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          end_date: string | null
+          id: string
+          name: string
+          start_date: string | null
+          status: Database["public"]["Enums"]["campaign_status"]
+          type: Database["public"]["Enums"]["campaign_type"]
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          name: string
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["campaign_status"]
+          type?: Database["public"]["Enums"]["campaign_type"]
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          name?: string
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["campaign_status"]
+          type?: Database["public"]["Enums"]["campaign_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaigns_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_documents: {
+        Row: {
+          company_id: string
+          created_at: string
+          document_type: string
+          file_size: number | null
+          file_url: string
+          id: string
+          name: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          document_type?: string
+          file_size?: number | null
+          file_url: string
+          id?: string
+          name: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          document_type?: string
+          file_size?: number | null
+          file_url?: string
+          id?: string
+          name?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_documents_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       companies: {
         Row: {
           company_size: string | null
@@ -176,6 +373,56 @@ export type Database = {
           },
         ]
       }
+      invoices: {
+        Row: {
+          amount: number
+          company_id: string
+          created_at: string
+          description: string | null
+          due_date: string | null
+          file_url: string | null
+          id: string
+          invoice_number: string
+          paid_date: string | null
+          status: Database["public"]["Enums"]["invoice_status"]
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          company_id: string
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          file_url?: string | null
+          id?: string
+          invoice_number: string
+          paid_date?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          company_id?: string
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          file_url?: string | null
+          id?: string
+          invoice_number?: string
+          paid_date?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           company_id: string | null
@@ -227,6 +474,47 @@ export type Database = {
           },
         ]
       }
+      messages: {
+        Row: {
+          company_id: string
+          content: string
+          created_at: string
+          file_url: string | null
+          id: string
+          is_from_client: boolean
+          read: boolean
+          sender_id: string
+        }
+        Insert: {
+          company_id: string
+          content: string
+          created_at?: string
+          file_url?: string | null
+          id?: string
+          is_from_client?: boolean
+          read?: boolean
+          sender_id: string
+        }
+        Update: {
+          company_id?: string
+          content?: string
+          created_at?: string
+          file_url?: string | null
+          id?: string
+          is_from_client?: boolean
+          read?: boolean
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notes: {
         Row: {
           content: string
@@ -251,6 +539,39 @@ export type Database = {
           entity_id?: string
           entity_type?: string
           id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          link: string | null
+          message: string | null
+          read: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          link?: string | null
+          message?: string | null
+          read?: boolean
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          link?: string | null
+          message?: string | null
+          read?: boolean
+          title?: string
+          type?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -314,6 +635,7 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          company_id: string | null
           created_at: string
           email: string | null
           first_name: string | null
@@ -324,6 +646,7 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          company_id?: string | null
           created_at?: string
           email?: string | null
           first_name?: string | null
@@ -334,6 +657,7 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          company_id?: string | null
           created_at?: string
           email?: string | null
           first_name?: string | null
@@ -342,7 +666,15 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tasks: {
         Row: {
@@ -424,8 +756,17 @@ export type Database = {
         | "meeting"
         | "note"
         | "campaign_interaction"
-      app_role: "admin" | "sales" | "marketing" | "founder"
+      app_role: "admin" | "sales" | "marketing" | "founder" | "client"
+      campaign_request_status: "pending" | "reviewed" | "approved" | "rejected"
+      campaign_status: "active" | "scheduled" | "completed" | "paused"
+      campaign_type:
+        | "email"
+        | "social_media"
+        | "paid_advertising"
+        | "influencer"
+        | "pr"
       company_status: "prospect" | "active_client" | "past_client"
+      invoice_status: "draft" | "sent" | "paid" | "overdue"
       lead_status:
         | "new"
         | "contacted"
@@ -575,8 +916,18 @@ export const Constants = {
         "note",
         "campaign_interaction",
       ],
-      app_role: ["admin", "sales", "marketing", "founder"],
+      app_role: ["admin", "sales", "marketing", "founder", "client"],
+      campaign_request_status: ["pending", "reviewed", "approved", "rejected"],
+      campaign_status: ["active", "scheduled", "completed", "paused"],
+      campaign_type: [
+        "email",
+        "social_media",
+        "paid_advertising",
+        "influencer",
+        "pr",
+      ],
       company_status: ["prospect", "active_client", "past_client"],
+      invoice_status: ["draft", "sent", "paid", "overdue"],
       lead_status: [
         "new",
         "contacted",
