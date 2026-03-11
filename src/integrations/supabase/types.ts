@@ -49,6 +49,47 @@ export type Database = {
           },
         ]
       }
+      campaign_assets: {
+        Row: {
+          asset_type: string
+          campaign_id: string
+          created_at: string
+          file_size: number | null
+          file_url: string
+          id: string
+          name: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          asset_type?: string
+          campaign_id: string
+          created_at?: string
+          file_size?: number | null
+          file_url: string
+          id?: string
+          name: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          asset_type?: string
+          campaign_id?: string
+          created_at?: string
+          file_size?: number | null
+          file_url?: string
+          id?: string
+          name?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_assets_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campaign_attributions: {
         Row: {
           campaign_name: string
@@ -84,12 +125,65 @@ export type Database = {
           },
         ]
       }
+      campaign_audiences: {
+        Row: {
+          campaign_id: string
+          company_name: string | null
+          contact_id: string | null
+          created_at: string
+          email: string | null
+          id: string
+          industry: string | null
+          job_title: string | null
+          name: string
+        }
+        Insert: {
+          campaign_id: string
+          company_name?: string | null
+          contact_id?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          industry?: string | null
+          job_title?: string | null
+          name: string
+        }
+        Update: {
+          campaign_id?: string
+          company_name?: string | null
+          contact_id?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          industry?: string | null
+          job_title?: string | null
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_audiences_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_audiences_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campaign_metrics: {
         Row: {
           ad_spend: number | null
           campaign_id: string
           click_through_rate: number | null
+          clicks: number | null
           conversion_rate: number | null
+          conversions: number | null
           cost_per_lead: number | null
           created_at: string
           date: string
@@ -99,12 +193,17 @@ export type Database = {
           impressions: number | null
           leads_generated: number | null
           open_rate: number | null
+          reach: number | null
+          replies: number | null
+          traffic: number | null
         }
         Insert: {
           ad_spend?: number | null
           campaign_id: string
           click_through_rate?: number | null
+          clicks?: number | null
           conversion_rate?: number | null
+          conversions?: number | null
           cost_per_lead?: number | null
           created_at?: string
           date?: string
@@ -114,12 +213,17 @@ export type Database = {
           impressions?: number | null
           leads_generated?: number | null
           open_rate?: number | null
+          reach?: number | null
+          replies?: number | null
+          traffic?: number | null
         }
         Update: {
           ad_spend?: number | null
           campaign_id?: string
           click_through_rate?: number | null
+          clicks?: number | null
           conversion_rate?: number | null
+          conversions?: number | null
           cost_per_lead?: number | null
           created_at?: string
           date?: string
@@ -129,6 +233,9 @@ export type Database = {
           impressions?: number | null
           leads_generated?: number | null
           open_rate?: number | null
+          reach?: number | null
+          replies?: number | null
+          traffic?: number | null
         }
         Relationships: [
           {
@@ -192,6 +299,7 @@ export type Database = {
       }
       campaigns: {
         Row: {
+          budget: number | null
           company_id: string
           created_at: string
           created_by: string | null
@@ -199,12 +307,16 @@ export type Database = {
           end_date: string | null
           id: string
           name: string
+          objective: string | null
+          owner_id: string | null
           start_date: string | null
           status: Database["public"]["Enums"]["campaign_status"]
+          target_audience_description: string | null
           type: Database["public"]["Enums"]["campaign_type"]
           updated_at: string
         }
         Insert: {
+          budget?: number | null
           company_id: string
           created_at?: string
           created_by?: string | null
@@ -212,12 +324,16 @@ export type Database = {
           end_date?: string | null
           id?: string
           name: string
+          objective?: string | null
+          owner_id?: string | null
           start_date?: string | null
           status?: Database["public"]["Enums"]["campaign_status"]
+          target_audience_description?: string | null
           type?: Database["public"]["Enums"]["campaign_type"]
           updated_at?: string
         }
         Update: {
+          budget?: number | null
           company_id?: string
           created_at?: string
           created_by?: string | null
@@ -225,8 +341,11 @@ export type Database = {
           end_date?: string | null
           id?: string
           name?: string
+          objective?: string | null
+          owner_id?: string | null
           start_date?: string | null
           status?: Database["public"]["Enums"]["campaign_status"]
+          target_audience_description?: string | null
           type?: Database["public"]["Enums"]["campaign_type"]
           updated_at?: string
         }
@@ -758,13 +877,15 @@ export type Database = {
         | "campaign_interaction"
       app_role: "admin" | "sales" | "marketing" | "founder" | "client"
       campaign_request_status: "pending" | "reviewed" | "approved" | "rejected"
-      campaign_status: "active" | "scheduled" | "completed" | "paused"
+      campaign_status: "active" | "scheduled" | "completed" | "paused" | "draft"
       campaign_type:
         | "email"
         | "social_media"
         | "paid_advertising"
         | "influencer"
         | "pr"
+        | "linkedin_outreach"
+        | "newsletter"
       company_status: "prospect" | "active_client" | "past_client"
       invoice_status: "draft" | "sent" | "paid" | "overdue"
       lead_status:
@@ -918,13 +1039,15 @@ export const Constants = {
       ],
       app_role: ["admin", "sales", "marketing", "founder", "client"],
       campaign_request_status: ["pending", "reviewed", "approved", "rejected"],
-      campaign_status: ["active", "scheduled", "completed", "paused"],
+      campaign_status: ["active", "scheduled", "completed", "paused", "draft"],
       campaign_type: [
         "email",
         "social_media",
         "paid_advertising",
         "influencer",
         "pr",
+        "linkedin_outreach",
+        "newsletter",
       ],
       company_status: ["prospect", "active_client", "past_client"],
       invoice_status: ["draft", "sent", "paid", "overdue"],
