@@ -460,6 +460,7 @@ export type Database = {
       }
       client_onboarding: {
         Row: {
+          agency_size: string | null
           business_description: string | null
           company_id: string
           competitors: string | null
@@ -468,12 +469,15 @@ export type Database = {
           created_at: string
           existing_channels: string | null
           id: string
+          industries_served: string | null
           marketing_goals: string | null
+          services_offered: string | null
           target_audience: string | null
           target_regions: string | null
           updated_at: string
         }
         Insert: {
+          agency_size?: string | null
           business_description?: string | null
           company_id: string
           competitors?: string | null
@@ -482,12 +486,15 @@ export type Database = {
           created_at?: string
           existing_channels?: string | null
           id?: string
+          industries_served?: string | null
           marketing_goals?: string | null
+          services_offered?: string | null
           target_audience?: string | null
           target_regions?: string | null
           updated_at?: string
         }
         Update: {
+          agency_size?: string | null
           business_description?: string | null
           company_id?: string
           competitors?: string | null
@@ -496,7 +503,9 @@ export type Database = {
           created_at?: string
           existing_channels?: string | null
           id?: string
+          industries_served?: string | null
           marketing_goals?: string | null
+          services_offered?: string | null
           target_audience?: string | null
           target_regions?: string | null
           updated_at?: string
