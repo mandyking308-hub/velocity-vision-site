@@ -27,6 +27,7 @@ import TasksPage from "./pages/crm/TasksPage.tsx";
 import CampaignsPage from "./pages/crm/CampaignsPage.tsx";
 import CampaignDetailPage from "./pages/crm/CampaignDetailPage.tsx";
 import CampaignDashboard from "./pages/crm/CampaignDashboard.tsx";
+import FounderDashboard from "./pages/crm/FounderDashboard.tsx";
 import PortalLayout from "./pages/PortalLayout.tsx";
 import PortalDashboard from "./pages/portal/PortalDashboard.tsx";
 import PortalCampaigns from "./pages/portal/PortalCampaigns.tsx";
