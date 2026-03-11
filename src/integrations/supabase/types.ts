@@ -793,26 +793,35 @@ export type Database = {
       legal_acceptances: {
         Row: {
           accepted_at: string
+          account_type: string | null
           created_at: string
           document_versions: Json | null
+          email: string | null
           id: string
           ip_address: string | null
+          legal_version: string | null
           user_id: string
         }
         Insert: {
           accepted_at?: string
+          account_type?: string | null
           created_at?: string
           document_versions?: Json | null
+          email?: string | null
           id?: string
           ip_address?: string | null
+          legal_version?: string | null
           user_id: string
         }
         Update: {
           accepted_at?: string
+          account_type?: string | null
           created_at?: string
           document_versions?: Json | null
+          email?: string | null
           id?: string
           ip_address?: string | null
+          legal_version?: string | null
           user_id?: string
         }
         Relationships: []
