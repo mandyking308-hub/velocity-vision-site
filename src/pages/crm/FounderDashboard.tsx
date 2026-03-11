@@ -69,6 +69,11 @@ const FounderDashboard = () => {
     queryFn: async () => { const { data } = await supabase.from("activities").select("*, contacts(first_name, last_name)").order("created_at", { ascending: false }).limit(20); return data ?? []; },
   });
 
+  const { data: workspaces } = useQuery({
+    queryKey: ["founder-workspaces"],
+    queryFn: async () => { const { data } = await supabase.from("client_workspaces").select("*"); return data ?? []; },
+  });
+
   const { data: notifications } = useQuery({
     queryKey: ["founder-notifications", user?.id],
     queryFn: async () => {
