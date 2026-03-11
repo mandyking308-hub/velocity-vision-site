@@ -29,6 +29,7 @@ import CampaignDetailPage from "./pages/crm/CampaignDetailPage.tsx";
 import CampaignDashboard from "./pages/crm/CampaignDashboard.tsx";
 import FounderDashboard from "./pages/crm/FounderDashboard.tsx";
 import BillingPage from "./pages/crm/BillingPage.tsx";
+import QADashboard from "./pages/crm/QADashboard.tsx";
 import PortalLayout from "./pages/PortalLayout.tsx";
 import PortalDashboard from "./pages/portal/PortalDashboard.tsx";
 import PortalCampaigns from "./pages/portal/PortalCampaigns.tsx";
@@ -78,6 +79,7 @@ const AnimatedRoutes = () => {
           <Route path="campaign-dashboard" element={<CampaignDashboard />} />
           <Route path="founder" element={<FounderDashboard />} />
           <Route path="billing" element={<BillingPage />} />
+          <Route path="qa" element={<QADashboard />} />
         </Route>
 
         {/* Client Portal (protected) */}

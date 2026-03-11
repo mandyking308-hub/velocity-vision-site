@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Building2, Users, Target, TrendingUp,
-  CheckSquare, LogOut, ChevronLeft, ChevronRight, Globe, Megaphone, BarChart3, Crown, CreditCard
+  CheckSquare, LogOut, ChevronLeft, ChevronRight, Globe, Megaphone, BarChart3, Crown, CreditCard, Shield
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
@@ -19,6 +19,7 @@ const navItems = [
   { label: "Campaigns", path: "/crm/campaigns", icon: Megaphone },
   { label: "Campaign Perf.", path: "/crm/campaign-dashboard", icon: BarChart3 },
   { label: "Billing", path: "/crm/billing", icon: CreditCard },
+  { label: "QA Testing", path: "/crm/qa", icon: Shield },
 ];
 
 const CRMSidebar = () => {

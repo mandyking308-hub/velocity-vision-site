@@ -593,6 +593,36 @@ export type Database = {
           },
         ]
       }
+      error_logs: {
+        Row: {
+          category: string
+          created_at: string
+          details: string | null
+          id: string
+          message: string
+          resolved: boolean
+          severity: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          details?: string | null
+          id?: string
+          message: string
+          resolved?: boolean
+          severity?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          details?: string | null
+          id?: string
+          message?: string
+          resolved?: boolean
+          severity?: string
+        }
+        Relationships: []
+      }
       invoices: {
         Row: {
           amount: number
@@ -943,6 +973,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      qa_test_results: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          last_run_at: string | null
+          notes: string | null
+          run_by: string | null
+          status: string
+          test_name: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          last_run_at?: string | null
+          notes?: string | null
+          run_by?: string | null
+          status?: string
+          test_name: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          last_run_at?: string | null
+          notes?: string | null
+          run_by?: string | null
+          status?: string
+          test_name?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       subscriptions: {
         Row: {
