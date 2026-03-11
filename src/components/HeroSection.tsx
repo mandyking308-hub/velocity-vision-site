@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Play } from "lucide-react";
 import heroAbstract from "@/assets/hero-abstract.jpg";
 
 const HeroSection = () => (
@@ -43,9 +43,14 @@ const HeroSection = () => (
             </Link>
           </Button>
           <Button variant="hero-outline" size="lg" asChild>
-            <Link to="/services">Explore Services</Link>
+            <Link to="/demo">
+              <Play size={16} /> Explore the Platform
+            </Link>
           </Button>
         </div>
+        <p className="text-xs text-primary-foreground/40 mt-4 max-w-md">
+          Explore the Velocity Influence platform using a live demo environment with sample campaigns and analytics.
+        </p>
       </motion.div>
     </div>
   </section>

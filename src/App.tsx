@@ -5,6 +5,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { DemoProvider } from "@/contexts/DemoContext";
 import ScrollToTop from "@/components/ScrollToTop";
 import PageTransition from "@/components/PageTransition";
 import Index from "./pages/Index.tsx";
@@ -45,6 +46,9 @@ import PortalNotifications from "./pages/portal/PortalNotifications.tsx";
 import PortalOnboarding from "./pages/portal/PortalOnboarding.tsx";
 import PortalWorkspaces from "./pages/portal/PortalWorkspaces.tsx";
 import PortalLegal from "./pages/portal/PortalLegal.tsx";
+import DemoLogin from "./pages/DemoLogin.tsx";
+import DemoCRMLayout from "./pages/demo/DemoCRMLayout.tsx";
+import DemoCRMDashboard from "./pages/demo/DemoCRMDashboard.tsx";
 
 const queryClient = new QueryClient();
 
@@ -74,6 +78,12 @@ const AnimatedRoutes = () => {
         <Route path="/legal" element={<PageTransition><LegalCentre /></PageTransition>} />
         <Route path="/legal/:slug" element={<PageTransition><LegalDocumentPage /></PageTransition>} />
         <Route path="/auth" element={<PageTransition><AuthPage /></PageTransition>} />
+        <Route path="/demo" element={<PageTransition><DemoLogin /></PageTransition>} />
+
+        {/* Demo CRM (sandboxed — no auth required) */}
+        <Route path="/demo/crm" element={<DemoCRMLayout />}>
+          <Route index element={<DemoCRMDashboard />} />
+        </Route>
 
         {/* CRM (protected - internal team) */}
         <Route path="/crm" element={<ProtectedRoute><CRMLayout /></ProtectedRoute>}>
@@ -115,14 +125,16 @@ const AnimatedRoutes = () => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
-          <AnimatedRoutes />
-        </BrowserRouter>
-      </TooltipProvider>
+      <DemoProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <ScrollToTop />
+            <AnimatedRoutes />
+          </BrowserRouter>
+        </TooltipProvider>
+      </DemoProvider>
     </AuthProvider>
   </QueryClientProvider>
 );
