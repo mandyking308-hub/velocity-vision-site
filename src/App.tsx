@@ -40,6 +40,7 @@ import PortalBilling from "./pages/portal/PortalBilling.tsx";
 import PortalCampaignRequest from "./pages/portal/PortalCampaignRequest.tsx";
 import PortalNotifications from "./pages/portal/PortalNotifications.tsx";
 import PortalOnboarding from "./pages/portal/PortalOnboarding.tsx";
+import PortalWorkspaces from "./pages/portal/PortalWorkspaces.tsx";
 
 const queryClient = new QueryClient();
 
