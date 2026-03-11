@@ -924,11 +924,102 @@ const docs: Record<string, LegalDoc> = {
     effectiveDate: "1 March 2026",
     lastUpdated: "1 March 2026",
     sections: [
-      { heading: "1. What Are Cookies", paragraphs: [`${ENTITY}, trading as Velocity Influence Agency, uses cookies and similar tracking technologies on our website and platform.`] },
-      { heading: "2. Types of Cookies We Use", paragraphs: ["We use the following types of cookies:"], bullets: ["Essential cookies — required for platform functionality", "Performance cookies — help us understand how visitors use our site", "Functionality cookies — remember your preferences", "Targeting cookies — used to deliver relevant advertisements"] },
-      { heading: "3. Third-Party Cookies", paragraphs: ["Some cookies are placed by third-party services that appear on our pages, including analytics providers and social media platforms."] },
-      { heading: "4. Managing Cookies", paragraphs: ["You can control and manage cookies through your browser settings. Note that disabling certain cookies may affect platform functionality."] },
-      { heading: "5. Updates to This Policy", paragraphs: ["We may update this Cookie Policy from time to time. Any changes will be posted on this page."] },
+      {
+        heading: "1. Introduction",
+        paragraphs: [
+          "This Cookie Policy describes how cookies and similar tracking technologies are used when individuals visit the Velocity Influence website or access the platform.",
+          "Cookies help improve website functionality, analyse usage patterns, and enhance the overall user experience.",
+        ],
+      },
+      {
+        heading: "2. Service Provider",
+        paragraphs: [
+          `Velocity Influence Agency is a trading name of ${ENTITY}.`,
+          `Throughout this policy, references to "Velocity Influence", "we", "our", and "us" refer to Global Solutions Management LLC.`,
+        ],
+      },
+      {
+        heading: "3. What Cookies Are",
+        paragraphs: [
+          "Cookies are small text files that are stored on a user's device (computer, tablet, or mobile phone) when they visit a website.",
+          "Cookies allow websites to recognise returning visitors, store certain preferences, and collect information about how the site is used. Cookies may be set by the website itself (first-party cookies) or by third-party services operating on the website.",
+        ],
+      },
+      {
+        heading: "4. Types of Cookies We Use",
+        paragraphs: [
+          "The Velocity Influence website and platform may use the following types of cookies:",
+        ],
+        bullets: [
+          "Essential cookies — required for the basic functionality of the website and platform, such as user authentication and security",
+          "Functional cookies — allow the website to remember user preferences and provide enhanced, personalised features",
+          "Analytics cookies — help us understand how visitors interact with the website by collecting and reporting usage data",
+        ],
+      },
+      {
+        heading: "5. Analytics Cookies",
+        paragraphs: [
+          "Analytics cookies help us understand how visitors interact with the Velocity Influence website. These cookies collect information such as:",
+        ],
+        bullets: [
+          "Pages visited and content viewed",
+          "Time spent on individual pages and the overall session",
+          "Navigation behaviour and click patterns",
+          "Referring websites or sources that directed visitors to our site",
+          "General geographic location based on IP address",
+        ],
+      },
+      {
+        heading: "6. Functional Cookies",
+        paragraphs: [
+          "Functional cookies allow the website and platform to remember user preferences and deliver a more personalised experience. These cookies may store information such as:",
+        ],
+        bullets: [
+          "Login session data to keep users authenticated",
+          "Language and regional preferences",
+          "Interface settings and display preferences",
+          "Previously viewed content or selected options",
+        ],
+      },
+      {
+        heading: "7. Managing Cookie Preferences",
+        paragraphs: [
+          "Users can control and manage cookies through their browser settings. Most browsers allow users to:",
+        ],
+        bullets: [
+          "Accept all cookies",
+          "Block all cookies or specific categories of cookies",
+          "Delete cookies that are already stored on their device",
+          "Configure the browser to notify them when cookies are being set",
+        ],
+      },
+      {
+        heading: "8. Third-Party Cookies",
+        paragraphs: [
+          "Some cookies on the Velocity Influence website may be placed by third-party service providers that assist in delivering our platform and services. These third parties may include:",
+        ],
+        bullets: [
+          "Analytics providers for website traffic analysis and usage reporting",
+          "Performance monitoring tools for platform reliability",
+          "Payment processors for subscription and billing services",
+          "Social media platforms for content sharing and engagement features",
+        ],
+      },
+      {
+        heading: "9. Updates to This Policy",
+        paragraphs: [
+          "Velocity Influence may update this Cookie Policy periodically to reflect changes in technology, legal requirements, or the types of cookies used on the website.",
+          "When significant changes are made, users will be notified via an updated notice on the website. The \"Last Updated\" date at the top of this page will be revised accordingly.",
+        ],
+      },
+      {
+        heading: "10. Contact Information",
+        paragraphs: [
+          "For enquiries related to cookies, website tracking technologies, or this Cookie Policy, please contact us at:",
+          "Global Solutions Management LLC\nTrading as Velocity Influence Agency\nState of Delaware, United States",
+          "Privacy enquiries: privacy@velocityinfluence.com\nLegal enquiries: legal@velocityinfluence.com\nGeneral enquiries: hello@velocityinfluence.com",
+        ],
+      },
     ],
   },
   "platform-security-policy": {
