@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import {
   Building2, Users, Target, TrendingUp, DollarSign, Megaphone,
-  Activity, AlertTriangle, ArrowRight, BarChart3, Globe, CreditCard
+  Activity, AlertTriangle, ArrowRight, BarChart3, Globe, CreditCard, Book
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -210,6 +210,7 @@ const FounderDashboard = () => {
           <Button variant="outline" size="sm" onClick={() => navigate("/crm/leads")} className="gap-1.5"><Target size={14} /> Pipeline</Button>
           <Button variant="outline" size="sm" onClick={() => navigate("/crm/campaigns")} className="gap-1.5"><Megaphone size={14} /> Campaigns</Button>
           <Button variant="outline" size="sm" onClick={() => navigate("/crm/companies")} className="gap-1.5"><Building2 size={14} /> Clients</Button>
+          <Button variant="outline" size="sm" onClick={() => navigate("/crm/manual")} className="gap-1.5"><Book size={14} /> Ops Manual</Button>
         </div>
       </div>
 
