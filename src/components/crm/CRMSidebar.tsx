@@ -1,11 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Building2, Users, Target, TrendingUp,
-  CheckSquare, LogOut, ChevronLeft, ChevronRight, Globe, Megaphone, BarChart3
+  CheckSquare, LogOut, ChevronLeft, ChevronRight, Globe, Megaphone, BarChart3, Crown
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const navItems = [
   { label: "Dashboard", path: "/crm", icon: LayoutDashboard },
@@ -20,8 +22,20 @@ const navItems = [
 
 const CRMSidebar = () => {
   const location = useLocation();
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
+
+  const { data: roles } = useQuery({
+    queryKey: ["sidebar-roles", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data } = await supabase.from("user_roles").select("role").eq("user_id", user.id);
+      return data?.map((r) => r.role) ?? [];
+    },
+    enabled: !!user,
+  });
+
+  const showFounder = roles?.some((r) => r === "founder" || r === "admin") ?? false;
 
   return (
     <aside className={cn(
