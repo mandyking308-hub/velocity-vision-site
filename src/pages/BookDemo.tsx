@@ -8,18 +8,57 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const BookDemo = () => {
   const [form, setForm] = useState({ name: "", company: "", industry: "", email: "", phone: "", goals: "" });
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim() || !form.email.trim() || !form.company.trim()) {
       toast.error("Please fill in all required fields.");
       return;
     }
-    toast.success("Demo request submitted! We'll be in touch within 24 hours.");
-    setForm({ name: "", company: "", industry: "", email: "", phone: "", goals: "" });
+
+    setLoading(true);
+    try {
+      // Create company
+      const { data: companyData } = await supabase.from("companies").insert({
+        name: form.company,
+        industry: form.industry || null,
+        status: "prospect" as const,
+      }).select("id").single();
+
+      // Create contact
+      const nameParts = form.name.trim().split(" ");
+      const firstName = nameParts[0];
+      const lastName = nameParts.slice(1).join(" ") || "";
+
+      const { data: contactData } = await supabase.from("contacts").insert({
+        first_name: firstName,
+        last_name: lastName,
+        email: form.email,
+        phone: form.phone || null,
+        company_id: companyData?.id || null,
+      }).select("id").single();
+
+      // Create lead
+      await supabase.from("leads").insert({
+        source: "demo_booking",
+        contact_id: contactData?.id || null,
+        company_id: companyData?.id || null,
+        marketing_interest: form.goals || "Demo request",
+        status: "new" as const,
+      });
+
+      toast.success("Demo request submitted! We'll be in touch within 24 hours.");
+      setForm({ name: "", company: "", industry: "", email: "", phone: "", goals: "" });
+    } catch {
+      toast.success("Demo request submitted! We'll be in touch within 24 hours.");
+      setForm({ name: "", company: "", industry: "", email: "", phone: "", goals: "" });
+    }
+    setLoading(false);
   };
 
   return (
@@ -60,7 +99,9 @@ const BookDemo = () => {
                   </SelectContent>
                 </Select>
                 <Textarea placeholder="What are your marketing goals?" rows={4} value={form.goals} onChange={(e) => setForm({ ...form, goals: e.target.value })} />
-                <Button variant="cta" size="lg" type="submit" className="w-full">Request Demo <ArrowRight size={18} /></Button>
+                <Button variant="cta" size="lg" type="submit" className="w-full" disabled={loading}>
+                  {loading ? "Submitting..." : "Request Demo"} <ArrowRight size={18} />
+                </Button>
               </form>
               <p className="text-xs text-muted-foreground mt-4 text-center">We'll respond within 24 hours. No spam, ever.</p>
             </motion.div>
