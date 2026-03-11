@@ -144,6 +144,17 @@ const BookDemo = () => {
                         <SelectContent>{industries.map((ind) => <SelectItem key={ind} value={ind.toLowerCase()}>{ind}</SelectItem>)}</SelectContent>
                       </Select>
                     </div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground mb-2">Account Type</p>
+                      <div className="flex gap-3">
+                        {[{ value: "business", label: "Business" }, { value: "agency", label: "Agency / Consultant" }].map((opt) => (
+                          <button key={opt.value} onClick={() => setForm({ ...form, accountType: opt.value })}
+                            className={`flex-1 p-2.5 rounded-lg border text-sm font-medium transition-colors ${
+                              form.accountType === opt.value ? "border-accent bg-accent/10 text-foreground" : "border-border/50 text-muted-foreground hover:border-accent/30"
+                            }`}>{opt.label}</button>
+                        ))}
+                      </div>
+                    </div>
                     <Button variant="cta" className="w-full" onClick={() => {
                       if (!form.name || !form.email || !form.company) { toast.error("Please fill required fields"); return; }
                       setStep(2);
