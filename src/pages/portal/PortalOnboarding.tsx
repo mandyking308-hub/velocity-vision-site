@@ -58,6 +58,8 @@ const PortalOnboarding = () => {
   const saveProfile = useMutation({
     mutationFn: async () => {
       if (!companyId) throw new Error("No company");
+      // Update company account_type
+      await supabase.from("companies").update({ account_type: accountType } as any).eq("id", companyId);
       if (onboarding) {
         const { error } = await supabase.from("client_onboarding" as any).update({
           ...form, completed: true, completed_at: new Date().toISOString(),
