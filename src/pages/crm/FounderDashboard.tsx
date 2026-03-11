@@ -227,6 +227,24 @@ const FounderDashboard = () => {
         ))}
       </div>
 
+      {/* Agency Analytics */}
+      {agencyAccounts.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-card border border-border/50 rounded-xl p-5 shadow-card">
+            <span className="text-xs text-muted-foreground">Agency Accounts</span>
+            <p className="text-2xl font-display font-bold text-foreground mt-1">{agencyAccounts.length}</p>
+          </div>
+          <div className="bg-card border border-border/50 rounded-xl p-5 shadow-card">
+            <span className="text-xs text-muted-foreground">Total Client Workspaces</span>
+            <p className="text-2xl font-display font-bold text-foreground mt-1">{totalWorkspaces}</p>
+          </div>
+          <div className="bg-card border border-border/50 rounded-xl p-5 shadow-card">
+            <span className="text-xs text-muted-foreground">Agency-Managed Campaigns</span>
+            <p className="text-2xl font-display font-bold text-foreground mt-1">{agencyCampaigns.length}</p>
+          </div>
+        </div>
+      )}
+
       {/* Revenue Analytics */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 bg-card border border-border/50 rounded-xl p-6 shadow-card">
