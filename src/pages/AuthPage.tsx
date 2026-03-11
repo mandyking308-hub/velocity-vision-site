@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -12,6 +14,27 @@ const AuthPage = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  // Role-based redirect after login
+  useEffect(() => {
+    if (!user) return;
+    const checkRoleAndRedirect = async () => {
+      const { data: roles } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id);
+      const roleList = roles?.map((r) => r.role) ?? [];
+
+      if (roleList.includes("client")) {
+        navigate("/portal", { replace: true });
+      } else {
+        navigate("/crm", { replace: true });
+      }
+    };
+    checkRoleAndRedirect();
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,10 +74,10 @@ const AuthPage = () => {
       >
         <div className="text-center mb-8">
           <h1 className="font-display text-3xl font-bold text-primary-foreground">
-            Velocity<span className="text-accent">.</span> CRM
+            Velocity<span className="text-accent">.</span>
           </h1>
           <p className="text-primary-foreground/60 mt-2 text-sm">
-            {isLogin ? "Sign in to your account" : "Create your team account"}
+            {isLogin ? "Sign in to your account" : "Create your account"}
           </p>
         </div>
 

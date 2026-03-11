@@ -24,6 +24,14 @@ import ContactsPage from "./pages/crm/ContactsPage.tsx";
 import LeadsPage from "./pages/crm/LeadsPage.tsx";
 import OpportunitiesPage from "./pages/crm/OpportunitiesPage.tsx";
 import TasksPage from "./pages/crm/TasksPage.tsx";
+import PortalLayout from "./pages/PortalLayout.tsx";
+import PortalDashboard from "./pages/portal/PortalDashboard.tsx";
+import PortalCampaigns from "./pages/portal/PortalCampaigns.tsx";
+import PortalDocuments from "./pages/portal/PortalDocuments.tsx";
+import PortalMessages from "./pages/portal/PortalMessages.tsx";
+import PortalBilling from "./pages/portal/PortalBilling.tsx";
+import PortalCampaignRequest from "./pages/portal/PortalCampaignRequest.tsx";
+import PortalNotifications from "./pages/portal/PortalNotifications.tsx";
 
 const queryClient = new QueryClient();
 
@@ -51,7 +59,7 @@ const AnimatedRoutes = () => {
         <Route path="/book-demo" element={<PageTransition><BookDemo /></PageTransition>} />
         <Route path="/auth" element={<PageTransition><AuthPage /></PageTransition>} />
 
-        {/* CRM (protected) */}
+        {/* CRM (protected - internal team) */}
         <Route path="/crm" element={<ProtectedRoute><CRMLayout /></ProtectedRoute>}>
           <Route index element={<CRMDashboard />} />
           <Route path="companies" element={<CompaniesPage />} />
@@ -59,6 +67,17 @@ const AnimatedRoutes = () => {
           <Route path="leads" element={<LeadsPage />} />
           <Route path="opportunities" element={<OpportunitiesPage />} />
           <Route path="tasks" element={<TasksPage />} />
+        </Route>
+
+        {/* Client Portal (protected) */}
+        <Route path="/portal" element={<ProtectedRoute><PortalLayout /></ProtectedRoute>}>
+          <Route index element={<PortalDashboard />} />
+          <Route path="campaigns" element={<PortalCampaigns />} />
+          <Route path="documents" element={<PortalDocuments />} />
+          <Route path="messages" element={<PortalMessages />} />
+          <Route path="billing" element={<PortalBilling />} />
+          <Route path="request" element={<PortalCampaignRequest />} />
+          <Route path="notifications" element={<PortalNotifications />} />
         </Route>
 
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
