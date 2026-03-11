@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Megaphone, FileText, MessageSquare,
-  CreditCard, Bell, PlusCircle, LogOut, ChevronLeft, ChevronRight, Compass, Briefcase
+  CreditCard, Bell, PlusCircle, LogOut, ChevronLeft, ChevronRight, Compass, Briefcase, Scale
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
