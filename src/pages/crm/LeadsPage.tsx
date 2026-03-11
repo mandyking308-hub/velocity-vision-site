@@ -181,7 +181,7 @@ const LeadsPage = () => {
                     <p className="text-muted-foreground">{(lead.companies as any)?.name || "No company"}</p>
                     <p className="text-muted-foreground">Source: {lead.source.replace("_", " ")}</p>
                     {/* Stage move buttons */}
-                    <div className="flex gap-1 pt-1">
+                    <div className="flex gap-1 pt-1 flex-wrap">
                       {stages
                         .filter((s) => s.key !== lead.status)
                         .slice(0, 3)
@@ -194,6 +194,14 @@ const LeadsPage = () => {
                             → {s.label}
                           </button>
                         ))}
+                      {lead.status !== "closed_won" && lead.status !== "closed_lost" && (
+                        <button
+                          onClick={() => convertToClient.mutate(lead)}
+                          className="text-[10px] px-1.5 py-0.5 rounded bg-green-100 text-green-700 hover:bg-green-200 transition-colors flex items-center gap-0.5"
+                        >
+                          <UserCheck size={10} /> Convert
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}
