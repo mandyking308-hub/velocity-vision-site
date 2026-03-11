@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useClientCompany } from "@/hooks/useClientCompany";
 import { useAuth } from "@/contexts/AuthContext";
@@ -15,12 +15,35 @@ const PortalCampaignRequest = () => {
   const { companyId } = useClientCompany();
   const { user } = useAuth();
   const [submitted, setSubmitted] = useState(false);
+  const [selectedWorkspace, setSelectedWorkspace] = useState("");
   const [form, setForm] = useState({
     objective: "",
     target_audience: "",
     budget_range: "",
     timeline: "",
     notes: "",
+  });
+
+  const { data: company } = useQuery({
+    queryKey: ["req-company", companyId],
+    queryFn: async () => {
+      if (!companyId) return null;
+      const { data } = await supabase.from("companies").select("*").eq("id", companyId).single();
+      return data;
+    },
+    enabled: !!companyId,
+  });
+
+  const isAgency = (company as any)?.account_type === "agency";
+
+  const { data: workspaces } = useQuery({
+    queryKey: ["req-workspaces", companyId],
+    queryFn: async () => {
+      if (!companyId) return [];
+      const { data } = await supabase.from("client_workspaces").select("*").eq("agency_company_id", companyId);
+      return data ?? [];
+    },
+    enabled: !!companyId && isAgency,
   });
 
   const mutation = useMutation({
