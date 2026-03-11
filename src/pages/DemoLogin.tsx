@@ -10,7 +10,7 @@ const DemoLogin = () => {
 
   const handleEnterDemo = () => {
     enterDemoMode();
-    navigate("/crm", { replace: true });
+    navigate("/demo/crm", { replace: true });
   };
 
   return (
