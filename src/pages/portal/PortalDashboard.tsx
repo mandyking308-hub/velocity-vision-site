@@ -5,6 +5,8 @@ import { Megaphone, Users, FileText, CreditCard, TrendingUp, Calendar } from "lu
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, CartesianGrid } from "recharts";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
+import { useState } from "react";
+import WorkspaceManager from "@/components/portal/WorkspaceManager";
 
 const PortalDashboard = () => {
   const { companyId, profile } = useClientCompany();
