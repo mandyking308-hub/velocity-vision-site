@@ -89,6 +89,7 @@ const AnimatedRoutes = () => {
           <Route path="billing" element={<PortalBilling />} />
           <Route path="request" element={<PortalCampaignRequest />} />
           <Route path="notifications" element={<PortalNotifications />} />
+          <Route path="onboarding" element={<PortalOnboarding />} />
         </Route>
 
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
