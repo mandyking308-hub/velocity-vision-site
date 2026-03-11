@@ -100,6 +100,7 @@ const AnimatedRoutes = () => {
           <Route path="notifications" element={<PortalNotifications />} />
           <Route path="onboarding" element={<PortalOnboarding />} />
           <Route path="workspaces" element={<PortalWorkspaces />} />
+          <Route path="legal" element={<PortalLegal />} />
         </Route>
 
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
