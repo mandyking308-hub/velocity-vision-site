@@ -362,6 +362,7 @@ export type Database = {
           target_audience_description: string | null
           type: Database["public"]["Enums"]["campaign_type"]
           updated_at: string
+          workspace_id: string | null
         }
         Insert: {
           budget?: number | null
@@ -379,6 +380,7 @@ export type Database = {
           target_audience_description?: string | null
           type?: Database["public"]["Enums"]["campaign_type"]
           updated_at?: string
+          workspace_id?: string | null
         }
         Update: {
           budget?: number | null
@@ -396,6 +398,7 @@ export type Database = {
           target_audience_description?: string | null
           type?: Database["public"]["Enums"]["campaign_type"]
           updated_at?: string
+          workspace_id?: string | null
         }
         Relationships: [
           {
@@ -403,6 +406,13 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaigns_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "client_workspaces"
             referencedColumns: ["id"]
           },
         ]
@@ -501,8 +511,53 @@ export type Database = {
           },
         ]
       }
+      client_workspaces: {
+        Row: {
+          agency_company_id: string
+          contact_email: string | null
+          contact_name: string | null
+          created_at: string
+          id: string
+          industry: string | null
+          name: string
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          agency_company_id: string
+          contact_email?: string | null
+          contact_name?: string | null
+          created_at?: string
+          id?: string
+          industry?: string | null
+          name: string
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          agency_company_id?: string
+          contact_email?: string | null
+          contact_name?: string | null
+          created_at?: string
+          id?: string
+          industry?: string | null
+          name?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_workspaces_agency_company_id_fkey"
+            columns: ["agency_company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       companies: {
         Row: {
+          account_type: string
           company_size: string | null
           country: string | null
           created_at: string
@@ -515,6 +570,7 @@ export type Database = {
           website: string | null
         }
         Insert: {
+          account_type?: string
           company_size?: string | null
           country?: string | null
           created_at?: string
@@ -527,6 +583,7 @@ export type Database = {
           website?: string | null
         }
         Update: {
+          account_type?: string
           company_size?: string | null
           country?: string | null
           created_at?: string
