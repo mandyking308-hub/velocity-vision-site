@@ -100,6 +100,10 @@ const FounderDashboard = () => {
   const monthStart = startOfMonth(now);
   const weekStart = startOfWeek(now);
 
+  const agencyAccounts = companies?.filter((c) => (c as any).account_type === "agency") ?? [];
+  const totalWorkspaces = workspaces?.length ?? 0;
+  const agencyCampaigns = campaigns?.filter((c) => agencyAccounts.some((a) => a.id === c.company_id)) ?? [];
+
   const activeClients = companies?.filter((c) => c.status === "active_client") ?? [];
   const activeCampaigns = campaigns?.filter((c) => c.status === "active") ?? [];
   const leadsThisMonth = leads?.filter((l) => new Date(l.created_at) >= monthStart) ?? [];
