@@ -1343,6 +1343,9 @@ const LegalDocumentPage = () => {
               <p className="text-sm text-muted-foreground">
                 <span className="font-medium text-foreground/70">Last Updated:</span> {doc.lastUpdated}
               </p>
+              <p className="text-sm text-muted-foreground">
+                <span className="font-medium text-foreground/70">Version:</span> {doc.version}
+              </p>
             </div>
             <p className="text-xs text-muted-foreground mt-2">
               Global Solutions Management LLC — Delaware, United States — trading as Velocity Influence Agency
