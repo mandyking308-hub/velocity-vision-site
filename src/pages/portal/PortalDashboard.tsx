@@ -10,6 +10,20 @@ import WorkspaceManager from "@/components/portal/WorkspaceManager";
 
 const PortalDashboard = () => {
   const { companyId, profile } = useClientCompany();
+  const [selectedWorkspace, setSelectedWorkspace] = useState<string | null>(null);
+
+  // Check if agency account
+  const { data: company } = useQuery({
+    queryKey: ["portal-company", companyId],
+    queryFn: async () => {
+      if (!companyId) return null;
+      const { data } = await supabase.from("companies").select("*").eq("id", companyId).single();
+      return data;
+    },
+    enabled: !!companyId,
+  });
+
+  const isAgency = (company as any)?.account_type === "agency";
 
   const { data: campaigns } = useQuery({
     queryKey: ["portal-campaigns", companyId],
