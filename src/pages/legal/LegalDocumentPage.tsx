@@ -19,6 +19,7 @@ type LegalDoc = {
   title: string;
   effectiveDate: string;
   lastUpdated: string;
+  version: string;
   sections: LegalSection[];
 };
 
@@ -27,6 +28,7 @@ const docs: Record<string, LegalDoc> = {
     title: "Platform Terms of Service",
     effectiveDate: "1 March 2026",
     lastUpdated: "1 March 2026",
+    version: "1.0",
     sections: [
       {
         heading: "1. Service Provider",
@@ -212,6 +214,7 @@ const docs: Record<string, LegalDoc> = {
     title: "Client Services Agreement",
     effectiveDate: "1 March 2026",
     lastUpdated: "1 March 2026",
+    version: "1.0",
     sections: [
       {
         heading: "1. Service Provider",
@@ -385,6 +388,7 @@ const docs: Record<string, LegalDoc> = {
     title: "Data Processing Agreement",
     effectiveDate: "1 March 2026",
     lastUpdated: "1 March 2026",
+    version: "1.0",
     sections: [
       {
         heading: "1. Service Provider",
@@ -539,6 +543,7 @@ const docs: Record<string, LegalDoc> = {
     title: "Privacy Policy",
     effectiveDate: "1 March 2026",
     lastUpdated: "1 March 2026",
+    version: "1.0",
     sections: [
       {
         heading: "1. Introduction",
@@ -691,6 +696,7 @@ const docs: Record<string, LegalDoc> = {
     title: "Acceptable Use Policy",
     effectiveDate: "1 March 2026",
     lastUpdated: "1 March 2026",
+    version: "1.0",
     sections: [
       {
         heading: "1. Introduction",
@@ -802,6 +808,7 @@ const docs: Record<string, LegalDoc> = {
     title: "Marketing Compliance Policy",
     effectiveDate: "1 March 2026",
     lastUpdated: "1 March 2026",
+    version: "1.0",
     sections: [
       {
         heading: "1. Introduction",
@@ -923,6 +930,7 @@ const docs: Record<string, LegalDoc> = {
     title: "Cookie Policy",
     effectiveDate: "1 March 2026",
     lastUpdated: "1 March 2026",
+    version: "1.0",
     sections: [
       {
         heading: "1. Introduction",
@@ -1026,6 +1034,7 @@ const docs: Record<string, LegalDoc> = {
     title: "Platform Security Policy",
     effectiveDate: "1 March 2026",
     lastUpdated: "1 March 2026",
+    version: "1.0",
     sections: [
       {
         heading: "1. Introduction",
@@ -1154,6 +1163,7 @@ const docs: Record<string, LegalDoc> = {
     title: "Service Level Agreement",
     effectiveDate: "1 March 2026",
     lastUpdated: "1 March 2026",
+    version: "1.0",
     sections: [
       {
         heading: "1. Introduction",
@@ -1332,6 +1342,9 @@ const LegalDocumentPage = () => {
               </p>
               <p className="text-sm text-muted-foreground">
                 <span className="font-medium text-foreground/70">Last Updated:</span> {doc.lastUpdated}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                <span className="font-medium text-foreground/70">Version:</span> {doc.version}
               </p>
             </div>
             <p className="text-xs text-muted-foreground mt-2">

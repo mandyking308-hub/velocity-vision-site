@@ -3,9 +3,23 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { CURRENT_LEGAL_VERSION } from "@/lib/legalVersions";
+
+const legalLinks = [
+  { label: "Platform Terms of Service", path: "/legal/terms-of-service" },
+  { label: "Client Services Agreement", path: "/legal/client-services-agreement" },
+  { label: "Privacy Policy", path: "/legal/privacy-policy" },
+  { label: "Acceptable Use Policy", path: "/legal/acceptable-use-policy" },
+  { label: "Marketing Compliance Policy", path: "/legal/marketing-compliance-policy" },
+  { label: "Data Processing Agreement", path: "/legal/data-processing-agreement" },
+  { label: "Cookie Policy", path: "/legal/cookie-policy" },
+  { label: "Platform Security Policy", path: "/legal/platform-security-policy" },
+  { label: "Service Level Agreement", path: "/legal/service-level-agreement" },
+];
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -13,6 +27,7 @@ const AuthPage = () => {
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [legalAccepted, setLegalAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -36,8 +51,45 @@ const AuthPage = () => {
     checkRoleAndRedirect();
   }, [user, navigate]);
 
+  const logLegalAcceptance = async (userId: string, userEmail: string) => {
+    try {
+      // Fetch IP address
+      let ipAddress = "unknown";
+      try {
+        const res = await fetch("https://api.ipify.org?format=json");
+        const data = await res.json();
+        ipAddress = data.ip;
+      } catch {
+        // IP fetch failed, continue with unknown
+      }
+
+      const documentVersions: Record<string, string> = {};
+      legalLinks.forEach((doc) => {
+        const slug = doc.path.split("/").pop() || "";
+        documentVersions[slug] = CURRENT_LEGAL_VERSION;
+      });
+
+      await supabase.from("legal_acceptances").insert({
+        user_id: userId,
+        email: userEmail,
+        account_type: "business",
+        legal_version: CURRENT_LEGAL_VERSION,
+        ip_address: ipAddress,
+        document_versions: documentVersions,
+      });
+    } catch (err) {
+      console.error("Failed to log legal acceptance:", err);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!isLogin && !legalAccepted) {
+      toast.error("You must accept the legal terms to create an account.");
+      return;
+    }
+
     setLoading(true);
 
     if (isLogin) {
@@ -48,7 +100,7 @@ const AuthPage = () => {
         toast.success("Welcome back!");
       }
     } else {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -59,6 +111,9 @@ const AuthPage = () => {
       if (error) {
         toast.error(error.message);
       } else {
+        if (data.user) {
+          await logLegalAcceptance(data.user.id, email);
+        }
         toast.success("Check your email to confirm your account.");
       }
     }
@@ -114,7 +169,32 @@ const AuthPage = () => {
               required
               minLength={6}
             />
-            <Button type="submit" variant="cta" className="w-full" disabled={loading}>
+
+            {/* Legal acceptance checkbox — signup only */}
+            {!isLogin && (
+              <div className="space-y-2">
+                <div className="flex items-start gap-2">
+                  <Checkbox
+                    id="legal-accept"
+                    checked={legalAccepted}
+                    onCheckedChange={(checked) => setLegalAccepted(checked === true)}
+                    className="mt-1"
+                  />
+                  <label htmlFor="legal-accept" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
+                    I confirm that I have read and agree to the{" "}
+                    <Link to="/legal/terms-of-service" target="_blank" className="text-accent hover:underline">Platform Terms of Service</Link>
+                    {" "}and{" "}
+                    <Link to="/legal/client-services-agreement" target="_blank" className="text-accent hover:underline">Client Services Agreement</Link>
+                    , and acknowledge the{" "}
+                    <Link to="/legal/privacy-policy" target="_blank" className="text-accent hover:underline">Privacy Policy</Link>
+                    {" "}and other applicable{" "}
+                    <Link to="/legal" target="_blank" className="text-accent hover:underline">legal policies</Link>.
+                  </label>
+                </div>
+              </div>
+            )}
+
+            <Button type="submit" variant="cta" className="w-full" disabled={loading || (!isLogin && !legalAccepted)}>
               {loading ? "Loading..." : isLogin ? "Sign In" : "Create Account"}
             </Button>
           </form>
