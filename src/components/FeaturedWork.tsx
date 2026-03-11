@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
+import campaignVisual from "@/assets/campaign-visual.jpg";
 
 const caseStudies = [
   {
@@ -26,16 +27,31 @@ const caseStudies = [
 const FeaturedWork = () => (
   <section className="section-padding bg-primary">
     <div className="max-w-7xl mx-auto">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="text-center mb-16"
-      >
-        <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Featured Work</p>
-        <h2 className="text-3xl md:text-5xl font-display font-bold text-primary-foreground mb-4">Campaigns that moved markets</h2>
-      </motion.div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Featured Work</p>
+          <h2 className="text-3xl md:text-5xl font-display font-bold text-primary-foreground mb-4">Campaigns that moved markets</h2>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.2 }}
+          className="hidden lg:block"
+        >
+          <img
+            src={campaignVisual}
+            alt="Campaign analytics dashboard visualization"
+            className="rounded-2xl shadow-elevated w-full max-w-md ml-auto opacity-80"
+            loading="lazy"
+          />
+        </motion.div>
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {caseStudies.map((cs, i) => (
           <motion.div

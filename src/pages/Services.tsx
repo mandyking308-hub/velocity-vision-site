@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Target, Megaphone, Users, BarChart3, Palette, BrainCircuit, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import servicesHero from "@/assets/services-hero.jpg";
 
 const services = [
   {
@@ -60,9 +61,18 @@ const Services = () => (
   <>
     <Navbar />
     <main className="pt-20">
-      {/* Hero */}
-      <section className="section-padding bg-hero">
-        <div className="max-w-7xl mx-auto">
+      {/* Hero with image */}
+      <section className="relative section-padding bg-hero overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src={servicesHero}
+            alt=""
+            className="w-full h-full object-cover opacity-20"
+            loading="eager"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/95 to-primary/70" />
+        </div>
+        <div className="relative max-w-7xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
             <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Our Services</p>
             <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6 max-w-3xl">Full-spectrum marketing, one integrated team</h1>

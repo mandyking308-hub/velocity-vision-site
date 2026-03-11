@@ -4,13 +4,23 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Globe, BrainCircuit, TrendingUp } from "lucide-react";
+import aboutHero from "@/assets/about-hero.jpg";
 
 const About = () => (
   <>
     <Navbar />
     <main className="pt-20">
-      <section className="section-padding bg-hero">
-        <div className="max-w-7xl mx-auto">
+      <section className="relative section-padding bg-hero overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src={aboutHero}
+            alt=""
+            className="w-full h-full object-cover opacity-25"
+            loading="eager"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/95 to-primary/70" />
+        </div>
+        <div className="relative max-w-7xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="max-w-3xl">
             <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">About Velocity</p>
             <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">Marketing at the speed of business</h1>
