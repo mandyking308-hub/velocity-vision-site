@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import {
   Building2, Users, Target, TrendingUp, DollarSign, Megaphone,
-  Activity, AlertTriangle, ArrowRight, BarChart3, Globe, CreditCard
+  Activity, AlertTriangle, ArrowRight, BarChart3, Globe, CreditCard, Book
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
