@@ -65,6 +65,7 @@ const AnimatedRoutes = () => {
         <Route path="/about" element={<PageTransition><About /></PageTransition>} />
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
         <Route path="/book-demo" element={<PageTransition><BookDemo /></PageTransition>} />
+        <Route path="/for-agencies" element={<PageTransition><ForAgencies /></PageTransition>} />
         <Route path="/auth" element={<PageTransition><AuthPage /></PageTransition>} />
 
         {/* CRM (protected - internal team) */}
