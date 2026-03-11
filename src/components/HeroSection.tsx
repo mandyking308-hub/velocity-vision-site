@@ -34,7 +34,7 @@ const HeroSection = () => (
           <span className="text-gradient">velocity.</span>
         </h1>
         <p className="text-lg md:text-xl text-primary-foreground/70 max-w-xl mb-10 leading-relaxed">
-          We accelerate growth for the world's most ambitious brands through data-driven marketing, strategic PR, and AI-powered intelligence.
+          We accelerate growth for businesses, agencies, and consultants worldwide through data-driven marketing, strategic PR, and AI-powered intelligence.
         </p>
         <div className="flex flex-col sm:flex-row gap-4">
           <Button variant="hero" size="lg" asChild>

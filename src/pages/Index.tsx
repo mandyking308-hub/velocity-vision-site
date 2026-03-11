@@ -7,6 +7,7 @@ import CampaignCapabilities from "@/components/CampaignCapabilities";
 import FeaturedWork from "@/components/FeaturedWork";
 import InsightsSection from "@/components/InsightsSection";
 import AgencyPositioning from "@/components/AgencyPositioning";
+import AgencySection from "@/components/AgencySection";
 import FinalCTA from "@/components/FinalCTA";
 
 const Index = () => (
@@ -17,6 +18,7 @@ const Index = () => (
       <WhatWeDo />
       <IndustriesSection />
       <CampaignCapabilities />
+      <AgencySection />
       <FeaturedWork />
       <InsightsSection />
       <AgencyPositioning />
