@@ -448,6 +448,59 @@ export type Database = {
           },
         ]
       }
+      client_onboarding: {
+        Row: {
+          business_description: string | null
+          company_id: string
+          competitors: string | null
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          existing_channels: string | null
+          id: string
+          marketing_goals: string | null
+          target_audience: string | null
+          target_regions: string | null
+          updated_at: string
+        }
+        Insert: {
+          business_description?: string | null
+          company_id: string
+          competitors?: string | null
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          existing_channels?: string | null
+          id?: string
+          marketing_goals?: string | null
+          target_audience?: string | null
+          target_regions?: string | null
+          updated_at?: string
+        }
+        Update: {
+          business_description?: string | null
+          company_id?: string
+          competitors?: string | null
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          existing_channels?: string | null
+          id?: string
+          marketing_goals?: string | null
+          target_audience?: string | null
+          target_regions?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_onboarding_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       companies: {
         Row: {
           company_size: string | null
