@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus } from "lucide-react";
+import { Plus, UserCheck } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { Database } from "@/integrations/supabase/types";
@@ -82,6 +82,36 @@ const LeadsPage = () => {
     onError: (e) => toast.error(e.message),
   });
 
+  const convertToClient = useMutation({
+    mutationFn: async (lead: any) => {
+      // Update company status to active_client
+      if (lead.company_id) {
+        await supabase.from("companies").update({ status: "active_client" as const }).eq("id", lead.company_id);
+      }
+      // Mark lead as won
+      await supabase.from("leads").update({ status: "closed_won" as const }).eq("id", lead.id);
+      // Create onboarding tasks
+      if (lead.company_id) {
+        const tasks = ["Account manager assignment", "Campaign planning", "Creative preparation", "Audience research", "Brand review"];
+        for (const title of tasks) {
+          await supabase.from("tasks").insert({
+            title: `${title} — ${(lead.companies as any)?.name || "New client"}`,
+            entity_type: "onboarding", entity_id: lead.company_id, created_by: user?.id,
+          });
+        }
+        // Create subscription placeholder
+        await supabase.from("subscriptions" as any).insert({
+          company_id: lead.company_id, plan_name: "starter", monthly_price: 0, created_by: user?.id,
+        } as any);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["crm-leads"] });
+      toast.success("Lead converted to client! Onboarding tasks created.");
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
   return (
     <div className="p-6 lg:p-8 space-y-6">
       <div className="flex items-center justify-between">
@@ -151,7 +181,7 @@ const LeadsPage = () => {
                     <p className="text-muted-foreground">{(lead.companies as any)?.name || "No company"}</p>
                     <p className="text-muted-foreground">Source: {lead.source.replace("_", " ")}</p>
                     {/* Stage move buttons */}
-                    <div className="flex gap-1 pt-1">
+                    <div className="flex gap-1 pt-1 flex-wrap">
                       {stages
                         .filter((s) => s.key !== lead.status)
                         .slice(0, 3)
@@ -164,6 +194,14 @@ const LeadsPage = () => {
                             → {s.label}
                           </button>
                         ))}
+                      {lead.status !== "closed_won" && lead.status !== "closed_lost" && (
+                        <button
+                          onClick={() => convertToClient.mutate(lead)}
+                          className="text-[10px] px-1.5 py-0.5 rounded bg-green-100 text-green-700 hover:bg-green-200 transition-colors flex items-center gap-0.5"
+                        >
+                          <UserCheck size={10} /> Convert
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}

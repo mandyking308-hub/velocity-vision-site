@@ -37,6 +37,7 @@ import PortalMessages from "./pages/portal/PortalMessages.tsx";
 import PortalBilling from "./pages/portal/PortalBilling.tsx";
 import PortalCampaignRequest from "./pages/portal/PortalCampaignRequest.tsx";
 import PortalNotifications from "./pages/portal/PortalNotifications.tsx";
+import PortalOnboarding from "./pages/portal/PortalOnboarding.tsx";
 
 const queryClient = new QueryClient();
 
@@ -88,6 +89,7 @@ const AnimatedRoutes = () => {
           <Route path="billing" element={<PortalBilling />} />
           <Route path="request" element={<PortalCampaignRequest />} />
           <Route path="notifications" element={<PortalNotifications />} />
+          <Route path="onboarding" element={<PortalOnboarding />} />
         </Route>
 
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />

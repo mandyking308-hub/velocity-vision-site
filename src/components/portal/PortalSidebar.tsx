@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Megaphone, FileText, MessageSquare,
-  CreditCard, Bell, PlusCircle, LogOut, ChevronLeft, ChevronRight
+  CreditCard, Bell, PlusCircle, LogOut, ChevronLeft, ChevronRight, Compass
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const navItems = [
   { label: "Dashboard", path: "/portal", icon: LayoutDashboard },
+  { label: "Onboarding", path: "/portal/onboarding", icon: Compass },
   { label: "Campaigns", path: "/portal/campaigns", icon: Megaphone },
   { label: "Documents", path: "/portal/documents", icon: FileText },
   { label: "Messages", path: "/portal/messages", icon: MessageSquare },
