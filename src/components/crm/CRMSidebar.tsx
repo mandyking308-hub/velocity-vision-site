@@ -19,6 +19,7 @@ const navItems = [
   { label: "Campaigns", path: "/crm/campaigns", icon: Megaphone },
   { label: "Campaign Perf.", path: "/crm/campaign-dashboard", icon: BarChart3 },
   { label: "Billing", path: "/crm/billing", icon: CreditCard },
+  { label: "QA Testing", path: "/crm/qa", icon: Shield },
 ];
 
 const CRMSidebar = () => {
