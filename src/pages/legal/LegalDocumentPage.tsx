@@ -1155,13 +1155,107 @@ const docs: Record<string, LegalDoc> = {
     effectiveDate: "1 March 2026",
     lastUpdated: "1 March 2026",
     sections: [
-      { heading: "1. Overview", paragraphs: [`This Service Level Agreement ("SLA") defines the availability and support commitments for the Velocity Influence platform operated by ${ENTITY}.`] },
-      { heading: "2. Platform Availability", paragraphs: ["We target 99.9% monthly uptime for the platform, excluding scheduled maintenance windows."] },
-      { heading: "3. Scheduled Maintenance", paragraphs: ["Planned maintenance windows will be communicated at least 48 hours in advance. Maintenance is typically scheduled during off-peak hours."] },
-      { heading: "4. Support Response Times", paragraphs: ["Response times by priority level:"], bullets: ["Critical (platform unavailable): response within 1 hour", "High priority (major feature impaired): response within 4 hours", "Medium priority (minor feature impaired): response within 1 business day", "Low priority (general enquiry): response within 2 business days"] },
-      { heading: "5. Support Channels", paragraphs: ["Support is available via in-platform messaging, email (support@velocityinfluence.com), and for Enterprise customers, dedicated account management with phone support."] },
-      { heading: "6. Service Credits", paragraphs: ["If monthly uptime falls below 99.9%, customers may be eligible for service credits up to a maximum of 30% of the monthly fee."] },
-      { heading: "7. Exclusions", paragraphs: ["This SLA does not apply to outages caused by factors outside our reasonable control, including force majeure events, customer equipment failures, or third-party service disruptions."] },
+      {
+        heading: "1. Introduction",
+        paragraphs: [
+          "This Service Level Agreement (\"SLA\") outlines the service standards Velocity Influence aims to maintain for customers using the platform.",
+          "This agreement describes platform availability expectations, support procedures, and the shared responsibilities of both Velocity Influence and its customers.",
+        ],
+      },
+      {
+        heading: "2. Service Provider",
+        paragraphs: [
+          `Velocity Influence Agency is a trading name of ${ENTITY}.`,
+          `Throughout this agreement, references to "Velocity Influence", "the Platform", "we", "our", and "us" refer to Global Solutions Management LLC.`,
+        ],
+      },
+      {
+        heading: "3. Platform Availability",
+        paragraphs: [
+          "Velocity Influence aims to maintain reliable and consistent access to the platform for all customers. Our target availability goal is:",
+        ],
+        bullets: [
+          "99% platform uptime measured on a monthly basis",
+        ],
+      },
+      {
+        heading: "4. Scheduled Maintenance",
+        paragraphs: [
+          "The platform may occasionally require scheduled maintenance to maintain performance, security, and reliability. During maintenance periods:",
+        ],
+        bullets: [
+          "Access to certain features or services may be temporarily unavailable",
+          "Users may receive advance notice where possible to minimise disruption",
+          "Maintenance windows are designed to occur during periods of lower platform usage",
+          "Emergency maintenance may be performed without advance notice when required to address critical security or stability issues",
+        ],
+      },
+      {
+        heading: "5. Incident Response",
+        paragraphs: [
+          "If a platform incident occurs, Velocity Influence will take reasonable steps to investigate and resolve the issue in a timely manner. Response priorities may depend on the severity and impact of the incident. Examples of incidents include:",
+        ],
+        bullets: [
+          "Platform outages affecting customer access to services",
+          "Critical system failures impacting core platform functionality",
+          "Security incidents that may affect customer data or platform integrity",
+          "Significant performance degradation affecting multiple customers",
+        ],
+      },
+      {
+        heading: "6. Support Requests",
+        paragraphs: [
+          "Customers may submit support requests through designated support channels. Support requests may include issues related to:",
+        ],
+        bullets: [
+          "Platform access and authentication issues",
+          "Campaign management tools and workflow functionality",
+          "Billing questions, invoice enquiries, and subscription management",
+          "System errors, bugs, or unexpected platform behaviour",
+          "Feature enquiries and usage guidance",
+        ],
+      },
+      {
+        heading: "7. Customer Responsibilities",
+        paragraphs: [
+          "Customers share responsibility for maintaining service reliability and ensuring a productive experience on the platform. Customers should:",
+        ],
+        bullets: [
+          "Maintain secure login credentials and protect account access",
+          "Follow all platform usage policies including the Acceptable Use Policy",
+          "Report technical issues, bugs, or security concerns promptly through support channels",
+          "Keep their own systems, browsers, and devices up to date when accessing the platform",
+          "Provide accurate and complete information when submitting support requests",
+        ],
+      },
+      {
+        heading: "8. Service Limitations",
+        paragraphs: [
+          "Platform performance and availability may be affected by factors outside the control of Velocity Influence. These factors may include:",
+        ],
+        bullets: [
+          "Internet connectivity issues affecting the customer's network or region",
+          "Third-party service disruptions from providers integrated with the platform",
+          "External infrastructure outages beyond the platform's hosting environment",
+          "Force majeure events including natural disasters, conflicts, or government actions",
+          "Customer-side hardware or software failures",
+        ],
+      },
+      {
+        heading: "9. Updates to the SLA",
+        paragraphs: [
+          "Velocity Influence may update this Service Level Agreement periodically to reflect improvements to platform infrastructure, changes in operational procedures, or evolving service standards.",
+          "When significant updates are made, customers will be notified via email or in-platform notification. The \"Last Updated\" date at the top of this page will be revised accordingly.",
+        ],
+      },
+      {
+        heading: "10. Contact Information",
+        paragraphs: [
+          "For enquiries related to service reliability, platform availability, or support, please contact us at:",
+          "Global Solutions Management LLC\nTrading as Velocity Influence Agency\nState of Delaware, United States",
+          "Support enquiries: support@velocityinfluence.com\nLegal enquiries: legal@velocityinfluence.com\nGeneral enquiries: hello@velocityinfluence.com",
+        ],
+      },
     ],
   },
 };
