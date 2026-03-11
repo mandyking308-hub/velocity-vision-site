@@ -24,6 +24,9 @@ import ContactsPage from "./pages/crm/ContactsPage.tsx";
 import LeadsPage from "./pages/crm/LeadsPage.tsx";
 import OpportunitiesPage from "./pages/crm/OpportunitiesPage.tsx";
 import TasksPage from "./pages/crm/TasksPage.tsx";
+import CampaignsPage from "./pages/crm/CampaignsPage.tsx";
+import CampaignDetailPage from "./pages/crm/CampaignDetailPage.tsx";
+import CampaignDashboard from "./pages/crm/CampaignDashboard.tsx";
 import PortalLayout from "./pages/PortalLayout.tsx";
 import PortalDashboard from "./pages/portal/PortalDashboard.tsx";
 import PortalCampaigns from "./pages/portal/PortalCampaigns.tsx";
@@ -67,6 +70,9 @@ const AnimatedRoutes = () => {
           <Route path="leads" element={<LeadsPage />} />
           <Route path="opportunities" element={<OpportunitiesPage />} />
           <Route path="tasks" element={<TasksPage />} />
+          <Route path="campaigns" element={<CampaignsPage />} />
+          <Route path="campaigns/:id" element={<CampaignDetailPage />} />
+          <Route path="campaign-dashboard" element={<CampaignDashboard />} />
         </Route>
 
         {/* Client Portal (protected) */}
