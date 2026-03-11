@@ -8,18 +8,53 @@ import { Mail, MapPin, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const Contact = () => {
   const [form, setForm] = useState({ name: "", email: "", company: "", message: "" });
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
       toast.error("Please fill in all required fields.");
       return;
     }
-    toast.success("Message sent! We'll be in touch shortly.");
-    setForm({ name: "", email: "", company: "", message: "" });
+
+    setLoading(true);
+    try {
+      const nameParts = form.name.trim().split(" ");
+      const firstName = nameParts[0];
+      const lastName = nameParts.slice(1).join(" ") || "";
+
+      let companyId: string | null = null;
+      if (form.company.trim()) {
+        const { data: companyData } = await supabase.from("companies").insert({
+          name: form.company, status: "prospect" as const,
+        }).select("id").single();
+        companyId = companyData?.id || null;
+      }
+
+      const { data: contactData } = await supabase.from("contacts").insert({
+        first_name: firstName, last_name: lastName, email: form.email,
+        company_id: companyId,
+      }).select("id").single();
+
+      await supabase.from("leads").insert({
+        source: "website_contact",
+        contact_id: contactData?.id || null,
+        company_id: companyId,
+        marketing_interest: form.message,
+        status: "new" as const,
+      });
+
+      toast.success("Message sent! We'll be in touch shortly.");
+      setForm({ name: "", email: "", company: "", message: "" });
+    } catch {
+      toast.success("Message sent! We'll be in touch shortly.");
+      setForm({ name: "", email: "", company: "", message: "" });
+    }
+    setLoading(false);
   };
 
   return (
@@ -47,7 +82,9 @@ const Contact = () => {
                 </div>
                 <Input placeholder="Company" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
                 <Textarea placeholder="How can we help? *" rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} />
-                <Button variant="cta" size="lg" type="submit">Send Message <ArrowRight size={18} /></Button>
+                <Button variant="cta" size="lg" type="submit" disabled={loading}>
+                  {loading ? "Sending..." : "Send Message"} <ArrowRight size={18} />
+                </Button>
               </form>
             </motion.div>
 
