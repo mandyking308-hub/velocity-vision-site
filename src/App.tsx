@@ -37,6 +37,7 @@ import PortalMessages from "./pages/portal/PortalMessages.tsx";
 import PortalBilling from "./pages/portal/PortalBilling.tsx";
 import PortalCampaignRequest from "./pages/portal/PortalCampaignRequest.tsx";
 import PortalNotifications from "./pages/portal/PortalNotifications.tsx";
+import PortalOnboarding from "./pages/portal/PortalOnboarding.tsx";
 
 const queryClient = new QueryClient();
 
