@@ -113,7 +113,19 @@ const PortalCampaignRequest = () => {
           />
         </div>
 
-        <div>
+        {isAgency && (workspaces ?? []).length > 0 && (
+          <div>
+            <label className="text-sm font-medium text-foreground mb-1.5 block">Client Workspace *</label>
+            <Select value={selectedWorkspace} onValueChange={setSelectedWorkspace}>
+              <SelectTrigger><SelectValue placeholder="Select client workspace" /></SelectTrigger>
+              <SelectContent>
+                {workspaces!.map((ws) => (
+                  <SelectItem key={ws.id} value={ws.id}>{ws.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
           <label className="text-sm font-medium text-foreground mb-1.5 block">Target Audience</label>
           <Input
             value={form.target_audience}
