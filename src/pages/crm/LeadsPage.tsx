@@ -82,6 +82,36 @@ const LeadsPage = () => {
     onError: (e) => toast.error(e.message),
   });
 
+  const convertToClient = useMutation({
+    mutationFn: async (lead: any) => {
+      // Update company status to active_client
+      if (lead.company_id) {
+        await supabase.from("companies").update({ status: "active_client" as const }).eq("id", lead.company_id);
+      }
+      // Mark lead as won
+      await supabase.from("leads").update({ status: "closed_won" as const }).eq("id", lead.id);
+      // Create onboarding tasks
+      if (lead.company_id) {
+        const tasks = ["Account manager assignment", "Campaign planning", "Creative preparation", "Audience research", "Brand review"];
+        for (const title of tasks) {
+          await supabase.from("tasks").insert({
+            title: `${title} — ${(lead.companies as any)?.name || "New client"}`,
+            entity_type: "onboarding", entity_id: lead.company_id, created_by: user?.id,
+          });
+        }
+        // Create subscription placeholder
+        await supabase.from("subscriptions" as any).insert({
+          company_id: lead.company_id, plan_name: "starter", monthly_price: 0, created_by: user?.id,
+        } as any);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["crm-leads"] });
+      toast.success("Lead converted to client! Onboarding tasks created.");
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
   return (
     <div className="p-6 lg:p-8 space-y-6">
       <div className="flex items-center justify-between">
