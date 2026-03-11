@@ -53,8 +53,8 @@ const BookDemo = () => {
     try {
       const { data: companyData } = await supabase.from("companies").insert({
         name: form.company, industry: form.industry || null, status: "prospect" as const,
-        website: form.website || null,
-      }).select("id").single();
+        website: form.website || null, account_type: form.accountType,
+      } as any).select("id").single();
 
       const nameParts = form.name.trim().split(" ");
       const { data: contactData } = await supabase.from("contacts").insert({
