@@ -803,12 +803,120 @@ const docs: Record<string, LegalDoc> = {
     effectiveDate: "1 March 2026",
     lastUpdated: "1 March 2026",
     sections: [
-      { heading: "1. Purpose", paragraphs: [`This Marketing Compliance Policy outlines the legal and ethical standards that all users of the Velocity Influence platform, operated by ${ENTITY}, must follow when conducting marketing campaigns.`] },
-      { heading: "2. Anti-Spam Compliance", paragraphs: ["All email and messaging campaigns must comply with applicable anti-spam laws including:"], bullets: ["CAN-SPAM (United States)", "CASL (Canada)", "PECR (United Kingdom)", "ePrivacy Directive (European Union)"] },
-      { heading: "3. Data Protection", paragraphs: ["Campaign activities involving personal data must comply with applicable data protection laws including GDPR, UK GDPR, and CCPA."] },
-      { heading: "4. Advertising Standards", paragraphs: ["All advertising content must be truthful, not misleading, and comply with relevant advertising standards codes. Claims must be substantiated."] },
-      { heading: "5. Social Media Compliance", paragraphs: ["Social media campaigns must comply with platform-specific advertising policies. Paid partnerships must be transparently disclosed."] },
-      { heading: "6. Customer Responsibility", paragraphs: ["Customers are responsible for ensuring that all marketing materials, contact lists, and campaign content they provide comply with applicable laws."] },
+      {
+        heading: "1. Introduction",
+        paragraphs: [
+          "This Marketing Compliance Policy defines the requirements customers must follow when using the Velocity Influence platform to conduct marketing campaigns.",
+          "The platform provides marketing tools and campaign infrastructure, but customers are solely responsible for ensuring that their marketing activities comply with all applicable laws and regulations.",
+        ],
+      },
+      {
+        heading: "2. Service Provider",
+        paragraphs: [
+          `Velocity Influence Agency is a trading name of ${ENTITY}.`,
+          `Throughout this policy, references to "Velocity Influence", "the Platform", "we", "our", and "us" refer to Global Solutions Management LLC.`,
+        ],
+      },
+      {
+        heading: "3. Responsibility for Marketing Activities",
+        paragraphs: [
+          "Customers are solely responsible for all marketing campaigns conducted through the Velocity Influence platform. This includes responsibility for:",
+        ],
+        bullets: [
+          "Campaign messaging, content, and creative materials",
+          "Marketing strategies and targeting decisions",
+          "Selection and management of marketing audiences and contact lists",
+          "Compliance with all applicable marketing, advertising, and data protection laws in every jurisdiction in which campaigns are conducted",
+        ],
+      },
+      {
+        heading: "4. Lawful Basis for Marketing Communications",
+        paragraphs: [
+          "Customers must ensure that they have a lawful basis for contacting individuals through marketing campaigns. A lawful basis may include:",
+        ],
+        bullets: [
+          "Explicit consent obtained from the individual",
+          "Legitimate interest where permitted by applicable law",
+          "An existing customer or business relationship",
+          "Other legal grounds recognised under applicable data protection legislation",
+        ],
+      },
+      {
+        heading: "5. Email Marketing Compliance",
+        paragraphs: [
+          "When conducting email campaigns through the platform, customers must comply with all applicable email marketing regulations. Examples of applicable regulations include:",
+        ],
+        bullets: [
+          "General Data Protection Regulation (GDPR) — European Union",
+          "CAN-SPAM Act — United States",
+          "Privacy and Electronic Communications Regulations (PECR) — United Kingdom",
+          "Canada's Anti-Spam Legislation (CASL) — Canada",
+          "ePrivacy Directive — European Union",
+        ],
+      },
+      {
+        heading: "6. Data Collection Requirements",
+        paragraphs: [
+          "Customers must ensure that personal data used for marketing campaigns has been collected lawfully and in accordance with applicable data protection laws. This includes ensuring that:",
+        ],
+        bullets: [
+          "Individuals were informed of how their data would be used at the point of collection",
+          "Appropriate privacy notices were provided to data subjects",
+          "Consent was obtained where required by applicable law",
+          "Data was not obtained through deceptive, fraudulent, or unlawful means",
+        ],
+      },
+      {
+        heading: "7. Agency Responsibilities",
+        paragraphs: [
+          "Agencies using the Velocity Influence platform to conduct campaigns on behalf of their clients must ensure that their clients comply with all applicable marketing laws and regulations.",
+          "The agency remains fully responsible for ensuring that all data uploaded to the platform on behalf of its clients is used lawfully and in compliance with this policy.",
+          "Velocity Influence does not enter into contractual relationships with the agency's end clients. The agency account holder is solely responsible for all activity conducted through its account and associated workspaces.",
+        ],
+      },
+      {
+        heading: "8. Prohibited Marketing Practices",
+        paragraphs: [
+          "Customers may not use the Velocity Influence platform to conduct any of the following activities:",
+        ],
+        bullets: [
+          "Sending unsolicited bulk spam communications or messages that violate anti-spam legislation",
+          "Using illegally obtained or non-consented marketing databases or contact lists",
+          "Conducting misleading, deceptive, or fraudulent marketing campaigns",
+          "Impersonating individuals, organisations, or brands",
+          "Distributing content that promotes illegal activities or violates applicable advertising standards",
+          "Engaging in marketing practices that target vulnerable individuals or minors inappropriately",
+        ],
+      },
+      {
+        heading: "9. Enforcement and Suspension",
+        paragraphs: [
+          "Velocity Influence reserves the right to take enforcement actions against accounts that violate this Marketing Compliance Policy. Enforcement actions may include:",
+        ],
+        bullets: [
+          "Issuing a formal warning to the account holder",
+          "Suspension of active campaigns pending investigation",
+          "Removal of unlawful data, content, or marketing materials from the platform",
+          "Temporary or permanent suspension of platform access",
+          "Termination of the customer account",
+          "Reporting illegal activities to relevant regulatory or law enforcement authorities where required",
+        ],
+      },
+      {
+        heading: "10. Updates to This Policy",
+        paragraphs: [
+          "Velocity Influence may update this Marketing Compliance Policy periodically to reflect changes in legal requirements, industry standards, or platform functionality.",
+          "When material changes are made, customers will be notified via email or in-platform notification. Continued use of the platform after notification constitutes acceptance of the updated policy.",
+        ],
+      },
+      {
+        heading: "11. Contact Information",
+        paragraphs: [
+          "For enquiries regarding marketing compliance or legal obligations, please contact us at:",
+          "Global Solutions Management LLC\nTrading as Velocity Influence Agency\nState of Delaware, United States",
+          "Compliance enquiries: compliance@velocityinfluence.com\nLegal enquiries: legal@velocityinfluence.com\nGeneral enquiries: hello@velocityinfluence.com",
+        ],
+      },
     ],
   },
   "cookie-policy": {
