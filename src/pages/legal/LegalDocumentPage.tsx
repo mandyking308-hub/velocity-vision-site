@@ -692,12 +692,110 @@ const docs: Record<string, LegalDoc> = {
     effectiveDate: "1 March 2026",
     lastUpdated: "1 March 2026",
     sections: [
-      { heading: "1. Purpose", paragraphs: [`This Acceptable Use Policy ("AUP") defines the permitted and prohibited uses of the Velocity Influence platform operated by ${ENTITY}.`] },
-      { heading: "2. Permitted Uses", paragraphs: ["The platform may be used for lawful marketing campaign management, audience engagement, analytics, reporting, and communication activities in accordance with your subscription agreement."] },
-      { heading: "3. Prohibited Conduct", paragraphs: ["You must not use the platform to:"], bullets: ["Send spam or unsolicited communications", "Distribute malware or harmful content", "Harvest personal data without consent", "Engage in fraud or deceptive practices", "Violate any applicable laws or regulations", "Infringe intellectual property rights"] },
-      { heading: "4. Content Standards", paragraphs: ["All content uploaded to or created through the platform must be lawful, not misleading, and must not contain hate speech, discriminatory material, or content that could harm minors."] },
-      { heading: "5. Enforcement", paragraphs: ["We reserve the right to investigate suspected violations and take appropriate action, including suspending or terminating access, removing content, and reporting to law enforcement."] },
-      { heading: "6. Reporting Violations", paragraphs: ["If you become aware of any misuse of the platform, please report it to compliance@velocityinfluence.com."] },
+      {
+        heading: "1. Introduction",
+        paragraphs: [
+          "This Acceptable Use Policy (\"AUP\") outlines the permitted and prohibited uses of the Velocity Influence platform.",
+          "All customers, users, and account holders must comply with this policy when using the platform to manage marketing campaigns, upload data, or access platform services.",
+        ],
+      },
+      {
+        heading: "2. Service Provider",
+        paragraphs: [
+          `Velocity Influence Agency is a trading name of ${ENTITY}.`,
+          `Throughout this policy, references to "Velocity Influence", "the Platform", "we", "our", and "us" refer to Global Solutions Management LLC.`,
+        ],
+      },
+      {
+        heading: "3. Permitted Uses of the Platform",
+        paragraphs: [
+          "Customers may use the Velocity Influence platform for legitimate marketing and campaign management purposes including:",
+        ],
+        bullets: [
+          "Managing and executing marketing campaigns across supported channels",
+          "Analysing marketing performance using platform analytics and reporting tools",
+          "Managing marketing contact databases and audience segments",
+          "Generating campaign reports and performance dashboards",
+          "Collaborating with team members and clients through platform workspaces",
+        ],
+      },
+      {
+        heading: "4. Prohibited Activities",
+        paragraphs: [
+          "Users may not use the platform to engage in any of the following activities:",
+        ],
+        bullets: [
+          "Sending unsolicited spam, bulk communications, or messages that violate applicable anti-spam legislation",
+          "Uploading unlawful, illegally obtained, or non-consented contact lists or marketing databases",
+          "Distributing malware, viruses, harmful software, or any material intended to disrupt platform operations",
+          "Conducting fraudulent, deceptive, or misleading marketing campaigns",
+          "Impersonating another individual, organisation, or entity",
+          "Harvesting, scraping, or collecting personal data from the platform without authorisation",
+          "Infringing the intellectual property rights of any third party",
+          "Using the platform in any manner that violates applicable laws or regulations",
+        ],
+      },
+      {
+        heading: "5. Marketing List Requirements",
+        paragraphs: [
+          "Customers uploading marketing contact lists to the platform must ensure that:",
+        ],
+        bullets: [
+          "The data was collected lawfully and in compliance with applicable data protection laws",
+          "Individuals have provided appropriate consent where required by law",
+          "Marketing communications sent using the data comply with applicable regulations",
+          "Contact lists do not contain information obtained through unlawful or deceptive means",
+        ],
+      },
+      {
+        heading: "6. Platform Security and Integrity",
+        paragraphs: [
+          "Customers must not attempt to compromise the security or integrity of the Velocity Influence platform. The following activities are strictly prohibited:",
+        ],
+        bullets: [
+          "Accessing unauthorised areas of the platform or other users' accounts",
+          "Bypassing, disabling, or circumventing platform security measures",
+          "Exploiting vulnerabilities, bugs, or errors in the platform software",
+          "Overloading, flooding, or deliberately disrupting system infrastructure",
+          "Reverse engineering, decompiling, or attempting to extract the source code of the platform",
+        ],
+      },
+      {
+        heading: "7. Enforcement Actions",
+        paragraphs: [
+          "Velocity Influence reserves the right to take enforcement actions if this policy is violated. Enforcement actions may include:",
+        ],
+        bullets: [
+          "Issuing a formal warning to the account holder",
+          "Temporary suspension of platform access pending investigation",
+          "Permanent termination of accounts found to be in violation",
+          "Removal of unlawful data, content, or marketing materials from the platform",
+          "Reporting illegal activities to relevant law enforcement or regulatory authorities where required",
+        ],
+      },
+      {
+        heading: "8. Reporting Violations",
+        paragraphs: [
+          "Users who become aware of any violations of this Acceptable Use Policy are encouraged to report concerns through the platform's support channels or by contacting us directly.",
+          "Reports can be submitted to: compliance@velocityinfluence.com",
+          "All reports will be reviewed and investigated in a timely manner. Velocity Influence may take appropriate action based on the findings of any investigation.",
+        ],
+      },
+      {
+        heading: "9. Updates to This Policy",
+        paragraphs: [
+          "Velocity Influence may update this Acceptable Use Policy periodically to reflect changes in platform functionality, legal requirements, or industry standards.",
+          "When significant changes are made, customers will be notified via email or in-platform notification. Continued use of the platform after notification constitutes acceptance of the updated policy.",
+        ],
+      },
+      {
+        heading: "10. Contact Information",
+        paragraphs: [
+          "For enquiries related to this Acceptable Use Policy or platform usage, please contact us at:",
+          "Global Solutions Management LLC\nTrading as Velocity Influence Agency\nState of Delaware, United States",
+          "Compliance enquiries: compliance@velocityinfluence.com\nLegal enquiries: legal@velocityinfluence.com\nGeneral enquiries: hello@velocityinfluence.com",
+        ],
+      },
     ],
   },
   "marketing-compliance-policy": {
