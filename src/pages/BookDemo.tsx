@@ -37,7 +37,7 @@ const BookDemo = () => {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [form, setForm] = useState({
     name: "", company: "", industry: "", email: "", phone: "",
-    website: "", budget: "", goals: "",
+    website: "", budget: "", goals: "", accountType: "business",
   });
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
