@@ -92,7 +92,13 @@ const PortalOnboarding = () => {
   // Save profile (business path)
   const saveBusinessProfile = useMutation({
     mutationFn: async () => {
-      if (!companyId) throw new Error("No company");
+      if (!companyId || !user) throw new Error("No company");
+      // Record legal acceptance
+      if (legalAccepted) {
+        await supabase.from("legal_acceptances" as any).insert({
+          user_id: user.id, ip_address: null, document_versions: { terms: "2026-03-01", privacy: "2026-03-01" },
+        } as any);
+      }
       await supabase.from("companies").update({ account_type: "business" } as any).eq("id", companyId);
       const payload = { ...form, completed: true, completed_at: new Date().toISOString() };
       if (onboarding) {
