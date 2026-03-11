@@ -24,8 +24,8 @@ const PortalWorkspaces = () => {
     queryKey: ["ws-campaigns", selectedId],
     queryFn: async () => {
       if (!selectedId) return [];
-      const { data } = await supabase.from("campaigns").select("*").eq("workspace_id" as any, selectedId).order("created_at", { ascending: false });
-      return data ?? [];
+      const { data } = await (supabase.from("campaigns").select("*") as any).eq("workspace_id", selectedId).order("created_at", { ascending: false });
+      return (data ?? []) as any[];
     },
     enabled: !!selectedId,
   });
