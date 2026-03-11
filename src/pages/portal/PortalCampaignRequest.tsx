@@ -126,6 +126,8 @@ const PortalCampaignRequest = () => {
             </Select>
           </div>
         )}
+
+        <div>
           <label className="text-sm font-medium text-foreground mb-1.5 block">Target Audience</label>
           <Input
             value={form.target_audience}
