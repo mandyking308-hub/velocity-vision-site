@@ -17,6 +17,7 @@ import Contact from "./pages/Contact.tsx";
 import BookDemo from "./pages/BookDemo.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import AuthPage from "./pages/AuthPage.tsx";
+import ForAgencies from "./pages/ForAgencies.tsx";
 import CRMLayout from "./pages/CRMLayout.tsx";
 import CRMDashboard from "./pages/crm/CRMDashboard.tsx";
 import CompaniesPage from "./pages/crm/CompaniesPage.tsx";
@@ -64,6 +65,7 @@ const AnimatedRoutes = () => {
         <Route path="/about" element={<PageTransition><About /></PageTransition>} />
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
         <Route path="/book-demo" element={<PageTransition><BookDemo /></PageTransition>} />
+        <Route path="/for-agencies" element={<PageTransition><ForAgencies /></PageTransition>} />
         <Route path="/auth" element={<PageTransition><AuthPage /></PageTransition>} />
 
         {/* CRM (protected - internal team) */}

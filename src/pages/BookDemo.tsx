@@ -37,7 +37,7 @@ const BookDemo = () => {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [form, setForm] = useState({
     name: "", company: "", industry: "", email: "", phone: "",
-    website: "", budget: "", goals: "",
+    website: "", budget: "", goals: "", accountType: "business",
   });
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -53,8 +53,8 @@ const BookDemo = () => {
     try {
       const { data: companyData } = await supabase.from("companies").insert({
         name: form.company, industry: form.industry || null, status: "prospect" as const,
-        website: form.website || null,
-      }).select("id").single();
+        website: form.website || null, account_type: form.accountType,
+      } as any).select("id").single();
 
       const nameParts = form.name.trim().split(" ");
       const { data: contactData } = await supabase.from("contacts").insert({
@@ -143,6 +143,17 @@ const BookDemo = () => {
                         <SelectTrigger><SelectValue placeholder="Select industry" /></SelectTrigger>
                         <SelectContent>{industries.map((ind) => <SelectItem key={ind} value={ind.toLowerCase()}>{ind}</SelectItem>)}</SelectContent>
                       </Select>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground mb-2">Account Type</p>
+                      <div className="flex gap-3">
+                        {[{ value: "business", label: "Business" }, { value: "agency", label: "Agency / Consultant" }].map((opt) => (
+                          <button key={opt.value} onClick={() => setForm({ ...form, accountType: opt.value })}
+                            className={`flex-1 p-2.5 rounded-lg border text-sm font-medium transition-colors ${
+                              form.accountType === opt.value ? "border-accent bg-accent/10 text-foreground" : "border-border/50 text-muted-foreground hover:border-accent/30"
+                            }`}>{opt.label}</button>
+                        ))}
+                      </div>
                     </div>
                     <Button variant="cta" className="w-full" onClick={() => {
                       if (!form.name || !form.email || !form.company) { toast.error("Please fill required fields"); return; }

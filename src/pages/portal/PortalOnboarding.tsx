@@ -27,6 +27,7 @@ const PortalOnboarding = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
+  const [accountType, setAccountType] = useState<"business" | "agency">("business");
   const [form, setForm] = useState({
     business_description: "", marketing_goals: "", target_audience: "",
     target_regions: "", competitors: "", existing_channels: "",
@@ -57,6 +58,8 @@ const PortalOnboarding = () => {
   const saveProfile = useMutation({
     mutationFn: async () => {
       if (!companyId) throw new Error("No company");
+      // Update company account_type
+      await supabase.from("companies").update({ account_type: accountType } as any).eq("id", companyId);
       if (onboarding) {
         const { error } = await supabase.from("client_onboarding" as any).update({
           ...form, completed: true, completed_at: new Date().toISOString(),
@@ -181,6 +184,19 @@ const PortalOnboarding = () => {
           <div className="bg-card border border-border/50 rounded-xl p-6 shadow-card space-y-4">
             <h3 className="font-display font-semibold text-foreground">Business Profile</h3>
             <p className="text-sm text-muted-foreground">Help us understand your business so we can plan the best campaigns for you.</p>
+            <div>
+              <p className="text-sm font-medium text-foreground mb-2">Account Type</p>
+              <div className="flex gap-3">
+                {(["business", "agency"] as const).map((type) => (
+                  <button key={type} onClick={() => setAccountType(type)}
+                    className={`flex-1 p-3 rounded-lg border text-sm font-medium transition-colors ${
+                      accountType === type ? "border-accent bg-accent/5 text-foreground" : "border-border/50 text-muted-foreground hover:border-accent/30"
+                    }`}>
+                    {type === "business" ? "Business" : "Agency / Consultant"}
+                  </button>
+                ))}
+              </div>
+            </div>
             <Textarea placeholder="Describe your business — what you do, who you serve..." rows={3} value={form.business_description} onChange={(e) => setForm({ ...form, business_description: e.target.value })} />
             <Button variant="cta" onClick={() => setCurrentStep(1)} className="gap-1.5">Continue <ArrowRight size={14} /></Button>
           </div>

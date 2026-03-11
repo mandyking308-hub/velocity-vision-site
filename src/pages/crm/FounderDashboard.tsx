@@ -69,6 +69,11 @@ const FounderDashboard = () => {
     queryFn: async () => { const { data } = await supabase.from("activities").select("*, contacts(first_name, last_name)").order("created_at", { ascending: false }).limit(20); return data ?? []; },
   });
 
+  const { data: workspaces } = useQuery({
+    queryKey: ["founder-workspaces"],
+    queryFn: async () => { const { data } = await supabase.from("client_workspaces").select("*"); return data ?? []; },
+  });
+
   const { data: notifications } = useQuery({
     queryKey: ["founder-notifications", user?.id],
     queryFn: async () => {
@@ -94,6 +99,10 @@ const FounderDashboard = () => {
   const now = new Date();
   const monthStart = startOfMonth(now);
   const weekStart = startOfWeek(now);
+
+  const agencyAccounts = companies?.filter((c) => (c as any).account_type === "agency") ?? [];
+  const totalWorkspaces = workspaces?.length ?? 0;
+  const agencyCampaigns = campaigns?.filter((c) => agencyAccounts.some((a) => a.id === c.company_id)) ?? [];
 
   const activeClients = companies?.filter((c) => c.status === "active_client") ?? [];
   const activeCampaigns = campaigns?.filter((c) => c.status === "active") ?? [];
@@ -217,6 +226,24 @@ const FounderDashboard = () => {
           </motion.div>
         ))}
       </div>
+
+      {/* Agency Analytics */}
+      {agencyAccounts.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-card border border-border/50 rounded-xl p-5 shadow-card">
+            <span className="text-xs text-muted-foreground">Agency Accounts</span>
+            <p className="text-2xl font-display font-bold text-foreground mt-1">{agencyAccounts.length}</p>
+          </div>
+          <div className="bg-card border border-border/50 rounded-xl p-5 shadow-card">
+            <span className="text-xs text-muted-foreground">Total Client Workspaces</span>
+            <p className="text-2xl font-display font-bold text-foreground mt-1">{totalWorkspaces}</p>
+          </div>
+          <div className="bg-card border border-border/50 rounded-xl p-5 shadow-card">
+            <span className="text-xs text-muted-foreground">Agency-Managed Campaigns</span>
+            <p className="text-2xl font-display font-bold text-foreground mt-1">{agencyCampaigns.length}</p>
+          </div>
+        </div>
+      )}
 
       {/* Revenue Analytics */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
