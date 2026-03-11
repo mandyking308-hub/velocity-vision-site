@@ -1027,13 +1027,127 @@ const docs: Record<string, LegalDoc> = {
     effectiveDate: "1 March 2026",
     lastUpdated: "1 March 2026",
     sections: [
-      { heading: "1. Commitment to Security", paragraphs: [`${ENTITY} is committed to protecting the security, confidentiality, and integrity of customer data.`] },
-      { heading: "2. Infrastructure Security", paragraphs: ["The platform is hosted on enterprise-grade cloud infrastructure with SOC 2 compliance."], bullets: ["Network segmentation and firewalls", "Intrusion detection systems", "DDoS protection"] },
-      { heading: "3. Data Encryption", paragraphs: ["All data is encrypted in transit using TLS 1.2 or higher. Sensitive data at rest is encrypted using AES-256 encryption."] },
-      { heading: "4. Access Controls", paragraphs: ["We implement role-based access control (RBAC) with the principle of least privilege. Multi-factor authentication is required for administrative access."] },
-      { heading: "5. Incident Response", paragraphs: ["We maintain an incident response plan covering identification, containment, eradication, recovery, and post-incident review."] },
-      { heading: "6. Security Assessments", paragraphs: ["We conduct regular vulnerability assessments and penetration testing. Practices are reviewed annually."] },
-      { heading: "7. Employee Security", paragraphs: ["All employees undergo background checks and security awareness training. Access to customer data is limited to authorised personnel."] },
+      {
+        heading: "1. Introduction",
+        paragraphs: [
+          "This Platform Security Policy describes the security practices implemented to protect the Velocity Influence platform, infrastructure, and customer data.",
+          "The goal is to maintain a secure and reliable platform for all customers, agencies, and users accessing Velocity Influence services.",
+        ],
+      },
+      {
+        heading: "2. Service Provider",
+        paragraphs: [
+          `Velocity Influence Agency is a trading name of ${ENTITY}.`,
+          `Throughout this policy, references to "Velocity Influence", "the Platform", "we", "our", and "us" refer to Global Solutions Management LLC.`,
+        ],
+      },
+      {
+        heading: "3. Security Philosophy",
+        paragraphs: [
+          "Velocity Influence is designed with security as a core principle embedded into all aspects of platform development and operations. Our security practices focus on:",
+        ],
+        bullets: [
+          "Protecting customer data against unauthorised access, loss, or misuse",
+          "Maintaining the integrity and reliability of platform systems",
+          "Preventing unauthorised access to accounts, infrastructure, and services",
+          "Ensuring reliable and consistent service delivery for all customers",
+          "Continuously improving security practices in response to evolving threats",
+        ],
+      },
+      {
+        heading: "4. Platform Infrastructure Security",
+        paragraphs: [
+          "The Velocity Influence platform is built on secure infrastructure environments designed to maintain system stability, resilience, and availability. Infrastructure protections include:",
+        ],
+        bullets: [
+          "Secure cloud hosting environments with enterprise-grade reliability",
+          "Network security controls including firewalls and traffic filtering",
+          "System redundancy and failover mechanisms to minimise service disruption",
+          "Infrastructure monitoring for performance and availability tracking",
+          "Distributed denial-of-service (DDoS) protection measures",
+          "Geographically distributed backups for disaster recovery",
+        ],
+      },
+      {
+        heading: "5. Data Protection Measures",
+        paragraphs: [
+          "Velocity Influence implements appropriate technical and organisational measures to protect stored and transmitted data. These measures include:",
+        ],
+        bullets: [
+          "Encrypted data transmission using TLS 1.2 or higher for all connections",
+          "Secure data storage practices with encryption at rest where appropriate",
+          "Access control policies restricting data access to authorised personnel",
+          "Regular security updates, patches, and vulnerability remediation",
+          "Data backup procedures with encrypted storage in geographically separate locations",
+        ],
+      },
+      {
+        heading: "6. Access Control and Authentication",
+        paragraphs: [
+          "Platform access is protected using robust authentication and permission controls to ensure that only authorised users can access platform data and features. Access controls include:",
+        ],
+        bullets: [
+          "Secure login authentication with password complexity requirements",
+          "Multi-factor authentication (MFA) for administrative and sensitive access",
+          "Role-based access permissions following the principle of least privilege",
+          "Restricted access to administrative systems and internal infrastructure",
+          "Session management controls including automatic timeout for inactive sessions",
+        ],
+      },
+      {
+        heading: "7. Monitoring and Threat Detection",
+        paragraphs: [
+          "The Velocity Influence platform uses monitoring systems designed to detect potential security threats, unusual system activity, and performance anomalies. Monitoring capabilities include:",
+        ],
+        bullets: [
+          "Continuous system and infrastructure monitoring",
+          "Intrusion detection and prevention systems",
+          "Automated alerting for suspicious or anomalous activity",
+          "Log collection and analysis for security investigation purposes",
+          "Regular review of monitoring data to identify emerging threats",
+        ],
+      },
+      {
+        heading: "8. Incident Response",
+        paragraphs: [
+          "Velocity Influence maintains documented procedures to respond to potential security incidents promptly and effectively. Our incident response process includes:",
+        ],
+        bullets: [
+          "Identification and classification of the security incident",
+          "Containment measures to limit the impact of the incident",
+          "Investigation and root cause analysis",
+          "Remediation and recovery actions",
+          "Post-incident review and implementation of preventive measures",
+        ],
+      },
+      {
+        heading: "9. Customer Security Responsibilities",
+        paragraphs: [
+          "Customers are responsible for maintaining the security of their own accounts and the data they manage through the platform. Customer responsibilities include:",
+        ],
+        bullets: [
+          "Protecting login credentials and not sharing account passwords",
+          "Restricting platform access to authorised personnel within their organisation",
+          "Ensuring secure handling and management of their marketing data and contact lists",
+          "Promptly notifying Velocity Influence if they believe their account security has been compromised",
+          "Keeping their own systems and devices secure when accessing the platform",
+        ],
+      },
+      {
+        heading: "10. Updates to This Policy",
+        paragraphs: [
+          "Velocity Influence may update this Platform Security Policy periodically to reflect changes in security practices, technology, or regulatory requirements.",
+          "When significant changes are made, customers will be notified via email or in-platform notification. The \"Last Updated\" date at the top of this page will be revised accordingly.",
+        ],
+      },
+      {
+        heading: "11. Contact Information",
+        paragraphs: [
+          "For security-related enquiries, vulnerability reports, or questions about this Platform Security Policy, please contact us at:",
+          "Global Solutions Management LLC\nTrading as Velocity Influence Agency\nState of Delaware, United States",
+          "Security enquiries: security@velocityinfluence.com\nLegal enquiries: legal@velocityinfluence.com\nGeneral enquiries: hello@velocityinfluence.com",
+        ],
+      },
     ],
   },
   "service-level-agreement": {
