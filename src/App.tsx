@@ -74,6 +74,7 @@ const AnimatedRoutes = () => {
           <Route path="campaigns" element={<CampaignsPage />} />
           <Route path="campaigns/:id" element={<CampaignDetailPage />} />
           <Route path="campaign-dashboard" element={<CampaignDashboard />} />
+          <Route path="founder" element={<FounderDashboard />} />
         </Route>
 
         {/* Client Portal (protected) */}
