@@ -13,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const FounderManual = () => {
   const { user } = useAuth();
@@ -113,7 +115,6 @@ const FounderManual = () => {
 
   const downloadText = () => {
     const md = generateMarkdown();
-    // Simple text version (strip markdown syntax for plain text)
     const text = md.replace(/#{1,3}\s/g, "").replace(/\*\*/g, "").replace(/\|/g, " ");
     const blob = new Blob([text], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
@@ -122,6 +123,118 @@ const FounderManual = () => {
     a.download = `velocity-influence-manual-${format(new Date(), "yyyy-MM-dd")}.txt`;
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const downloadPDF = () => {
+    const doc = new jsPDF({ unit: "pt", format: "a4" });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const margin = 48;
+    const maxW = pageW - margin * 2;
+    let y = margin;
+
+    const ensureSpace = (needed: number) => {
+      if (y + needed > pageH - margin) {
+        doc.addPage();
+        y = margin;
+      }
+    };
+
+    const writeLines = (text: string, opts: { size: number; bold?: boolean; color?: [number, number, number]; gap?: number }) => {
+      doc.setFont("helvetica", opts.bold ? "bold" : "normal");
+      doc.setFontSize(opts.size);
+      doc.setTextColor(...(opts.color ?? [30, 30, 30]));
+      const lines = doc.splitTextToSize(text, maxW);
+      lines.forEach((line: string) => {
+        ensureSpace(opts.size + 4);
+        doc.text(line, margin, y);
+        y += opts.size + 4;
+      });
+      y += opts.gap ?? 4;
+    };
+
+    // Cover
+    doc.setFillColor(15, 23, 42);
+    doc.rect(0, 0, pageW, pageH, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(28);
+    doc.text("Velocity Influence", margin, 200);
+    doc.setFontSize(20);
+    doc.text("Platform Operations Manual", margin, 235);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    doc.setTextColor(200, 200, 200);
+    doc.text(`Generated ${format(new Date(), "d MMMM yyyy")}`, margin, 270);
+    doc.text(`${platformManual.length} chapters · ${platformManual.reduce((s, c) => s + c.sections.length, 0)} sections · ${buildLog.length} build entries`, margin, 290);
+    doc.addPage();
+    y = margin;
+
+    // Table of contents
+    writeLines("Table of Contents", { size: 18, bold: true, color: [15, 23, 42], gap: 8 });
+    platformManual.forEach((ch, i) => {
+      writeLines(`${i + 1}. ${ch.title}`, { size: 11, bold: true, color: [30, 30, 30], gap: 2 });
+      ch.sections.forEach((s, j) => {
+        writeLines(`    ${i + 1}.${j + 1}  ${s.title}`, { size: 10, color: [80, 80, 80], gap: 1 });
+      });
+    });
+    writeLines(`${platformManual.length + 1}. Platform Build Log`, { size: 11, bold: true, color: [30, 30, 30] });
+
+    // Chapters
+    platformManual.forEach((ch, i) => {
+      doc.addPage();
+      y = margin;
+      writeLines(`${i + 1}. ${ch.title}`, { size: 20, bold: true, color: [15, 23, 42], gap: 12 });
+      ch.sections.forEach((s, j) => {
+        ensureSpace(40);
+        writeLines(`${i + 1}.${j + 1}  ${s.title}`, { size: 13, bold: true, color: [220, 90, 70], gap: 6 });
+        // Strip markdown formatting for clean PDF
+        const cleaned = s.content
+          .replace(/\*\*(.*?)\*\*/g, "$1")
+          .replace(/`(.*?)`/g, "$1")
+          .replace(/^>\s/gm, "  ")
+          .replace(/^-\s/gm, "• ")
+          .replace(/^\|.*\|$/gm, "") // skip table rows for simplicity
+          .replace(/\n{3,}/g, "\n\n");
+        cleaned.split("\n").forEach((line) => {
+          if (!line.trim()) { y += 4; return; }
+          writeLines(line, { size: 10, color: [50, 50, 50], gap: 2 });
+        });
+        y += 8;
+      });
+    });
+
+    // Build Log
+    doc.addPage();
+    y = margin;
+    writeLines(`${platformManual.length + 1}. Platform Build Log`, { size: 20, bold: true, color: [15, 23, 42], gap: 12 });
+    autoTable(doc, {
+      startY: y,
+      head: [["Date", "Feature", "Component", "Description"]],
+      body: buildLog.map((e) => [
+        format(new Date(e.date), "d MMM yyyy"),
+        e.feature,
+        e.component,
+        e.description,
+      ]),
+      styles: { fontSize: 9, cellPadding: 6, valign: "top" },
+      headStyles: { fillColor: [15, 23, 42], textColor: 255 },
+      columnStyles: { 0: { cellWidth: 70 }, 1: { cellWidth: 110 }, 2: { cellWidth: 80 }, 3: { cellWidth: "auto" } },
+      margin: { left: margin, right: margin },
+    });
+
+    // Footers
+    const total = doc.getNumberOfPages();
+    for (let p = 1; p <= total; p++) {
+      doc.setPage(p);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.setTextColor(150, 150, 150);
+      doc.text(`Velocity Influence — Operations Manual`, margin, pageH - 20);
+      doc.text(`Page ${p} of ${total}`, pageW - margin, pageH - 20, { align: "right" });
+    }
+
+    doc.save(`velocity-influence-manual-${format(new Date(), "yyyy-MM-dd")}.pdf`);
   };
 
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
@@ -272,6 +385,9 @@ const FounderManual = () => {
                   className="pl-8 h-8 text-xs w-48"
                 />
               </div>
+              <Button size="sm" onClick={downloadPDF} className="gap-1.5 text-xs h-8">
+                <Download size={12} /> Download PDF
+              </Button>
               <Button variant="outline" size="sm" onClick={downloadMarkdown} className="gap-1.5 text-xs h-8">
                 <Download size={12} /> Markdown
               </Button>
