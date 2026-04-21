@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Calculator, TrendingUp, ArrowRight, DollarSign, Target, Users } from "lucide-react";
+import { Calculator, TrendingUp, ArrowRight, DollarSign, Target, Users, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -192,12 +192,14 @@ const ROICalculator = () => {
 
               <div className="pt-2 space-y-3">
                 <Button variant="hero" size="lg" className="w-full" asChild>
-                  <Link to="/book-demo">
-                    See how we'd build this for you <ArrowRight size={18} />
+                  <Link to="/demo">
+                    <Play size={16} /> Explore the Platform
                   </Link>
                 </Button>
                 <Button variant="hero-outline" size="lg" className="w-full" asChild>
-                  <Link to="/contact">Get a custom forecast by email</Link>
+                  <Link to="/book-demo">
+                    See how we'd build this for you <ArrowRight size={18} />
+                  </Link>
                 </Button>
               </div>
             </CardContent>

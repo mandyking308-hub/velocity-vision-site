@@ -3,12 +3,12 @@ import { Target, Megaphone, Users, BarChart3, Palette, BrainCircuit } from "luci
 import { Link } from "react-router-dom";
 
 const services = [
-  { icon: Target, title: "Marketing Strategy", desc: "Data-backed strategies that align your brand with market opportunity and drive measurable growth." },
-  { icon: Megaphone, title: "PR & Media Relations", desc: "Earned media campaigns that build credibility and shape public perception across global markets." },
-  { icon: Users, title: "Social Media & Influencer", desc: "Authentic influencer partnerships and social strategies that create cultural relevance." },
-  { icon: BarChart3, title: "Paid Advertising", desc: "Performance-driven paid media across search, social, programmatic, and emerging channels." },
-  { icon: Palette, title: "Brand & Creative", desc: "Distinctive brand identities and creative campaigns that capture attention and inspire action." },
-  { icon: BrainCircuit, title: "Marketing Intelligence", desc: "AI-powered analytics and competitive intelligence that turn data into decisive advantage." },
+  { icon: Target, title: "Marketing Strategy", desc: "Data-backed plans that turn market opportunity into measurable growth." },
+  { icon: Megaphone, title: "PR & Media Relations", desc: "Earned media campaigns that build credibility across global markets." },
+  { icon: Users, title: "Social & Influencer", desc: "Authentic creator partnerships that drive cultural relevance and reach." },
+  { icon: BarChart3, title: "Paid Advertising", desc: "Performance media across search, social, and programmatic channels." },
+  { icon: Palette, title: "Brand & Creative", desc: "Distinctive identities and campaigns that capture attention instantly." },
+  { icon: BrainCircuit, title: "Marketing Intelligence", desc: "AI-powered analytics that turn data into decisive competitive advantage." },
 ];
 
 const WhatWeDo = () => (

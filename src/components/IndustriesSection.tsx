@@ -3,12 +3,12 @@ import { Link } from "react-router-dom";
 import { Heart, Cpu, Landmark, Bot, Briefcase, ShoppingBag } from "lucide-react";
 
 const industries = [
-  { icon: Heart, title: "Healthcare", desc: "Navigating complex regulatory landscapes to build trust and accelerate patient engagement." },
-  { icon: Cpu, title: "Technology", desc: "Positioning tech brands for market leadership through thought leadership and demand generation." },
-  { icon: Landmark, title: "Finance", desc: "Building credibility and compliance-ready campaigns for financial services and fintech." },
-  { icon: Bot, title: "AI & Software", desc: "Launching AI products with narratives that resonate with enterprise buyers and investors." },
-  { icon: Briefcase, title: "Professional Services", desc: "Elevating consultancies and B2B firms with authority-building content and lead generation." },
-  { icon: ShoppingBag, title: "Consumer Brands", desc: "Creating cultural moments and brand love through integrated consumer campaigns." },
+  { icon: Heart, title: "Healthcare", desc: "Compliant campaigns that build trust and drive patient engagement." },
+  { icon: Cpu, title: "Technology", desc: "Positioning tech brands for category leadership and demand generation." },
+  { icon: Landmark, title: "Finance", desc: "Compliance-ready campaigns for financial services and fintech." },
+  { icon: Bot, title: "AI & Software", desc: "Launching AI products with narratives that resonate with enterprise buyers." },
+  { icon: Briefcase, title: "Professional Services", desc: "Authority-building content and lead generation for B2B firms." },
+  { icon: ShoppingBag, title: "Consumer Brands", desc: "Cultural moments and brand love through integrated consumer campaigns." },
 ];
 
 const IndustriesSection = () => (
