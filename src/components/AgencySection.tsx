@@ -15,10 +15,10 @@ const AgencySection = () => (
       <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
         <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">For Agencies & Consultants</p>
         <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
-          Power campaigns for every client in one platform
+          Power campaigns for every client on one platform
         </h2>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          Velocity Influence powers marketing campaigns for businesses, agencies, and consultants worldwide.
+          Built for businesses and agencies managing multiple clients at scale.
         </p>
       </motion.div>
 
@@ -35,9 +35,12 @@ const AgencySection = () => (
         ))}
       </div>
 
-      <div className="text-center">
+      <div className="text-center flex flex-col sm:flex-row gap-3 justify-center">
         <Button variant="cta" size="lg" asChild>
-          <Link to="/for-agencies">Learn More <ArrowRight size={16} /></Link>
+          <Link to="/for-agencies">Start Agency Plan <ArrowRight size={16} /></Link>
+        </Button>
+        <Button variant="outline" size="lg" asChild>
+          <Link to="/for-agencies">Learn More</Link>
         </Button>
       </div>
     </div>
