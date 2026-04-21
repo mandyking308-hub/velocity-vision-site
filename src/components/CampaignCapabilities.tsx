@@ -2,12 +2,12 @@ import { motion } from "framer-motion";
 import { Crosshair, Users, Layers, Handshake, Newspaper, TrendingUp } from "lucide-react";
 
 const capabilities = [
-  { icon: Crosshair, title: "Campaign Strategy", desc: "Bespoke campaign blueprints built around your growth goals and competitive landscape." },
-  { icon: Users, title: "Audience Targeting", desc: "Precision segmentation powered by first-party data and AI-driven insights." },
-  { icon: Layers, title: "Multi-channel Marketing", desc: "Orchestrated campaigns across digital, traditional, and experiential channels." },
-  { icon: Handshake, title: "Influencer Partnerships", desc: "Authentic collaborations with creators who move your target audience." },
-  { icon: Newspaper, title: "Media Placements", desc: "Tier-1 media coverage and strategic placements that amplify your narrative." },
-  { icon: TrendingUp, title: "Performance Optimisation", desc: "Continuous optimization through real-time analytics and A/B testing." },
+  { icon: Crosshair, title: "Campaign Strategy", desc: "Blueprints built around your growth goals." },
+  { icon: Users, title: "Audience Targeting", desc: "Precision segmentation powered by AI-driven insights." },
+  { icon: Layers, title: "Multi-channel Execution", desc: "Run digital, traditional, and experiential in sync." },
+  { icon: Handshake, title: "Influencer Partnerships", desc: "Authentic collaborations that move your audience." },
+  { icon: Newspaper, title: "Media Placements", desc: "Tier-1 coverage that amplifies your narrative." },
+  { icon: TrendingUp, title: "Performance Optimisation", desc: "Continuous A/B testing and real-time analytics." },
 ];
 
 const CampaignCapabilities = () => (
