@@ -385,6 +385,9 @@ const FounderManual = () => {
                   className="pl-8 h-8 text-xs w-48"
                 />
               </div>
+              <Button size="sm" onClick={downloadPDF} className="gap-1.5 text-xs h-8">
+                <Download size={12} /> Download PDF
+              </Button>
               <Button variant="outline" size="sm" onClick={downloadMarkdown} className="gap-1.5 text-xs h-8">
                 <Download size={12} /> Markdown
               </Button>
