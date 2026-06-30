@@ -79,7 +79,7 @@ export default function AppDashboard() {
     needs_review: 0, risky: 0, blocked: 0, duplicates: 0, safe_to_activate: 0,
   });
   const [pipeline, setPipeline] = useState<PipelineStats>({
-    leads: 0, opportunities: 0, pipeline_value: 0, won: 0, lost: 0, by_stage: {},
+    leads: 0, opportunities: 0, pipeline_value: 0, won: 0, lost: 0, by_stage: {}, stuck: 0, next_action_due: 0,
   });
   const [inter, setInter] = useState<InteractionStats>({
     replies_due: 0, followups_today: 0, dormant: 0, warm: 0, bounces: 0,
