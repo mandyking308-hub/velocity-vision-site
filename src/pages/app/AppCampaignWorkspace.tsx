@@ -13,6 +13,11 @@ import { CREDIT_COSTS } from "@/lib/credits";
 import HumanReviewButton from "@/components/app/HumanReviewButton";
 import EmailSequenceSender from "@/components/app/EmailSequenceSender";
 import LeadFormConfig from "@/components/app/LeadFormConfig";
+import {
+  CADENCE_LABELS, CadenceType, LIFECYCLE_TONE, REFRESH_LABELS, RefreshStrategy,
+  computeNextRun, deriveLifecycle, nextActionLabel, plainEnglish,
+} from "@/lib/cadence";
+import { Pause, Play, Clock, Repeat } from "lucide-react";
 
 interface Campaign {
   id: string;
@@ -25,7 +30,19 @@ interface Campaign {
   slug: string | null;
   lead_form_config: any;
   lead_form_published: boolean;
+  cadence_type: CadenceType | null;
+  cadence_interval: number | null;
+  cadence_unit: string | null;
+  start_at: string | null;
+  timezone: string | null;
+  cadence_end_at: string | null;
+  cadence_max_runs: number | null;
+  next_run_at: string | null;
+  last_run_at: string | null;
+  runs_completed: number | null;
+  refresh_strategy: RefreshStrategy | null;
 }
+
 
 const copy = (text: string) => {
   navigator.clipboard.writeText(text);
