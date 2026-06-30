@@ -1,0 +1,64 @@
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useState, useEffect } from "react";
+import { useCredits } from "@/contexts/CreditsContext";
+import { Sparkles, CheckCircle2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { HUMAN_REVIEW_PRICE } from "@/lib/credits";
+
+interface Props { campaignId: string }
+
+export default function HumanReviewButton({ campaignId }: Props) {
+  const { user } = useAuth();
+  const { purchaseHumanReview } = useCredits();
+  const [open, setOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [existing, setExisting] = useState<{ status: string } | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const { data } = await supabase.from("human_reviews").select("status").eq("campaign_id", campaignId).maybeSingle();
+      setExisting(data as any);
+    })();
+  }, [user, campaignId, busy]);
+
+  if (existing) {
+    return (
+      <Button variant="outline" size="sm" disabled>
+        <CheckCircle2 className="h-4 w-4 mr-2" />
+        Human review: {existing.status}
+      </Button>
+    );
+  }
+
+  return (
+    <>
+      <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
+        <Sparkles className="h-4 w-4 mr-2" /> Get expert review
+      </Button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Premium Human Review</DialogTitle>
+            <DialogDescription>
+              A senior strategist reviews this campaign pack, sends written recommendations, and provides one async revision pass.
+            </DialogDescription>
+          </DialogHeader>
+          <ul className="text-sm text-muted-foreground space-y-1 list-disc pl-5">
+            <li>Independent expert review of strategy, copy and offer</li>
+            <li>Prioritised recommendations</li>
+            <li>One async revision pass on the pack</li>
+          </ul>
+          <DialogFooter className="mt-4 flex items-center justify-between">
+            <span className="text-lg font-semibold">£{HUMAN_REVIEW_PRICE}</span>
+            <Button disabled={busy} onClick={async () => { setBusy(true); await purchaseHumanReview(campaignId); setBusy(false); setOpen(false); }}>
+              {busy ? "Purchasing…" : "Purchase review"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
