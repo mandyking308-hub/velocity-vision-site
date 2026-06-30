@@ -69,14 +69,14 @@ export default function AppEmailConnections() {
     if (!user) return;
     await supabase.from("email_connections").update({ is_default: false }).eq("user_id", user.id);
     await supabase.from("email_connections").update({ is_default: true }).eq("id", id);
-    toast.success("Default sender updated");
+    toast.success(tc("toasts.defaultSenderUpdated"));
     load();
   };
 
   const remove = async (id: string) => {
     if (!confirm("Disconnect this email account?")) return;
     await supabase.from("email_connections").delete().eq("id", id);
-    toast.success("Disconnected");
+    toast.success(tc("toasts.disconnected"));
     load();
   };
 
