@@ -74,6 +74,8 @@ import AppDataVault from "./pages/app/AppDataVault.tsx";
 import AppDataVaultUpload from "./pages/app/AppDataVaultUpload.tsx";
 import AppDataVaultImport from "./pages/app/AppDataVaultImport.tsx";
 import AppActivation from "./pages/app/AppActivation.tsx";
+import AppFollowUp from "./pages/app/AppFollowUp.tsx";
+import AppPipeline from "./pages/app/AppPipeline.tsx";
 import DemoDataVault from "./pages/demo/DemoDataVault.tsx";
 import HostedCapture from "./pages/HostedCapture.tsx";
 
