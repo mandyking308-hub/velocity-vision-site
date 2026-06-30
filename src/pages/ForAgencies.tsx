@@ -4,7 +4,7 @@ import SEO from "@/components/SEO";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Building2, ShieldCheck, Coins, Layers, Inbox, Eye } from "lucide-react";
+import { ArrowRight, Building2, ShieldCheck, Coins, Layers, Inbox, Eye, Mail, Share2, Newspaper, Megaphone, GitBranch, RefreshCw, Zap, Sparkles, CheckCircle2, TrendingUp, XCircle, Clock, Users, BarChart3 } from "lucide-react";
 
 const benefits = [
   { icon: Layers, title: "One workspace per client", desc: "Isolated data, isolated activation, isolated pipeline. No cross-client contamination, no context-switching tax." },
