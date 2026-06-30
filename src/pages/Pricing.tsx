@@ -6,12 +6,27 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Check } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { useCurrency } from "@/hooks/useCurrency";
+import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
 
-const plans = [
+interface PlanDef {
+  sku: SkuId;
+  name: string;
+  tagline: string;
+  unit: string;
+  best: string;
+  credits: string;
+  features: string[];
+  cta: string;
+  highlight?: boolean;
+  addon?: boolean;
+}
+
+const plans: PlanDef[] = [
   {
+    sku: "vv_starter_oneoff",
     name: "Starter",
     tagline: "Self-Serve Campaign Launch",
-    price: "£149",
     unit: "one-off",
     best: "Your first guided campaign launch",
     credits: "Includes 25 Campaign Credits",
@@ -26,9 +41,9 @@ const plans = [
     cta: "Start Starter",
   },
   {
+    sku: "vv_growth_monthly",
     name: "Growth",
     tagline: "Monthly Campaign Engine",
-    price: "£249",
     unit: "per month",
     best: "Businesses running campaigns continuously",
     credits: "Includes 80 Campaign Credits / month",
@@ -44,9 +59,9 @@ const plans = [
     cta: "Start Growth",
   },
   {
+    sku: "vv_agency_monthly",
     name: "Agency Workspace",
     tagline: "Multi-client workspace",
-    price: "£499",
     unit: "per month",
     best: "Agencies, consultants, fractional teams",
     credits: "Includes 250 pooled Campaign Credits / month",
@@ -61,9 +76,9 @@ const plans = [
     cta: "Start Agency Workspace",
   },
   {
+    sku: "vv_human_review_oneoff",
     name: "Premium Human Review",
     tagline: "Optional add-on",
-    price: "£199",
     unit: "per review",
     best: "Optional only — never required",
     credits: "Adds expert review to one campaign",
@@ -76,6 +91,7 @@ const plans = [
     addon: true,
   },
 ];
+
 
 const faqs = [
   { q: "What are Campaign Credits?", a: "Campaign Credits are your allowance for AI-heavy actions like generating a full campaign pack, social pack, press release, video pack or email sequence. Browsing, editing, moving leads, exporting and reading reports are always free." },
