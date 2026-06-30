@@ -52,7 +52,8 @@ Deno.serve(async (req) => {
     return json({ ok: true, lead_id: lead?.id });
   } catch (e) {
     console.error("lead-submit error:", e);
-    return json({ error: (e as Error).message }, 500);
+    console.error("lead-submit error:", e);
+    return json({ error: "Could not submit form. Please try again." }, 500);
   }
 });
 
