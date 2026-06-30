@@ -153,6 +153,8 @@ const AnimatedRoutes = () => {
           <Route path="campaigns/new" element={<AppCampaignNew />} />
           <Route path="campaigns/:id" element={<AppCampaignWorkspace />} />
           <Route path="leads" element={<AppLeads />} />
+          <Route path="follow-up" element={<AppFollowUp />} />
+          <Route path="pipeline" element={<AppPipeline />} />
           <Route path="activate" element={<AppActivation />} />
           <Route path="performance" element={<AppPerformance />} />
           <Route path="templates" element={<AppTemplates />} />
