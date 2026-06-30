@@ -8,7 +8,11 @@
     "forAgencies": "Pour les agences",
     "help": "Aide",
     "login": "Connexion",
-    "signup": "S'inscrire"
+    "signup": "S'inscrire",
+    "about": "À propos",
+    "templates": "Modèles",
+    "seePricing": "Voir les tarifs",
+    "startCampaign": "Démarrer une campagne"
   },
   "hero": {
     "eyebrow": "Plateforme de croissance marketing",

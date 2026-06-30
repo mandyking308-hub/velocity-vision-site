@@ -8,7 +8,11 @@
     "forAgencies": "For agencies",
     "help": "Help",
     "login": "Log in",
-    "signup": "Sign up"
+    "signup": "Sign up",
+    "about": "About",
+    "templates": "Templates",
+    "seePricing": "See pricing",
+    "startCampaign": "Start campaign"
   },
   "hero": {
     "eyebrow": "Marketing growth launchpad",
