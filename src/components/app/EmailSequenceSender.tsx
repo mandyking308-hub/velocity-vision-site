@@ -104,7 +104,7 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
                 {e.preview && <p className="text-xs text-muted-foreground">Preview: {e.preview}</p>}
               </div>
               <div className="flex gap-2">
-                <Button variant="ghost" size="sm" onClick={() => { navigator.clipboard.writeText(`${e.subject}\n\n${e.body}`); toast.success("Copied"); }}>
+                <Button variant="ghost" size="sm" onClick={() => { navigator.clipboard.writeText(`${e.subject}\n\n${e.body}`); toast.success(i18n.t("common:toasts.copied")); }}>
                   <Copy className="h-4 w-4" />
                 </Button>
                 <Button size="sm" disabled={noConnection || leads.length === 0} onClick={() => setOpenIdx(i)}>
