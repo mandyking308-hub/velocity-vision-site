@@ -265,45 +265,24 @@ export default function AppDashboard() {
             <CardContent className="p-4 flex flex-col justify-between h-full">
               <div className="text-xs font-medium text-primary">Recommended</div>
               <div className="text-sm mt-1">Activate <b>{vault.safe_to_activate}</b> safe contacts now.</div>
-              <Button size="sm" className="mt-2" onClick={() => navigate("/app/leads")}>Activate <ArrowRight className="h-3.5 w-3.5 ml-1" /></Button>
+              <Button size="sm" className="mt-2" onClick={() => navigate("/app/activate")}>Activate <ArrowRight className="h-3.5 w-3.5 ml-1" /></Button>
             </CardContent>
           </Card>
         </div>
       </div>
 
-      {/* C. Activation Readiness */}
+      {/* C. Activation Readiness + Send Safety Engine */}
       <SectionHeader
         icon={ShieldCheck}
-        title="Activation Readiness"
-        desc="Safe outreach controls — only the right people, at the right pace."
-        cta={{ label: "Open send controls", to: "/app/settings" }}
+        title="Activation Readiness & Send Safety"
+        desc="Store generously. Activate carefully. We protect your sender reputation by default."
+        cta={{ label: "Open pre-flight", to: "/app/activate" }}
       />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Card className="lg:col-span-2">
-          <CardContent className="p-5 space-y-3">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <MiniStat label="Send credits" value={remaining} />
-              <MiniStat label="Safe send today" value={safeSendToday} />
-              <MiniStat label="Risky excluded" value={vault.risky} tone="warn" />
-              <MiniStat label="Blocked" value={vault.blocked} tone="danger" />
-            </div>
-            <div className="rounded-md bg-muted/50 p-3 text-sm space-y-1">
-              <div className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600" /><b>{vault.safe_to_activate}</b> contacts safe to activate</div>
-              <div className="flex items-center gap-2"><AlertTriangle className="h-4 w-4 text-amber-600" /><b>{vault.needs_review}</b> need review</div>
-              <div className="flex items-center gap-2"><AlertTriangle className="h-4 w-4 text-rose-600" /><b>{vault.risky}</b> risky records excluded</div>
-              <div className="flex items-center gap-2"><Zap className="h-4 w-4 text-primary" />Recommended send today: <b>{recommendedSend}</b> warm contacts</div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-base flex items-center gap-2"><Mail className="h-4 w-4" />Sender status</CardTitle></CardHeader>
-          <CardContent className="space-y-2 text-sm">
-            <div className="flex items-center justify-between"><span>Connected mailbox</span><Badge variant="outline">Check</Badge></div>
-            <div className="flex items-center justify-between"><span>Domain authentication</span><Badge variant="outline">SPF / DKIM</Badge></div>
-            <div className="flex items-center justify-between"><span>Scheduled sends today</span><b>0</b></div>
-            <Button size="sm" variant="outline" className="w-full" onClick={() => navigate("/app/settings")}>Open email connections</Button>
-          </CardContent>
-        </Card>
+        <div className="lg:col-span-2">
+          <SendSafetyPanel s={safety} used={sendsUsedToday} scheduled={sendsScheduledToday} />
+        </div>
+        <SenderStatusCard state={sender} health={safety.health} scheduledToday={sendsScheduledToday} fromEmail={senderEmail} />
       </div>
 
       {/* C2. Campaign cadence / upcoming activity */}
