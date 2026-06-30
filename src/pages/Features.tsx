@@ -122,6 +122,33 @@ const Features = () => (
           ))}
         </div>
       </section>
+
+      {/* Commercial control & agency scale strip */}
+      <section className="section-padding bg-secondary/40">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="bg-card border border-border/50 rounded-xl p-6 shadow-card">
+              <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Billing & Credits</p>
+              <h3 className="text-xl font-display font-semibold text-foreground mb-2">Scale without billing surprises</h3>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                Plan credits, instant top-ups, multi-currency checkout and tax handled locally. Pay for what you activate, not for data sitting in the vault.
+              </p>
+            </motion.div>
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }} className="bg-card border border-border/50 rounded-xl p-6 shadow-card">
+              <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Agency Workspaces</p>
+              <h3 className="text-xl font-display font-semibold text-foreground mb-2">One account, every client</h3>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                Isolated client workspaces, pooled credits and pooled governance, with cross-client visibility across the whole book.
+              </p>
+            </motion.div>
+          </div>
+          <div className="mt-10 text-center">
+            <Button variant="cta" size="lg" asChild>
+              <Link to="/auth">Start your workspace <ArrowRight size={18} /></Link>
+            </Button>
+          </div>
+        </div>
+      </section>
     </main>
     <Footer />
   </>
