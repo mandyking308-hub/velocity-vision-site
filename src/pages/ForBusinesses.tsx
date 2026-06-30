@@ -4,7 +4,7 @@ import SEO from "@/components/SEO";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Database, ShieldCheck, Inbox, GitBranch, RefreshCw, Eye } from "lucide-react";
+import { ArrowRight, Database, ShieldCheck, Inbox, GitBranch, RefreshCw, Eye, Mail, Share2, Newspaper, Megaphone, Zap, CheckCircle2, XCircle, Clock, TrendingUp, Layers, Sparkles } from "lucide-react";
 
 const cases = [
   { icon: Database, title: "Organise messy data", desc: "Upload spreadsheets and exports. Field-map once. See what's usable, what's duplicated, what's risky." },
@@ -13,6 +13,31 @@ const cases = [
   { icon: GitBranch, title: "Move pipeline", desc: "Promote warm contacts into opportunities, track value and progress without buying a separate CRM." },
   { icon: RefreshCw, title: "Repeat what works", desc: "Recurring cadence, reusable segments and templates. The next run starts from the last winner, not a blank page." },
   { icon: Eye, title: "See the whole picture", desc: "Data, sending, replies and pipeline in one workspace. No more guessing which tool holds the truth." },
+];
+
+const capabilities = [
+  { icon: Mail, title: "Email sequences", desc: "Multi-step outreach with timing, follow-ups and recurring cadence built in." },
+  { icon: Share2, title: "Social media content", desc: "Launch posts, hooks and platform variants generated alongside your outreach." },
+  { icon: Newspaper, title: "Press releases", desc: "Distribution-ready announcements for launches, milestones and funding news." },
+  { icon: Megaphone, title: "Campaigns", desc: "Brief once, generate the full asset pack, activate the right segment, track the result." },
+  { icon: Inbox, title: "Follow-up", desc: "Action queue for replies. Snooze, stuck-deal alerts, nothing slipping through inboxes." },
+  { icon: GitBranch, title: "Pipeline", desc: "Promote warm contacts into opportunities and track value — no separate CRM needed." },
+];
+
+const replaces = [
+  { icon: Layers, title: "Spreadsheets for contact data", desc: "Replaced by the Data Vault — field-mapped, deduped, quality-scored." },
+  { icon: XCircle, title: "Six disconnected tools", desc: "One workspace covers outreach, social, PR, replies and pipeline." },
+  { icon: Clock, title: "Freelancer & agency overhead", desc: "Generate the assets in-house in minutes instead of waiting on a retainer." },
+  { icon: Inbox, title: "Missed follow-up in inboxes", desc: "Every reply lands in a shared action queue with snooze and stuck-deal flags." },
+  { icon: RefreshCw, title: "Manual coordination", desc: "Recurring cadence and reusable segments mean the next run runs itself." },
+];
+
+const outcomes = [
+  { icon: Zap, title: "Faster outreach", desc: "Brief to live campaign in minutes, not weeks." },
+  { icon: Sparkles, title: "Cleaner execution", desc: "Sender verification, daily caps and risky-record limits keep activation safe." },
+  { icon: CheckCircle2, title: "Less admin", desc: "One login, one source of truth — no copy-pasting between tools." },
+  { icon: Inbox, title: "Consistent follow-up", desc: "Snooze, states and stuck-deal alerts keep every warm contact moving." },
+  { icon: TrendingUp, title: "Pipeline movement", desc: "Visible opportunity value and progress, updated as you work." },
 ];
 
 const ForBusinesses = () => (
