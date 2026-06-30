@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Rocket, Users, BarChart3, LayoutTemplate, Settings, Briefcase, LogOut, Plus, CreditCard, Database } from "lucide-react";
+import { LayoutDashboard, Rocket, Users, BarChart3, LayoutTemplate, Settings, Briefcase, LogOut, Plus, CreditCard, Database, MessageSquare, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useWorkspace, WorkspaceProvider } from "@/contexts/WorkspaceContext";
@@ -11,7 +11,9 @@ const nav = [
   { to: "/app", label: "Launch", icon: LayoutDashboard, end: true },
   { to: "/app/data-vault", label: "Data Vault", icon: Database },
   { to: "/app/campaigns", label: "Campaigns", icon: Rocket },
-  { to: "/app/leads", label: "Pipeline", icon: Users },
+  { to: "/app/follow-up", label: "Replies & Follow-up", icon: MessageSquare },
+  { to: "/app/leads", label: "Leads", icon: Users },
+  { to: "/app/pipeline", label: "Pipeline", icon: TrendingUp },
   { to: "/app/performance", label: "Performance", icon: BarChart3 },
   { to: "/app/templates", label: "Templates", icon: LayoutTemplate },
   { to: "/app/workspaces", label: "Workspaces", icon: Briefcase },
