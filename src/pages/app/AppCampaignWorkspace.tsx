@@ -12,7 +12,7 @@ import i18n from "@/i18n";
 import { useTranslation } from "react-i18next";
 import { useCredits } from "@/contexts/CreditsContext";
 import { CREDIT_COSTS } from "@/lib/credits";
-import HumanReviewButton from "@/components/app/HumanReviewButton";
+
 import EmailSequenceSender from "@/components/app/EmailSequenceSender";
 import LeadFormConfig from "@/components/app/LeadFormConfig";
 import {
@@ -183,7 +183,7 @@ export default function AppCampaignWorkspace() {
           )}
           <Button variant="outline" size="sm" onClick={regenerate}><Sparkles className="h-4 w-4 mr-1" />Regenerate ({CREDIT_COSTS.full_campaign_pack} credits)</Button>
           <Button variant="outline" size="sm" onClick={exportMd}><Download className="h-4 w-4 mr-1" />Export</Button>
-          <HumanReviewButton campaignId={c.id} />
+          
         </div>
       </div>
 

@@ -197,8 +197,8 @@ const ROICalculator = () => {
                   </Link>
                 </Button>
                 <Button variant="hero-outline" size="lg" className="w-full" asChild>
-                  <Link to="/book-demo">
-                    See how we'd build this for you <ArrowRight size={18} />
+                  <Link to="/auth">
+                    Start your workspace <ArrowRight size={18} />
                   </Link>
                 </Button>
               </div>

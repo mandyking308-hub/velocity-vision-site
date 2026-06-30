@@ -211,28 +211,6 @@ export default function AppBilling() {
         </div>
       </section>
 
-      <section>
-        <h2 className="text-xl font-semibold mb-3">Premium Human Review</h2>
-        <Card>
-          <CardContent className="p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <div className="font-semibold">Optional add-on — {priceFor("vv_human_review_oneoff", currency).formatted} per review</div>
-              <p className="text-sm text-muted-foreground">Senior strategist review of one campaign pack. Purchase from inside any campaign.</p>
-            </div>
-            <Button variant="outline" asChild><a href="/app/campaigns">Choose a campaign <ArrowUpRight className="h-4 w-4 ml-2" /></a></Button>
-          </CardContent>
-        </Card>
-        {reviews.length > 0 && (
-          <div className="mt-3 space-y-2">
-            {reviews.map((r) => (
-              <div key={r.id} className="flex justify-between border border-border rounded-md p-3 text-sm">
-                <div>{r.campaigns?.name || "Campaign"} — <span className="text-muted-foreground">{r.status}</span></div>
-                <div className="text-muted-foreground">{new Intl.NumberFormat(undefined, { style: "currency", currency: ((r as any).currency || "GBP").toUpperCase() }).format(r.amount)}</div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
 
       <section>
         <h2 className="text-xl font-semibold mb-3">Billing history</h2>
