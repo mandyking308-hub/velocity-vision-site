@@ -20,6 +20,12 @@ import BookDemo from "./pages/BookDemo.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import AuthPage from "./pages/AuthPage.tsx";
 import ForAgencies from "./pages/ForAgencies.tsx";
+import ForBusinesses from "./pages/ForBusinesses.tsx";
+import Pricing from "./pages/Pricing.tsx";
+import HowItWorks from "./pages/HowItWorks.tsx";
+import Features from "./pages/Features.tsx";
+import Templates from "./pages/Templates.tsx";
+import Help from "./pages/Help.tsx";
 import LegalCentre from "./pages/legal/LegalCentre.tsx";
 import LegalDocumentPage from "./pages/legal/LegalDocumentPage.tsx";
 import CRMLayout from "./pages/CRMLayout.tsx";
@@ -77,6 +83,12 @@ const AnimatedRoutes = () => {
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
         <Route path="/book-demo" element={<PageTransition><BookDemo /></PageTransition>} />
         <Route path="/for-agencies" element={<PageTransition><ForAgencies /></PageTransition>} />
+        <Route path="/for-businesses" element={<PageTransition><ForBusinesses /></PageTransition>} />
+        <Route path="/pricing" element={<PageTransition><Pricing /></PageTransition>} />
+        <Route path="/how-it-works" element={<PageTransition><HowItWorks /></PageTransition>} />
+        <Route path="/features" element={<PageTransition><Features /></PageTransition>} />
+        <Route path="/templates" element={<PageTransition><Templates /></PageTransition>} />
+        <Route path="/help" element={<PageTransition><Help /></PageTransition>} />
         <Route path="/legal" element={<PageTransition><LegalCentre /></PageTransition>} />
         <Route path="/legal/:slug" element={<PageTransition><LegalDocumentPage /></PageTransition>} />
         <Route path="/auth" element={<PageTransition><AuthPage /></PageTransition>} />
