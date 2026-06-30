@@ -6,7 +6,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 const faqs = [
   { q: "What does Velocity Vision actually replace?", a: "For most teams it replaces a stitched-together stack: a spreadsheet for contacts, a separate tool for email sequences, another for social, doc templates for press releases, an inbox-as-CRM for replies and a half-built pipeline tracker. All of that lives in one workspace here." },
-  { q: "Is this self-serve or done-for-you?", a: "Self-serve. You upload your data, review quality, generate outreach assets, activate safely and work the replies from your own workspace. Optional Premium Human Review is available if you want expert eyes on a specific campaign." },
+  { q: "Is this a self-serve workspace?", a: "Yes. You upload your data, review quality, generate outreach assets, activate safely and work the replies from your own workspace — entirely self-serve." },
   { q: "What outputs does it actually generate?", a: "From a single brief you get: email sequences, social media posts and hooks, a press release, and a short-form video pack (scripts, hooks, shot list, captions). All editable, all ready to plug into governed sending." },
   { q: "What does activation actually mean?", a: "Activation is the governed step where you connect and verify your sender, pick a safe segment from your Data Vault, set cadence and only then begin sending. Daily caps and risky-record limits are enforced by the platform — not by you remembering." },
   { q: "Do I still need a CRM or email tool?", a: "Not for the core flow. Outreach, replies, follow-up states and pipeline movement all live in the workspace. You can export at any time, and connect your own sender domain." },

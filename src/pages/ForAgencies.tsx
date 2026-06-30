@@ -39,7 +39,7 @@ const ForAgencies = () => (
                 <Link to="/auth">Start Agency Workspace <ArrowRight size={18} /></Link>
               </Button>
               <Button variant="hero-outline" size="lg" asChild>
-                <Link to="/contact">Talk to us about volume</Link>
+                <Link to="/contact">Send a volume enquiry</Link>
               </Button>
             </div>
           </motion.div>
@@ -173,7 +173,7 @@ const ForAgencies = () => (
               <Link to="/auth">Start Agency Workspace <ArrowRight size={18} /></Link>
             </Button>
             <Button variant="hero-outline" size="lg" asChild>
-              <Link to="/contact">Talk to us about volume</Link>
+              <Link to="/contact">Send a volume enquiry</Link>
             </Button>
             <Button variant="hero-outline" size="lg" asChild>
               <Link to="/pricing">See pricing</Link>

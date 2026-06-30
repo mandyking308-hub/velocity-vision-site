@@ -75,21 +75,6 @@ const plans: PlanDef[] = [
     ],
     cta: "Start Agency Workspace",
   },
-  {
-    sku: "vv_human_review_oneoff",
-    name: "Premium Human Review",
-    tagline: "Optional add-on",
-    unit: "per review",
-    best: "Optional only — never required",
-    credits: "Adds expert review to one activation",
-    features: [
-      "Senior strategist review of one campaign",
-      "Written recommendations",
-      "One async revision pass",
-    ],
-    cta: "Add Human Review",
-    addon: true,
-  },
 ];
 
 
@@ -100,7 +85,6 @@ const faqs = [
   { q: "What sending limits apply?", a: "Tiered daily caps protect deliverability: Starter and Growth have per-workspace limits; Agency has a pooled 1,000/day ceiling across all client workspaces. Risky records are capped at 10% of any batch (max 25)." },
   { q: "What happens if I run out of credits?", a: "The workspace stays fully usable — data, replies, pipeline and reports remain live. Only new AI generations pause. Top up in seconds or upgrade your plan." },
   { q: "Can agencies share credits across clients?", a: "Yes — Agency Workspace pools monthly credits and sending governance across every client workspace in the account." },
-  { q: "Is human review required?", a: "No. Premium Human Review is an optional paid add-on you can buy from inside any activation." },
 ];
 
 const Pricing = () => {
@@ -110,7 +94,7 @@ const Pricing = () => {
 
     <SEO
       title="Pricing — Velocity Vision commercial workspace"
-      description="Self-serve pricing for businesses and agencies. Generous data storage, governed sending, credits for heavy-value actions, and optional Premium Human Review."
+      description="Self-serve pricing for businesses and agencies. Generous data storage, governed sending, and credits for heavy-value actions."
       path="/pricing"
     />
     <Navbar />
@@ -127,10 +111,10 @@ const Pricing = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button variant="hero" size="lg" asChild>
-                <Link to="/app/billing">Start your workspace <ArrowRight size={18} /></Link>
+                <Link to="/auth">Start your workspace <ArrowRight size={18} /></Link>
               </Button>
               <Button variant="hero-outline" size="lg" asChild>
-                <Link to="/contact">Talk to us about volume</Link>
+                <Link to="/app/billing">View agency workspace</Link>
               </Button>
             </div>
           </motion.div>
@@ -140,7 +124,7 @@ const Pricing = () => {
 
       <section className="relative z-10 bg-background px-6 md:px-12 lg:px-20 -mt-16 md:-mt-20 lg:-mt-28 pt-0 pb-16 md:pb-20 lg:pb-24">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {plans.map((p, i) => (
               <motion.div
                 key={p.name}

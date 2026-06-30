@@ -103,13 +103,12 @@ const HowItWorks = () => (
 
       <section className="section-padding bg-background">
         <div className="max-w-3xl mx-auto text-center">
-          <span className="inline-block text-xs font-semibold uppercase tracking-wider text-accent border border-accent/30 rounded-full px-3 py-1 mb-4">Optional add-on</span>
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">Expert eyes, only when you want them</h2>
+          <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">Self-serve, end to end</h2>
           <p className="text-muted-foreground text-lg mb-6">
-            Premium Human Review is a paid, optional extra. A strategist reviews a specific activation and sends back written recommendations plus one revision pass. It is never required and never blocks you launching.
+            Everything runs from your own workspace — upload, generate, activate, reply and report. No call required to get started.
           </p>
-          <Button variant="outline" asChild>
-            <Link to="/pricing">See pricing <ArrowRight size={16} /></Link>
+          <Button variant="cta" asChild>
+            <Link to="/auth">Start your workspace <ArrowRight size={16} /></Link>
           </Button>
         </div>
       </section>

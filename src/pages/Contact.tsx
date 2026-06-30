@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 const routes = [
-  { icon: Building2, title: "Sales — enterprise & agency volume", desc: "Multi-workspace rollouts, agency-scale send governance, custom commercial terms.", action: "Talk to sales", to: "/book-demo" },
+  { icon: Building2, title: "Enterprise & agency volume", desc: "Multi-workspace rollouts, agency-scale send governance, custom commercial terms.", action: "Send a volume enquiry", to: "#contact-form" },
   { icon: LifeBuoy, title: "Product support", desc: "Help using the workspace — uploads, activation, sender setup, replies, pipeline.", action: "Open in-app support", to: "/app" },
   { icon: CreditCard, title: "Billing & account help", desc: "Plan changes, currency, invoices, top-ups, tax queries.", action: "Open billing help", to: "/app/billing" },
   { icon: Scale, title: "Legal & compliance", desc: "Terms, privacy, data processing, security and compliance questions.", action: "Open legal route", to: "#contact-form" },
@@ -151,9 +151,9 @@ const Contact = () => {
                   </div>
                 </div>
                 <div className="bg-card border border-border/50 rounded-xl p-6 shadow-card">
-                  <h3 className="font-display font-semibold text-foreground mb-2">Enterprise or agency volume?</h3>
-                  <p className="text-muted-foreground text-sm mb-4">For multi-workspace rollouts, pooled send governance, or custom terms — book a 30-minute call.</p>
-                  <Button variant="cta" size="default" asChild><Link to="/book-demo">Book an enterprise call</Link></Button>
+                  <h3 className="font-display font-semibold text-foreground mb-2">Agency or volume enquiry?</h3>
+                  <p className="text-muted-foreground text-sm mb-4">For larger workspaces, agency usage or custom billing questions, send a message and we'll route it internally.</p>
+                  <Button variant="cta" size="default" asChild><Link to="#contact-form">Send a volume enquiry</Link></Button>
                 </div>
               </motion.div>
             </div>
