@@ -44,6 +44,7 @@ import QADashboard from "./pages/crm/QADashboard.tsx";
 import LegalCompliancePage from "./pages/crm/LegalCompliancePage.tsx";
 import FounderManual from "./pages/crm/FounderManual.tsx";
 import FounderMonetisation from "./pages/crm/FounderMonetisation.tsx";
+import FounderIntelligence from "./pages/crm/FounderIntelligence.tsx";
 import PortalLayout from "./pages/PortalLayout.tsx";
 import PortalDashboard from "./pages/portal/PortalDashboard.tsx";
 import PortalCampaigns from "./pages/portal/PortalCampaigns.tsx";
