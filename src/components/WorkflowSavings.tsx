@@ -13,7 +13,7 @@ const fmt = (v: number) =>
   );
 
 const VELOCITY_COST_MONTHLY = 249; // Growth plan benchmark
-const HOURLY_RATE = 45; // blended team hourly rate, GBP
+const DEFAULT_HOURLY_RATE = 45; // blended team hourly rate, GBP — user-editable
 
 const WorkflowSavings = () => {
   const [campaigns, setCampaigns] = useState(2);
@@ -21,6 +21,7 @@ const WorkflowSavings = () => {
   const [hoursAssetsPerCampaign, setHoursAssetsPerCampaign] = useState(8);
   const [toolSpend, setToolSpend] = useState(280);
   const [freelancerSpend, setFreelancerSpend] = useState(600);
+  const [hourlyRate, setHourlyRate] = useState(DEFAULT_HOURLY_RATE);
 
   const { hoursSaved, timeSavingsValue, toolSavings, totalMonthly, totalAnnual, netVsVelocity } = useMemo(() => {
     const c = Math.max(0, campaigns || 0);
@@ -28,11 +29,12 @@ const WorkflowSavings = () => {
     const hAssets = Math.max(0, hoursAssetsPerCampaign || 0);
     const tools = Math.max(0, toolSpend || 0);
     const free = Math.max(0, freelancerSpend || 0);
+    const rate = Math.max(0, hourlyRate || 0);
 
     // Estimate ~70% of repetitive data + asset hours collapse into the workspace flow
     const totalHours = c * (hData + hAssets);
     const savedHrs = totalHours * 0.7;
-    const timeValue = savedHrs * HOURLY_RATE;
+    const timeValue = savedHrs * rate;
     // Assume ~60% of stitched-together tool spend overlaps the workspace
     const toolSaved = tools * 0.6 + free * 0.5;
     const monthly = timeValue + toolSaved;
@@ -46,7 +48,7 @@ const WorkflowSavings = () => {
       totalAnnual: annual,
       netVsVelocity: net,
     };
-  }, [campaigns, hoursDataPerCampaign, hoursAssetsPerCampaign, toolSpend, freelancerSpend]);
+  }, [campaigns, hoursDataPerCampaign, hoursAssetsPerCampaign, toolSpend, freelancerSpend, hourlyRate]);
 
   const positive = netVsVelocity > 0;
 
