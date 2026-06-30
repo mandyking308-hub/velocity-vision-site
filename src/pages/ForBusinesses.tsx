@@ -194,9 +194,6 @@ const ForBusinesses = () => (
 );
 
 export default ForBusinesses;
-    </main>
-    <Footer />
-  </>
-);
+
 
 export default ForBusinesses;
