@@ -258,15 +258,30 @@ export default function FounderIntelligence() {
         </CardContent>
       </Card>
 
-      {/* Customer Profitability */}
+      {/* Customer Profitability — PROXY */}
       <Card>
-        <CardHeader><CardTitle className="flex items-center gap-2"><TrendingUp size={18} /> Customer Profitability</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <TrendingUp size={18} /> Customer Profitability
+            <Badge variant="outline" className="ml-2 text-[10px] uppercase tracking-wide">Proxy · estimated</Badge>
+          </CardTitle>
+        </CardHeader>
         <CardContent>
+          <div className="mb-3 flex items-start gap-2 rounded-md border border-dashed border-amber-300 bg-amber-50/60 dark:bg-amber-950/20 dark:border-amber-900 p-3 text-xs text-amber-900 dark:text-amber-200">
+            <Info className="h-4 w-4 mt-0.5 shrink-0" />
+            <div>
+              Margin numbers below use <b>estimated cost coefficients</b>, not real cost accounting.
+              Replace <code className="font-mono">COST_COEFFICIENTS</code> in this file with live infra / AI gateway / Stripe figures
+              when cost telemetry is wired in. Today's coefficients:
+              <span className="ml-1 font-mono">send≈{COST_COEFFICIENTS.perSendProxy}</span>,
+              <span className="ml-1 font-mono">upload≈{COST_COEFFICIENTS.perUploadProxy}</span>.
+            </div>
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b text-left text-xs text-muted-foreground">
-                  <th className="py-2">Customer</th><th>Plan</th><th>Revenue</th><th>Sends</th><th>Uploads</th><th>Credits used</th><th>Burn</th><th>Margin proxy</th>
+                  <th className="py-2">Customer</th><th>Plan</th><th>Revenue</th><th>Sends</th><th>Uploads</th><th>Credits used</th><th>Burn</th><th>Margin (proxy)</th>
                 </tr>
               </thead>
               <tbody>
@@ -279,16 +294,20 @@ export default function FounderIntelligence() {
                     <td>{c.uploads}</td>
                     <td>{c.used}</td>
                     <td>{c.allowance ? `${Math.round(c.burnPct * 100)}%` : "—"}</td>
-                    <td className={c.marginScore < 0 ? "text-destructive" : "text-emerald-600"}>{c.marginScore.toFixed(1)}</td>
+                    <td className={c.marginScore < COST_COEFFICIENTS.marginWarningBelow ? "text-destructive" : "text-emerald-600"}>{c.marginScore.toFixed(1)}</td>
                   </tr>
                 ))}
                 {customers.length === 0 && <tr><td colSpan={8} className="text-muted-foreground py-4">No active customers yet.</td></tr>}
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-muted-foreground mt-3">Margin proxy = plan + top-up revenue minus weighted usage intensity. Directional indicator, not accounting truth.</p>
+          <p className="text-xs text-muted-foreground mt-3">
+            Margin (proxy) = plan + top-up revenue − (sends × send-coefficient + uploads × upload-coefficient).
+            Directional indicator only — not accounting truth. Wire real per-unit costs to make this a true margin view.
+          </p>
         </CardContent>
       </Card>
+
 
       {/* Alerts */}
       <Card>
