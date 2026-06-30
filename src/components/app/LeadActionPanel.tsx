@@ -123,6 +123,22 @@ export default function LeadActionPanel({
           <Quick onClick={markDormant} icon={Snowflake}>Dormant</Quick>
           <Quick onClick={() => snooze(3)} icon={PauseCircle}>Snooze 3d</Quick>
           <Quick onClick={() => snooze(7)} icon={PauseCircle}>Snooze 7d</Quick>
+          <Popover open={snoozeOpen} onOpenChange={setSnoozeOpen}>
+            <PopoverTrigger asChild>
+              <Button size="sm" variant="outline" className="h-7 text-xs px-2">
+                <CalendarIcon className="h-3 w-3 mr-1" />Custom
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                disabled={(d) => d < new Date(new Date().setHours(0, 0, 0, 0))}
+                onSelect={(d) => d && snoozeUntil(d)}
+                initialFocus
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
           <Quick onClick={markWon} icon={CheckCircle2}>Won</Quick>
           <Quick onClick={markLost} icon={XCircle}>Lost</Quick>
         </div>
