@@ -66,7 +66,45 @@
     "new": "Nueva campaña",
     "schedule": "Programación",
     "cadence": "Cadencia",
-    "language": "Idioma de la campaña"
+    "language": "Idioma de la campaña",
+    "toasts": {
+      "paused": "Campaña pausada",
+      "resumed": "Campaña reanudada",
+      "runLogged": "Ejecución registrada · próxima ejecución programada",
+      "finalRunLogged": "Última ejecución registrada · campaña completada",
+      "packRegenerated": "Pack regenerado",
+      "draftSaved": "Campaña guardada como borrador",
+      "draftSavedDesc": "Añade créditos para desbloquear el pack generado por IA.",
+      "packGenerated": "Pack de campaña generado",
+      "generateFailed": "Error al generar la campaña"
+    }
+  },
+  "sender": {
+    "toasts": {
+      "noDomain": "Aún no hay dominio de remitente para verificar.",
+      "verified": "Dominio verificado",
+      "verifiedDesc": "SPF y DKIM correctos para {{domain}}.",
+      "notVerified": "Dominio no totalmente verificado",
+      "verifyFailed": "Error de verificación"
+    }
+  },
+  "email": {
+    "toasts": {
+      "credentialsRequired": "Correo, usuario y contraseña son obligatorios",
+      "savedConnectError": "Guardado pero no se pudo conectar: {{error}}",
+      "inboxConnected": "Bandeja conectada",
+      "connectFirst": "Conecta primero un correo",
+      "pickLead": "Selecciona al menos un lead con correo",
+      "scheduled": "{{count}} programado(s)",
+      "sent": "{{count}} enviado(s)",
+      "failed": "{{count}} fallido(s)"
+    }
+  },
+  "leadForm": {
+    "toasts": {
+      "saveFailed": "No se pudo guardar el formulario",
+      "saved": "Formulario de leads guardado"
+    }
   },
   "followUp": {
     "title": "Respuestas y seguimiento",
