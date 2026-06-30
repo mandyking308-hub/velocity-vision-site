@@ -25,6 +25,8 @@ interface Props {
 }
 
 export default function LeadFormConfig({ campaignId, slug, initial, packDefaults, published }: Props) {
+  const { t } = useTranslation("app");
+  const tc = useTranslation("common").t;
   const [cfg, setCfg] = useState<Config>({
     headline: initial.headline || packDefaults.headline || "",
     subheadline: initial.subheadline || packDefaults.subheadline || "",
