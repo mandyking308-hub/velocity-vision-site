@@ -16,8 +16,8 @@ import FinalCTA from "@/components/FinalCTA";
 const Index = () => (
   <>
     <SEO
-      title={"Velocity Vision — Self-serve marketing campaign launchpad"}
-      description={"Launch your next marketing campaign in a weekend. Self-serve platform for businesses and agencies — guided briefs, AI-generated campaign packs, lead capture, pipeline and reporting."}
+      title={"Velocity Vision — Commercial operating workspace for outreach & pipeline"}
+      description={"From data to pipeline in one workspace. Upload contacts, review quality, activate safely, create outreach, work replies and move opportunities — for businesses and agencies."}
       path="/"
       jsonLd={{
         "@context": "https://schema.org",
@@ -26,7 +26,7 @@ const Index = () => (
             "@type": "Organization",
             "name": "Velocity Vision",
             "url": "https://velocity-outreach.com",
-            "description": "Self-serve marketing campaign launchpad for businesses and agencies.",
+            "description": "Commercial operating workspace for outreach, replies and pipeline. Self-serve, multilingual, multi-currency.",
           },
           {
             "@type": "WebSite",
