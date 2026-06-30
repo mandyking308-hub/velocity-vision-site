@@ -114,20 +114,20 @@ const Pricing = () => {
       path="/pricing"
     />
     <Navbar />
-    <main className="pt-24">
-      <section className="section-padding bg-hero">
-        <div className="max-w-5xl mx-auto text-center">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+    <main className="pt-20">
+      <section className="relative bg-hero px-6 md:px-12 lg:px-20 pt-16 pb-28 md:pt-20 md:pb-36 lg:pt-24 lg:pb-44">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Pricing</p>
-            <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-primary-foreground mb-5">
               Pay for governed action, not for stored data
             </h1>
-            <p className="text-primary-foreground/75 text-lg mb-8 max-w-2xl mx-auto">
+            <p className="text-primary-foreground/80 text-lg md:text-xl mb-8 max-w-2xl mx-auto">
               Storage is generous. Sending stays safe. Credits cover heavy-value AI generations. Scale with top-ups, not surprise bills.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button variant="hero" size="lg" asChild>
-                <Link to="/app/billing">Choose your plan <ArrowRight size={18} /></Link>
+                <Link to="/app/billing">Start your workspace <ArrowRight size={18} /></Link>
               </Button>
               <Button variant="hero-outline" size="lg" asChild>
                 <Link to="/contact">Talk to us about volume</Link>
@@ -136,6 +136,7 @@ const Pricing = () => {
           </motion.div>
         </div>
       </section>
+
 
       <section className="section-padding bg-background">
         <div className="max-w-7xl mx-auto">
