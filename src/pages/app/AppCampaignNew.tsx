@@ -78,24 +78,25 @@ export default function AppCampaignNew() {
     try {
       const pack = generatePack(brief);
       const slug = makeSlug(brief.name || "campaign");
-      const { data, error } = await supabase
-        .from("campaigns")
-        .insert({
-          name: brief.name,
-          description: brief.offer,
-          goal: brief.goal,
-          campaign_kind: brief.kind,
-          status: "active" as any,
-          type: "marketing" as any,
-          owner_id: user.id,
-          created_by: user.id,
-          workspace_id: workspaceId,
-          brief: brief as any,
-          pack: pack as any,
-          slug,
-          objective: `${brief.goal} — ${brief.cta}`,
-          target_audience_description: brief.audience,
-        })
+      const insertRow: any = {
+        name: brief.name,
+        description: brief.offer,
+        goal: brief.goal,
+        campaign_kind: brief.kind,
+        status: "active",
+        type: "marketing",
+        owner_id: user.id,
+        created_by: user.id,
+        workspace_id: workspaceId,
+        company_id: null,
+        brief,
+        pack,
+        slug,
+        objective: `${brief.goal} — ${brief.cta}`,
+        target_audience_description: brief.audience,
+      };
+      const { data, error } = await (supabase.from("campaigns") as any)
+        .insert(insertRow)
         .select("id")
         .single();
       if (error) throw error;
