@@ -328,15 +328,15 @@ export default function AppDashboard() {
       <SectionHeader
         icon={MessageSquare}
         title="Replies and follow-up"
-        desc="Interaction intelligence — never miss a warm signal."
-        cta={{ label: "Open interaction queue", to: "/app/leads" }}
+        desc="Who replied, who's overdue, what's warm. This is where you start your day."
+        cta={{ label: "Open follow-up queue", to: "/app/follow-up" }}
       />
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <BigStat label="Replies need action" value={inter.replies_due} icon={MessageSquare} tone="warn" />
-        <BigStat label="Follow-ups due today" value={inter.followups_today} icon={Mail} tone="warn" />
-        <BigStat label="Warm contacts" value={inter.warm} icon={Zap} tone="good" />
-        <BigStat label="Dormant" value={inter.dormant} icon={AlertTriangle} />
-        <BigStat label="Bounces" value={inter.bounces} icon={AlertTriangle} tone="danger" />
+        <Link to="/app/follow-up?tab=replied"><BigStat label="Replies need action" value={inter.replies_due} icon={MessageSquare} tone="warn" /></Link>
+        <Link to="/app/follow-up?tab=overdue"><BigStat label="Follow-ups due / overdue" value={inter.followups_today} icon={Mail} tone="warn" /></Link>
+        <Link to="/app/follow-up?tab=warm"><BigStat label="Warm contacts" value={inter.warm} icon={Zap} tone="good" /></Link>
+        <Link to="/app/follow-up?tab=dormant"><BigStat label="Dormant" value={inter.dormant} icon={AlertTriangle} /></Link>
+        <Link to="/app/follow-up?tab=bounced"><BigStat label="Bounces" value={inter.bounces} icon={AlertTriangle} tone="danger" /></Link>
       </div>
       <FollowUpReminders />
 
@@ -345,13 +345,15 @@ export default function AppDashboard() {
         icon={TrendingUp}
         title="Pipeline and sales"
         desc="From activated data to closed revenue."
-        cta={{ label: "Open pipeline", to: "/app/leads" }}
+        cta={{ label: "Open pipeline", to: "/app/pipeline" }}
       />
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
         <BigStat label="Leads" value={pipeline.leads} icon={Users} />
         <BigStat label="Opportunities" value={pipeline.opportunities} icon={Briefcase} />
         <BigStat label="Pipeline value" value={`£${pipeline.pipeline_value.toLocaleString()}`} icon={TrendingUp} tone="good" />
-        <BigStat label="Closed won" value={pipeline.won} icon={CheckCircle2} tone="good" />
+        <BigStat label="Stuck 14d+" value={pipeline.stuck} icon={AlertTriangle} tone="warn" />
+        <BigStat label="Actions overdue" value={pipeline.next_action_due} icon={Clock} tone="danger" />
+        <BigStat label="Won" value={pipeline.won} icon={CheckCircle2} tone="good" />
       </div>
       {Object.keys(pipeline.by_stage).length > 0 && (
         <Card>
