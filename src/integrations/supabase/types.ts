@@ -2016,7 +2016,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      agency_pooled_sends_today: { Args: { _company: string }; Returns: number }
+      agency_pooled_sends_today: { Args: never; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
