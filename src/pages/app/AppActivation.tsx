@@ -63,14 +63,16 @@ export default function AppActivation() {
 
       const def = conn.data?.[0];
       if (def) {
+        setConnectionId(def.id);
         setFromEmail(def.from_email);
         const last = (sends.data || []).filter((x: any) => x.status === "sent").map((x: any) => x.sent_at).filter(Boolean).sort().pop() || null;
         const newly = def.last_verified_at ? (Date.now() - new Date(def.last_verified_at).getTime()) < 7 * 86400000 : true;
         const totalSends = (sends.data || []).length || 1;
         const bounces = (sends.data || []).filter((x: any) => x.status === "bounced" || x.status === "failed").length;
+        const verified = def.spf_status === "valid" && def.dkim_status === "valid" && !!def.domain_verified_at;
         setSender({
           connected: def.status === "connected",
-          domain_authenticated: false, // surface as not yet verified by default
+          domain_authenticated: verified,
           reconnect_required: def.status === "reconnect_required",
           newly_connected: newly,
           last_send_at: last,
@@ -84,8 +86,14 @@ export default function AppActivation() {
       const sched = (sends.data || []).filter((x: any) => x.scheduled_at && new Date(x.scheduled_at) >= today && !x.sent_at).length;
       setUsedToday(used);
       setScheduledToday(sched);
+
+      // Agency pooled cap: total sends today across every child workspace in this Agency company.
+      if ((planConfig.id as PlanId) === "agency") {
+        const { data: pooled } = await (supabase as any).rpc("agency_pooled_sends_today");
+        if (typeof pooled === "number") setAgencyPooled(pooled);
+      }
     })();
-  }, [user]);
+  }, [user, planConfig.id]);
 
   const plan = (planConfig.id as PlanId) || "starter";
   const safety = useMemo(() => computeSafety({
