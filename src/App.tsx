@@ -43,6 +43,7 @@ import BillingPage from "./pages/crm/BillingPage.tsx";
 import QADashboard from "./pages/crm/QADashboard.tsx";
 import LegalCompliancePage from "./pages/crm/LegalCompliancePage.tsx";
 import FounderManual from "./pages/crm/FounderManual.tsx";
+import FounderMonetisation from "./pages/crm/FounderMonetisation.tsx";
 import PortalLayout from "./pages/PortalLayout.tsx";
 import PortalDashboard from "./pages/portal/PortalDashboard.tsx";
 import PortalCampaigns from "./pages/portal/PortalCampaigns.tsx";
@@ -67,6 +68,7 @@ import AppTemplates from "./pages/app/AppTemplates.tsx";
 import AppPerformance from "./pages/app/AppPerformance.tsx";
 import AppSettings from "./pages/app/AppSettings.tsx";
 import AppWorkspaces from "./pages/app/AppWorkspaces.tsx";
+import AppBilling from "./pages/app/AppBilling.tsx";
 
 const queryClient = new QueryClient();
 
@@ -125,6 +127,7 @@ const AnimatedRoutes = () => {
           <Route path="qa" element={<QADashboard />} />
           <Route path="legal-compliance" element={<LegalCompliancePage />} />
           <Route path="manual" element={<FounderManual />} />
+          <Route path="monetisation" element={<FounderMonetisation />} />
         </Route>
 
         {/* Self-serve customer app (protected) */}
@@ -137,6 +140,7 @@ const AnimatedRoutes = () => {
           <Route path="performance" element={<AppPerformance />} />
           <Route path="templates" element={<AppTemplates />} />
           <Route path="settings" element={<AppSettings />} />
+          <Route path="billing" element={<AppBilling />} />
           <Route path="workspaces" element={<AppWorkspaces />} />
         </Route>
 

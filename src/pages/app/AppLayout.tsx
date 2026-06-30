@@ -1,8 +1,10 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Rocket, Users, BarChart3, LayoutTemplate, Settings, Briefcase, LogOut, Plus } from "lucide-react";
+import { LayoutDashboard, Rocket, Users, BarChart3, LayoutTemplate, Settings, Briefcase, LogOut, Plus, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useWorkspace, WorkspaceProvider } from "@/contexts/WorkspaceContext";
+import { CreditsProvider } from "@/contexts/CreditsContext";
+import { CreditPill } from "@/components/app/CreditMeter";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const nav = [
@@ -12,6 +14,7 @@ const nav = [
   { to: "/app/performance", label: "Performance", icon: BarChart3 },
   { to: "/app/templates", label: "Templates", icon: LayoutTemplate },
   { to: "/app/workspaces", label: "Workspaces", icon: Briefcase },
+  { to: "/app/billing", label: "Billing", icon: CreditCard },
   { to: "/app/settings", label: "Settings", icon: Settings },
 ];
 
@@ -66,11 +69,14 @@ function Shell() {
         </div>
       </aside>
       <div className="flex-1 flex flex-col">
-        <header className="h-14 border-b border-border bg-card flex items-center justify-between px-6">
+        <header className="h-14 border-b border-border bg-card flex items-center justify-between px-6 gap-3">
           <WorkspaceSwitcher />
-          <Button size="sm" onClick={() => navigate("/app/campaigns/new")}>
-            <Plus className="h-4 w-4 mr-1" /> New campaign
-          </Button>
+          <div className="flex items-center gap-3">
+            <CreditPill />
+            <Button size="sm" onClick={() => navigate("/app/campaigns/new")}>
+              <Plus className="h-4 w-4 mr-1" /> New campaign
+            </Button>
+          </div>
         </header>
         <main className="flex-1 overflow-auto p-6">
           <Outlet />
@@ -83,7 +89,9 @@ function Shell() {
 export default function AppLayout() {
   return (
     <WorkspaceProvider>
-      <Shell />
+      <CreditsProvider>
+        <Shell />
+      </CreditsProvider>
     </WorkspaceProvider>
   );
 }

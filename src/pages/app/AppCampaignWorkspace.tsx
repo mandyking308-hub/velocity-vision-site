@@ -8,6 +8,9 @@ import { Copy, Download, Sparkles, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { CampaignBrief, CampaignPack, generatePack } from "@/lib/campaignPack";
 import { toast } from "sonner";
+import { useCredits } from "@/contexts/CreditsContext";
+import { CREDIT_COSTS } from "@/lib/credits";
+import HumanReviewButton from "@/components/app/HumanReviewButton";
 
 interface Campaign {
   id: string;
@@ -43,8 +46,12 @@ export default function AppCampaignWorkspace() {
     })();
   }, [id]);
 
+  const { consume } = useCredits();
+
   const regenerate = async () => {
     if (!c?.brief) return;
+    const ok = await consume("full_campaign_pack", c.id, c.name);
+    if (!ok) return;
     const pack = generatePack(c.brief);
     await supabase.from("campaigns").update({ pack: pack as any }).eq("id", c.id);
     setC({ ...c, pack });
@@ -80,9 +87,10 @@ export default function AppCampaignWorkspace() {
             {c.campaign_kind && <Badge variant="outline">{c.campaign_kind.replace("_", " ")}</Badge>}
           </div>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={regenerate}><Sparkles className="h-4 w-4 mr-1" />Regenerate</Button>
+        <div className="flex gap-2 flex-wrap">
+          <Button variant="outline" size="sm" onClick={regenerate}><Sparkles className="h-4 w-4 mr-1" />Regenerate ({CREDIT_COSTS.full_campaign_pack} credits)</Button>
           <Button variant="outline" size="sm" onClick={exportMd}><Download className="h-4 w-4 mr-1" />Export</Button>
+          <HumanReviewButton campaignId={c.id} />
         </div>
       </div>
 

@@ -14,6 +14,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { CampaignBrief, CampaignGoal, CampaignKind, generatePack, makeSlug } from "@/lib/campaignPack";
 import { toast } from "sonner";
+import { useCredits } from "@/contexts/CreditsContext";
+import { CREDIT_COSTS } from "@/lib/credits";
 
 const GOALS: { id: CampaignGoal; label: string; desc: string }[] = [
   { id: "leads", label: "Leads", desc: "Capture qualified prospects" },
@@ -47,6 +49,7 @@ export default function AppCampaignNew() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { currentId: workspaceId } = useWorkspace();
+  const { remaining, consume, starterExpired } = useCredits();
   const [params] = useSearchParams();
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
@@ -100,7 +103,13 @@ export default function AppCampaignNew() {
         .select("id")
         .single();
       if (error) throw error;
-      toast.success("Campaign pack generated");
+      const ok = await consume("full_campaign_pack", data.id, brief.name);
+      if (!ok) {
+        // Campaign saved as draft but no credits charged
+        toast.message("Campaign saved as draft", { description: "Top up credits to unlock the AI-generated pack." });
+      } else {
+        toast.success("Campaign pack generated");
+      }
       navigate(`/app/campaigns/${data.id}`);
     } catch (e: any) {
       toast.error(e.message || "Failed to generate campaign");
@@ -109,14 +118,21 @@ export default function AppCampaignNew() {
     }
   };
 
+  const blocked = remaining < CREDIT_COSTS.full_campaign_pack || starterExpired;
+
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
         <h1 className="text-3xl font-bold">New campaign</h1>
         <p className="text-muted-foreground">A short brief. We generate the full pack.</p>
       </div>
+      {blocked && (
+        <div className="rounded-md border border-accent/40 bg-accent/10 px-4 py-3 text-sm">
+          <strong>{starterExpired ? "Starter access has ended." : "You don't have enough Campaign Credits."}</strong> Generating a full campaign pack costs {CREDIT_COSTS.full_campaign_pack} credits. <a href="/app/billing" className="underline">Top up or upgrade</a> to keep launching.
+        </div>
+      )}
       <Progress value={(step / totalSteps) * 100} />
-      <div className="text-sm text-muted-foreground">Step {step} of {totalSteps}</div>
+      <div className="text-sm text-muted-foreground">Step {step} of {totalSteps} · This generation will use {CREDIT_COSTS.full_campaign_pack} Campaign Credits</div>
 
       {step === 1 && (
         <Card>

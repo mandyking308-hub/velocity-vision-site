@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Rocket, FolderOpen, Users, BarChart3, LayoutTemplate, Settings, Briefcase, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import CreditMeter from "@/components/app/CreditMeter";
 
 export default function AppDashboard() {
   const { user } = useAuth();
@@ -65,6 +66,8 @@ export default function AppDashboard() {
         <StatCard label="Follow-ups due" value={stats.followups} />
         <StatCard label="Last performance" value="—" hint="Launch your first to see data" />
       </div>
+
+      <CreditMeter />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {cards.map((c) => (
