@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import HeroSection from "@/components/HeroSection";
 import WhatWeDo from "@/components/WhatWeDo";
 import PlatformPositioning from "@/components/PlatformPositioning";
@@ -15,7 +16,8 @@ import FinalCTA from "@/components/FinalCTA";
 
 const Index = () => (
   <>
-    <Navbar />
+    <SEO title={"Velocity Influence — Marketing Platform + Agency for Growth"} description={"Run campaigns end-to-end with a marketing platform plus a full-service team. Try it instantly or book a demo with Velocity Influence."} path="/" />
+      <Navbar />
     <main>
       <HeroSection />
       <WhatWeDo />

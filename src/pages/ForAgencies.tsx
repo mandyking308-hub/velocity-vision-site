@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -18,7 +19,8 @@ const benefits = [
 
 const ForAgencies = () => (
   <>
-    <Navbar />
+    <SEO title={"For Agencies — White-Label Marketing Platform | Velocity Influence"} description={"Velocity Influence for agencies: a multi-workspace marketing platform with white-label client portals, campaign tooling, and reporting."} path="/for-agencies" />
+      <Navbar />
     <main className="pt-20">
       {/* Hero */}
       <section className="section-padding bg-hero">

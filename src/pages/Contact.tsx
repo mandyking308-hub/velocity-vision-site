@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,6 +60,7 @@ const Contact = () => {
 
   return (
     <>
+      <SEO title={"Contact Velocity Influence — Talk to Our Team"} description={"Get in touch with Velocity Influence. Tell us about your brand and we'll come back within one business day."} path="/contact" />
       <Navbar />
       <main className="pt-20">
         <section className="section-padding bg-hero">

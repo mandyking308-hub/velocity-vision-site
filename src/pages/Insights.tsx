@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
@@ -14,7 +15,8 @@ const articles = [
 
 const Insights = () => (
   <>
-    <Navbar />
+    <SEO title={"Marketing Insights & Reports | Velocity Influence"} description={"Data-driven insights on marketing strategy, AI, and growth from the Velocity Influence team."} path="/insights" />
+      <Navbar />
     <main className="pt-20">
       <section className="section-padding bg-hero">
         <div className="max-w-7xl mx-auto">

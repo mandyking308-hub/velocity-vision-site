@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -8,7 +9,8 @@ import aboutHero from "@/assets/about-hero.jpg";
 
 const About = () => (
   <>
-    <Navbar />
+    <SEO title={"About Velocity Influence — Global Marketing & PR Firm"} description={"Velocity Influence is a global marketing and PR firm operated by Global Solutions Management LLC, blending data, AI, and creative talent."} path="/about" />
+      <Navbar />
     <main className="pt-20">
       <section className="relative section-padding bg-hero overflow-hidden">
         <div className="absolute inset-0">

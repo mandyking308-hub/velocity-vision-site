@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { motion } from "framer-motion";
 import { Heart, Cpu, Landmark, Bot, Briefcase, ShoppingBag, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -52,7 +53,8 @@ const industries = [
 
 const Industries = () => (
   <>
-    <Navbar />
+    <SEO title={"Industries We Serve — Healthcare, Tech, Finance & More | Velocity Influence"} description={"Specialist marketing for healthcare, tech, fintech, AI, professional services, and retail. See how we drive growth in your industry."} path="/industries" />
+      <Navbar />
     <main className="pt-20">
       <section className="section-padding bg-hero">
         <div className="max-w-7xl mx-auto">

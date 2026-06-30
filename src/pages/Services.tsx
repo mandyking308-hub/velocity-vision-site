@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { motion } from "framer-motion";
 import { Target, Megaphone, Users, BarChart3, Palette, BrainCircuit, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -59,7 +60,8 @@ const services = [
 
 const Services = () => (
   <>
-    <Navbar />
+    <SEO title={"Marketing Services — Strategy, Performance & Creative | Velocity Influence"} description={"Integrated marketing services: brand strategy, performance media, PR, AI intelligence, and creative production for global enterprise clients."} path="/services" />
+      <Navbar />
     <main className="pt-20">
       {/* Hero with image */}
       <section className="relative section-padding bg-hero overflow-hidden">

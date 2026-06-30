@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -87,6 +88,7 @@ const BookDemo = () => {
 
   return (
     <>
+      <SEO title={"Book a Demo — See the Velocity Influence Platform"} description={"Book a personalised demo of the Velocity Influence marketing platform and agency services."} path="/book-demo" />
       <Navbar />
       <main className="pt-20">
         <section className="section-padding bg-hero">
