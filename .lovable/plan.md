@@ -1,99 +1,99 @@
-# Velocity Vision — Self-Serve Repositioning Sprint
+## Sprint 2 — Reshape the Logged-In Product Into a Self-Serve Campaign Launchpad
 
-Repositioning the public site from "platform + agency" to a **self-serve campaign launchpad** with optional paid expert review. Existing visual style (navy/coral, Space Grotesk, glassmorphism) is preserved; copy, structure, CTAs and IA change.
+The goal is to turn the existing `/portal` + `/crm` surfaces into a guided, campaign-first product without rebuilding the underlying tables, auth, or agency model. Customers should land on a Launch Dashboard, run a guided builder, and end up in a campaign pack workspace with social / press / video / lead capture / pipeline / reporting all in one place.
 
-## 1. Global rules (applies everywhere)
+### 1. New customer-facing app namespace: `/app`
 
-- **Primary CTAs:** `Start your first campaign` → `/auth` (sign-up), `See pricing` → `/pricing`
-- **Secondary CTA:** `Talk to us` → `/contact` (enterprise/agency volume only)
-- **Retire** `Book a Demo` as primary. Keep `/book-demo` route reachable but de-emphasised.
-- **Language:** self-serve, guided, launch faster, campaign pack, workspace, lead capture, follow-up, reporting, optional expert review. Strip "full-service agency", "founder-led delivery", "bespoke", "contact us for pricing" from primary frames.
-
-## 2. Navigation (`src/components/Navbar.tsx`)
-
-Replace nav links with: Home · How it works · Pricing · For Businesses · For Agencies · Features · Templates · About · Help.
-Top-right: `See pricing` (ghost) + `Start your first campaign` (cta).
-
-## 3. Homepage (`src/pages/Index.tsx` + components)
-
-Rebuild section order. Reuse existing components where copy-only swap suffices; replace where structure changes.
-
-1. **Hero** — rewrite `HeroSection.tsx`. Two-column (copy left, dashboard visual right). New H1, subheadline, dual CTAs, microcopy.
-2. **Problem/Proof** — new `ProblemProof.tsx`. 3 stats (56% / 27% / 30%) + closing statement + source line.
-3. **3 Core Promises** — new `CorePromises.tsx` (Guided not blank-page / Built for revenue / Self-serve with optional review).
-4. **What the platform gives you** — rewrite `CampaignCapabilities.tsx` into card grid with 11 items, each describing business value.
-5. **How it works preview** — new `HowItWorksPreview.tsx` (5 step cards → link `/how-it-works`).
-6. **Platform preview** — repurpose `PlatformPositioning.tsx` into two-column platform visual + bullets.
-7. **For Businesses / For Agencies split** — new `AudienceSplit.tsx` (two cards).
-8. **Pricing teaser** — new `PricingTeaser.tsx` (4 plan cards → `/pricing`).
-9. **Not another agency / tool / founder-dependent** — new `NotAnotherX.tsx` (3 comparison blocks).
-10. **FAQ preview** — new `HomeFAQ.tsx` (6 questions, accordion).
-11. **Final CTA** — rewrite `FinalCTA.tsx`.
-
-Remove from homepage: `WhatWeDo`, `IndustriesSection`, `AgencySection`, `AgencyPositioning`, `ROICalculator`, `MidPageCTA`, `FeaturedWork`, `InsightsSection` (files stay in repo for other pages but drop from Index).
-
-## 4. Pricing page (`src/pages/Pricing.tsx` — new)
-
-SaaS-style. Hero + 4-card plan grid (Starter £149 one-off, Growth £249/mo, Agency Workspace £499/mo, Premium Human Review £199/review as optional add-on) + pricing FAQ. Add route in `App.tsx`.
-
-## 5. How it works (`src/pages/HowItWorks.tsx` — new)
-
-Hero + 5-step flow + "What you get" list (11 outputs) + optional human help section + CTA. Add route.
-
-## 6. Supporting pages
-
-- **For Businesses** — new `src/pages/ForBusinesses.tsx` + route.
-- **For Agencies** — rewrite existing `src/pages/ForAgencies.tsx` copy + CTAs.
-- **Features** — new `src/pages/Features.tsx` + route (grouped feature blocks).
-- **Templates** — new `src/pages/Templates.tsx` + route (5 campaign template cards).
-- **Help** — new `src/pages/Help.tsx` + route (KB-style sections).
-- **About** — rewrite `src/pages/About.tsx` to product-architect framing, less founder-heavy.
-
-## 7. Routing & SEO
-
-- Add routes in `src/App.tsx`: `/pricing`, `/how-it-works`, `/for-businesses`, `/features`, `/templates`, `/help`.
-- `<SEO>` on every new/changed page with self-serve positioning titles/descriptions.
-- Update `public/sitemap.xml` with new URLs.
-
-## 8. Out of scope this sprint
-
-- Stripe wiring (pricing CTAs route to `/auth` sign-up for now; payment flow is a later sprint).
-- CRM/Portal/legal pages.
-- Templates page renders static example cards only — no live template engine.
-- Help page is static markdown-style content — no search.
-
-## Founder decisions still needed (will flag in final report, not block build)
-
-- Confirm price points (£149 / £249 / £499 / £199) — placeholders used as instructed.
-- Confirm `Start your first campaign` routes to `/auth` until checkout exists.
-- Whether to physically delete the now-unused homepage sections or leave dormant for reuse (plan: leave dormant).
-
-## Files touched (summary)
+Customers (role: `client`) and agency users currently land in `/portal`. We'll introduce a new `/app` namespace that becomes the self-serve launchpad. `/portal/*` stays as a thin compatibility layer (redirects to the `/app` equivalents) so we don't break existing sessions.
 
 ```text
-modify  src/components/Navbar.tsx
-modify  src/components/HeroSection.tsx
-modify  src/components/FinalCTA.tsx
-modify  src/components/PlatformPositioning.tsx
-modify  src/components/CampaignCapabilities.tsx
-modify  src/pages/Index.tsx
-modify  src/pages/About.tsx
-modify  src/pages/ForAgencies.tsx
-modify  src/App.tsx
-modify  public/sitemap.xml
-new     src/components/ProblemProof.tsx
-new     src/components/CorePromises.tsx
-new     src/components/HowItWorksPreview.tsx
-new     src/components/AudienceSplit.tsx
-new     src/components/PricingTeaser.tsx
-new     src/components/NotAnotherX.tsx
-new     src/components/HomeFAQ.tsx
-new     src/pages/Pricing.tsx
-new     src/pages/HowItWorks.tsx
-new     src/pages/ForBusinesses.tsx
-new     src/pages/Features.tsx
-new     src/pages/Templates.tsx
-new     src/pages/Help.tsx
+/app                        Launch Dashboard (new)
+/app/campaigns              My campaigns (active + drafts)
+/app/campaigns/new          Guided 5-step builder
+/app/campaigns/:id          Campaign pack workspace (tabs)
+/app/leads                  Mini pipeline (Kanban: New → Contacted → Qualified → Won → Lost)
+/app/performance            Cross-campaign performance review
+/app/templates              Template gallery + clone
+/app/workspaces             Agency client workspace switcher (agency only)
+/app/settings               Billing, integrations, profile, email connection
 ```
 
-Approve and I'll build it in one sprint.
+### 2. Launch Dashboard (`/app`)
+
+Top band:
+- "Welcome back, {first name}"
+- Primary CTA: **Start a new campaign** → `/app/campaigns/new`
+- Secondary CTA: **Open my latest campaign** → most recent `campaigns` row
+- Stat strip: active campaigns, leads captured, follow-ups due, last campaign performance snapshot
+
+Below, six core cards (plus a 7th for agencies):
+Start a campaign · My current campaigns · Lead capture & pipeline · Performance review · Templates · Workspace settings · Client workspaces (agency only).
+
+### 3. Guided campaign builder (`/app/campaigns/new`)
+
+Replace the existing one-shot form with a 5-step wizard with a progress bar:
+1. **Goal** — leads / sales / sign-ups / bookings / awareness
+2. **Business brief** — campaign name, offer, audience, industry, geography, price, tone, key CTA, channels, deadline, notes
+3. **Campaign type** — lead gen / launch / promo / nurture / re-engagement / PR push
+4. **Output preferences** — checklist of pack components (social, email, landing, PR, video, full bundle)
+5. **Review** — summary card → **Generate campaign pack**
+
+Submission writes one row to `campaigns` (existing table) with brief data in a JSON column (`brief jsonb` — add via migration if missing) and a generated `pack jsonb` produced client-side from a deterministic template library (no AI call yet; we wire AI in a follow-up). Each generated section is stored so the workspace can read it back.
+
+### 4. Campaign pack workspace (`/app/campaigns/:id`)
+
+Replace the current `CampaignDetailPage` with a tabbed workspace. Tabs:
+Overview · Strategy · Landing Page Copy · Offer Copy · Email Sequence · Social Pack · Press Release · Video Pack · Lead Capture · Pipeline · Performance.
+
+Each tab renders the corresponding slice of `pack jsonb` with copy-to-clipboard, "regenerate this section" stub, and export buttons (markdown / pdf reuse the existing `jspdf` setup).
+
+Required content shapes:
+- **Social pack** — launch posts, follow-ups, hook variations, CTA variations, platform variants (LinkedIn / Instagram / X / Facebook / TikTok), short + long captions, visual prompts, launch-week sequence, repost ideas.
+- **Press release** — headline, subheadline, opening para, body, quote draft, boilerplate, CTA / contact line.
+- **Video pack** — 3 hook options, 30s + 60s scripts, talking-head + B-roll versions, shot list, storyboard outline, on-screen text prompts, caption text, CTA endings. No rendering this sprint.
+- **Lead capture** — form title, field preview, CTA label, thank-you message, hosted capture URL placeholder (`/c/:slug`), leads-from-this-campaign list.
+- **Pipeline** — campaign-scoped slice of `leads` table.
+- **Performance** — leads, response volume, conversion %, best performer note, next-step prompt, "Clone campaign" button.
+
+### 5. Mini pipeline (`/app/leads`)
+
+Kanban with 5 stages (New, Contacted, Qualified, Won, Lost) reading from the existing `leads` table. Each card: name, source campaign, created date, stage, last action, follow-up status. Drag to change stage updates `leads.status`.
+
+### 6. Templates (`/app/templates`)
+
+Static template gallery with six starter types (lead gen, launch, nurture, promo, re-engagement, PR push) plus a "Clone from existing" list pulled from the user's past campaigns. Selecting a template prefills the builder.
+
+### 7. Agency workspace integration
+
+Reuse existing `client_workspaces`. Add a workspace-switcher dropdown in the `/app` shell header for users with more than one workspace; all `/app` reads are scoped by selected `workspace_id` held in context + localStorage. Same flows, just scoped.
+
+### 8. Demo environment
+
+Reshape `/demo/crm` to mirror the new `/app` experience using `DemoContext` (no DB writes). Pre-seed one fully generated example campaign so the demo shows: builder → pack → social → PR → video → lead capture → pipeline → reporting.
+
+### 9. Cleanup / compatibility
+
+- `/portal` routes become thin redirects to `/app` equivalents (Navigate components) — preserves bookmarks and any links in transactional emails.
+- Internal CRM (`/crm/*`) is untouched — it stays the staff-side tool.
+- Old `CampaignsPage` / `CampaignDetailPage` in `/crm` remain for staff but are no longer the customer's primary surface.
+
+### Technical details
+
+- New folder: `src/pages/app/` for the launchpad pages, `src/components/app/` for builder steps, workspace tabs, pipeline board, template cards.
+- New context: `src/contexts/WorkspaceContext.tsx` — selected workspace id, switcher, scoped query helpers.
+- New util: `src/lib/campaignPack.ts` — pure-function template generators that take the brief and return the full `pack` object (social, PR, video, etc.). Deterministic, no network. AI hook stub left as `TODO: replace with AI Gateway call`.
+- Migration: add `brief jsonb`, `pack jsonb`, `slug text unique` to `campaigns` if absent. Grants kept consistent (`authenticated`, `service_role`). RLS unchanged.
+- Update `src/App.tsx` with the new `/app/*` route tree under `ProtectedRoute`, plus `/portal/*` → `/app/*` redirects.
+- Update `src/lib/platformManual.ts` with a new chapter "Self-Serve Campaign Launchpad" and add a build-log entry.
+
+### Out of scope this sprint (called out for founder decisions)
+
+- Real AI generation for pack content (currently deterministic templates). Decision: do we wire Lovable AI Gateway next sprint?
+- Hosted capture page rendering at `/c/:slug` — placeholder route only.
+- Stripe billing / paywalling tiers (Starter / Growth / Agency).
+- Email sending for follow-up sequences (drafts only).
+- Real analytics ingestion (UTM / pixel) — performance numbers are computed from `leads` for now.
+
+### Deliverables when complete
+
+Launch Dashboard, guided builder, campaign pack workspace with all 11 tabs, full social / PR / video outputs, mini pipeline, templates, agency workspace switcher, refreshed demo, `/portal` redirects, updated ops manual, and a short list of founder decisions before the monetisation sprint.
