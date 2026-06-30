@@ -1,20 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useState, useEffect } from "react";
-import { useCredits } from "@/contexts/CreditsContext";
 import { Sparkles, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { HUMAN_REVIEW_PRICE } from "@/lib/credits";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
+import { PRICE_IDS } from "@/lib/stripe";
 
 interface Props { campaignId: string }
 
 export default function HumanReviewButton({ campaignId }: Props) {
   const { user } = useAuth();
-  const { purchaseHumanReview } = useCredits();
   const [open, setOpen] = useState(false);
-  const [busy, setBusy] = useState(false);
   const [existing, setExisting] = useState<{ status: string } | null>(null);
+  const { openCheckout, element } = useStripeCheckout();
 
   useEffect(() => {
     if (!user) return;
@@ -22,7 +22,7 @@ export default function HumanReviewButton({ campaignId }: Props) {
       const { data } = await supabase.from("human_reviews").select("status").eq("campaign_id", campaignId).maybeSingle();
       setExisting(data as any);
     })();
-  }, [user, campaignId, busy]);
+  }, [user, campaignId]);
 
   if (existing) {
     return (
@@ -53,12 +53,19 @@ export default function HumanReviewButton({ campaignId }: Props) {
           </ul>
           <DialogFooter className="mt-4 flex items-center justify-between">
             <span className="text-lg font-semibold">£{HUMAN_REVIEW_PRICE}</span>
-            <Button disabled={busy} onClick={async () => { setBusy(true); await purchaseHumanReview(campaignId); setBusy(false); setOpen(false); }}>
-              {busy ? "Purchasing…" : "Purchase review"}
-            </Button>
+            <Button onClick={() => {
+              setOpen(false);
+              openCheckout({
+                priceId: PRICE_IDS.human_review,
+                refId: campaignId,
+                title: "Buy Premium Human Review",
+                returnPath: `/app/campaigns/${campaignId}?checkout=review`,
+              });
+            }}>Purchase review</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      {element}
     </>
   );
 }
