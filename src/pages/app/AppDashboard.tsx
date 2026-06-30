@@ -16,6 +16,7 @@ import CreditMeter from "@/components/app/CreditMeter";
 import FollowUpReminders from "@/components/app/FollowUpReminders";
 import SendSafetyPanel from "@/components/app/SendSafetyPanel";
 import SenderStatusCard from "@/components/app/SenderStatusCard";
+import OnboardingChecklist from "@/components/app/OnboardingChecklist";
 import { computeSafety, DEFAULT_SENDER_STATE, type SenderState } from "@/lib/sendSafety";
 import type { PlanId } from "@/lib/credits";
 import { deriveFollowUpState } from "@/lib/leadStates";
@@ -254,6 +255,23 @@ export default function AppDashboard() {
           )}
         </div>
       </div>
+
+
+
+      {/* A2. First-time onboarding checklist (auto-hides once complete) */}
+      <OnboardingChecklist
+        signals={{
+          hasContacts: vault.total_contacts > 0,
+          hasReviewed: vault.clean + vault.needs_review + vault.risky + vault.blocked > 0,
+          hasSafeSegment: vault.safe_to_activate > 0,
+          hasSender: sender.connected,
+          hasAssets: campaignRows.length > 0,
+          hasCadence: campaignRows.some((c) => !!c.start_at || (c.cadence_type && c.cadence_type !== "one_off")),
+          hasActivated: sendsUsedToday + sendsScheduledToday > 0 || sender.last_send_at !== null,
+          hasWorkedReplies: inter.replies_due + pipeline.opportunities > 0,
+        }}
+      />
+
 
       {/* B. Database Health */}
       <SectionHeader
