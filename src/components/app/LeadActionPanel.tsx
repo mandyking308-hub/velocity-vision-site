@@ -75,6 +75,11 @@ export default function LeadActionPanel({
     const until = new Date(Date.now() + days * 86400000).toISOString();
     return update({ snoozed_until: until, follow_up_state: "snoozed", follow_up_at: until, last_action: `Snoozed ${days}d` }, "snoozed", { days });
   };
+  const snoozeUntil = (date: Date) => {
+    const until = date.toISOString();
+    setSnoozeOpen(false);
+    return update({ snoozed_until: until, follow_up_state: "snoozed", follow_up_at: until, last_action: `Snoozed until ${format(date, "PP")}` }, "snoozed", { until });
+  };
   const markWarm = () => update({ follow_up_state: "warm", last_action: "Marked warm" }, "marked_warm");
   const markDormant = () => update({ follow_up_state: "dormant", last_action: "Marked dormant" }, "marked_dormant");
   const markWon = () => update({ status: "closed_won" as any, follow_up_state: "won", last_action: "Won" }, "marked_won");
