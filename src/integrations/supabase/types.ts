@@ -347,16 +347,21 @@ export type Database = {
       }
       campaigns: {
         Row: {
+          brief: Json | null
           budget: number | null
+          campaign_kind: string | null
           company_id: string
           created_at: string
           created_by: string | null
           description: string | null
           end_date: string | null
+          goal: string | null
           id: string
           name: string
           objective: string | null
           owner_id: string | null
+          pack: Json | null
+          slug: string | null
           start_date: string | null
           status: Database["public"]["Enums"]["campaign_status"]
           target_audience_description: string | null
@@ -365,16 +370,21 @@ export type Database = {
           workspace_id: string | null
         }
         Insert: {
+          brief?: Json | null
           budget?: number | null
+          campaign_kind?: string | null
           company_id: string
           created_at?: string
           created_by?: string | null
           description?: string | null
           end_date?: string | null
+          goal?: string | null
           id?: string
           name: string
           objective?: string | null
           owner_id?: string | null
+          pack?: Json | null
+          slug?: string | null
           start_date?: string | null
           status?: Database["public"]["Enums"]["campaign_status"]
           target_audience_description?: string | null
@@ -383,16 +393,21 @@ export type Database = {
           workspace_id?: string | null
         }
         Update: {
+          brief?: Json | null
           budget?: number | null
+          campaign_kind?: string | null
           company_id?: string
           created_at?: string
           created_by?: string | null
           description?: string | null
           end_date?: string | null
+          goal?: string | null
           id?: string
           name?: string
           objective?: string | null
           owner_id?: string | null
+          pack?: Json | null
+          slug?: string | null
           start_date?: string | null
           status?: Database["public"]["Enums"]["campaign_status"]
           target_audience_description?: string | null
@@ -741,39 +756,67 @@ export type Database = {
       }
       leads: {
         Row: {
+          campaign_id: string | null
           company_id: string | null
           contact_id: string | null
           created_at: string
           created_by: string | null
+          email: string | null
+          follow_up_at: string | null
           id: string
+          last_action: string | null
           marketing_interest: string | null
+          name: string | null
+          owner_id: string | null
+          phone: string | null
           source: string
           status: Database["public"]["Enums"]["lead_status"]
           updated_at: string
         }
         Insert: {
+          campaign_id?: string | null
           company_id?: string | null
           contact_id?: string | null
           created_at?: string
           created_by?: string | null
+          email?: string | null
+          follow_up_at?: string | null
           id?: string
+          last_action?: string | null
           marketing_interest?: string | null
+          name?: string | null
+          owner_id?: string | null
+          phone?: string | null
           source?: string
           status?: Database["public"]["Enums"]["lead_status"]
           updated_at?: string
         }
         Update: {
+          campaign_id?: string | null
           company_id?: string | null
           contact_id?: string | null
           created_at?: string
           created_by?: string | null
+          email?: string | null
+          follow_up_at?: string | null
           id?: string
+          last_action?: string | null
           marketing_interest?: string | null
+          name?: string | null
+          owner_id?: string | null
+          phone?: string | null
           source?: string
           status?: Database["public"]["Enums"]["lead_status"]
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "leads_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "leads_company_id_fkey"
             columns: ["company_id"]
