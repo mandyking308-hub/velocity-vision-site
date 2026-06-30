@@ -136,28 +136,37 @@ export default function AppDashboard() {
       const ls = leads || [];
       const now = Date.now();
       const dayMs = 24 * 60 * 60 * 1000;
-      const followups_today = ls.filter((l: any) => l.follow_up_at && new Date(l.follow_up_at).getTime() <= now).length;
-      const warm = ls.filter((l: any) => ["contacted", "demo_scheduled", "proposal_sent"].includes(l.status)).length;
-      const dormant = ls.filter((l: any) => l.last_contacted_at && (now - new Date(l.last_contacted_at).getTime()) > 30 * dayMs).length;
+      const states = ls.map((l: any) => deriveFollowUpState(l));
+      const replies_due = states.filter((s) => s === "replied").length;
+      const followups_today = states.filter((s) => s === "due" || s === "overdue").length;
+      const warm = states.filter((s) => s === "warm" || s === "replied").length;
+      const dormant = states.filter((s) => s === "dormant").length;
       const bounces = (sends || []).filter((s: any) => s.status === "failed" || s.status === "bounced").length;
-      setInter({ replies_due: 0, followups_today, dormant, warm, bounces });
+      setInter({ replies_due, followups_today, dormant, warm, bounces });
 
       const opp = opps || [];
       const by_stage: Record<string, number> = {};
       let pipeline_value = 0;
+      let stuck = 0;
+      let nextActionDue = 0;
       opp.forEach((o: any) => {
         by_stage[o.stage] = (by_stage[o.stage] || 0) + 1;
-        if (o.stage !== "closed_lost" && o.stage !== "closed_won") {
+        const isOpen = o.stage !== "lost" && o.stage !== "won";
+        if (isOpen) {
           pipeline_value += Number(o.estimated_value || 0);
+          if (o.stage_changed_at && (now - new Date(o.stage_changed_at).getTime()) > 14 * dayMs) stuck++;
+          if (o.next_action_at && new Date(o.next_action_at).getTime() < now) nextActionDue++;
         }
       });
       setPipeline({
         leads: ls.length,
         opportunities: opp.length,
         pipeline_value,
-        won: opp.filter((o: any) => o.stage === "closed_won").length,
-        lost: opp.filter((o: any) => o.stage === "closed_lost").length,
+        won: opp.filter((o: any) => o.stage === "won").length,
+        lost: opp.filter((o: any) => o.stage === "lost").length,
         by_stage,
+        stuck,
+        next_action_due: nextActionDue,
       });
     })();
   }, [user]);
