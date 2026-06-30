@@ -366,9 +366,10 @@ export default function AppDataVaultUpload() {
         </div>
       )}
       {step === "report" && (
-        <div className="flex justify-end gap-2">
+        <div className="flex justify-end gap-2 flex-wrap">
           <Button variant="outline" onClick={() => navigate("/app/data-vault")}>Back to Data Vault</Button>
-          <Button onClick={() => navigate(`/app/data-vault/imports/${uploadId}`)}>View import detail</Button>
+          <Button variant="outline" onClick={() => navigate(`/app/data-vault/imports/${uploadId}`)}>View import detail</Button>
+          <Button onClick={() => navigate("/app/activate")}>Activate safe contacts <ArrowRight className="h-4 w-4 ml-1" /></Button>
         </div>
       )}
     </div>
