@@ -103,7 +103,8 @@ export default function AppActivation() {
     sendsUsedToday: usedToday,
     sendsScheduledToday: scheduledToday,
     sendCreditsRemaining: remaining,
-  }), [plan, counts, sender, usedToday, scheduledToday, remaining]);
+    agencyPooledSendsToday: agencyPooled,
+  }), [plan, counts, sender, usedToday, scheduledToday, remaining, agencyPooled]);
 
   const safeSelected = Math.min(batchSize, counts.valid);
   const reviewSelected = includeReview ? counts.needs_review : 0;
