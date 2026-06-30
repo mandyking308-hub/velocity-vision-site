@@ -132,7 +132,60 @@ export default function AppCampaignWorkspace() {
     });
   };
 
+  const cadenceFull = {
+    cadence_type: (c.cadence_type || "one_off") as CadenceType,
+    cadence_interval: c.cadence_interval || 1,
+    cadence_unit: (c.cadence_unit || "week") as any,
+    start_at: c.start_at, timezone: c.timezone || "UTC",
+    cadence_end_at: c.cadence_end_at, cadence_max_runs: c.cadence_max_runs ?? null,
+    refresh_strategy: (c.refresh_strategy || "reuse") as RefreshStrategy,
+  };
+
+  return (
+    <div className="space-y-4 max-w-6xl">
+      <button onClick={() => navigate("/app/campaigns")} className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
+        <ArrowLeft className="h-3 w-3" /> All campaigns
+      </button>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold">{c.name}</h1>
+          <div className="flex items-center gap-2 mt-2 flex-wrap">
+            <Badge className={lifecycleTone.cls}>{lifecycleTone.label}</Badge>
+            <Badge variant="outline" className="gap-1"><Repeat className="h-3 w-3" />{CADENCE_LABELS[cadenceFull.cadence_type]}</Badge>
+            {c.goal && <Badge variant="outline">{c.goal}</Badge>}
+            {c.campaign_kind && <Badge variant="outline">{c.campaign_kind.replace("_", " ")}</Badge>}
+          </div>
+          <div className="text-sm text-muted-foreground mt-2 flex items-center gap-1">
+            <Clock className="h-3.5 w-3.5" /> {nextActionLabel({
+              next_run_at: c.next_run_at, start_at: c.start_at,
+              cadence_type: cadenceFull.cadence_type, cadence_end_at: c.cadence_end_at,
+              timezone: c.timezone || "UTC",
+            } as any)}
+          </div>
+          {c.start_at && <div className="text-xs text-muted-foreground mt-1">{plainEnglish(cadenceFull as any)}</div>}
+          {(c.runs_completed ?? 0) > 0 && (
+            <div className="text-xs text-muted-foreground mt-1">
+              {c.runs_completed} run{(c.runs_completed || 0) > 1 ? "s" : ""} completed · Asset strategy: {REFRESH_LABELS[cadenceFull.refresh_strategy]}
+            </div>
+          )}
+        </div>
+        <div className="flex gap-2 flex-wrap">
+          {lifecycle === "active" || lifecycle === "scheduled" ? (
+            <Button variant="outline" size="sm" onClick={() => toggleStatus("paused")}><Pause className="h-4 w-4 mr-1" />Pause</Button>
+          ) : lifecycle === "paused" ? (
+            <Button variant="outline" size="sm" onClick={() => toggleStatus("active")}><Play className="h-4 w-4 mr-1" />Resume</Button>
+          ) : null}
+          {(lifecycle === "active" || lifecycle === "scheduled") && cadenceFull.cadence_type !== "one_off" && (
+            <Button variant="outline" size="sm" onClick={advanceRun}><Repeat className="h-4 w-4 mr-1" />Mark run complete</Button>
+          )}
+          <Button variant="outline" size="sm" onClick={regenerate}><Sparkles className="h-4 w-4 mr-1" />Regenerate ({CREDIT_COSTS.full_campaign_pack} credits)</Button>
+          <Button variant="outline" size="sm" onClick={exportMd}><Download className="h-4 w-4 mr-1" />Export</Button>
+          <HumanReviewButton campaignId={c.id} />
+        </div>
+      </div>
+
       {!pack ? (
+
         <Card><CardContent className="p-8 text-center">No pack generated yet.</CardContent></Card>
       ) : (
         <Tabs defaultValue="overview" className="w-full">
