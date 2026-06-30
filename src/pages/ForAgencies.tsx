@@ -9,8 +9,8 @@ import { ArrowRight, Building2, ShieldCheck, Coins, Layers, Inbox, Eye, Mail, Sh
 const benefits = [
   { icon: Layers, title: "One workspace per client", desc: "Isolated data, isolated activation, isolated pipeline. No cross-client contamination, no context-switching tax." },
   { icon: Coins, title: "Pooled credits across the account", desc: "Agency Workspace credits flow across all client workspaces — use them where the work lands that month." },
-  { icon: ShieldCheck, title: "Pooled sending governance", desc: "A single 1,000/day pooled ceiling and shared risky-record limits protect deliverability across every client." },
-  { icon: Inbox, title: "Replies & pipeline per client", desc: "Inbound replies, follow-up states and opportunity movement, tracked per client — without bolting on another CRM." },
+  { icon: ShieldCheck, title: "Pooled sending governance", desc: "Shared send limits and account-level safety controls protect deliverability across every client." },
+  { icon: Inbox, title: "Replies & pipeline per client", desc: "Inbound replies, follow-up states and opportunity movement, tracked per client — without bolting on another system." },
   { icon: Eye, title: "Cross-client visibility", desc: "See what's active, what's stuck and where pipeline is moving across your whole book of clients." },
   { icon: Building2, title: "Repeatable delivery", desc: "Reusable templates, segments and cadences. Operators ship the work; they don't reinvent the workflow each time." },
 ];
