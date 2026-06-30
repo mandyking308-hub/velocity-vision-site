@@ -3,8 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { CreditCard, Mail, User, Plug, Scale, FileText } from "lucide-react";
 
 const items = [
-  { title: "Billing", desc: "Plan, invoices, payment method", icon: CreditCard, to: "/portal/billing" },
-  { title: "Email connection", desc: "Connect the inbox you send from", icon: Mail, to: "#" },
+  { title: "Email connections", desc: "Connect Gmail or Outlook to send follow-ups", icon: Mail, to: "/app/settings/email" },
+  { title: "Billing", desc: "Plan, credits, invoices", icon: CreditCard, to: "/app/billing" },
   { title: "Profile", desc: "Your details and avatar", icon: User, to: "#" },
   { title: "Integrations", desc: "Connect your CRM, calendar, social", icon: Plug, to: "#" },
   { title: "Legal", desc: "Terms, privacy and compliance acceptance", icon: Scale, to: "/portal/legal" },
