@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import CreditMeter from "@/components/app/CreditMeter";
 import FollowUpReminders from "@/components/app/FollowUpReminders";
+import DataVaultDashboardWidget from "@/components/app/datavault/DataVaultDashboardWidget";
 
 export default function AppDashboard() {
   const { user } = useAuth();
