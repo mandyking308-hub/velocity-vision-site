@@ -16,6 +16,12 @@ import { CampaignBrief, CampaignGoal, CampaignKind, generatePack, makeSlug } fro
 import { toast } from "sonner";
 import { useCredits } from "@/contexts/CreditsContext";
 import { CREDIT_COSTS } from "@/lib/credits";
+import {
+  CadenceConfig, CADENCE_LABELS, CadenceType, COMMON_TIMEZONES, REFRESH_LABELS,
+  RefreshStrategy, computeNextRun, defaultCadence, plainEnglish,
+} from "@/lib/cadence";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 
 const GOALS: { id: CampaignGoal; label: string; desc: string }[] = [
   { id: "leads", label: "Leads", desc: "Capture qualified prospects" },
