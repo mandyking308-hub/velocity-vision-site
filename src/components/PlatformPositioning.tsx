@@ -4,13 +4,14 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Check } from "lucide-react";
 
 const bullets = [
-  "One workspace for every campaign and client",
-  "Guided campaign builder — brief in, pack out",
-  "Lead forms wired straight into your pipeline",
-  "Simple pipeline to track interest through to closed",
-  "Auto-generated monthly performance reporting",
-  "Reusable templates so the next campaign is faster",
-  "Optional agency workspace mode for multi-client work",
+  "Data Vault for companies, contacts and segments",
+  "Quality review with duplicate and risk flags",
+  "Sender verification and governed activation",
+  "Outreach email, social, press and video from one brief",
+  "Cadence and scheduling for recurring campaigns",
+  "Replies inbox with follow-up states and snooze",
+  "Pipeline movement with opportunity value tracking",
+  "Agency mode: multiple client workspaces, pooled governance",
 ];
 
 const PlatformPositioning = () => (
@@ -22,12 +23,12 @@ const PlatformPositioning = () => (
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
       >
-        <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Inside the platform</p>
+        <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Inside the workspace</p>
         <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-5">
-          The self-serve campaign engine behind the results
+          One connected system, not a stack of disconnected tools
         </h2>
         <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
-          Everything you need to plan, launch, capture and improve — in one workspace you control. No retainer. No handovers.
+          Your data, activation, outreach, replies and pipeline live in the same workspace — so the same flow that creates a campaign also captures the revenue from it.
         </p>
         <ul className="space-y-3 mb-8">
           {bullets.map((b) => (
@@ -40,7 +41,7 @@ const PlatformPositioning = () => (
           ))}
         </ul>
         <Button variant="cta" size="lg" asChild>
-          <Link to="/auth">Start your first campaign <ArrowRight size={18} /></Link>
+          <Link to="/auth">Start your workspace <ArrowRight size={18} /></Link>
         </Button>
       </motion.div>
 

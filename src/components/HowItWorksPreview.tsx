@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
 const steps = [
-  { n: "01", title: "Answer the brief", desc: "Short guided questions about goal, audience and offer." },
-  { n: "02", title: "Generate the campaign pack", desc: "The platform builds strategy, copy, assets and follow-up." },
-  { n: "03", title: "Edit what you want", desc: "Tweak in the workspace — everything is editable, nothing is locked." },
-  { n: "04", title: "Launch and capture leads", desc: "Publish, share, and collect leads into your pipeline." },
-  { n: "05", title: "Review and improve", desc: "See what worked in the monthly report and rerun the winners." },
+  { n: "01", title: "Upload your data", desc: "CSV or paste rows. Map your fields once. Companies and contacts land in the Data Vault." },
+  { n: "02", title: "Review & build a safe segment", desc: "Quality flags surface duplicates and risky records. Pick who's safe to activate." },
+  { n: "03", title: "Create outreach assets", desc: "Email sequence, social pack, press release and video pack — generated from your brief." },
+  { n: "04", title: "Activate with cadence", desc: "Verify sender, set timing, schedule recurring runs. Daily caps and safety checks enforced." },
+  { n: "05", title: "Work replies & move pipeline", desc: "Action queue for inbound, follow-up states, and warm contacts promoted into opportunities." },
 ];
 
 const HowItWorksPreview = () => (
@@ -23,7 +23,7 @@ const HowItWorksPreview = () => (
       >
         <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">How it works</p>
         <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">
-          From brief to live campaign in 5 steps
+          From upload to pipeline movement — in one continuous flow
         </h2>
       </motion.div>
 
@@ -45,7 +45,7 @@ const HowItWorksPreview = () => (
       </div>
 
       <Button variant="cta" size="lg" asChild>
-        <Link to="/how-it-works">See how it works <ArrowRight size={18} /></Link>
+        <Link to="/how-it-works">See the workflow <ArrowRight size={18} /></Link>
       </Button>
     </div>
   </section>

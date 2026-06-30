@@ -3,16 +3,16 @@ import { XCircle } from "lucide-react";
 
 const blocks = [
   {
-    title: "Not an agency retainer",
-    desc: "No waiting for meetings, handovers, or monthly activity reports that go nowhere.",
+    title: "Not another agency retainer",
+    desc: "No waiting on meetings or activity reports. You own the workspace, the data and the activation.",
   },
   {
-    title: "Not a blank AI tool",
-    desc: "You don't start with an empty screen and figure everything out yourself.",
+    title: "Not a stack of disconnected tools",
+    desc: "Data, sending, replies and pipeline live in the same place — no exports between six apps.",
   },
   {
-    title: "Not founder-dependent delivery",
-    desc: "The system helps you move fast without waiting on a human every time.",
+    title: "Not a blank AI generator",
+    desc: "Outreach assets are generated from your brief, then plug into governed sending and follow-up.",
   },
 ];
 
@@ -27,7 +27,7 @@ const NotAnotherX = () => (
         className="max-w-2xl mb-12"
       >
         <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">
-          Not a retainer. Not a blank tool. Not another delay.
+          Not a retainer. Not a tool stack. Not a blank generator.
         </h2>
       </motion.div>
 

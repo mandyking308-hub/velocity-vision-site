@@ -26,51 +26,51 @@ const plans: PlanDef[] = [
   {
     sku: "vv_starter_oneoff",
     name: "Starter",
-    tagline: "Self-Serve Campaign Launch",
+    tagline: "One activated campaign",
     unit: "one-off",
-    best: "Your first guided campaign launch",
+    best: "Trying the workspace end to end",
     credits: "Includes 25 Campaign Credits",
     features: [
       "1 workspace",
-      "1 guided brief",
-      "1 full generated campaign pack",
-      "Social, press release, video pack",
-      "Lead capture page",
-      "30 days dashboard access",
+      "Data Vault with quality review",
+      "Sender verification & governed activation",
+      "Full outreach pack (email, social, press, video)",
+      "Replies, follow-up & pipeline",
+      "30 days workspace access",
     ],
     cta: "Start Starter",
   },
   {
     sku: "vv_growth_monthly",
     name: "Growth",
-    tagline: "Monthly Campaign Engine",
+    tagline: "Recurring commercial workspace",
     unit: "per month",
-    best: "Businesses running campaigns continuously",
+    best: "Lean teams running outreach continuously",
     credits: "Includes 80 Campaign Credits / month",
     highlight: true,
     features: [
-      "1 main workspace",
-      "Recurring monthly credits",
-      "Templates & repeat campaigns",
-      "Lead capture and mini pipeline",
-      "Connected email area",
-      "Monthly AI performance review",
+      "Everything in Starter, ongoing",
+      "Recurring cadence (weekly/monthly)",
+      "Larger daily send caps",
+      "Reusable templates & segments",
+      "Replies inbox with follow-up states",
+      "Monthly performance review",
     ],
     cta: "Start Growth",
   },
   {
     sku: "vv_agency_monthly",
     name: "Agency Workspace",
-    tagline: "Multi-client workspace",
+    tagline: "Multi-client commercial workspace",
     unit: "per month",
-    best: "Agencies, consultants, fractional teams",
+    best: "Agencies and fractional teams",
     credits: "Includes 250 pooled Campaign Credits / month",
     features: [
-      "Unlimited client workspaces",
+      "Unlimited client workspaces, isolated data",
       "Pooled credits across clients",
-      "Reusable templates & assets",
-      "Cross-client pipeline",
-      "Client-level reporting",
+      "Pooled sending governance (1,000/day ceiling)",
+      "Cross-client pipeline visibility",
+      "Reusable templates & branded reports",
       "Seat management",
     ],
     cta: "Start Agency Workspace",
@@ -81,9 +81,9 @@ const plans: PlanDef[] = [
     tagline: "Optional add-on",
     unit: "per review",
     best: "Optional only — never required",
-    credits: "Adds expert review to one campaign",
+    credits: "Adds expert review to one activation",
     features: [
-      "Senior strategist review of one pack",
+      "Senior strategist review of one campaign",
       "Written recommendations",
       "One async revision pass",
     ],
@@ -94,12 +94,13 @@ const plans: PlanDef[] = [
 
 
 const faqs = [
-  { q: "What are Campaign Credits?", a: "Campaign Credits are your allowance for AI-heavy actions like generating a full campaign pack, social pack, press release, video pack or email sequence. Browsing, editing, moving leads, exporting and reading reports are always free." },
-  { q: "What happens if I run out of credits?", a: "Your workspace stays fully usable — campaigns, leads, reports and assets remain accessible. Only new AI generations pause. You can buy a credit top-up or upgrade plan in seconds." },
-  { q: "Can I top up between cycles?", a: "Yes. Top-up packs add credits instantly and never expire while your plan is active." },
-  { q: "What happens after Starter's 30 days?", a: "Your campaign pack and assets stay yours read-only. To run new generations, upgrade to Growth or buy another Starter." },
-  { q: "Is human review required?", a: "No. Premium Human Review is a paid optional add-on you can buy from inside any campaign." },
-  { q: "Can agencies share credits across clients?", a: "Yes — Agency Workspace pools its monthly credits across all client workspaces." },
+  { q: "What am I actually paying for?", a: "A commercial operating workspace: Data Vault, quality review, sender verification, governed activation, outreach asset generation, cadence, replies, follow-up and pipeline. Storage is generous on every plan. Credits cover heavy-value AI generations." },
+  { q: "What are Campaign Credits?", a: "Credits are the allowance for AI-heavy actions — generating full outreach packs, social packs, press releases, video packs and email sequences. Uploading, reviewing, sending, replying, moving pipeline and exporting are always free." },
+  { q: "Is storing data the same as activating it?", a: "No. You can upload and review unlimited data within plan limits. Activation is the governed step that verifies your sender, picks a safe segment and starts sending — with daily caps and risky-record limits enforced." },
+  { q: "What sending limits apply?", a: "Tiered daily caps protect deliverability: Starter and Growth have per-workspace limits; Agency has a pooled 1,000/day ceiling across all client workspaces. Risky records are capped at 10% of any batch (max 25)." },
+  { q: "What happens if I run out of credits?", a: "The workspace stays fully usable — data, replies, pipeline and reports remain live. Only new AI generations pause. Top up in seconds or upgrade your plan." },
+  { q: "Can agencies share credits across clients?", a: "Yes — Agency Workspace pools monthly credits and sending governance across every client workspace in the account." },
+  { q: "Is human review required?", a: "No. Premium Human Review is an optional paid add-on you can buy from inside any activation." },
 ];
 
 const Pricing = () => {
@@ -108,8 +109,8 @@ const Pricing = () => {
   <>
 
     <SEO
-      title="Pricing — Velocity Vision self-serve marketing platform"
-      description="Self-serve pricing for businesses and agencies. Starter, Growth and Agency Workspace plans plus an optional Premium Human Review add-on."
+      title="Pricing — Velocity Vision commercial workspace"
+      description="Self-serve pricing for businesses and agencies. Generous data storage, governed sending, credits for heavy-value actions, and optional Premium Human Review."
       path="/pricing"
     />
     <Navbar />
@@ -119,17 +120,17 @@ const Pricing = () => {
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
             <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Pricing</p>
             <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">
-              Choose the plan that fits how you launch
+              Pay for governed action, not for stored data
             </h1>
             <p className="text-primary-foreground/75 text-lg mb-8 max-w-2xl mx-auto">
-              Self-serve pricing for businesses and agencies, with optional expert review when you want it.
+              Storage is generous. Sending stays safe. Credits cover heavy-value AI generations. Scale with top-ups, not surprise bills.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button variant="hero" size="lg" asChild>
-                <Link to="/app/billing">Start your first campaign <ArrowRight size={18} /></Link>
+                <Link to="/app/billing">Choose your plan <ArrowRight size={18} /></Link>
               </Button>
               <Button variant="hero-outline" size="lg" asChild>
-                <Link to="/contact">Talk to us</Link>
+                <Link to="/contact">Talk to us about volume</Link>
               </Button>
             </div>
           </motion.div>
@@ -184,16 +185,16 @@ const Pricing = () => {
       <section className="section-padding bg-background border-t border-border">
         <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
           <div>
-            <h3 className="font-display font-semibold text-lg mb-2">Plans include Campaign Credits</h3>
-            <p className="text-muted-foreground text-sm">Every plan includes a generous allowance of credits for AI-heavy actions: full campaign packs, social, press, video and email sequences. Browsing, editing, pipeline and reports are always free.</p>
+            <h3 className="font-display font-semibold text-lg mb-2">Generous data, governed action</h3>
+            <p className="text-muted-foreground text-sm">Store companies, contacts and segments without per-record fees. Heavy-value actions — full outreach packs, social packs, press releases, video packs — draw on Campaign Credits.</p>
           </div>
           <div>
-            <h3 className="font-display font-semibold text-lg mb-2">Scale with top-ups, not surprises</h3>
-            <p className="text-muted-foreground text-sm">Need more in a busy month? Add a credit top-up in seconds — Small, Medium or Large. Top-ups never expire while your plan is active.</p>
+            <h3 className="font-display font-semibold text-lg mb-2">Safe scaling, no surprise bills</h3>
+            <p className="text-muted-foreground text-sm">Tiered daily caps protect deliverability. Top up credits when a month gets busy — Small, Medium or Large. Top-ups never expire while your plan is active.</p>
           </div>
           <div>
-            <h3 className="font-display font-semibold text-lg mb-2">Human review when you want it</h3>
-            <p className="text-muted-foreground text-sm">Optional Premium Human Review ({priceFor("vv_human_review_oneoff", currency).formatted}) adds a senior strategist's eyes to any campaign — never required, available from inside the workspace.</p>
+            <h3 className="font-display font-semibold text-lg mb-2">International by default</h3>
+            <p className="text-muted-foreground text-sm">Multi-currency pricing (GBP, USD, EUR and more), localised tax at checkout, multilingual outreach. Built for distributed teams from day one.</p>
           </div>
         </div>
       </section>

@@ -8,51 +8,75 @@ import { ArrowRight } from "lucide-react";
 
 const groups = [
   {
-    label: "Campaign builder",
+    label: "Data Vault",
     features: [
-      { title: "Guided brief intake", value: "Stops the blank-page problem. Captures what's needed to generate a usable campaign first time." },
-      { title: "Goal-based templates", value: "Pre-shaped flows for lead gen, launch, nurture, promo and re-engagement so you don't reinvent structure." },
-      { title: "In-workspace editor", value: "Refine any output without leaving the platform — what you ship is what you saw." },
+      { title: "Upload & field mapping", value: "CSV import or paste rows. Map once, reuse the mapping for next time." },
+      { title: "Companies & contacts", value: "Structured records with the relationships intact — not a flat dump in a spreadsheet." },
+      { title: "Saved segments", value: "Filter to the records that matter, save the segment, reuse it across campaigns." },
     ],
   },
   {
-    label: "AI-generated campaign packs",
+    label: "Quality Review",
     features: [
-      { title: "Strategy summary", value: "A short, actionable plan — not a 40-page deck nobody reads." },
-      { title: "Copy across channels", value: "Landing page, offer, ads, email — written for conversion, not for word count." },
-      { title: "Brand-aware generation", value: "Your tone, voice and constraints carry across every asset in the pack." },
+      { title: "Duplicate detection", value: "Surfaces duplicated and conflicting records before they get sent to." },
+      { title: "Risk & completeness flags", value: "Missing fields, invalid emails and risky records are flagged for review." },
+      { title: "Safe-to-activate view", value: "Filter directly to records that meet the safety bar — no guessing." },
     ],
   },
   {
-    label: "Social, press and video outputs",
+    label: "Safe Activation",
     features: [
-      { title: "Social media pack", value: "Launch posts, follow-ups, hooks and CTAs — variants per platform, ready to schedule." },
-      { title: "Press release", value: "Distribution-ready announcement so launches get amplified, not buried." },
-      { title: "Video pack", value: "Scripts, hooks, shot list, storyboard outline and captions — no separate creative brief needed." },
+      { title: "Sender verification", value: "DNS-based SPF/DKIM verification before any activation can proceed." },
+      { title: "Tiered daily caps", value: "Per-workspace daily limits scale with your plan; agencies pool to a single 1,000/day ceiling." },
+      { title: "Risky-record limits", value: "Risky records are capped at 10% of any batch, max 25 per batch — enforced automatically." },
     ],
   },
   {
-    label: "Lead forms and pipeline",
+    label: "Outreach Assets",
     features: [
-      { title: "Hosted lead forms", value: "Every campaign captures interest — no third-party form builder, no copy-paste embed dance." },
-      { title: "Simple pipeline", value: "See leads move from new to qualified to closed without buying a separate CRM." },
-      { title: "Follow-up sequences", value: "Drafted automatically so leads never go silent after the first touch." },
+      { title: "Email sequence", value: "Multi-step outbound and follow-up generated from your brief, editable in the workspace." },
+      { title: "Social pack", value: "Launch posts, hooks and platform variants ready to schedule alongside outreach." },
+      { title: "Press & video pack", value: "Distribution-ready press release plus video scripts, shot lists and captions for short-form video." },
     ],
   },
   {
-    label: "Reporting",
+    label: "Cadence & Scheduling",
     features: [
-      { title: "Monthly performance review", value: "Auto-generated. Tells you what worked, what to repeat, what to drop." },
-      { title: "Pipeline value tracking", value: "Revenue-focused metrics, not vanity engagement numbers." },
-      { title: "Exportable reports", value: "Share with stakeholders or clients — branded for agencies." },
+      { title: "One-off & recurring runs", value: "Weekly, monthly or custom cadence with clear next-run visibility." },
+      { title: "Asset refresh strategies", value: "Choose whether assets are reused, regenerated or refreshed each cycle." },
+      { title: "Lifecycle states", value: "Draft, Scheduled, Active, Paused, Expired — clearly visible per campaign." },
     ],
   },
   {
-    label: "Templates and agency workspaces",
+    label: "Replies & Follow-Up",
     features: [
-      { title: "Campaign template library", value: "Save winning campaigns and re-deploy them — your next launch is faster than your last." },
-      { title: "Reusable assets", value: "Shared copy, offers and sequences across campaigns and clients." },
-      { title: "Multi-client workspaces", value: "Run every client from one login, with clean isolation and branded exports." },
+      { title: "Action queue inbox", value: "Inbound replies surface in one queue with clear owner and next action." },
+      { title: "Follow-up states & snooze", value: "Mark replied, snooze (3d/7d/custom), flag stuck after 14 days." },
+      { title: "Lead Action Panel", value: "Per-contact view of history, last touch, follow-up state and next step." },
+    ],
+  },
+  {
+    label: "Pipeline Movement",
+    features: [
+      { title: "Promote to opportunity", value: "Move warm contacts into pipeline with one click — value, stage, owner." },
+      { title: "Stuck-deal alerts", value: "Opportunities idle for 14+ days surface in the dashboard for action." },
+      { title: "Warm & dormant intelligence", value: "Re-surface warm contacts that went quiet so nothing dies in an inbox." },
+    ],
+  },
+  {
+    label: "Billing, Credits & Scaling",
+    features: [
+      { title: "Generous data storage", value: "Storage is included on every plan — credits only apply to heavy-value AI generations." },
+      { title: "Credit top-ups", value: "Add Small / Medium / Large packs instantly; top-ups never expire while your plan is active." },
+      { title: "Multi-currency & tax", value: "GBP, USD, EUR and more, with localised tax handled at checkout." },
+    ],
+  },
+  {
+    label: "Agency Workspaces",
+    features: [
+      { title: "Isolated client workspaces", value: "Run every client from one account with clean data and pipeline isolation." },
+      { title: "Pooled credits & governance", value: "Credits and the 1,000/day sending ceiling are pooled across the account." },
+      { title: "Cross-client visibility", value: "See activation health, replies and pipeline across the whole book in one view." },
     ],
   },
 ];
@@ -60,8 +84,8 @@ const groups = [
 const Features = () => (
   <>
     <SEO
-      title="Features — Self-serve marketing campaign platform | Velocity Vision"
-      description="Campaign builder, AI-generated packs, social, press and video outputs, lead forms, pipeline, reporting, templates and agency workspaces."
+      title="Features — Commercial operating workspace | Velocity Vision"
+      description="Data Vault, quality review, safe activation, outreach assets, cadence, replies, pipeline, credits and agency workspaces — connected end to end."
       path="/features"
     />
     <Navbar />
@@ -70,12 +94,12 @@ const Features = () => (
         <div className="max-w-5xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
             <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Features</p>
-            <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">Everything inside the platform</h1>
+            <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">The full commercial workspace, pillar by pillar</h1>
             <p className="text-primary-foreground/75 text-lg mb-8 max-w-2xl">
-              Every feature exists to compress time-to-launch and increase the chance the campaign actually drives revenue.
+              Every feature exists to take you from messy data to live pipeline — safely, repeatably and without bolting on another tool.
             </p>
             <Button variant="hero" size="lg" asChild>
-              <Link to="/auth">Start your first campaign <ArrowRight size={18} /></Link>
+              <Link to="/auth">Start your workspace <ArrowRight size={18} /></Link>
             </Button>
           </motion.div>
         </div>

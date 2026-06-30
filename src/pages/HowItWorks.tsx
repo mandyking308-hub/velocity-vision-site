@@ -7,24 +7,37 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Check } from "lucide-react";
 
 const steps = [
-  { n: "01", title: "Pick the goal", desc: "Lead gen, launch, nurture, promo or re-engagement — choose the campaign type." },
-  { n: "02", title: "Complete the brief", desc: "Short guided questions about audience, offer, voice and constraints." },
-  { n: "03", title: "Generate the campaign pack", desc: "Strategy, copy, assets and follow-up generated inside your workspace." },
-  { n: "04", title: "Edit and launch", desc: "Refine anything you want, then publish and start capturing leads." },
-  { n: "05", title: "Track and improve", desc: "Pipeline updates in real time, monthly report tells you what to repeat." },
+  { n: "01", title: "Upload your data", desc: "Import CSVs or paste rows. Map your fields once. Companies and contacts land in the Data Vault." },
+  { n: "02", title: "Review quality & duplicates", desc: "See what's complete, what's duplicated and what's risky — before you act on any of it." },
+  { n: "03", title: "Build a safe segment", desc: "Filter to the records that are usable and safe to outreach to. Save the segment for reuse." },
+  { n: "04", title: "Connect & verify sender", desc: "Connect your sending domain or mailbox. Verification gates activation — no surprises live." },
+  { n: "05", title: "Create outreach assets", desc: "Email sequence, social pack, press release and video pack generated from your brief." },
+  { n: "06", title: "Set timing & cadence", desc: "One-off or recurring (weekly/monthly). Decide how assets refresh between runs." },
+  { n: "07", title: "Activate safely", desc: "Tiered daily caps, risky-record limits and pooled governance for agencies — enforced automatically." },
+  { n: "08", title: "Work replies & follow-up", desc: "Action queue for inbound. Snooze, mark stuck, follow up — nothing falls through the cracks." },
+  { n: "09", title: "Move warm contacts into pipeline", desc: "Promote replies into opportunities. Track value, stage and progress in the same workspace." },
+  { n: "10", title: "Review & repeat what works", desc: "Reply rates, pipeline value and activation health summarised every cycle. Rerun the winners." },
 ];
 
 const outputs = [
-  "Strategy summary", "Landing page copy", "Offer copy", "Social media pack",
-  "Email follow-up", "Ad variants", "Press release", "Video pack",
-  "Lead form", "Pipeline", "Monthly review",
+  "Data Vault",
+  "Quality flags & segments",
+  "Sender verification",
+  "Email sequence",
+  "Social pack",
+  "Press release",
+  "Video pack",
+  "Cadence scheduler",
+  "Replies & follow-up",
+  "Pipeline",
+  "Performance review",
 ];
 
 const HowItWorks = () => (
   <>
     <SEO
-      title="How it works — Velocity Vision self-serve campaign launchpad"
-      description="A guided workflow that takes you from campaign idea to live assets, lead capture and reporting — without hiring an agency."
+      title="How it works — Velocity Vision commercial workspace"
+      description="The end-to-end flow: upload data, review quality, activate safely, create outreach, set cadence, work replies and move opportunities into pipeline."
       path="/how-it-works"
     />
     <Navbar />
@@ -33,13 +46,18 @@ const HowItWorks = () => (
         <div className="max-w-5xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
             <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">How it works</p>
-            <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">How Velocity Vision works</h1>
+            <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">From data upload to pipeline movement</h1>
             <p className="text-primary-foreground/75 text-lg mb-8 max-w-2xl">
-              A guided workflow that takes you from campaign idea to live assets, lead capture and reporting — without hiring an agency.
+              One continuous flow inside one workspace. Activation is governed, replies are owned, pipeline is tracked — and the same loop keeps repeating.
             </p>
-            <Button variant="hero" size="lg" asChild>
-              <Link to="/auth">Start your first campaign <ArrowRight size={18} /></Link>
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button variant="hero" size="lg" asChild>
+                <Link to="/auth">Start your workspace <ArrowRight size={18} /></Link>
+              </Button>
+              <Button variant="hero-outline" size="lg" asChild>
+                <Link to="/pricing">See pricing</Link>
+              </Button>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -53,7 +71,7 @@ const HowItWorks = () => (
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.08 }}
+                transition={{ duration: 0.4, delay: i * 0.05 }}
                 className="bg-card border border-border/50 rounded-xl p-6 shadow-card"
               >
                 <p className="text-accent font-display font-bold text-2xl mb-3">{s.n}</p>
@@ -67,8 +85,8 @@ const HowItWorks = () => (
 
       <section className="section-padding bg-secondary">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">What you get</h2>
-          <p className="text-muted-foreground mb-10 max-w-2xl">Every campaign pack is delivered inside your workspace, ready to edit and launch.</p>
+          <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">What's in the workspace</h2>
+          <p className="text-muted-foreground mb-10 max-w-2xl">The same login covers the whole loop — from data review through to opportunity movement.</p>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {outputs.map((o) => (
               <div key={o} className="flex items-center gap-2 bg-card border border-border/50 rounded-lg px-4 py-3">
@@ -84,7 +102,7 @@ const HowItWorks = () => (
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">Expert eyes, only if you want them</h2>
           <p className="text-muted-foreground text-lg mb-6">
-            Premium Human Review is a paid, optional add-on. A strategist reviews your campaign pack and sends back written recommendations and one revision pass. It is never required, and never blocks you launching.
+            Premium Human Review is an optional, paid add-on. A strategist reviews a specific activation and sends back written recommendations and one revision pass. It is never required and never blocks you launching.
           </p>
           <Button variant="cta" asChild>
             <Link to="/pricing">See pricing <ArrowRight size={16} /></Link>
