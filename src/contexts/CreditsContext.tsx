@@ -113,38 +113,6 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
     return true;
   }, [user, remaining, starterExpired, load]);
 
-  const buyTopup = useCallback<CreditsContextValue["buyTopup"]>(async (packId) => {
-    if (!user) return;
-    const pack = TOPUP_PACKS.find((p) => p.id === packId);
-    if (!pack) return;
-    await supabase.from("credit_topups").insert({ user_id: user.id, pack: pack.id, credits: pack.credits, amount: pack.price });
-    await supabase.from("credit_ledger").insert({ user_id: user.id, delta: pack.credits, reason: "topup", meta: { pack: pack.id, price: pack.price } });
-    toast.success(`Added ${pack.credits} Campaign Credits`);
-    await load();
-  }, [user, load]);
-
-  const upgradePlan = useCallback<CreditsContextValue["upgradePlan"]>(async (next) => {
-    if (!user) return;
-    const cfg = PLANS[next];
-    const periodEndIso = cfg.cadence === "monthly"
-      ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-      : new Date(Date.now() + (cfg.durationDays ?? 30) * 24 * 60 * 60 * 1000).toISOString();
-    await supabase.from("user_plans").update({
-      plan: next,
-      status: "active",
-      period_start: new Date().toISOString(),
-      period_end: periodEndIso,
-    }).eq("user_id", user.id);
-    await supabase.from("credit_ledger").insert({
-      user_id: user.id,
-      delta: cfg.includedCredits,
-      reason: "plan_grant",
-      meta: { plan: next },
-    });
-    toast.success(`Switched to ${cfg.name}`);
-    await load();
-  }, [user, load]);
-
   const purchaseHumanReview = useCallback<CreditsContextValue["purchaseHumanReview"]>(async (campaignId) => {
     if (!user) return;
     await supabase.from("human_reviews").insert({
@@ -159,7 +127,7 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
   const value: CreditsContextValue = {
     loading, plan: planId, planConfig, periodStart, periodEnd, starterExpired,
     included, used, topupBalance, remaining,
-    refresh: load, consume, buyTopup, upgradePlan, purchaseHumanReview,
+    refresh: load, consume, purchaseHumanReview,
   };
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
