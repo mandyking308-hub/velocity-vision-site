@@ -43,7 +43,7 @@ const AuthPage = () => {
       const roleList = roles?.map((r) => r.role) ?? [];
 
       if (roleList.includes("client")) {
-        navigate("/portal", { replace: true });
+        navigate("/app", { replace: true });
       } else {
         navigate("/crm", { replace: true });
       }
