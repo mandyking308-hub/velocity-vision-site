@@ -26,7 +26,7 @@ type LegalDoc = {
 };
 
 const standardContact = (topic: string) => [
-  `For ${topic}, contact ${CONTACT_EMAIL}.`,
+  `For ${topic}, ${CONTACT_CTA}`,
   `${ENTITY}.`,
 ];
 
