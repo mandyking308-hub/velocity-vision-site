@@ -1015,6 +1015,9 @@ export type Database = {
         Row: {
           created_at: string
           display_name: string | null
+          dkim_status: string | null
+          domain_verification_details: Json | null
+          domain_verified_at: string | null
           from_email: string
           from_name: string | null
           id: string
@@ -1026,6 +1029,7 @@ export type Database = {
           smtp_host: string
           smtp_port: number
           smtp_username: string
+          spf_status: string | null
           status: string
           updated_at: string
           user_id: string
@@ -1034,6 +1038,9 @@ export type Database = {
         Insert: {
           created_at?: string
           display_name?: string | null
+          dkim_status?: string | null
+          domain_verification_details?: Json | null
+          domain_verified_at?: string | null
           from_email: string
           from_name?: string | null
           id?: string
@@ -1045,6 +1052,7 @@ export type Database = {
           smtp_host: string
           smtp_port?: number
           smtp_username: string
+          spf_status?: string | null
           status?: string
           updated_at?: string
           user_id: string
@@ -1053,6 +1061,9 @@ export type Database = {
         Update: {
           created_at?: string
           display_name?: string | null
+          dkim_status?: string | null
+          domain_verification_details?: Json | null
+          domain_verified_at?: string | null
           from_email?: string
           from_name?: string | null
           id?: string
@@ -1064,6 +1075,7 @@ export type Database = {
           smtp_host?: string
           smtp_port?: number
           smtp_username?: string
+          spf_status?: string | null
           status?: string
           updated_at?: string
           user_id?: string
@@ -2004,6 +2016,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      agency_pooled_sends_today: { Args: { _company: string }; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
