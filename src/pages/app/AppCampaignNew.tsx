@@ -12,7 +12,8 @@ import { CheckCircle2, ChevronLeft, ChevronRight, Sparkles } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
-import { CampaignBrief, CampaignGoal, CampaignKind, generatePack, makeSlug } from "@/lib/campaignPack";
+import { CampaignBrief, CampaignGoal, CampaignKind, CampaignLanguage, CAMPAIGN_LANGUAGES, generatePack, makeSlug } from "@/lib/campaignPack";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useCredits } from "@/contexts/CreditsContext";
 import { CREDIT_COSTS } from "@/lib/credits";
@@ -57,6 +58,8 @@ export default function AppCampaignNew() {
   const { currentId: workspaceId } = useWorkspace();
   const { remaining, consume, starterExpired } = useCredits();
   const [params] = useSearchParams();
+  const { i18n } = useTranslation();
+  const defaultLang: CampaignLanguage = (i18n.language?.startsWith("es") ? "es" : "en");
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
   const [brief, setBrief] = useState<CampaignBrief>({
@@ -74,6 +77,7 @@ export default function AppCampaignNew() {
     deadline: "",
     notes: "",
     outputs: ["full"],
+    language: defaultLang,
   });
   const [cadence, setCadence] = useState<CadenceConfig>(defaultCadence());
   const updateCadence = <K extends keyof CadenceConfig>(k: K, v: CadenceConfig[K]) =>
@@ -104,6 +108,7 @@ export default function AppCampaignNew() {
         workspace_id: workspaceId,
         company_id: null,
         brief,
+        language: brief.language || "en",
         pack,
         slug,
         objective: `${brief.goal} — ${brief.cta}`,
@@ -199,6 +204,22 @@ export default function AppCampaignNew() {
                   );
                 })}
               </div>
+            </div>
+            <div className="md:col-span-2">
+              <Label className="mb-2 block">Output language</Label>
+              <Select value={brief.language || "en"} onValueChange={(v) => update("language", v as CampaignLanguage)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {CAMPAIGN_LANGUAGES.map((l) => (
+                    <SelectItem key={l.value} value={l.value}>
+                      {l.label}{!l.supported && " — falls back to English"}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground mt-1">
+                English and Spanish generate natively. Other languages store metadata and render English copy for now.
+              </p>
             </div>
             <div className="md:col-span-2">
               <Label>Notes / existing assets</Label>
