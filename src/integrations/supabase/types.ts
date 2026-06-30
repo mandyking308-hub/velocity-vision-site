@@ -357,6 +357,8 @@ export type Database = {
           end_date: string | null
           goal: string | null
           id: string
+          lead_form_config: Json | null
+          lead_form_published: boolean
           name: string
           objective: string | null
           owner_id: string | null
@@ -380,6 +382,8 @@ export type Database = {
           end_date?: string | null
           goal?: string | null
           id?: string
+          lead_form_config?: Json | null
+          lead_form_published?: boolean
           name: string
           objective?: string | null
           owner_id?: string | null
@@ -403,6 +407,8 @@ export type Database = {
           end_date?: string | null
           goal?: string | null
           id?: string
+          lead_form_config?: Json | null
+          lead_form_published?: boolean
           name?: string
           objective?: string | null
           owner_id?: string | null
@@ -771,6 +777,7 @@ export type Database = {
           last_error: string | null
           last_verified_at: string | null
           provider: string
+          rate_limit_per_hour: number
           smtp_host: string
           smtp_port: number
           smtp_username: string
@@ -789,6 +796,7 @@ export type Database = {
           last_error?: string | null
           last_verified_at?: string | null
           provider: string
+          rate_limit_per_hour?: number
           smtp_host: string
           smtp_port?: number
           smtp_username: string
@@ -807,6 +815,7 @@ export type Database = {
           last_error?: string | null
           last_verified_at?: string | null
           provider?: string
+          rate_limit_per_hour?: number
           smtp_host?: string
           smtp_port?: number
           smtp_username?: string
@@ -1320,6 +1329,68 @@ export type Database = {
           },
         ]
       }
+      payment_intents: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          environment: string
+          id: string
+          meta: Json | null
+          price_id: string
+          product_kind: string
+          ref_id: string | null
+          status: string
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          updated_at: string
+          user_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          environment?: string
+          id?: string
+          meta?: Json | null
+          price_id: string
+          product_kind: string
+          ref_id?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          user_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          environment?: string
+          id?: string
+          meta?: Json | null
+          price_id?: string
+          product_kind?: string
+          ref_id?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          user_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_intents_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "client_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
@@ -1450,6 +1521,68 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      stripe_subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean | null
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          environment: string
+          id: string
+          plan: string | null
+          price_id: string | null
+          product_id: string | null
+          status: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string
+          user_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          environment?: string
+          id?: string
+          plan?: string | null
+          price_id?: string | null
+          product_id?: string | null
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          environment?: string
+          id?: string
+          plan?: string | null
+          price_id?: string | null
+          product_id?: string | null
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stripe_subscriptions_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "client_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       subscriptions: {
         Row: {
