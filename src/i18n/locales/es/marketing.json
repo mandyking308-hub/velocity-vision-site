@@ -1,0 +1,40 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "howItWorks": "Cómo funciona",
+    "pricing": "Precios",
+    "forBusinesses": "Para Empresas",
+    "forAgencies": "Para Agencias",
+    "features": "Funciones",
+    "templates": "Plantillas",
+    "about": "Nosotros",
+    "help": "Ayuda",
+    "seePricing": "Ver precios",
+    "startCampaign": "Lanza tu primera campaña"
+  },
+  "hero": {
+    "eyebrow": "Plataforma de campañas self-serve",
+    "ctaPrimary": "Lanza tu primera campaña",
+    "ctaSecondary": "Ver cómo funciona"
+  },
+  "midCta": {
+    "title": "¿Listo para tu próxima campaña?",
+    "body": "Crea, programa y mide en un solo espacio.",
+    "button": "Empezar"
+  },
+  "finalCta": {
+    "title": "Lanza tu primera campaña hoy",
+    "body": "Sin agencia, sin esperas. Genera un pack completo en minutos.",
+    "button": "Empezar"
+  },
+  "footer": {
+    "tagline": "La plataforma self-serve para crecer.",
+    "product": "Producto",
+    "company": "Empresa",
+    "legal": "Legal",
+    "rights": "Todos los derechos reservados."
+  },
+  "faq": {
+    "title": "Preguntas frecuentes"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "title": "Billing",
+  "subtitle": "Plan, credits, and invoices.",
+  "currentPlan": "Current plan",
+  "credits": "Campaign Credits",
+  "topUp": "Top up",
+  "currency": "Currency",
+  "billingCountry": "Billing country",
+  "chargedIn": "Charged in {{currency}}",
+  "tax": "Tax",
+  "history": "Payment history"
+}

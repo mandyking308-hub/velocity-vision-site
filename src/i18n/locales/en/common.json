@@ -1,0 +1,26 @@
+{
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "back": "Back",
+    "next": "Next",
+    "close": "Close",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading…",
+    "retry": "Retry"
+  },
+  "language": {
+    "label": "Language",
+    "english": "English",
+    "spanish": "Español"
+  },
+  "currency": {
+    "label": "Currency"
+  },
+  "states": {
+    "empty": "Nothing here yet.",
+    "error": "Something went wrong."
+  }
+}

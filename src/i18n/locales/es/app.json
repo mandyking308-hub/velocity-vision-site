@@ -1,0 +1,35 @@
+{
+  "nav": {
+    "dashboard": "Panel",
+    "dataVault": "Bóveda de Datos",
+    "activate": "Activar",
+    "campaigns": "Campañas",
+    "followUp": "Seguimiento",
+    "pipeline": "Pipeline",
+    "leads": "Leads",
+    "templates": "Plantillas",
+    "email": "Correo",
+    "performance": "Rendimiento",
+    "workspaces": "Espacios",
+    "billing": "Facturación",
+    "settings": "Ajustes"
+  },
+  "dashboard": {
+    "title": "Centro de Mando",
+    "subtitle": "Tu espacio comercial de un vistazo.",
+    "sections": {
+      "summary": "Resumen",
+      "dataHealth": "Salud de Datos",
+      "activation": "Listo para Activar",
+      "create": "Crear Activos",
+      "replies": "Respuestas y Seguimiento",
+      "pipeline": "Pipeline y Ventas",
+      "nextBest": "Próximas Mejores Acciones"
+    },
+    "empty": {
+      "title": "Nada que hacer todavía",
+      "body": "Sube tus datos para empezar a activar campañas.",
+      "cta": "Subir datos"
+    }
+  }
+}
