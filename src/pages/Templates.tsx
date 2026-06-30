@@ -7,8 +7,8 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Target, Rocket, Heart, Tag, RefreshCw } from "lucide-react";
 
 const templates = [
-  { icon: Target, name: "Outbound lead generation", desc: "Safe segment + multi-step outreach + reply queue + pipeline promotion. A repeatable motion you can run every week." },
-  { icon: Rocket, name: "Launch motion", desc: "Coordinated outreach, social pack, press release and video pack — activated together for a product or offer launch." },
+  { icon: Target, name: "Outbound lead generation", desc: "Safe segment + multi-step outreach + reply queue + pipeline promotion. A repeatable template you can run every week." },
+  { icon: Rocket, name: "Launch template", desc: "Coordinated outreach, social pack, press release and video pack — activated together for a product or offer launch." },
   { icon: Heart, name: "Nurture & re-warm", desc: "Multi-step educational sequence for warm contacts, with reply tracking and follow-up states built in." },
   { icon: Tag, name: "Promo & offer push", desc: "Short-window activation with urgency-led copy, safe segment limits and pipeline tracking for converted interest." },
   { icon: RefreshCw, name: "Dormant re-engagement", desc: "Re-surface lapsed customers and cold contacts with a refreshed offer, tailored follow-up and stuck-deal alerts." },
