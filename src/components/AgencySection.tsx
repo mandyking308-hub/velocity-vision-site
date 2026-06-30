@@ -40,7 +40,7 @@ const AgencySection = () => (
           <Link to="/for-agencies">Start Agency Plan <ArrowRight size={16} /></Link>
         </Button>
         <Button variant="outline" size="lg" asChild>
-          <Link to="/for-agencies">Learn More</Link>
+          <Link to="/for-agencies">See agency platform features</Link>
         </Button>
       </div>
     </div>
