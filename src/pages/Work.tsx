@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { motion } from "framer-motion";
 
 const campaigns = [
@@ -13,7 +14,8 @@ const campaigns = [
 
 const Work = () => (
   <>
-    <Navbar />
+    <SEO title={"Case Studies & Client Work | Velocity Influence"} description={"Real campaigns, real outcomes. Explore Velocity Influence case studies across performance marketing, PR, and brand transformation."} path="/work" />
+      <Navbar />
     <main className="pt-20">
       <section className="section-padding bg-hero">
         <div className="max-w-7xl mx-auto">

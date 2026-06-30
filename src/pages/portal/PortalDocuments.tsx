@@ -45,13 +45,12 @@ const PortalDocuments = () => {
       return;
     }
 
-    const { data: urlData } = supabase.storage.from("client-documents").getPublicUrl(filePath);
-
+    // Store the storage path (not a public URL) — bucket is private; we mint signed URLs on demand.
     const { error } = await supabase.from("client_documents").insert({
       company_id: companyId,
       name: file.name,
       document_type: docType,
-      file_url: urlData.publicUrl,
+      file_url: filePath,
       file_size: file.size,
       uploaded_by: user.id,
     });
@@ -64,6 +63,24 @@ const PortalDocuments = () => {
     }
     setUploading(false);
     e.target.value = "";
+  };
+
+  const handleDownload = async (doc: { file_url: string; name: string }) => {
+    // file_url may be a legacy public URL or a storage path. Normalize to a storage path.
+    let path = doc.file_url;
+    const marker = "/client-documents/";
+    const idx = path.indexOf(marker);
+    if (idx !== -1) path = path.substring(idx + marker.length);
+
+    const { data, error } = await supabase.storage
+      .from("client-documents")
+      .createSignedUrl(path, 3600);
+
+    if (error || !data?.signedUrl) {
+      toast.error("Could not generate download link");
+      return;
+    }
+    window.open(data.signedUrl, "_blank", "noopener,noreferrer");
   };
 
   const deleteMutation = useMutation({
@@ -136,9 +153,9 @@ const PortalDocuments = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <a href={doc.file_url} target="_blank" rel="noopener noreferrer">
-                <Button variant="ghost" size="sm"><Download size={16} /></Button>
-              </a>
+              <Button variant="ghost" size="sm" onClick={() => handleDownload(doc)}>
+                <Download size={16} />
+              </Button>
               <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(doc.id)}>
                 <Trash2 size={16} className="text-destructive" />
               </Button>

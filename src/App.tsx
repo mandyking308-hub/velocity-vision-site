@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { DemoProvider } from "@/contexts/DemoContext";
 import ScrollToTop from "@/components/ScrollToTop";
 import PageTransition from "@/components/PageTransition";
+import CRMProtectedRoute from "@/components/CRMProtectedRoute";
 import Index from "./pages/Index.tsx";
 import Services from "./pages/Services.tsx";
 import Industries from "./pages/Industries.tsx";
@@ -87,7 +88,7 @@ const AnimatedRoutes = () => {
         </Route>
 
         {/* CRM (protected - internal team) */}
-        <Route path="/crm" element={<ProtectedRoute><CRMLayout /></ProtectedRoute>}>
+        <Route path="/crm" element={<CRMProtectedRoute><CRMLayout /></CRMProtectedRoute>}>
           <Route index element={<CRMDashboard />} />
           <Route path="companies" element={<CompaniesPage />} />
           <Route path="contacts" element={<ContactsPage />} />
