@@ -156,11 +156,13 @@ const Pricing = () => {
                 )}
                 <h3 className="font-display font-semibold text-xl text-foreground">{p.name}</h3>
                 <p className="text-muted-foreground text-sm mb-4">{p.tagline}</p>
-                <p className="mb-2">
-                  <span className="text-4xl font-display font-bold text-foreground">{p.price}</span>
+                <p className="mb-1">
+                  <span className="text-4xl font-display font-bold text-foreground">{priceFor(p.sku, currency).formatted}</span>
                   <span className="text-muted-foreground text-sm ml-1">{p.unit}</span>
                 </p>
+                <p className="text-[11px] text-muted-foreground mb-2">{taxNotice(currency)}</p>
                 <p className="text-xs text-muted-foreground mb-2">Best for: {p.best}</p>
+
                 <p className="text-xs font-semibold text-accent mb-4">{p.credits}</p>
                 <ul className="space-y-2 mb-6 flex-1">
                   {p.features.map((f) => (
