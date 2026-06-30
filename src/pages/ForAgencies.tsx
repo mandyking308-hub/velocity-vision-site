@@ -4,111 +4,62 @@ import SEO from "@/components/SEO";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import {
-  ArrowRight, Building2, BarChart3, Users, Layers, Shield, Zap
-} from "lucide-react";
+import { ArrowRight, Building2, BarChart3, Users, Layers, FileDown, Eye } from "lucide-react";
 
 const benefits = [
-  { icon: Layers, title: "Multiple Client Workspaces", desc: "Manage all your client campaigns from a single agency account. Create separate workspaces for each client with dedicated assets, contacts, and reporting." },
-  { icon: BarChart3, title: "Centralised Campaign Analytics", desc: "View performance data across all client campaigns in one dashboard. Compare results, optimise budgets, and demonstrate ROI to every client." },
-  { icon: Users, title: "Team Collaboration", desc: "Add unlimited team members to your agency account. Assign campaigns, manage workflows, and keep everyone aligned across client projects." },
-  { icon: Shield, title: "White-Label Reporting", desc: "Generate branded reports for each client workspace. Present campaign results under your agency's identity with professional analytics." },
-  { icon: Zap, title: "Campaign Engine at Scale", desc: "Launch email, social, paid, PR, and influencer campaigns for all your clients. Our campaign engine handles volume without sacrificing quality." },
-  { icon: Building2, title: "Unified Billing", desc: "One subscription covers your entire agency. Bill your own clients independently — we handle your platform subscription, you handle your client relationships." },
+  { icon: Layers, title: "Multiple client workspaces", desc: "Run every client from one account — isolated workspaces, shared templates, no context-switching tax." },
+  { icon: FileDown, title: "Repeatable templates", desc: "Save winning campaigns as templates and re-deploy across clients in minutes." },
+  { icon: Users, title: "Reusable assets", desc: "Build a shared asset library — copy frameworks, offers, sequences — and stop rewriting from scratch." },
+  { icon: BarChart3, title: "Branded reporting exports", desc: "Auto-generated monthly reports under your agency brand — no analyst time required." },
+  { icon: Eye, title: "Cross-client campaign visibility", desc: "One dashboard across every active campaign — never lose track of what's running where." },
+  { icon: Building2, title: "Reduced delivery friction", desc: "Less calls, fewer handovers, faster turnarounds. Your team ships campaigns, not status updates." },
 ];
 
 const ForAgencies = () => (
   <>
-    <SEO title={"For Agencies — White-Label Marketing Platform | Velocity Influence"} description={"Velocity Influence for agencies: a multi-workspace marketing platform with white-label client portals, campaign tooling, and reporting."} path="/for-agencies" />
-      <Navbar />
-    <main className="pt-20">
-      {/* Hero */}
+    <SEO
+      title="For Agencies — One workspace to run every client | Velocity Vision"
+      description="Velocity Vision for agencies: multi-client workspaces, reusable templates, branded reporting and a self-serve campaign engine that scales delivery without scaling headcount."
+      path="/for-agencies"
+    />
+    <Navbar />
+    <main className="pt-24">
       <section className="section-padding bg-hero">
-        <div className="max-w-7xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="max-w-3xl">
+        <div className="max-w-5xl mx-auto">
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
             <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">For Agencies</p>
             <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">
-              Run campaigns for <span className="text-gradient">every client</span> in one platform.
+              One workspace to run campaigns for every client
             </h1>
-            <p className="text-primary-foreground/70 text-lg mb-8 leading-relaxed">
-              Velocity Influence gives agencies, consultants, and marketing firms the tools to manage multiple client campaigns, centralise analytics, and scale without complexity.
+            <p className="text-primary-foreground/75 text-lg mb-8 max-w-2xl">
+              Multi-client workspaces, repeatable templates, reusable assets and branded reporting — so your team ships more, faster, without burning more hours.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button variant="hero" size="lg" asChild>
-                <Link to="/book-demo">Start Agency Plan <ArrowRight size={18} /></Link>
+                <Link to="/auth">Start Agency Workspace <ArrowRight size={18} /></Link>
               </Button>
               <Button variant="hero-outline" size="lg" asChild>
-                <Link to="/book-demo">Book a Platform Demo</Link>
+                <Link to="/contact">Talk to us about volume</Link>
               </Button>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Why Agencies */}
       <section className="section-padding bg-background">
         <div className="max-w-7xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
-            <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Why Agencies Choose Us</p>
-            <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">Everything your agency needs, nothing it doesn't</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">From boutique consultancies to full-service agencies — one platform that grows with you.</p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-10 max-w-2xl">Built for delivery teams</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {benefits.map((b, i) => (
-              <motion.div key={b.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
-                className="bg-card rounded-xl p-8 shadow-card border border-border/50 hover:border-accent/30 transition-all">
-                <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center mb-5">
-                  <b.icon className="text-accent" size={24} />
+              <motion.div key={b.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="bg-card border border-border/50 rounded-xl p-6 shadow-card">
+                <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
+                  <b.icon className="text-accent" size={20} />
                 </div>
-                <h3 className="font-display font-semibold text-lg text-foreground mb-2">{b.title}</h3>
+                <h3 className="font-display font-semibold text-foreground mb-2">{b.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">{b.desc}</p>
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="section-padding bg-secondary">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">How It Works</p>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-12">From sign-up to campaign launch in minutes</h2>
-          </motion.div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {[
-              { step: "1", title: "Sign Up", desc: "Create your agency account and choose the Agency Plan." },
-              { step: "2", title: "Add Clients", desc: "Create client workspaces for each of your clients." },
-              { step: "3", title: "Launch Campaigns", desc: "Build and deploy campaigns per client workspace." },
-              { step: "4", title: "Report & Scale", desc: "Track analytics per client and scale across your portfolio." },
-            ].map((s, i) => (
-              <motion.div key={s.step} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                className="text-center">
-                <div className="w-12 h-12 rounded-full bg-accent text-accent-foreground font-display font-bold text-lg flex items-center justify-center mx-auto mb-4">{s.step}</div>
-                <h3 className="font-display font-semibold text-foreground mb-1">{s.title}</h3>
-                <p className="text-muted-foreground text-sm">{s.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="section-padding bg-hero">
-        <div className="max-w-3xl mx-auto text-center">
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground mb-4">Ready to scale your agency?</h2>
-            <p className="text-primary-foreground/70 text-lg mb-8">Join agencies worldwide using Velocity Influence to manage client campaigns at scale.</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="hero" size="lg" asChild>
-                <Link to="/book-demo">Start Agency Plan <ArrowRight size={18} /></Link>
-              </Button>
-              <Button variant="hero-outline" size="lg" asChild>
-                <Link to="/book-demo">Book a Demo</Link>
-              </Button>
-            </div>
-          </motion.div>
         </div>
       </section>
     </main>
