@@ -54,12 +54,32 @@ export default function FounderMonetisation() {
   const avgUsage = Object.values(userUsage).reduce((s, u) => s + u.used, 0) / Math.max(Object.keys(userUsage).length, 1);
   const nearExhaustion = Object.entries(userUsage).filter(([, u]) => u.granted + u.topup > 0 && u.used / (u.granted + u.topup) >= 0.9).length;
 
+  const runInternationalSetup = async () => {
+    const { data, error } = await supabase.functions.invoke("setup-international-payments", { method: "POST" });
+    if (error) { alert("Setup failed: " + error.message); return; }
+    alert(
+      `Stripe international setup complete.\n` +
+      `Products updated: ${data?.products?.length ?? 0}\n` +
+      `Prices created/verified: ${data?.prices?.length ?? 0}\n` +
+      `Errors: ${data?.errors?.length ?? 0}`,
+    );
+  };
+
   return (
     <div className="space-y-6 max-w-6xl">
-      <div>
-        <h1 className="text-3xl font-bold">Monetisation</h1>
-        <p className="text-muted-foreground">Plan mix, credit usage and revenue across the platform.</p>
+      <div className="flex items-start justify-between gap-3 flex-wrap">
+        <div>
+          <h1 className="text-3xl font-bold">Monetisation</h1>
+          <p className="text-muted-foreground">Plan mix, credit usage and revenue across the platform.</p>
+        </div>
+        <button
+          onClick={runInternationalSetup}
+          className="text-sm border border-border rounded-md px-3 py-2 hover:bg-muted"
+        >
+          Run international Stripe setup
+        </button>
       </div>
+
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Stat label="Total users on a plan" value={plans.length} />
