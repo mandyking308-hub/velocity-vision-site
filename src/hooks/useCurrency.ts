@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Active currency + country for the current user/visitor.
- * Resolution order: URL override → stored selection → profile → IP/geo → browser locale → GBP.
+ * Resolution order: URL override → stored selection → profile → IP/geo → browser locale → USD fallback.
  * URL overrides (for demos/QA): ?ccy=USD ?cc=US
  */
 export function useCurrency() {
