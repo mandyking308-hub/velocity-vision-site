@@ -7,7 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import LeadActionPanel, { type ActionLead } from "@/components/app/LeadActionPanel";
 import { bucketCounts, deriveFollowUpState, STATE_LABEL, STATE_TONE, type FollowUpState } from "@/lib/leadStates";
-import { MessageSquare, Mail, AlertTriangle, Zap, Flame, Snowflake, Filter, RefreshCw } from "lucide-react";
+import { MessageSquare, Mail, AlertTriangle, Zap, Flame, Snowflake, Filter, RefreshCw, Send, Upload } from "lucide-react";
+import JourneyEmptyState from "@/components/app/JourneyEmptyState";
 
 const PRIMARY_TABS: { id: "action" | FollowUpState; label: string; icon: any }[] = [
   { id: "action", label: "Needs action", icon: AlertTriangle },
