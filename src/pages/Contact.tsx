@@ -50,13 +50,30 @@ const Contact = () => {
         company_id: companyId,
       }).select("id").single();
 
-      await supabase.from("leads").insert({
+      const { data: leadData } = await supabase.from("leads").insert({
         source: "website_contact",
         contact_id: contactData?.id || null,
         company_id: companyId,
         marketing_interest: form.message,
         status: "new" as const,
-      });
+      }).select("id").single();
+
+      try {
+        await supabase.functions.invoke("notify-contact", {
+          body: {
+            name: form.name,
+            email: form.email,
+            company: form.company,
+            message: form.message,
+            route: "website_contact",
+            lead_id: leadData?.id ?? null,
+            contact_id: contactData?.id ?? null,
+            company_id: companyId,
+          },
+        });
+      } catch {
+        // notification failure must not block the user
+      }
 
       toast.success("Message sent. We'll respond within one business day.");
       setForm({ name: "", email: "", company: "", message: "" });
