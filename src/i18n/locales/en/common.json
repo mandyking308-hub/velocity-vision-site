@@ -23,7 +23,9 @@
     "viewAll": "View all",
     "learnMore": "Learn more",
     "getStarted": "Get started",
-    "tryDemo": "Try the demo"
+    "tryDemo": "Try the demo",
+    "refresh": "Refresh",
+    "copy": "Copy"
   },
   "status": {
     "draft": "Draft",
@@ -33,6 +35,15 @@
     "completed": "Completed",
     "expired": "Expired",
     "failed": "Failed"
+  },
+  "toasts": {
+    "saved": "Saved",
+    "copied": "Copied",
+    "updated": "Updated",
+    "updateFailed": "Update failed",
+    "moved": "Moved to {{stage}}",
+    "movedToPipeline": "Moved to pipeline",
+    "moveToPipelineFailed": "Couldn't move to pipeline"
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",

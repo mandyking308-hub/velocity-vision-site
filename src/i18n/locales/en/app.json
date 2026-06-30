@@ -14,6 +14,21 @@
     "billing": "Billing",
     "settings": "Settings"
   },
+  "priority": {
+    "title": "Needs your attention today",
+    "empty": "You're caught up — nothing urgent.",
+    "repliesDue": "{{count}} reply needs action",
+    "repliesDue_plural": "{{count}} replies need action",
+    "overdue": "{{count}} follow-up overdue",
+    "overdue_plural": "{{count}} follow-ups overdue",
+    "stuck": "{{count}} deal stuck 14+ days",
+    "stuck_plural": "{{count}} deals stuck 14+ days",
+    "senderUnverified": "Sender domain not verified",
+    "senderDisconnected": "Sender not connected",
+    "creditsLow": "Credits low — top up to keep sending",
+    "creditsExhausted": "Credits exhausted",
+    "open": "Open"
+  },
   "dashboard": {
     "title": "Command Centre",
     "subtitle": "Your commercial workspace at a glance.",
@@ -41,7 +56,10 @@
     "title": "Activate",
     "subtitle": "Move clean, verified data into live campaigns.",
     "readiness": "Readiness",
-    "launch": "Launch"
+    "launch": "Launch",
+    "toasts": {
+      "prepared": "Activation prepared for {{count}} contacts. Open your campaign to schedule the send."
+    }
   },
   "campaigns": {
     "title": "Campaigns",
@@ -51,18 +69,53 @@
     "language": "Campaign language"
   },
   "followUp": {
-    "title": "Follow-Up",
-    "subtitle": "Replies and reminders that need your attention."
+    "title": "Replies & Follow-Up",
+    "subtitle": "Who replied, who's overdue, what's warm. This is where you start your day.",
+    "stats": {
+      "needsAction": "Needs action",
+      "replied": "Replied",
+      "overdue": "Overdue",
+      "due": "Due today",
+      "warm": "Warm",
+      "dormant": "Dormant",
+      "inPipeline": "In pipeline",
+      "snoozed": "Snoozed",
+      "bounced": "Bounced"
+    },
+    "filters": {
+      "search": "Search by name or email…",
+      "allCampaigns": "All campaigns"
+    },
+    "empty": {
+      "title": "No leads in your follow-up queue yet",
+      "description": "Once you activate a campaign, replies and follow-ups land here automatically.",
+      "caughtUp": "Nothing in this queue. You're caught up.",
+      "tryFilter": "Nothing in this queue. Try another filter."
+    }
   },
   "pipeline": {
     "title": "Pipeline",
-    "stages": {
-      "new": "New",
-      "qualified": "Qualified",
-      "meeting": "Meeting",
-      "proposal": "Proposal",
+    "subtitle": "Active opportunities and where revenue is moving — or getting stuck.",
+    "stats": {
+      "opportunities": "Opportunities",
+      "active": "Active",
+      "value": "Pipeline value",
+      "stuck": "Stuck 14d+",
+      "overdue": "Overdue action",
       "won": "Won",
       "lost": "Lost"
+    },
+    "stages": {
+      "discovery": "Discovery",
+      "demo": "Demo",
+      "proposal": "Proposal",
+      "negotiation": "Negotiation",
+      "won": "Won",
+      "lost": "Lost"
+    },
+    "empty": {
+      "title": "No opportunities in your pipeline yet",
+      "description": "Opportunities are created when you promote a replied or warm lead from the Follow-Up queue."
     }
   },
   "billing": {
