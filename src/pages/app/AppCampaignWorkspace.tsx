@@ -12,6 +12,7 @@ import { useCredits } from "@/contexts/CreditsContext";
 import { CREDIT_COSTS } from "@/lib/credits";
 import HumanReviewButton from "@/components/app/HumanReviewButton";
 import EmailSequenceSender from "@/components/app/EmailSequenceSender";
+import LeadFormConfig from "@/components/app/LeadFormConfig";
 
 interface Campaign {
   id: string;
@@ -22,6 +23,8 @@ interface Campaign {
   brief: CampaignBrief | null;
   pack: CampaignPack | null;
   slug: string | null;
+  lead_form_config: any;
+  lead_form_published: boolean;
 }
 
 const copy = (text: string) => {
@@ -39,7 +42,7 @@ export default function AppCampaignWorkspace() {
     if (!id) return;
     (async () => {
       const [{ data: camp }, { data: ld }] = await Promise.all([
-        supabase.from("campaigns").select("id, name, status, goal, campaign_kind, brief, pack, slug").eq("id", id).maybeSingle(),
+        supabase.from("campaigns").select("id, name, status, goal, campaign_kind, brief, pack, slug, lead_form_config, lead_form_published").eq("id", id).maybeSingle(),
         supabase.from("leads").select("id, name, email, status, created_at, last_action").eq("campaign_id", id).order("created_at", { ascending: false }),
       ]);
       setC(camp as any);

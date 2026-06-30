@@ -70,6 +70,7 @@ import AppSettings from "./pages/app/AppSettings.tsx";
 import AppWorkspaces from "./pages/app/AppWorkspaces.tsx";
 import AppBilling from "./pages/app/AppBilling.tsx";
 import AppEmailConnections from "./pages/app/AppEmailConnections.tsx";
+import HostedCapture from "./pages/HostedCapture.tsx";
 
 const queryClient = new QueryClient();
 
@@ -106,6 +107,9 @@ const AnimatedRoutes = () => {
         <Route path="/legal/:slug" element={<PageTransition><LegalDocumentPage /></PageTransition>} />
         <Route path="/auth" element={<PageTransition><AuthPage /></PageTransition>} />
         <Route path="/demo" element={<PageTransition><DemoLogin /></PageTransition>} />
+
+        {/* Hosted public lead capture pages */}
+        <Route path="/c/:slug" element={<HostedCapture />} />
 
         {/* Demo CRM (sandboxed — no auth required) */}
         <Route path="/demo/crm" element={<DemoCRMLayout />}>
