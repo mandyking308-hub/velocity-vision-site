@@ -171,9 +171,9 @@ function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspa
   const toggle = (id: string) => { const s = new Set(selected); s.has(id) ? s.delete(id) : s.add(id); setSelected(s); };
 
   const submit = async () => {
-    if (!connectionId) { toast.error("Connect an email first"); return; }
+    if (!connectionId) { toast.error(t("email.toasts.connectFirst")); return; }
     const targets = leads.filter(l => selected.has(l.id) && l.email);
-    if (targets.length === 0) { toast.error("Pick at least one lead with an email"); return; }
+    if (targets.length === 0) { toast.error(t("email.toasts.pickLead")); return; }
     setSending(true);
     let ok = 0, fail = 0;
     for (const lead of targets) {
@@ -188,8 +188,8 @@ function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspa
       if (error || (data as any)?.error) fail++; else ok++;
     }
     setSending(false);
-    if (ok) toast.success(`${ok} ${mode === "schedule" ? "scheduled" : "sent"}`);
-    if (fail) toast.error(`${fail} failed`);
+    if (ok) toast.success(mode === "schedule" ? t("email.toasts.scheduled", { count: ok }) : t("email.toasts.sent", { count: ok }));
+    if (fail) toast.error(t("email.toasts.failed", { count: fail }));
     onClose();
   };
 
