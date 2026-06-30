@@ -42,6 +42,20 @@ export default function FounderIntelligence() {
 
   useEffect(() => {
     (async () => {
+      // Best-effort access log — governance signal that this internal
+      // dashboard was viewed, by whom, and when. Reuses send_audit_log
+      // so no extra surface area / migration.
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          await (supabase as any).from("send_audit_log").insert({
+            user_id: user.id,
+            action: "intelligence_view",
+            details: { path: "/crm/intelligence", at: new Date().toISOString() },
+          });
+        }
+      } catch { /* non-blocking */ }
+
       const results = await Promise.all([
         supabase.from("contacts").select("id, country, language, company_id, quality_status, suppressed, blocked, created_at"),
         supabase.from("companies").select("id, country, industry, created_at"),
@@ -53,7 +67,7 @@ export default function FounderIntelligence() {
         supabase.from("user_plans").select("user_id, plan, status, currency"),
         supabase.from("credit_topups").select("user_id, credits, amount, created_at"),
         supabase.from("credit_ledger").select("user_id, delta, reason, created_at"),
-        supabase.from("send_audit_log").select("user_id, action, created_at"),
+        supabase.from("send_audit_log").select("user_id, action, created_at").order("created_at", { ascending: false }).limit(50),
       ]);
       setContacts((results[0].data as Row[]) || []);
       setCompanies((results[1].data as Row[]) || []);
