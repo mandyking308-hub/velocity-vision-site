@@ -101,5 +101,53 @@ export const buildLog: BuildLogEntry[] = [
     feature: "Founder Operations Manual",
     description: "Created comprehensive operations manual documenting all platform systems, architecture, workflows, and configurations. Includes platform build log, search functionality, and downloadable export.",
     component: "Documentation"
+  },
+  {
+    date: "2026-03-15",
+    feature: "Homepage Repositioning",
+    description: "Refined homepage to position Velocity Influence as platform + agency. Added PlatformPositioning four-block grid and MidPageCTA. Updated HeroSection with dual CTAs ('Explore the Platform' and 'Book a Demo'). Tightened copy across WhatWeDo, IndustriesSection, CampaignCapabilities, AgencySection, and FinalCTA.",
+    component: "Website"
+  },
+  {
+    date: "2026-03-15",
+    feature: "ROI Calculator",
+    description: "Built homepage ROI calculator (src/components/ROICalculator.tsx) with inputs for deal value, close rate, and monthly leads. Computes monthly and annual revenue and compares against service cost. Includes lead-capture CTA.",
+    component: "Website"
+  },
+  {
+    date: "2026-03-18",
+    feature: "Security Hardening — Phase 1",
+    description: "Tenant isolation pass across 18 tables. Created app_private schema for security definer helpers (has_role, is_internal, user_company). Replaced broad RLS policies on profiles, user_roles, companies, contacts, invoices, payments, subscriptions, messages, notifications, client_documents, error_logs, qa_test_results. Enabled HIBP leaked-password protection. Converted client-documents storage bucket to private with folder-scoped policies.",
+    component: "Security"
+  },
+  {
+    date: "2026-03-19",
+    feature: "SEO Phase 2",
+    description: "Installed react-helmet-async with HelmetProvider. Created src/components/SEO.tsx and added per-page titles, meta descriptions, canonical URLs, and Open Graph tags across 9 public pages. Added Organization, WebSite, and CollectionPage JSON-LD. Created public/sitemap.xml, public/robots.txt, and public/llms.txt. Improved accessibility on Navbar mobile button and 'Learn More' links.",
+    component: "SEO"
+  },
+  {
+    date: "2026-03-19",
+    feature: "CRM Route Protection",
+    description: "Created src/components/CRMProtectedRoute.tsx enforcing internal-role requirement (founder, admin, sales, marketing) on every /crm/* route. Updated PortalDocuments to use 1-hour signed URLs for private-bucket downloads instead of public URLs.",
+    component: "Security"
+  },
+  {
+    date: "2026-03-20",
+    feature: "Security Hardening — Phase 2",
+    description: "Cleared residual USING(true)/WITH CHECK(true) policies on CRM tables (leads, opportunities, client_onboarding, campaign_requests, client_workspaces, campaigns, campaign_metrics, campaign_assets, notes, activities, tasks, campaign_attributions). Removed unrestricted anonymous INSERT policies on companies and contacts; anonymous writes restricted to leads table only. Scanner result: 42 findings → 0 critical.",
+    component: "Security"
+  },
+  {
+    date: "2026-03-22",
+    feature: "Manual PDF Export",
+    description: "Added PDF export to the Founder Operations Manual using jspdf and jspdf-autotable. Includes branded cover page, full table of contents, all chapters and sections paginated cleanly, and the build log as a formatted table with page-numbered footer. Markdown and Text exports retained.",
+    component: "Documentation"
+  },
+  {
+    date: "2026-06-30",
+    feature: "Manual Refresh — Pre-Launch",
+    description: "Refreshed Operations Manual with new chapters: Homepage Conversion Layer, SEO & Discoverability, Security Hardening Programme, and Operations Manual Export. Verified that every chapter, section, and build log entry is included in the PDF, Markdown, and Text exports with no truncation.",
+    component: "Documentation"
   }
 ];

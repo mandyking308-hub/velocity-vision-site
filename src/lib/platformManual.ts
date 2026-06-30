@@ -417,5 +417,97 @@ export const platformManual: ManualChapter[] = [
         content: `\`\`\`\nsrc/\n├── components/        # Reusable components\n│   ├── ui/            # shadcn/ui primitives\n│   ├── crm/           # CRM-specific components\n│   ├── portal/        # Portal-specific components\n│   └── *.tsx          # Website sections\n├── contexts/          # React contexts (Auth, Demo)\n├── hooks/             # Custom hooks\n├── integrations/\n│   └── supabase/      # Auto-generated client + types\n├── lib/               # Utilities, demo data, manual content\n├── pages/             # Route components\n│   ├── crm/           # CRM pages\n│   ├── portal/        # Client portal pages\n│   ├── demo/          # Demo environment pages\n│   └── legal/         # Legal Centre pages\n└── App.tsx            # Root router\n\`\`\``
       }
     ]
+  },
+  {
+    id: "homepage-conversion",
+    title: "Homepage Conversion Layer",
+    sections: [
+      {
+        title: "Repositioning Summary",
+        content: `The homepage was refined to position Velocity Influence as **both a self-serve platform and a full-service agency**, with a clear path for users to (a) try the platform instantly via the demo, (b) book a strategy call, or (c) request agency delivery.\n\n**Primary message:** "A marketing platform plus agency — for businesses and agencies."\n\n**Dual CTAs everywhere:**\n- **Primary:** "Explore the Platform" → \`/demo\`\n- **Secondary:** "Book a Demo" → \`/book-demo\``
+      },
+      {
+        title: "Section Stack (Index.tsx)",
+        content: `Current homepage section order:\n\n1. **HeroSection** — H1, sub-headline, dual CTAs\n2. **PlatformPositioning** — 4-block grid: Platform · Agency · For Businesses · For Agencies\n3. **WhatWeDo** — service pillars\n4. **CampaignCapabilities** — campaign engine highlights\n5. **MidPageCTA** — mid-scroll conversion block\n6. **ROICalculator** — interactive revenue calculator + lead capture CTA\n7. **AgencySection** — agency-as-a-service deeper pitch\n8. **FeaturedWork** — case study tiles\n9. **IndustriesSection** — verticals served\n10. **InsightsSection** — latest articles\n11. **FinalCTA** — closing conversion block\n12. **Footer**`
+      },
+      {
+        title: "PlatformPositioning Component",
+        content: `**File:** \`src/components/PlatformPositioning.tsx\`\n\nFour-block feature grid that immediately answers "what is this?" within the first viewport after the hero. Cards:\n- **A Platform** — self-serve campaign builder, dashboards, automations\n- **An Agency** — optional human delivery for premium clients\n- **For Businesses** — single-workspace marketing engine\n- **For Agencies** — multi-workspace, white-labelled client portals`
+      },
+      {
+        title: "MidPageCTA Component",
+        content: `**File:** \`src/components/MidPageCTA.tsx\`\n\nReinforces conversion mid-scroll with a banner-style CTA encouraging users to either explore the platform or book a call. Prevents drop-off between the capability and proof sections.`
+      },
+      {
+        title: "ROI Calculator",
+        content: `**File:** \`src/components/ROICalculator.tsx\`\n\n**Inputs:** average deal value, close rate (%), monthly leads\n**Logic:** deals = leads × close rate; monthly revenue = deals × deal value; annual = monthly × 12\n**Outputs:** monthly revenue, annual revenue, comparison vs platform cost\n**CTA:** "See how we'd build this for you" → email capture / booking flow\n\nUsed on the homepage to give visitors an immediate, quantifiable reason to engage.`
+      }
+    ]
+  },
+  {
+    id: "seo",
+    title: "SEO & Discoverability",
+    sections: [
+      {
+        title: "SEO Component",
+        content: `**File:** \`src/components/SEO.tsx\`\n\nWraps \`react-helmet-async\` to inject per-route \`<title>\`, meta description, canonical URL, and Open Graph / Twitter card tags. \`HelmetProvider\` is mounted in \`src/main.tsx\`.\n\n**Coverage:** Home, Services, Industries, Work, Insights, About, Contact, Book a Demo, For Agencies — all 9 public pages have unique, keyword-targeted metadata.`
+      },
+      {
+        title: "Structured Data",
+        content: `- **index.html** ships an Organization JSON-LD on every page\n- **Homepage** adds a WebSite @graph for sitelinks\n- **Insights** adds a CollectionPage JSON-LD\n- Additional Article schema is planned per long-form post`
+      },
+      {
+        title: "Crawler Files",
+        content: `| File | Purpose |\n|------|---------|\n| \`public/robots.txt\` | Allow crawlers, disallow \`/crm/*\` and \`/portal/*\`, reference sitemap |\n| \`public/sitemap.xml\` | All 10 public routes with lastmod |\n| \`public/llms.txt\` | Plain-English site summary for AI crawlers / LLM indexing |`
+      },
+      {
+        title: "Accessibility Improvements",
+        content: `- Navbar mobile button has \`aria-label\` and \`aria-expanded\`\n- "Learn More" links replaced with descriptive labels (e.g. "See agency platform features")\n- Single H1 per page enforced via the SEO component pattern\n- Semantic HTML (\`<header>\`, \`<main>\`, \`<section>\`) across all public pages`
+      },
+      {
+        title: "Open Items",
+        content: `- **Google Search Console** — connector not yet authorised (requires user OAuth)\n- **Lighthouse Performance & Accessibility** — re-scored against the last published build; will clear on next publish\n- **Long-form content** — \`/insights/ai-content-creation-guide\` article targeting "ai powered content creation platform" still to be drafted`
+      }
+    ]
+  },
+  {
+    id: "security-hardening",
+    title: "Security Hardening Programme",
+    sections: [
+      {
+        title: "Phase 1 — Tenant Isolation",
+        content: `Re-wrote RLS across 18 tables to ensure strict company / workspace scoping. Key actions:\n\n- Created \`app_private\` schema for sensitive helper functions (\`has_role\`, \`is_internal\`, \`user_company\`) — revoked public execute\n- Replaced overly-broad \`USING (true)\` policies on \`profiles\`, \`user_roles\`, \`companies\`, \`contacts\`, \`campaign_audiences\`, \`invoices\`, \`payments\`, \`subscriptions\`, \`messages\`, \`notifications\`, \`client_documents\`, \`error_logs\`, \`qa_test_results\` and others\n- Enabled HIBP leaked-password protection in Supabase Auth\n- Converted \`client-documents\` storage bucket to **private** with folder-scoped access policies`
+      },
+      {
+        title: "Phase 2 — CRM Lockdown",
+        content: `Cleared residual \`USING(true)\` / \`WITH CHECK(true)\` policies across CRM tables: \`leads\`, \`opportunities\`, \`client_onboarding\`, \`campaign_requests\`, \`client_workspaces\`, \`campaigns\`, \`campaign_metrics\`, \`campaign_assets\`, \`notes\`, \`activities\`, \`tasks\`, \`campaign_attributions\`.\n\nDropped unrestricted anonymous \`INSERT\` policies on \`companies\` and \`contacts\` — anonymous writes are now restricted to the \`leads\` table only (public lead-capture form).\n\nScoped related-record access (tasks, notes, activities) by author, assignee, or associated contact's company.`
+      },
+      {
+        title: "Application-Layer Guards",
+        content: `- **\`src/components/CRMProtectedRoute.tsx\`** — enforces internal-role requirement (founder, admin, sales, marketing) on every \`/crm/*\` route\n- **\`src/pages/portal/PortalDocuments.tsx\`** — uses 1-hour signed URLs for private-bucket downloads instead of public URLs\n- **AuthContext** subscribes to auth state changes before fetching session to prevent race conditions`
+      },
+      {
+        title: "Outcome",
+        content: `Security scan went from **42 findings → 0 critical / 2 low** (intentional anonymous lead submit). The publish blocker is cleared and the platform is launch-ready from a security perspective.\n\nThe security memory document is maintained in parallel to guide future scans and prevent regressions.`
+      }
+    ]
+  },
+  {
+    id: "operations-manual-export",
+    title: "Operations Manual Export",
+    sections: [
+      {
+        title: "Download Formats",
+        content: `The Operations Manual at \`/crm/manual\` offers three export formats:\n\n- **PDF** (\`jspdf\` + \`jspdf-autotable\`) — branded cover page, table of contents, all chapters and sections, build log as a formatted table, footer with page numbers\n- **Markdown (.md)** — full content with TOC and table-formatted build log\n- **Plain Text (.txt)** — same content stripped of markdown formatting\n\nFiles are named \`velocity-influence-manual-YYYY-MM-DD.{pdf|md|txt}\` and download client-side via a Blob URL.`
+      },
+      {
+        title: "Completeness Guarantee",
+        content: `Every chapter and section in \`src/lib/platformManual.ts\` AND every entry in \`src/lib/buildLog.ts\` is included in every export. Nothing is truncated. The PDF generator paginates automatically so long sections flow across pages without loss.`
+      },
+      {
+        title: "Update Protocol",
+        content: `When any new feature, page, table, or policy is added:\n1. Append a new section (or chapter) to \`platformManual.ts\`\n2. Append a new dated entry to \`buildLog.ts\`\n\nThe next manual export will automatically include the changes — no rebuild step required.`
+      }
+    ]
   }
 ];
