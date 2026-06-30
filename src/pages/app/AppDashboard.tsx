@@ -108,6 +108,8 @@ export default function AppDashboard() {
       const active = (campaigns || []).filter((c: any) => c.status === "active" || c.status === "planning").length;
       setActiveCampaigns(active);
       setLatestCampaignId(campaigns?.[0]?.id || null);
+      setCampaignRows((campaigns || []) as CadenceRow[]);
+
 
       const clean = contactsClean ?? 0;
       const review = contactsReview ?? 0;
