@@ -138,17 +138,17 @@ const Pricing = () => {
       </section>
 
 
-      <section className="section-padding bg-background">
+      <section className="relative z-10 bg-background px-6 md:px-12 lg:px-20 -mt-16 md:-mt-20 lg:-mt-28 pt-0 pb-16 md:pb-20 lg:pb-24">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {plans.map((p, i) => (
               <motion.div
                 key={p.name}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.08 }}
-                className={`rounded-2xl p-7 shadow-card border flex flex-col ${p.highlight ? "bg-card border-accent/60 ring-1 ring-accent/30" : p.addon ? "bg-secondary border-border/50" : "bg-card border-border/50"}`}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.4, delay: i * 0.06 }}
+                className={`rounded-2xl p-6 lg:p-7 shadow-elevated border flex flex-col ${p.highlight ? "bg-card border-accent/60 ring-1 ring-accent/30" : p.addon ? "bg-secondary border-border/50" : "bg-card border-border/50"}`}
               >
                 {p.highlight && (
                   <span className="inline-block self-start text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-accent/15 text-accent font-semibold mb-3">Most popular</span>
@@ -157,13 +157,13 @@ const Pricing = () => {
                   <span className="inline-block self-start text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-foreground/10 text-foreground font-semibold mb-3">Optional add-on</span>
                 )}
                 <h3 className="font-display font-semibold text-xl text-foreground">{p.name}</h3>
-                <p className="text-muted-foreground text-sm mb-4">{p.tagline}</p>
+                <p className="text-muted-foreground text-sm mb-3">{p.tagline}</p>
                 <p className="mb-1">
-                  <span className="text-4xl font-display font-bold text-foreground">{priceFor(p.sku, currency).formatted}</span>
+                  <span className="text-3xl md:text-4xl font-display font-bold text-foreground">{priceFor(p.sku, currency).formatted}</span>
                   <span className="text-muted-foreground text-sm ml-1">{p.unit}</span>
                 </p>
-                <p className="text-[11px] text-muted-foreground mb-2">{taxNotice(currency)}</p>
-                <p className="text-xs text-muted-foreground mb-2">Best for: {p.best}</p>
+                <p className="text-[11px] text-muted-foreground mb-3">{taxNotice(currency)}</p>
+                <p className="text-xs text-muted-foreground mb-4">Best for: <span className="text-foreground font-medium">{p.best}</span></p>
 
                 <p className="text-xs font-semibold text-accent mb-4">{p.credits}</p>
                 <ul className="space-y-2 mb-6 flex-1">
@@ -174,7 +174,7 @@ const Pricing = () => {
                     </li>
                   ))}
                 </ul>
-                <Button variant={p.highlight ? "cta" : "outline"} asChild>
+                <Button variant={p.highlight ? "cta" : p.addon ? "outline" : "default"} asChild>
                   <Link to="/app/billing">{p.cta}</Link>
                 </Button>
               </motion.div>
@@ -182,6 +182,7 @@ const Pricing = () => {
           </div>
         </div>
       </section>
+
 
       <section className="section-padding bg-background border-t border-border">
         <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
