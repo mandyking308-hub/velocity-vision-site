@@ -256,6 +256,17 @@ export default function AppDashboard() {
         </Card>
       </div>
 
+      {/* C2. Campaign cadence / upcoming activity */}
+      <SectionHeader
+        icon={Clock}
+        title="Campaign cadence & upcoming activity"
+        desc="Your outreach rhythm — what's running, what's next, what needs attention."
+        cta={{ label: "Open campaigns", to: "/app/campaigns" }}
+      />
+      <CadenceSection rows={campaignRows} navigate={navigate} />
+
+
+
       {/* D. Create outreach assets */}
       <SectionHeader
         icon={Sparkles}
