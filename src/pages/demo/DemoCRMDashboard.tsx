@@ -65,30 +65,113 @@ export default function DemoCRMDashboard() {
           <TabsTrigger value="reporting">Reporting</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="dashboard" className="space-y-4 mt-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <Stat label="Active campaigns" value={2} />
-            <Stat label="Leads captured" value={DEMO_LEADS.length} />
-            <Stat label="Follow-ups due" value={2} />
-            <Stat label="Last conversion" value="18%" />
+        <TabsContent value="dashboard" className="space-y-6 mt-4">
+          {/* Top summary */}
+          <div className="rounded-xl border border-border bg-gradient-to-br from-primary/5 via-background to-accent/5 p-5">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+              <div>
+                <h2 className="text-2xl font-bold">Commercial command centre</h2>
+                <p className="text-muted-foreground text-sm">Activate your data, create outreach assets, and move deals forward.</p>
+              </div>
+              <div className="grid grid-cols-3 gap-2 min-w-[280px]">
+                <Stat label="Credits" value={18} />
+                <Stat label="Safe send today" value={80} />
+                <Stat label="Active" value={2} />
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2 mt-4">
+              <Button><Megaphone className="h-4 w-4 mr-2" />Activate safe segment</Button>
+              <Button variant="outline">Upload contacts</Button>
+              <Button variant="outline" onClick={() => setTab("builder")}>Create assets</Button>
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {[
-              { i: Rocket, t: "Start a campaign", d: "Begin a new guided brief" },
-              { i: FolderOpen, t: "My current campaigns", d: "2 active, 1 draft" },
-              { i: Users, t: "Lead pipeline", d: "5 leads in flight" },
-              { i: BarChart3, t: "Performance", d: "Best: Spring Lead Sprint" },
-              { i: LayoutTemplate, t: "Templates", d: "6 starters + your past wins" },
-              { i: Briefcase, t: "Client workspaces", d: "3 client workspaces" },
-            ].map((c, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}>
-                <Card><CardHeader>
-                  <c.i className="h-5 w-5 text-primary mb-2" />
-                  <CardTitle className="text-base">{c.t}</CardTitle>
-                  <p className="text-sm text-muted-foreground">{c.d}</p>
-                </CardHeader></Card>
-              </motion.div>
-            ))}
+
+          {/* Database Health */}
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Database Health</h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+              <Stat label="Contacts" value={2148} />
+              <Stat label="Companies" value={412} />
+              <Stat label="Imports" value={6} />
+              <Stat label="Clean" value={1284} />
+              <Stat label="Safe to activate" value={1284} />
+              <Stat label="Needs review" value={92} />
+              <Stat label="Risky" value={37} />
+              <Stat label="Blocked" value={14} />
+              <Stat label="Duplicates" value={28} />
+            </div>
+          </div>
+
+          {/* Activation Readiness */}
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Activation Readiness</h3>
+            <Card><CardContent className="p-4 text-sm space-y-1">
+              <p>✅ 1,284 contacts safe to activate</p>
+              <p>⚠️ 92 need review · 37 risky excluded · 14 blocked</p>
+              <p>📤 Today's safe send limit: 80 · Recommended: 50 warm contacts</p>
+              <p>📧 Domain auth: SPF ✓ DKIM ✓ · Scheduled today: 0</p>
+            </CardContent></Card>
+          </div>
+
+          {/* Create assets */}
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Create outreach assets</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {[
+                { i: Megaphone, t: "Social media pack", d: "Launch posts, follow-ups, hooks, platform variants." },
+                { i: Mail, t: "Email sequence", d: "Outreach + follow-up emails ready to send." },
+                { i: Newspaper, t: "Press release", d: "Announcement copy for outreach and publicity." },
+                { i: Video, t: "Video pack", d: "Hooks, 30s + 60s scripts, shot list." },
+                { i: Sparkles, t: "Landing page copy", d: "Conversion-focused page structure." },
+                { i: Copy, t: "Offer / follow-up copy", d: "Reply-ready follow-ups and offers." },
+              ].map((c, i) => (
+                <Card key={i} className="cursor-pointer" onClick={() => setTab("pack")}>
+                  <CardHeader><c.i className="h-5 w-5 text-primary mb-1" /><CardTitle className="text-base">{c.t}</CardTitle><p className="text-xs text-muted-foreground">{c.d}</p></CardHeader>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          {/* Replies & follow-up */}
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Replies and follow-up</h3>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+              <Stat label="Replies need action" value={6} />
+              <Stat label="Follow-ups today" value={12} />
+              <Stat label="Warm contacts" value={18} />
+              <Stat label="Dormant" value={42} />
+              <Stat label="Bounces" value={4} />
+            </div>
+          </div>
+
+          {/* Pipeline */}
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Pipeline and sales</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <Stat label="Leads" value={DEMO_LEADS.length} />
+              <Stat label="Opportunities" value={3} />
+              <Stat label="Pipeline value" value="£48,500" />
+              <Stat label="Closed won" value={1} />
+            </div>
+          </div>
+
+          {/* Next best actions */}
+          <div>
+            <h3 className="text-lg font-semibold mb-2">What should I do next?</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {[
+                "Review 37 risky contacts",
+                "Resolve 28 duplicates",
+                "Send to 50 safe contacts",
+                "Follow up 6 replies",
+                "Move 4 leads into pipeline",
+                "Authenticate sender domain",
+                "Create a social pack for your next outreach",
+                "Buy more credits",
+              ].map((t, i) => (
+                <Card key={i}><CardContent className="p-3 text-sm flex items-center justify-between"><span>{t}</span><ArrowRight className="h-4 w-4 text-muted-foreground" /></CardContent></Card>
+              ))}
+            </div>
           </div>
 
           <Card className="border-accent/40">
@@ -99,24 +182,6 @@ export default function DemoCRMDashboard() {
                 <div className="text-xs text-muted-foreground">Growth plan • resets 28 Jul</div>
               </div>
               <div className="h-2 bg-muted rounded-full overflow-hidden"><div className="h-full bg-accent" style={{ width: "78%" }} /></div>
-              <div className="text-xs rounded-md border border-accent/40 bg-accent/10 px-3 py-2">You've used 78% of your credits this cycle. Buy a top-up or upgrade to keep generating.</div>
-              <div className="flex gap-2 pt-1">
-                <span className="text-xs px-2 py-1 rounded-md border border-border">Small +25 · £49</span>
-                <span className="text-xs px-2 py-1 rounded-md border border-border">Medium +75 · £119</span>
-                <span className="text-xs px-2 py-1 rounded-md border border-border">Large +200 · £279</span>
-                <span className="text-xs px-2 py-1 rounded-md border border-accent/40 bg-accent/5 ml-auto">+ Premium Human Review · £199</span>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="builder" className="space-y-4 mt-4">
-          <Card><CardHeader><CardTitle>Step 5 of 5 — Review</CardTitle></CardHeader>
-            <CardContent className="space-y-1 text-sm">
-              {Object.entries({ Name: DEMO_BRIEF.name, Goal: DEMO_BRIEF.goal, Type: DEMO_BRIEF.kind, Offer: DEMO_BRIEF.offer, Audience: DEMO_BRIEF.audience, Channels: DEMO_BRIEF.channels.join(", ") }).map(([k, v]) => (
-                <div key={k} className="flex justify-between py-1 border-b border-border last:border-0"><span className="text-muted-foreground">{k}</span><span className="font-medium">{v}</span></div>
-              ))}
-              <Button className="mt-4" onClick={() => setTab("pack")}><Sparkles className="h-4 w-4 mr-2" />Generate campaign pack</Button>
             </CardContent>
           </Card>
         </TabsContent>
