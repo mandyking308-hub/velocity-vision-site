@@ -89,7 +89,7 @@ const PublicContactGuard = () => {
 
     const replaceText = (node: Node) => {
       if (node.nodeType === Node.TEXT_NODE && node.textContent?.includes(hiddenAddress)) {
-        node.textContent = node.textContent.replaceAll(hiddenAddress, replacement);
+        node.textContent = node.textContent.split(hiddenAddress).join(replacement);
       }
       node.childNodes.forEach(replaceText);
     };
