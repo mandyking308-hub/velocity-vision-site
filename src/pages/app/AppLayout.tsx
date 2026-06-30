@@ -17,9 +17,9 @@ const nav = [
   { to: "/app/pipeline", label: "Pipeline", icon: TrendingUp },
   { to: "/app/performance", label: "Performance", icon: BarChart3 },
   { to: "/app/templates", label: "Templates", icon: LayoutTemplate },
-  { to: "/app/workspaces", label: "Workspaces", icon: Briefcase },
   { to: "/app/billing", label: "Billing", icon: CreditCard },
   { to: "/app/settings", label: "Settings", icon: Settings },
+  { to: "/app/workspaces", label: "Workspaces", icon: Briefcase },
 ];
 
 function WorkspaceSwitcher() {
