@@ -14,7 +14,7 @@ Operated by Global Solutions Management LLC (Delaware, USA).
 - [For Agencies](/for-agencies): Multi-workspace platform with white-label client portals.
 - [About](/about): Who we are and how we operate.
 - [Contact](/contact): Talk to the team.
-- [Book a Demo](/book-demo): See the platform live.
+- [Try the Demo](/demo): Explore the self-serve workspace without signing up.
 
 ## Optional
 

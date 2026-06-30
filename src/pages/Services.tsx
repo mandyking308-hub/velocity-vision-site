@@ -129,7 +129,7 @@ const Services = () => (
         <div className="max-w-2xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground mb-6">Ready to get started?</h2>
           <Button variant="hero" size="lg" asChild>
-            <Link to="/book-demo">Book a Demo <ArrowRight size={18} /></Link>
+            <Link to="/auth">Start your workspace <ArrowRight size={18} /></Link>
           </Button>
         </div>
       </section>

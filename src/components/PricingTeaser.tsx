@@ -86,7 +86,7 @@ const PricingTeaser = () => (
           <Link to="/pricing">See full pricing <ArrowRight size={18} /></Link>
         </Button>
         <p className="text-xs text-muted-foreground self-center">
-          Optional Premium Human Review available at £199/review. Multi-currency checkout supported.
+          Multi-currency checkout supported. Self-serve from day one.
         </p>
       </div>
     </div>
