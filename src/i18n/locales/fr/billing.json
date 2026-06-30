@@ -1,0 +1,11 @@
+{
+  "title": "Facturation",
+  "subtitle": "Gérez votre offre, vos Crédits de campagne et vos options.",
+  "currentPlan": "Offre actuelle",
+  "credits": "Crédits de campagne",
+  "topUp": "Recharger",
+  "history": "Historique",
+  "noHistory": "Aucune dépense pour l'instant.",
+  "taxNotice": "Prix hors TVA. Les taxes sont calculées au paiement.",
+  "humanReview": "Revue humaine premium"
+}

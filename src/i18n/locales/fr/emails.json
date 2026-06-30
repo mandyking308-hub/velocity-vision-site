@@ -1,0 +1,21 @@
+{
+  "welcome": {
+    "subject": "Bienvenue sur Velocity Influence",
+    "greeting": "Bonjour {{name}},",
+    "body": "Votre espace est en ligne. Importez votre première audience pour lancer une campagne en quelques minutes.",
+    "cta": "Ouvrir mon tableau de bord"
+  },
+  "receipt": {
+    "subject": "Votre reçu Velocity Influence",
+    "thanks": "Merci pour votre achat.",
+    "amount": "Montant débité : {{amount}}"
+  },
+  "reminder": {
+    "subject": "Des réponses vous attendent",
+    "body": "{{count}} réponses nécessitent une relance aujourd'hui."
+  },
+  "activation": {
+    "subject": "Votre campagne est prête à être activée",
+    "body": "{{count}} contacts vérifiés sont prêts à être contactés."
+  }
+}

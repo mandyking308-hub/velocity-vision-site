@@ -1,82 +1,75 @@
-// Locale-aware formatters. Driven by i18next current language + optional timezone.
-import i18n from "@/i18n";
-import type { Currency } from "@/lib/currency";
+// Locale-aware formatting helpers. All functions are safe to call on the
+// server (edge functions) and the client — they only depend on the standard
+// Intl APIs.
+import i18n, { LANGUAGE_DEFAULTS, type SupportedLanguage } from "@/i18n";
 
-function bcp47(lang?: string): string {
-  // Map our short codes to a reasonable BCP-47 default.
-  const l = (lang || i18n.language || "en").toLowerCase();
-  if (l.startsWith("es")) return "es-ES";
-  if (l.startsWith("en")) return "en-GB";
-  return l;
+/** Resolve the current UI language as a short code (en/es/fr). */
+export function currentLanguage(): SupportedLanguage {
+  const raw = (i18n.language || "en").slice(0, 2);
+  return (["en", "es", "fr"].includes(raw) ? raw : "en") as SupportedLanguage;
 }
 
-export function formatCurrency(
-  amount: number,
-  currency: Currency | string,
-  opts: { lang?: string; maximumFractionDigits?: number } = {},
-): string {
+/** Resolve the BCP-47 locale to use for Intl formatting. */
+export function currentLocale(override?: string): string {
+  if (override) return override;
+  return LANGUAGE_DEFAULTS[currentLanguage()].locale;
+}
+
+export function formatNumber(value: number, opts?: Intl.NumberFormatOptions) {
+  return new Intl.NumberFormat(currentLocale(), opts).format(value);
+}
+
+export function formatCurrency(value: number, currency: string, opts?: Intl.NumberFormatOptions) {
+  return new Intl.NumberFormat(currentLocale(), { style: "currency", currency, ...opts }).format(value);
+}
+
+export function formatDate(value: Date | string | number, opts?: Intl.DateTimeFormatOptions) {
+  const d = typeof value === "string" || typeof value === "number" ? new Date(value) : value;
+  return new Intl.DateTimeFormat(currentLocale(), opts ?? { dateStyle: "medium" }).format(d);
+}
+
+export function formatDateTime(value: Date | string | number, timezone?: string) {
+  const d = typeof value === "string" || typeof value === "number" ? new Date(value) : value;
+  return new Intl.DateTimeFormat(currentLocale(), {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: timezone,
+  }).format(d);
+}
+
+export function formatRelativeTime(value: Date | string | number) {
+  const d = typeof value === "string" || typeof value === "number" ? new Date(value) : value;
+  const diffSec = Math.round((d.getTime() - Date.now()) / 1000);
+  const abs = Math.abs(diffSec);
+  const rtf = new Intl.RelativeTimeFormat(currentLocale(), { numeric: "auto" });
+  if (abs < 60) return rtf.format(diffSec, "second");
+  if (abs < 3600) return rtf.format(Math.round(diffSec / 60), "minute");
+  if (abs < 86400) return rtf.format(Math.round(diffSec / 3600), "hour");
+  if (abs < 604800) return rtf.format(Math.round(diffSec / 86400), "day");
+  return rtf.format(Math.round(diffSec / 604800), "week");
+}
+
+/** Country display name in the user's UI language. */
+export function countryName(code: string): string {
   try {
-    return new Intl.NumberFormat(bcp47(opts.lang), {
-      style: "currency",
-      currency,
-      maximumFractionDigits: opts.maximumFractionDigits ?? 0,
-    }).format(amount);
+    return new Intl.DisplayNames([currentLocale()], { type: "region" }).of(code.toUpperCase()) || code;
   } catch {
-    return `${currency} ${amount.toFixed(0)}`;
+    return code;
   }
 }
 
-export function formatNumber(n: number, lang?: string): string {
+/** Language display name in the user's UI language. */
+export function languageName(code: string): string {
   try {
-    return new Intl.NumberFormat(bcp47(lang)).format(n);
+    return new Intl.DisplayNames([currentLocale()], { type: "language" }).of(code) || code;
   } catch {
-    return String(n);
+    return code;
   }
 }
 
-export function formatDate(
-  d: Date | string | number,
-  opts: { lang?: string; timeZone?: string; dateStyle?: "short" | "medium" | "long" | "full" } = {},
-): string {
-  const date = typeof d === "string" || typeof d === "number" ? new Date(d) : d;
-  try {
-    return new Intl.DateTimeFormat(bcp47(opts.lang), {
-      dateStyle: opts.dateStyle ?? "medium",
-      timeZone: opts.timeZone,
-    }).format(date);
-  } catch {
-    return date.toISOString();
-  }
-}
-
-export function formatDateTime(
-  d: Date | string | number,
-  opts: { lang?: string; timeZone?: string } = {},
-): string {
-  const date = typeof d === "string" || typeof d === "number" ? new Date(d) : d;
-  try {
-    return new Intl.DateTimeFormat(bcp47(opts.lang), {
-      dateStyle: "medium",
-      timeStyle: "short",
-      timeZone: opts.timeZone,
-    }).format(date);
-  } catch {
-    return date.toISOString();
-  }
-}
-
-export function formatRelative(d: Date | string | number, lang?: string): string {
-  const date = typeof d === "string" || typeof d === "number" ? new Date(d) : d;
-  const diffMs = date.getTime() - Date.now();
-  const abs = Math.abs(diffMs);
-  const rtf = new Intl.RelativeTimeFormat(bcp47(lang), { numeric: "auto" });
-  const minute = 60_000, hour = 60 * minute, day = 24 * hour;
-  if (abs < hour) return rtf.format(Math.round(diffMs / minute), "minute");
-  if (abs < day) return rtf.format(Math.round(diffMs / hour), "hour");
-  return rtf.format(Math.round(diffMs / day), "day");
-}
-
-export function browserTimezone(): string {
+/** Resolve the user's effective time zone (browser default fallback). */
+export function currentTimezone(override?: string): string {
+  if (override) return override;
   try {
     return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
   } catch {

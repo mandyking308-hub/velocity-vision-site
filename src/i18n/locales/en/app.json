@@ -31,5 +31,51 @@
       "body": "Upload your data to start activating campaigns.",
       "cta": "Upload data"
     }
+  },
+  "dataVault": {
+    "title": "Data Vault",
+    "subtitle": "Upload, map and review your contact data.",
+    "upload": "Upload data"
+  },
+  "activate": {
+    "title": "Activate",
+    "subtitle": "Move clean, verified data into live campaigns.",
+    "readiness": "Readiness",
+    "launch": "Launch"
+  },
+  "campaigns": {
+    "title": "Campaigns",
+    "new": "New campaign",
+    "schedule": "Schedule",
+    "cadence": "Cadence",
+    "language": "Campaign language"
+  },
+  "followUp": {
+    "title": "Follow-Up",
+    "subtitle": "Replies and reminders that need your attention."
+  },
+  "pipeline": {
+    "title": "Pipeline",
+    "stages": {
+      "new": "New",
+      "qualified": "Qualified",
+      "meeting": "Meeting",
+      "proposal": "Proposal",
+      "won": "Won",
+      "lost": "Lost"
+    }
+  },
+  "billing": {
+    "title": "Billing",
+    "currentPlan": "Current plan",
+    "credits": "Campaign Credits",
+    "topUp": "Top up"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "timezone": "Time zone",
+    "currency": "Currency",
+    "country": "Country"
   }
 }

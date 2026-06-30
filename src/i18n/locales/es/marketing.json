@@ -1,40 +1,45 @@
 {
   "nav": {
     "home": "Inicio",
-    "howItWorks": "Cómo funciona",
     "pricing": "Precios",
-    "forBusinesses": "Para Empresas",
-    "forAgencies": "Para Agencias",
+    "howItWorks": "Cómo funciona",
     "features": "Funciones",
-    "templates": "Plantillas",
-    "about": "Nosotros",
+    "forBusinesses": "Para empresas",
+    "forAgencies": "Para agencias",
     "help": "Ayuda",
+    "login": "Iniciar sesión",
+    "signup": "Registrarse",
+    "about": "Acerca de",
+    "templates": "Plantillas",
     "seePricing": "Ver precios",
-    "startCampaign": "Lanza tu primera campaña"
+    "startCampaign": "Iniciar campaña"
   },
   "hero": {
-    "eyebrow": "Plataforma de campañas self-serve",
-    "ctaPrimary": "Lanza tu primera campaña",
-    "ctaSecondary": "Ver cómo funciona"
+    "eyebrow": "Plataforma de crecimiento de marketing",
+    "title": "Lanza campañas completas en minutos, no semanas.",
+    "subtitle": "Sube tu audiencia, activa una campaña y deja que Velocity Influence ejecute el outbound, el seguimiento y el pipeline. Autoservicio. Multilingüe. Para equipos globales.",
+    "ctaPrimary": "Empezar prueba gratis",
+    "ctaSecondary": "Ver demo en vivo"
   },
-  "midCta": {
-    "title": "¿Listo para tu próxima campaña?",
-    "body": "Crea, programa y mide en un solo espacio.",
-    "button": "Empezar"
+  "pricing": {
+    "title": "Precios simples y transparentes",
+    "subtitle": "Cada plan incluye Créditos de campaña, el Data Vault y el espacio de pipeline completo.",
+    "month": "/mes",
+    "oneTime": "pago único",
+    "perReview": "por revisión",
+    "taxNotice": "Los precios no incluyen IVA ni impuestos sobre ventas. El impuesto se calcula al pagar.",
+    "starter": "Inicial",
+    "growth": "Crecimiento",
+    "agency": "Agencia",
+    "choosePlan": "Elegir plan"
   },
-  "finalCta": {
-    "title": "Lanza tu primera campaña hoy",
-    "body": "Sin agencia, sin esperas. Genera un pack completo en minutos.",
-    "button": "Empezar"
-  },
-  "footer": {
-    "tagline": "La plataforma self-serve para crecer.",
-    "product": "Producto",
-    "company": "Empresa",
-    "legal": "Legal",
-    "rights": "Todos los derechos reservados."
-  },
-  "faq": {
-    "title": "Preguntas frecuentes"
+  "howItWorks": {
+    "title": "Cómo funciona",
+    "subtitle": "De datos a ingresos en 5 pasos guiados.",
+    "step1": "Sube tus datos",
+    "step2": "Revisa y activa",
+    "step3": "Genera activos",
+    "step4": "Lanza la campaña",
+    "step5": "Trabaja las respuestas"
   }
 }

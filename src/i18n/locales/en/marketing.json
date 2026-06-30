@@ -1,40 +1,45 @@
 {
   "nav": {
     "home": "Home",
-    "howItWorks": "How it works",
     "pricing": "Pricing",
-    "forBusinesses": "For Businesses",
-    "forAgencies": "For Agencies",
+    "howItWorks": "How it works",
     "features": "Features",
-    "templates": "Templates",
-    "about": "About",
+    "forBusinesses": "For businesses",
+    "forAgencies": "For agencies",
     "help": "Help",
+    "login": "Log in",
+    "signup": "Sign up",
+    "about": "About",
+    "templates": "Templates",
     "seePricing": "See pricing",
-    "startCampaign": "Start your first campaign"
+    "startCampaign": "Start campaign"
   },
   "hero": {
-    "eyebrow": "Self-serve campaign launchpad",
-    "ctaPrimary": "Start your first campaign",
-    "ctaSecondary": "See how it works"
+    "eyebrow": "Marketing growth launchpad",
+    "title": "Launch full campaigns in minutes — not weeks.",
+    "subtitle": "Upload your audience, activate a campaign, and let Velocity Influence run the outbound, the follow-up and the pipeline. Self-serve. Multilingual. Built for global teams.",
+    "ctaPrimary": "Start free trial",
+    "ctaSecondary": "See live demo"
   },
-  "midCta": {
-    "title": "Ready to launch your next campaign?",
-    "body": "Build, schedule and track in one workspace.",
-    "button": "Start now"
+  "pricing": {
+    "title": "Simple, transparent pricing",
+    "subtitle": "Every plan includes Campaign Credits, the Data Vault, and the full pipeline workspace.",
+    "month": "/month",
+    "oneTime": "one-off",
+    "perReview": "per review",
+    "taxNotice": "Prices exclude VAT/sales tax. Tax is calculated at checkout.",
+    "starter": "Starter",
+    "growth": "Growth",
+    "agency": "Agency",
+    "choosePlan": "Choose plan"
   },
-  "finalCta": {
-    "title": "Launch your first campaign today",
-    "body": "No agency, no waiting. Generate a full pack in minutes.",
-    "button": "Get started"
-  },
-  "footer": {
-    "tagline": "The self-serve growth launchpad.",
-    "product": "Product",
-    "company": "Company",
-    "legal": "Legal",
-    "rights": "All rights reserved."
-  },
-  "faq": {
-    "title": "Frequently asked questions"
+  "howItWorks": {
+    "title": "How it works",
+    "subtitle": "From data to revenue in 5 guided steps.",
+    "step1": "Upload your data",
+    "step2": "Review & activate",
+    "step3": "Generate assets",
+    "step4": "Launch the campaign",
+    "step5": "Work the replies"
   }
 }

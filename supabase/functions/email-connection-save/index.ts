@@ -83,7 +83,8 @@ Deno.serve(async (req) => {
 
     return json({ id: connectionId, status, last_error });
   } catch (e) {
-    return json({ error: (e as Error).message }, 500);
+    console.error("email-connection-save error:", e);
+    return json({ error: "Could not save email connection. Please try again." }, 500);
   }
 });
 

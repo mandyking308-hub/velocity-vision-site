@@ -365,6 +365,7 @@ export type Database = {
           end_date: string | null
           goal: string | null
           id: string
+          language: string | null
           last_run_at: string | null
           lead_form_config: Json | null
           lead_form_published: boolean
@@ -381,6 +382,7 @@ export type Database = {
           start_date: string | null
           status: Database["public"]["Enums"]["campaign_status"]
           target_audience_description: string | null
+          target_country: string | null
           timezone: string
           type: Database["public"]["Enums"]["campaign_type"]
           updated_at: string
@@ -402,6 +404,7 @@ export type Database = {
           end_date?: string | null
           goal?: string | null
           id?: string
+          language?: string | null
           last_run_at?: string | null
           lead_form_config?: Json | null
           lead_form_published?: boolean
@@ -418,6 +421,7 @@ export type Database = {
           start_date?: string | null
           status?: Database["public"]["Enums"]["campaign_status"]
           target_audience_description?: string | null
+          target_country?: string | null
           timezone?: string
           type?: Database["public"]["Enums"]["campaign_type"]
           updated_at?: string
@@ -439,6 +443,7 @@ export type Database = {
           end_date?: string | null
           goal?: string | null
           id?: string
+          language?: string | null
           last_run_at?: string | null
           lead_form_config?: Json | null
           lead_form_published?: boolean
@@ -455,6 +460,7 @@ export type Database = {
           start_date?: string | null
           status?: Database["public"]["Enums"]["campaign_status"]
           target_audience_description?: string | null
+          target_country?: string | null
           timezone?: string
           type?: Database["public"]["Enums"]["campaign_type"]
           updated_at?: string
@@ -586,7 +592,10 @@ export type Database = {
           contact_email: string | null
           contact_name: string | null
           created_at: string
+          default_country: string | null
           default_language: string
+          default_locale: string | null
+          default_timezone: string | null
           id: string
           industry: string | null
           name: string
@@ -598,7 +607,10 @@ export type Database = {
           contact_email?: string | null
           contact_name?: string | null
           created_at?: string
+          default_country?: string | null
           default_language?: string
+          default_locale?: string | null
+          default_timezone?: string | null
           id?: string
           industry?: string | null
           name: string
@@ -610,7 +622,10 @@ export type Database = {
           contact_email?: string | null
           contact_name?: string | null
           created_at?: string
+          default_country?: string | null
           default_language?: string
+          default_locale?: string | null
+          default_timezone?: string | null
           id?: string
           industry?: string | null
           name?: string
@@ -709,6 +724,7 @@ export type Database = {
           quality_status: string | null
           source_upload_id: string | null
           suppressed: boolean
+          timezone: string | null
           updated_at: string
         }
         Insert: {
@@ -733,6 +749,7 @@ export type Database = {
           quality_status?: string | null
           source_upload_id?: string | null
           suppressed?: boolean
+          timezone?: string | null
           updated_at?: string
         }
         Update: {
@@ -757,6 +774,7 @@ export type Database = {
           quality_status?: string | null
           source_upload_id?: string | null
           suppressed?: boolean
+          timezone?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -1807,6 +1825,8 @@ export type Database = {
           last_name: string | null
           preferred_currency: string
           preferred_language: string
+          preferred_locale: string | null
+          preferred_timezone: string | null
           timezone: string | null
           updated_at: string
           user_id: string
@@ -1822,6 +1842,8 @@ export type Database = {
           last_name?: string | null
           preferred_currency?: string
           preferred_language?: string
+          preferred_locale?: string | null
+          preferred_timezone?: string | null
           timezone?: string | null
           updated_at?: string
           user_id: string
@@ -1837,6 +1859,8 @@ export type Database = {
           last_name?: string | null
           preferred_currency?: string
           preferred_language?: string
+          preferred_locale?: string | null
+          preferred_timezone?: string | null
           timezone?: string | null
           updated_at?: string
           user_id?: string

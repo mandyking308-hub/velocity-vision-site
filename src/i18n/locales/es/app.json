@@ -1,35 +1,81 @@
 {
   "nav": {
     "dashboard": "Panel",
-    "dataVault": "Bóveda de Datos",
+    "dataVault": "Bóveda de datos",
     "activate": "Activar",
     "campaigns": "Campañas",
     "followUp": "Seguimiento",
     "pipeline": "Pipeline",
     "leads": "Leads",
     "templates": "Plantillas",
-    "email": "Correo",
+    "email": "Email",
     "performance": "Rendimiento",
     "workspaces": "Espacios",
     "billing": "Facturación",
     "settings": "Ajustes"
   },
   "dashboard": {
-    "title": "Centro de Mando",
+    "title": "Centro de mando",
     "subtitle": "Tu espacio comercial de un vistazo.",
     "sections": {
       "summary": "Resumen",
-      "dataHealth": "Salud de Datos",
-      "activation": "Listo para Activar",
-      "create": "Crear Activos",
-      "replies": "Respuestas y Seguimiento",
-      "pipeline": "Pipeline y Ventas",
-      "nextBest": "Próximas Mejores Acciones"
+      "dataHealth": "Salud de los datos",
+      "activation": "Listo para activar",
+      "create": "Crear activos",
+      "replies": "Respuestas y seguimiento",
+      "pipeline": "Pipeline y ventas",
+      "nextBest": "Próximas acciones"
     },
     "empty": {
-      "title": "Nada que hacer todavía",
+      "title": "Nada por hacer todavía",
       "body": "Sube tus datos para empezar a activar campañas.",
       "cta": "Subir datos"
     }
+  },
+  "dataVault": {
+    "title": "Bóveda de datos",
+    "subtitle": "Sube, mapea y revisa tus contactos.",
+    "upload": "Subir datos"
+  },
+  "activate": {
+    "title": "Activar",
+    "subtitle": "Lleva datos verificados a campañas en vivo.",
+    "readiness": "Preparación",
+    "launch": "Lanzar"
+  },
+  "campaigns": {
+    "title": "Campañas",
+    "new": "Nueva campaña",
+    "schedule": "Programación",
+    "cadence": "Cadencia",
+    "language": "Idioma de la campaña"
+  },
+  "followUp": {
+    "title": "Seguimiento",
+    "subtitle": "Respuestas y recordatorios que necesitan tu atención."
+  },
+  "pipeline": {
+    "title": "Pipeline",
+    "stages": {
+      "new": "Nuevo",
+      "qualified": "Cualificado",
+      "meeting": "Reunión",
+      "proposal": "Propuesta",
+      "won": "Ganado",
+      "lost": "Perdido"
+    }
+  },
+  "billing": {
+    "title": "Facturación",
+    "currentPlan": "Plan actual",
+    "credits": "Créditos de campaña",
+    "topUp": "Recargar"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "language": "Idioma",
+    "timezone": "Zona horaria",
+    "currency": "Moneda",
+    "country": "País"
   }
 }

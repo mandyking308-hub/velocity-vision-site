@@ -24,15 +24,21 @@ export default function LanguageSwitcher({ variant = "ghost", compact = false }:
     try {
       const { data } = await supabase.auth.getUser();
       if (data.user) {
+        const { LANGUAGE_DEFAULTS } = await import("@/i18n");
+        const defaults = LANGUAGE_DEFAULTS[lng];
         await supabase
           .from("profiles")
-          .update({ preferred_language: lng })
+          .update({
+            preferred_language: lng,
+            preferred_locale: defaults.locale,
+          })
           .eq("user_id", data.user.id);
       }
     } catch {
       // not signed in or no profile — preference still persists in localStorage via detector
     }
   };
+
 
   return (
     <DropdownMenu>

@@ -113,16 +113,14 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
     return true;
   }, [user, remaining, starterExpired, load]);
 
-  const purchaseHumanReview = useCallback<CreditsContextValue["purchaseHumanReview"]>(async (campaignId) => {
-    if (!user) return;
-    await supabase.from("human_reviews").insert({
-      user_id: user.id,
-      campaign_id: campaignId,
-      status: "purchased",
-      amount: HUMAN_REVIEW_PRICE,
-    });
-    toast.success("Premium Human Review purchased", { description: "A strategist will review this campaign and send recommendations." });
-  }, [user]);
+  // NOTE: Human Review purchases MUST go through Stripe checkout —
+  // `HumanReviewButton` calls openCheckout() and the Stripe webhook inserts
+  // the `human_reviews` row via service_role after payment clears. This stub
+  // remains only to preserve the public type; it does not write to the DB.
+  const purchaseHumanReview = useCallback<CreditsContextValue["purchaseHumanReview"]>(async () => {
+    toast.error("Use the Buy button to start checkout.");
+  }, []);
+
 
   const value: CreditsContextValue = {
     loading, plan: planId, planConfig, periodStart, periodEnd, starterExpired,

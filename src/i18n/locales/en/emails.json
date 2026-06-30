@@ -1,0 +1,21 @@
+{
+  "welcome": {
+    "subject": "Welcome to Velocity Influence",
+    "greeting": "Hi {{name}},",
+    "body": "Your workspace is live. Upload your first audience to launch a campaign in minutes.",
+    "cta": "Open your dashboard"
+  },
+  "receipt": {
+    "subject": "Your Velocity Influence receipt",
+    "thanks": "Thanks for your purchase.",
+    "amount": "Amount charged: {{amount}}"
+  },
+  "reminder": {
+    "subject": "You have replies waiting",
+    "body": "{{count}} replies need your follow-up today."
+  },
+  "activation": {
+    "subject": "Your campaign is ready to activate",
+    "body": "{{count}} contacts are cleaned, verified and ready to go."
+  }
+}
