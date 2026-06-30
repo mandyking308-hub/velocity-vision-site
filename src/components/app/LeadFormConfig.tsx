@@ -50,7 +50,7 @@ export default function LeadFormConfig({ campaignId, slug, initial, packDefaults
       lead_form_published: isPublished,
     }).eq("id", campaignId);
     setSaving(false);
-    if (error) toast.error("Couldn't save lead form"); else toast.success("Lead form saved");
+    if (error) toast.error(t("leadForm.toasts.saveFailed")); else toast.success(t("leadForm.toasts.saved"));
   };
 
   const updateField = (i: number, patch: Partial<Field>) => {
