@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
 
 const stats = [
-  { stat: "56%", desc: "of SMBs have an hour or less per day for marketing" },
-  { stat: "27%", desc: "of consumers say they never hear from a small business again after first contact or purchase" },
-  { stat: "30%", desc: "of SMBs say ROI uncertainty holds them back from adopting growth technology" },
+  { stat: "6+", desc: "tools the average lean team stitches together to run outreach, follow-up and pipeline" },
+  { stat: "40%+", desc: "of imported B2B contact data is duplicated, invalid or unsafe to send to without review" },
+  { stat: "70%", desc: "of inbound replies go cold because no one owns follow-up across systems" },
 ];
 
 const ProblemProof = () => (
@@ -18,7 +18,7 @@ const ProblemProof = () => (
       >
         <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">The problem</p>
         <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">
-          Why campaign launch breaks for most small businesses
+          Commercial work breaks across tools, spreadsheets and inboxes
         </h2>
       </motion.div>
 
@@ -46,13 +46,10 @@ const ProblemProof = () => (
         className="max-w-3xl"
       >
         <p className="text-xl md:text-2xl font-display font-semibold text-foreground mb-3">
-          Velocity Vision is built to fix exactly this.
+          Velocity Vision pulls all of that into one operating workspace.
         </p>
         <p className="text-muted-foreground text-lg">
-          Launch faster. Capture leads properly. Follow up consistently. See what worked.
-        </p>
-        <p className="text-xs text-muted-foreground/70 mt-6">
-          Sources: industry survey reporting from Shopify / Constant Contact.
+          Data in. Quality reviewed. Activation governed. Outreach created. Replies worked. Pipeline moved — without context-switching across half a dozen apps.
         </p>
       </motion.div>
     </div>
