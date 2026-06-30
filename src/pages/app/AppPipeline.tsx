@@ -183,6 +183,7 @@ function OppEditor({ opp, onClose, onMove, onSaved }: {
   opp: Opp | null; onClose: () => void;
   onMove: (o: Opp, s: Stage) => void; onSaved: () => void;
 }) {
+  const tc = useTranslation("common").t;
   const [value, setValue] = useState("");
   const [close, setClose] = useState("");
   const [next, setNext] = useState("");
