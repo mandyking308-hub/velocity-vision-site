@@ -4,7 +4,10 @@
 
 export const SUPPORTED_CURRENCIES = ["GBP", "USD", "EUR", "CAD", "AUD", "MXN"] as const;
 export type Currency = (typeof SUPPORTED_CURRENCIES)[number];
-export const DEFAULT_CURRENCY: Currency = "GBP";
+// Founder decision: unconfigured/unknown locales fall back cleanly to USD
+// (international-first). GBP remains the base pricing currency for Stripe
+// lookup keys — see priceIdFor below.
+export const DEFAULT_CURRENCY: Currency = "USD";
 
 export const CURRENCY_LABELS: Record<Currency, string> = {
   GBP: "£ GBP",
