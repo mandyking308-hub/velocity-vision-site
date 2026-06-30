@@ -44,7 +44,7 @@ const HeroSection = () => (
               <Link to="/pricing">See pricing</Link>
             </Button>
           </div>
-          <p className="text-xs text-primary-foreground/60 mt-4">
+          <p className="text-xs text-primary-foreground/75 mt-4">
             Self-serve. Guided. Cancel, pause or upgrade anytime.
           </p>
         </motion.div>
