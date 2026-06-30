@@ -118,6 +118,18 @@ const CRMSidebar = () => {
               <CreditCard size={18} className="shrink-0" />
               {!collapsed && <span>Monetisation</span>}
             </Link>
+            <Link
+              to="/crm/intelligence"
+              className={cn(
+                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors border border-accent/20",
+                location.pathname === "/crm/intelligence"
+                  ? "bg-accent text-accent-foreground"
+                  : "text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/5"
+              )}
+            >
+              <Brain size={18} className="shrink-0" />
+              {!collapsed && <span>Intelligence</span>}
+            </Link>
           </>
         )}
       </nav>
