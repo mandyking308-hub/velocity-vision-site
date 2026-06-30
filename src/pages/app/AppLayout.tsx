@@ -11,7 +11,7 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import CurrencySwitcher from "@/components/CurrencySwitcher";
 import { useLanguageSync } from "@/hooks/useLanguageSync";
 
-const navConfig = [
+const navConfig: { to: string; key: string; icon: typeof LayoutDashboard; end?: boolean }[] = [
   { to: "/app", key: "dashboard", icon: LayoutDashboard, end: true },
   { to: "/app/data-vault", key: "dataVault", icon: Database },
   { to: "/app/activate", key: "activate", icon: Send },
@@ -24,7 +24,7 @@ const navConfig = [
   { to: "/app/billing", key: "billing", icon: CreditCard },
   { to: "/app/settings", key: "settings", icon: Settings },
   { to: "/app/workspaces", key: "workspaces", icon: Briefcase },
-] as const;
+];
 
 function WorkspaceSwitcher() {
   const { workspaces, currentId, setCurrentId } = useWorkspace();
