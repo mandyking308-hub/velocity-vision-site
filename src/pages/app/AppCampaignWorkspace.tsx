@@ -202,21 +202,20 @@ export default function AppCampaignWorkspace() {
           </TabsContent>
 
           <TabsContent value="capture" className="space-y-4 mt-4">
-            <Section title="Form title"><p className="font-semibold">{pack.leadCapture.formTitle}</p></Section>
-            <Section title="Fields">
-              <div className="space-y-2">{pack.leadCapture.fields.map((f, i) => (
-                <div key={i} className="flex justify-between p-2 border border-border rounded-md text-sm">
-                  <span>{f.label}{f.required && <span className="text-destructive"> *</span>}</span>
-                  <span className="text-muted-foreground">{f.type}</span>
-                </div>
-              ))}</div>
-            </Section>
-            <Section title="CTA label"><Badge>{pack.leadCapture.ctaLabel}</Badge></Section>
-            <Section title="Thank-you message"><p>{pack.leadCapture.thankYou}</p></Section>
-            <Section title="Hosted capture URL">
-              <code className="text-sm bg-muted px-2 py-1 rounded">{`${window.location.origin}/c/${c.slug}`}</code>
-              <p className="text-xs text-muted-foreground mt-2">Share this link to capture leads. Hosted page coming in the next sprint.</p>
-            </Section>
+            <LeadFormConfig
+              campaignId={c.id}
+              slug={c.slug}
+              published={c.lead_form_published ?? true}
+              initial={c.lead_form_config || {}}
+              packDefaults={{
+                headline: pack.landing?.headline,
+                subheadline: pack.landing?.subheadline,
+                formTitle: pack.leadCapture?.formTitle,
+                ctaLabel: pack.leadCapture?.ctaLabel,
+                thankYou: pack.leadCapture?.thankYou,
+                fields: pack.leadCapture?.fields as any,
+              }}
+            />
           </TabsContent>
 
           <TabsContent value="pipeline" className="mt-4">

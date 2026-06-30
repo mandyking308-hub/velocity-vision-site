@@ -62,6 +62,21 @@ Deno.serve(async (req) => {
       await admin.from("email_sends").update({ status: "failed", error: "Email connection not found" }).eq("id", sendRow.id);
       return json({ error: "connection not found" }, 400);
     }
+
+    // RATE LIMIT: refuse to send if the connection has hit its hourly cap.
+    const limit = conn.rate_limit_per_hour ?? 60;
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const { count: recentCount } = await admin.from("email_sends")
+      .select("id", { count: "exact", head: true })
+      .eq("connection_id", conn.id)
+      .eq("status", "sent")
+      .gte("sent_at", oneHourAgo);
+    if ((recentCount ?? 0) >= limit) {
+      const retryMsg = `Rate limit reached (${limit}/hr). Try again later or raise the connection's hourly limit.`;
+      await admin.from("email_sends").update({ status: "scheduled", scheduled_for: new Date(Date.now() + 15 * 60 * 1000).toISOString(), error: retryMsg }).eq("id", sendRow.id);
+      return json({ id: sendRow.id, status: "rate_limited", retryInMinutes: 15 }, 429);
+    }
+
     const { data: secret } = await admin.from("email_connection_secrets").select("encrypted_password").eq("connection_id", conn.id).single();
     if (!secret) {
       await admin.from("email_sends").update({ status: "failed", error: "No SMTP password stored" }).eq("id", sendRow.id);
