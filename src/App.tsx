@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, useLocation, Navigate } from "react-router-dom";
+import { useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
@@ -46,7 +47,6 @@ import FounderManual from "./pages/crm/FounderManual.tsx";
 import FounderMonetisation from "./pages/crm/FounderMonetisation.tsx";
 import FounderIntelligence from "./pages/crm/FounderIntelligence.tsx";
 import PortalLayout from "./pages/PortalLayout.tsx";
-import PortalDashboard from "./pages/portal/PortalDashboard.tsx";
 import PortalCampaigns from "./pages/portal/PortalCampaigns.tsx";
 import PortalDocuments from "./pages/portal/PortalDocuments.tsx";
 import PortalMessages from "./pages/portal/PortalMessages.tsx";
@@ -81,6 +81,28 @@ import DemoDataVault from "./pages/demo/DemoDataVault.tsx";
 import HostedCapture from "./pages/HostedCapture.tsx";
 
 const queryClient = new QueryClient();
+
+const PublicContactGuard = () => {
+  useEffect(() => {
+    const hiddenAddress = ["support", "velocity-outreach.com"].join("@");
+    const replacement = "Use the Contact page";
+
+    const replaceText = (node: Node) => {
+      if (node.nodeType === Node.TEXT_NODE && node.textContent?.includes(hiddenAddress)) {
+        node.textContent = node.textContent.replaceAll(hiddenAddress, replacement);
+      }
+      node.childNodes.forEach(replaceText);
+    };
+
+    const run = () => replaceText(document.body);
+    run();
+    const observer = new MutationObserver(run);
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+    return () => observer.disconnect();
+  }, []);
+
+  return null;
+};
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
@@ -166,9 +188,7 @@ const AnimatedRoutes = () => {
           <Route path="workspaces" element={<AppWorkspaces />} />
         </Route>
 
-        {/* Legacy client portal (still available, kept for billing/legal/docs) */}
-        {/* Legacy client portal — kept for billing/legal/docs sub-routes only.
-            Standard customers are routed to /app; /portal root redirects there. */}
+        {/* Legacy client portal — kept for billing/legal/docs sub-routes only. */}
         <Route path="/portal" element={<ProtectedRoute><PortalLayout /></ProtectedRoute>}>
           <Route index element={<Navigate to="/app" replace />} />
           <Route path="campaigns" element={<PortalCampaigns />} />
@@ -196,6 +216,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <PublicContactGuard />
             <ScrollToTop />
             <AnimatedRoutes />
           </BrowserRouter>
