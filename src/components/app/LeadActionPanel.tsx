@@ -2,6 +2,11 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 import {
   Mail, MessageSquare, Clock, ArrowRight, Snowflake, Flame,
   CheckCircle2, XCircle, PauseCircle, NotebookPen, Send, TrendingUp, Trash2,
