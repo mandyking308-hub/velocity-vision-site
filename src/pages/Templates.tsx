@@ -17,8 +17,8 @@ const templates = [
 const Templates = () => (
   <>
     <SEO
-      title="Templates — Reusable commercial motions | Velocity Vision"
-      description="Templates aren't starter packs — they're repeatable commercial motions that connect data, activation, cadence, replies and pipeline."
+      title="Templates — Reusable commercial templates | Velocity Vision"
+      description="Templates aren't starter packs — they're repeatable commercial workflows that connect data, activation, cadence, replies and pipeline."
       path="/templates"
     />
     <Navbar />
@@ -28,10 +28,10 @@ const Templates = () => (
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
             <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Templates</p>
             <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">
-              Start from a repeatable motion, not a blank workspace
+              Start from a proven template, not a blank workspace
             </h1>
             <p className="text-primary-foreground/75 text-lg mb-8 max-w-2xl">
-              Each template is a full commercial motion — data segment, activation rules, outreach pack, cadence, follow-up and pipeline routing — ready to adapt and reuse.
+              Each template is a full commercial workflow — data segment, activation rules, outreach pack, cadence, follow-up and pipeline routing — ready to adapt and reuse.
             </p>
             <Button variant="hero" size="lg" asChild>
               <Link to="/auth">Start your workspace <ArrowRight size={18} /></Link>
@@ -51,13 +51,13 @@ const Templates = () => (
                 <h3 className="text-xl font-display font-semibold text-foreground mb-3">{t.name}</h3>
                 <p className="text-muted-foreground leading-relaxed mb-6 flex-1">{t.desc}</p>
                 <Button variant="outline" asChild className="self-start">
-                  <Link to="/auth">Use this motion <ArrowRight size={16} /></Link>
+                  <Link to="/auth">Start with this template <ArrowRight size={16} /></Link>
                 </Button>
               </motion.div>
             ))}
           </div>
           <p className="text-muted-foreground text-sm mt-10 max-w-3xl">
-            Every template connects directly to your Data Vault, governed activation, cadence scheduler, replies inbox and pipeline — so the motion runs end-to-end inside the workspace.
+            Every template connects directly to your Data Vault, governed activation, cadence scheduler, replies inbox and pipeline — so the workflow runs end-to-end inside the workspace.
           </p>
         </div>
       </section>
