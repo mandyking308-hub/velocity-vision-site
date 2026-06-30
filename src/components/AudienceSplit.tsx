@@ -7,17 +7,17 @@ const cards = [
   {
     icon: Briefcase,
     label: "For Businesses",
-    title: "Structured marketing without agency overhead",
-    desc: "For founders, operators and lean teams that need traction now — not another retainer.",
-    cta: "For Businesses",
+    title: "A commercial workspace for lean teams",
+    desc: "Founders and operators who need structure, safe activation and a pipeline that keeps moving — not another agency.",
+    cta: "See it for lean teams",
     href: "/for-businesses",
   },
   {
     icon: Building2,
     label: "For Agencies",
-    title: "One workspace for every client",
-    desc: "Run campaigns for multiple clients, reuse what works, and export clean branded reporting.",
-    cta: "For Agencies",
+    title: "One account, one workspace per client",
+    desc: "Run multiple clients with isolated data, pooled credits and pooled sending governance — without tool sprawl.",
+    cta: "See it for agencies",
     href: "/for-agencies",
   },
 ];
