@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { TOPUP_PACKS } from "@/lib/credits";
@@ -6,6 +7,9 @@ import { PRICE_IDS } from "@/lib/stripe";
 import { Sparkles } from "lucide-react";
 import { useCurrency } from "@/hooks/useCurrency";
 import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
+import LegalAcceptanceGate from "@/components/LegalAcceptanceGate";
+import { useAuth } from "@/contexts/AuthContext";
+import { recordLegalAcceptance } from "@/lib/recordLegalAcceptance";
 
 const PACK_TO_PRICE: Record<string, string> = {
   small: PRICE_IDS.topup_small,
@@ -21,13 +25,29 @@ const PACK_TO_SKU: Record<string, SkuId> = {
 export default function TopUpModal({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
   const { openCheckout, element } = useStripeCheckout();
   const { currency } = useCurrency();
+  const { user } = useAuth();
+  const [pendingPack, setPendingPack] = useState<string | null>(null);
 
   const handle = (packId: string) => {
     onOpenChange(false);
+    setPendingPack(packId);
+  };
+
+  const confirmBuy = async () => {
+    if (!pendingPack) return;
+    if (user) {
+      await recordLegalAcceptance({
+        userId: user.id,
+        email: user.email ?? null,
+        source: "topup_checkout",
+      });
+    }
+    const id = pendingPack;
+    setPendingPack(null);
     openCheckout({
-      priceId: PACK_TO_PRICE[packId],
+      priceId: PACK_TO_PRICE[id],
       title: "Buy Campaign Credits",
-      returnPath: `/app/billing?checkout=topup_${packId}`,
+      returnPath: `/app/billing?checkout=topup_${id}`,
     });
   };
 
@@ -53,6 +73,14 @@ export default function TopUpModal({ open, onOpenChange }: { open: boolean; onOp
           <p className="text-xs text-muted-foreground mt-2">Top-ups never expire while your plan is active. {taxNotice(currency)}</p>
         </DialogContent>
       </Dialog>
+      <LegalAcceptanceGate
+        open={pendingPack !== null}
+        onOpenChange={(v) => { if (!v) setPendingPack(null); }}
+        title="Confirm before buying credits"
+        description="You must accept the legal stack before completing checkout."
+        confirmLabel="Continue to checkout"
+        onConfirm={confirmBuy}
+      />
       {element}
     </>
   );

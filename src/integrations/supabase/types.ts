@@ -1485,6 +1485,15 @@ export type Database = {
       legal_acceptances: {
         Row: {
           accepted_at: string
+          accepted_aup_version: string | null
+          accepted_cookie_policy_version: string | null
+          accepted_customer_agreement_version: string | null
+          accepted_dpa_version: string | null
+          accepted_marketing_compliance_version: string | null
+          accepted_privacy_version: string | null
+          accepted_security_policy_version: string | null
+          accepted_sla_version: string | null
+          accepted_terms_version: string | null
           account_type: string | null
           created_at: string
           document_versions: Json | null
@@ -1492,10 +1501,22 @@ export type Database = {
           id: string
           ip_address: string | null
           legal_version: string | null
+          source: string | null
+          user_agent: string | null
           user_id: string
+          workspace_id: string | null
         }
         Insert: {
           accepted_at?: string
+          accepted_aup_version?: string | null
+          accepted_cookie_policy_version?: string | null
+          accepted_customer_agreement_version?: string | null
+          accepted_dpa_version?: string | null
+          accepted_marketing_compliance_version?: string | null
+          accepted_privacy_version?: string | null
+          accepted_security_policy_version?: string | null
+          accepted_sla_version?: string | null
+          accepted_terms_version?: string | null
           account_type?: string | null
           created_at?: string
           document_versions?: Json | null
@@ -1503,10 +1524,22 @@ export type Database = {
           id?: string
           ip_address?: string | null
           legal_version?: string | null
+          source?: string | null
+          user_agent?: string | null
           user_id: string
+          workspace_id?: string | null
         }
         Update: {
           accepted_at?: string
+          accepted_aup_version?: string | null
+          accepted_cookie_policy_version?: string | null
+          accepted_customer_agreement_version?: string | null
+          accepted_dpa_version?: string | null
+          accepted_marketing_compliance_version?: string | null
+          accepted_privacy_version?: string | null
+          accepted_security_policy_version?: string | null
+          accepted_sla_version?: string | null
+          accepted_terms_version?: string | null
           account_type?: string | null
           created_at?: string
           document_versions?: Json | null
@@ -1514,7 +1547,10 @@ export type Database = {
           id?: string
           ip_address?: string | null
           legal_version?: string | null
+          source?: string | null
+          user_agent?: string | null
           user_id?: string
+          workspace_id?: string | null
         }
         Relationships: []
       }

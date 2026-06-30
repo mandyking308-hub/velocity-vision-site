@@ -3,13 +3,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { useNavigate, Link } from "react-router-dom";
-import { CURRENT_LEGAL_VERSION } from "@/lib/legalVersions";
+import { useNavigate } from "react-router-dom";
+import LegalAcceptanceCheckbox from "@/components/LegalAcceptanceCheckbox";
+import { recordLegalAcceptance } from "@/lib/recordLegalAcceptance";
 
-const legalLinks = [
+const _legalLinks = [
   { label: "Platform Terms of Service", path: "/legal/terms-of-service" },
   { label: "Client Services Agreement", path: "/legal/client-services-agreement" },
   { label: "Privacy Policy", path: "/legal/privacy-policy" },
@@ -49,37 +49,6 @@ const AuthPage = () => {
     checkRoleAndRedirect();
   }, [user, navigate]);
 
-  const logLegalAcceptance = async (userId: string, userEmail: string) => {
-    try {
-      // Fetch IP address
-      let ipAddress = "unknown";
-      try {
-        const res = await fetch("https://api.ipify.org?format=json");
-        const data = await res.json();
-        ipAddress = data.ip;
-      } catch {
-        // IP fetch failed, continue with unknown
-      }
-
-      const documentVersions: Record<string, string> = {};
-      legalLinks.forEach((doc) => {
-        const slug = doc.path.split("/").pop() || "";
-        documentVersions[slug] = CURRENT_LEGAL_VERSION;
-      });
-
-      await supabase.from("legal_acceptances").insert({
-        user_id: userId,
-        email: userEmail,
-        account_type: "business",
-        legal_version: CURRENT_LEGAL_VERSION,
-        ip_address: ipAddress,
-        document_versions: documentVersions,
-      });
-    } catch (err) {
-      console.error("Failed to log legal acceptance:", err);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -110,7 +79,11 @@ const AuthPage = () => {
         toast.error(error.message);
       } else {
         if (data.user) {
-          await logLegalAcceptance(data.user.id, email);
+          await recordLegalAcceptance({
+            userId: data.user.id,
+            email,
+            source: "signup",
+          });
         }
         toast.success("Check your email to confirm your account.");
       }
@@ -168,28 +141,12 @@ const AuthPage = () => {
               minLength={6}
             />
 
-            {/* Legal acceptance checkbox — signup only */}
+            {/* Legal acceptance — mandatory on signup, unticked by default */}
             {!isLogin && (
-              <div className="space-y-2">
-                <div className="flex items-start gap-2">
-                  <Checkbox
-                    id="legal-accept"
-                    checked={legalAccepted}
-                    onCheckedChange={(checked) => setLegalAccepted(checked === true)}
-                    className="mt-1"
-                  />
-                  <label htmlFor="legal-accept" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
-                    I confirm that I have read and agree to the{" "}
-                    <Link to="/legal/terms-of-service" target="_blank" className="text-accent hover:underline">Platform Terms of Service</Link>
-                    {" "}and{" "}
-                    <Link to="/legal/client-services-agreement" target="_blank" className="text-accent hover:underline">Client Services Agreement</Link>
-                    , and acknowledge the{" "}
-                    <Link to="/legal/privacy-policy" target="_blank" className="text-accent hover:underline">Privacy Policy</Link>
-                    {" "}and other applicable{" "}
-                    <Link to="/legal" target="_blank" className="text-accent hover:underline">legal policies</Link>.
-                  </label>
-                </div>
-              </div>
+              <LegalAcceptanceCheckbox
+                checked={legalAccepted}
+                onCheckedChange={setLegalAccepted}
+              />
             )}
 
             <Button type="submit" variant="cta" className="w-full" disabled={loading || (!isLogin && !legalAccepted)}>

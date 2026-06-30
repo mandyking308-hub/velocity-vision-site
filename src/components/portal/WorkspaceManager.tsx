@@ -2,11 +2,14 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useClientCompany } from "@/hooks/useClientCompany";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Building2, Plus, ArrowRight, Briefcase } from "lucide-react";
 import { motion } from "framer-motion";
+import LegalAcceptanceCheckbox from "@/components/LegalAcceptanceCheckbox";
+import { recordLegalAcceptance } from "@/lib/recordLegalAcceptance";
 
 interface WorkspaceManagerProps {
   onSelectWorkspace?: (workspaceId: string) => void;
@@ -15,9 +18,11 @@ interface WorkspaceManagerProps {
 
 const WorkspaceManager = ({ onSelectWorkspace, selectedWorkspaceId }: WorkspaceManagerProps) => {
   const { companyId } = useClientCompany();
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: "", industry: "", website: "", contact_name: "", contact_email: "" });
+  const [legalAccepted, setLegalAccepted] = useState(false);
 
   const { data: workspaces, isLoading } = useQuery({
     queryKey: ["client-workspaces", companyId],
@@ -36,20 +41,30 @@ const WorkspaceManager = ({ onSelectWorkspace, selectedWorkspaceId }: WorkspaceM
   const createWorkspace = useMutation({
     mutationFn: async () => {
       if (!companyId || !form.name.trim()) throw new Error("Name required");
-      const { error } = await supabase.from("client_workspaces").insert({
+      if (!legalAccepted) throw new Error("You must accept the legal terms before creating a workspace.");
+      const { data, error } = await supabase.from("client_workspaces").insert({
         agency_company_id: companyId,
         name: form.name,
         industry: form.industry || null,
         website: form.website || null,
         contact_name: form.contact_name || null,
         contact_email: form.contact_email || null,
-      });
+      }).select("id").single();
       if (error) throw error;
+      if (user && data?.id) {
+        await recordLegalAcceptance({
+          userId: user.id,
+          email: user.email ?? null,
+          source: "workspace_create",
+          workspaceId: data.id,
+        });
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["client-workspaces"] });
       toast.success("Client workspace created!");
       setForm({ name: "", industry: "", website: "", contact_name: "", contact_email: "" });
+      setLegalAccepted(false);
       setShowForm(false);
     },
     onError: (e: any) => toast.error(e.message),
@@ -80,9 +95,15 @@ const WorkspaceManager = ({ onSelectWorkspace, selectedWorkspaceId }: WorkspaceM
             <Input placeholder="Contact name" value={form.contact_name} onChange={(e) => setForm({ ...form, contact_name: e.target.value })} />
             <Input placeholder="Contact email" value={form.contact_email} onChange={(e) => setForm({ ...form, contact_email: e.target.value })} />
           </div>
+          <LegalAcceptanceCheckbox checked={legalAccepted} onCheckedChange={setLegalAccepted} />
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={() => setShowForm(false)}>Cancel</Button>
-            <Button variant="cta" size="sm" onClick={() => createWorkspace.mutate()} disabled={createWorkspace.isPending}>Create Workspace</Button>
+            <Button
+              variant="cta"
+              size="sm"
+              onClick={() => createWorkspace.mutate()}
+              disabled={createWorkspace.isPending || !legalAccepted}
+            >Create Workspace</Button>
           </div>
         </motion.div>
       )}
