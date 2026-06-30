@@ -13,12 +13,21 @@ import { Check, ArrowUpRight, CheckCircle2 } from "lucide-react";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { PRICE_IDS } from "@/lib/stripe";
 import { toast } from "sonner";
+import { useCurrency } from "@/hooks/useCurrency";
+import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
+import CurrencySwitcher from "@/components/CurrencySwitcher";
 
+const PLAN_TO_SKU: Record<PlanId, SkuId> = {
+  starter: "vv_starter_oneoff",
+  growth: "vv_growth_monthly",
+  agency: "vv_agency_monthly",
+};
 const PLAN_TO_PRICE: Record<PlanId, string> = {
   starter: PRICE_IDS.starter,
   growth: PRICE_IDS.growth,
   agency: PRICE_IDS.agency,
 };
+
 
 export default function AppBilling() {
   const { user } = useAuth();
