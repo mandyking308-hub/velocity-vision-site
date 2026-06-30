@@ -67,6 +67,8 @@ export default function AppDashboard() {
         <StatCard label="Last performance" value="—" hint="Launch your first to see data" />
       </div>
 
+      <CreditMeter />
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {cards.map((c) => (
           <Link key={c.to} to={c.to}>
