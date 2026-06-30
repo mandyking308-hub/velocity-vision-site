@@ -65,10 +65,16 @@ Deno.serve(async (req) => {
 
     if (connectionId) {
       const { error } = await admin.from("email_connections").update(row).eq("id", connectionId).eq("user_id", user.id);
-      if (error) return json({ error: error.message }, 400);
+      if (error) {
+        console.error("email_connections update error:", error);
+        return json({ error: "Could not update email connection." }, 400);
+      }
     } else {
       const { data, error } = await admin.from("email_connections").insert(row).select("id").single();
-      if (error) return json({ error: error.message }, 400);
+      if (error) {
+        console.error("email_connections insert error:", error);
+        return json({ error: "Could not save email connection." }, 400);
+      }
       connectionId = data.id;
     }
 
