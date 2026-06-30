@@ -6,6 +6,18 @@ import { smtpSend } from "../_shared/smtp-send.ts";
 // Cron-driven. Picks scheduled emails whose scheduled_for is in the past and sends them.
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
+  // Shared-secret check — only the configured pg_cron job (or an operator with the
+  // CRON_SECRET) may invoke this endpoint. Without this anyone with the URL could
+  // trigger early delivery of all queued mail.
+  const cronSecret = Deno.env.get("CRON_SECRET");
+  if (!cronSecret || req.headers.get("Authorization") !== `Bearer ${cronSecret}`) {
+    return new Response(JSON.stringify({ error: "Forbidden" }), {
+      status: 403,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
   const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
   const { data: due } = await admin

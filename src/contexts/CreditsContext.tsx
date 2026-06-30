@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { PLANS, PlanId, CREDIT_COSTS, CreditAction, TOPUP_PACKS, HUMAN_REVIEW_PRICE } from "@/lib/credits";
+import { PLANS, PlanId, CREDIT_COSTS, CreditAction, HUMAN_REVIEW_PRICE } from "@/lib/credits";
 import { toast } from "sonner";
 
 interface UserPlan {
@@ -25,8 +25,6 @@ interface CreditsContextValue {
   refresh: () => Promise<void>;
   /** Returns true on success, false (and shows toast) if not enough credits. */
   consume: (action: CreditAction, refId?: string, label?: string) => Promise<boolean>;
-  buyTopup: (packId: typeof TOPUP_PACKS[number]["id"]) => Promise<void>;
-  upgradePlan: (next: PlanId) => Promise<void>;
   purchaseHumanReview: (campaignId: string) => Promise<void>;
 }
 
@@ -40,24 +38,24 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
 
   const ensurePlan = useCallback(async (): Promise<UserPlan | null> => {
     if (!user) return null;
-    const { data } = await supabase.from("user_plans").select("plan, status, period_start, period_end").eq("user_id", user.id).maybeSingle();
+    const { data } = await supabase
+      .from("user_plans")
+      .select("plan, status, period_start, period_end")
+      .eq("user_id", user.id)
+      .maybeSingle();
     if (data) return data as UserPlan;
-    // Lazy-create starter plan + initial credit grant
-    const periodEnd = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
-    const { data: created } = await supabase.from("user_plans").insert({
-      user_id: user.id,
-      plan: "starter",
-      status: "active",
-      period_end: periodEnd,
-    }).select("plan, status, period_start, period_end").single();
-    await supabase.from("credit_ledger").insert({
-      user_id: user.id,
-      delta: PLANS.starter.includedCredits,
-      reason: "plan_grant",
-      meta: { plan: "starter" },
-    });
-    return created as UserPlan;
+    // Lazy-provision the free Starter plan via security-definer RPC.
+    // Plan upgrades and credit grants happen exclusively in the Stripe webhook.
+    const { data: provisioned, error } = await supabase.rpc("provision_starter_plan");
+    if (error || !provisioned) return null;
+    return {
+      plan: (provisioned as any).plan,
+      status: (provisioned as any).status,
+      period_start: (provisioned as any).period_start,
+      period_end: (provisioned as any).period_end,
+    };
   }, [user]);
+
 
   const load = useCallback(async () => {
     if (!user) { setLoading(false); return; }
@@ -115,38 +113,6 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
     return true;
   }, [user, remaining, starterExpired, load]);
 
-  const buyTopup = useCallback<CreditsContextValue["buyTopup"]>(async (packId) => {
-    if (!user) return;
-    const pack = TOPUP_PACKS.find((p) => p.id === packId);
-    if (!pack) return;
-    await supabase.from("credit_topups").insert({ user_id: user.id, pack: pack.id, credits: pack.credits, amount: pack.price });
-    await supabase.from("credit_ledger").insert({ user_id: user.id, delta: pack.credits, reason: "topup", meta: { pack: pack.id, price: pack.price } });
-    toast.success(`Added ${pack.credits} Campaign Credits`);
-    await load();
-  }, [user, load]);
-
-  const upgradePlan = useCallback<CreditsContextValue["upgradePlan"]>(async (next) => {
-    if (!user) return;
-    const cfg = PLANS[next];
-    const periodEndIso = cfg.cadence === "monthly"
-      ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-      : new Date(Date.now() + (cfg.durationDays ?? 30) * 24 * 60 * 60 * 1000).toISOString();
-    await supabase.from("user_plans").update({
-      plan: next,
-      status: "active",
-      period_start: new Date().toISOString(),
-      period_end: periodEndIso,
-    }).eq("user_id", user.id);
-    await supabase.from("credit_ledger").insert({
-      user_id: user.id,
-      delta: cfg.includedCredits,
-      reason: "plan_grant",
-      meta: { plan: next },
-    });
-    toast.success(`Switched to ${cfg.name}`);
-    await load();
-  }, [user, load]);
-
   const purchaseHumanReview = useCallback<CreditsContextValue["purchaseHumanReview"]>(async (campaignId) => {
     if (!user) return;
     await supabase.from("human_reviews").insert({
@@ -161,7 +127,7 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
   const value: CreditsContextValue = {
     loading, plan: planId, planConfig, periodStart, periodEnd, starterExpired,
     included, used, topupBalance, remaining,
-    refresh: load, consume, buyTopup, upgradePlan, purchaseHumanReview,
+    refresh: load, consume, purchaseHumanReview,
   };
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

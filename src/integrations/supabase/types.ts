@@ -1736,6 +1736,25 @@ export type Database = {
         }
         Returns: boolean
       }
+      provision_starter_plan: {
+        Args: never
+        Returns: {
+          created_at: string
+          id: string
+          period_end: string | null
+          period_start: string
+          plan: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "user_plans"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       activity_type:
