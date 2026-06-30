@@ -69,6 +69,7 @@ import AppPerformance from "./pages/app/AppPerformance.tsx";
 import AppSettings from "./pages/app/AppSettings.tsx";
 import AppWorkspaces from "./pages/app/AppWorkspaces.tsx";
 import AppBilling from "./pages/app/AppBilling.tsx";
+import AppEmailConnections from "./pages/app/AppEmailConnections.tsx";
 
 const queryClient = new QueryClient();
 
@@ -140,6 +141,7 @@ const AnimatedRoutes = () => {
           <Route path="performance" element={<AppPerformance />} />
           <Route path="templates" element={<AppTemplates />} />
           <Route path="settings" element={<AppSettings />} />
+          <Route path="settings/email" element={<AppEmailConnections />} />
           <Route path="billing" element={<AppBilling />} />
           <Route path="workspaces" element={<AppWorkspaces />} />
         </Route>

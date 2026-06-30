@@ -17,16 +17,18 @@ export default function AppBilling() {
   const [ledger, setLedger] = useState<any[]>([]);
   const [topups, setTopups] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
+  const [emailConn, setEmailConn] = useState<any[]>([]);
 
   useEffect(() => {
     if (!user) return;
     (async () => {
-      const [l, t, r] = await Promise.all([
+      const [l, t, r, e] = await Promise.all([
         supabase.from("credit_ledger").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(30),
         supabase.from("credit_topups").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
         supabase.from("human_reviews").select("*, campaigns(name)").eq("user_id", user.id).order("created_at", { ascending: false }),
+        supabase.from("email_connections").select("id, from_email, status, is_default").eq("user_id", user.id),
       ]);
-      setLedger(l.data || []); setTopups(t.data || []); setReviews(r.data || []);
+      setLedger(l.data || []); setTopups(t.data || []); setReviews(r.data || []); setEmailConn(e.data || []);
     })();
   }, [user]);
 
@@ -38,6 +40,26 @@ export default function AppBilling() {
         <h1 className="text-3xl font-bold">Billing</h1>
         <p className="text-muted-foreground">Manage your plan, Campaign Credits and add-ons.</p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Email sending</CardTitle>
+          <CardDescription>
+            {emailConn.length === 0
+              ? "No inbox connected — you can't send follow-ups yet."
+              : `${emailConn.length} connection${emailConn.length === 1 ? "" : "s"} · sending ${emailConn.some((c) => c.status === "connected") ? "active" : "needs attention"}`}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex items-center gap-3 flex-wrap">
+          {emailConn.map((c) => (
+            <Badge key={c.id} variant={c.status === "connected" ? "default" : "destructive"}>
+              {c.from_email} · {c.status}
+            </Badge>
+          ))}
+          <a href="/app/settings/email"><Button variant="outline" size="sm">Manage email connections</Button></a>
+        </CardContent>
+      </Card>
+
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2"><CreditMeter /></div>

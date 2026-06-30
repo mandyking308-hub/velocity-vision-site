@@ -731,6 +731,189 @@ export type Database = {
         }
         Relationships: []
       }
+      email_connection_secrets: {
+        Row: {
+          connection_id: string
+          created_at: string
+          encrypted_password: string
+          updated_at: string
+        }
+        Insert: {
+          connection_id: string
+          created_at?: string
+          encrypted_password: string
+          updated_at?: string
+        }
+        Update: {
+          connection_id?: string
+          created_at?: string
+          encrypted_password?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_connection_secrets_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: true
+            referencedRelation: "email_connections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_connections: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          from_email: string
+          from_name: string | null
+          id: string
+          is_default: boolean
+          last_error: string | null
+          last_verified_at: string | null
+          provider: string
+          smtp_host: string
+          smtp_port: number
+          smtp_username: string
+          status: string
+          updated_at: string
+          user_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          from_email: string
+          from_name?: string | null
+          id?: string
+          is_default?: boolean
+          last_error?: string | null
+          last_verified_at?: string | null
+          provider: string
+          smtp_host: string
+          smtp_port?: number
+          smtp_username: string
+          status?: string
+          updated_at?: string
+          user_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          from_email?: string
+          from_name?: string | null
+          id?: string
+          is_default?: boolean
+          last_error?: string | null
+          last_verified_at?: string | null
+          provider?: string
+          smtp_host?: string
+          smtp_port?: number
+          smtp_username?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_connections_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "client_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_sends: {
+        Row: {
+          body: string
+          campaign_id: string | null
+          connection_id: string | null
+          created_at: string
+          error: string | null
+          id: string
+          lead_id: string | null
+          recipient_email: string
+          recipient_name: string | null
+          scheduled_for: string | null
+          sent_at: string | null
+          sequence_step: number | null
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          body: string
+          campaign_id?: string | null
+          connection_id?: string | null
+          created_at?: string
+          error?: string | null
+          id?: string
+          lead_id?: string | null
+          recipient_email: string
+          recipient_name?: string | null
+          scheduled_for?: string | null
+          sent_at?: string | null
+          sequence_step?: number | null
+          status?: string
+          subject: string
+          updated_at?: string
+          user_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          body?: string
+          campaign_id?: string | null
+          connection_id?: string | null
+          created_at?: string
+          error?: string | null
+          id?: string
+          lead_id?: string | null
+          recipient_email?: string
+          recipient_name?: string | null
+          scheduled_for?: string | null
+          sent_at?: string | null
+          sequence_step?: number | null
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_sends_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_sends_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "email_connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_sends_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_sends_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "client_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       error_logs: {
         Row: {
           category: string
@@ -869,6 +1052,8 @@ export type Database = {
           follow_up_at: string | null
           id: string
           last_action: string | null
+          last_email_sent_at: string | null
+          last_email_subject: string | null
           marketing_interest: string | null
           name: string | null
           owner_id: string | null
@@ -887,6 +1072,8 @@ export type Database = {
           follow_up_at?: string | null
           id?: string
           last_action?: string | null
+          last_email_sent_at?: string | null
+          last_email_subject?: string | null
           marketing_interest?: string | null
           name?: string | null
           owner_id?: string | null
@@ -905,6 +1092,8 @@ export type Database = {
           follow_up_at?: string | null
           id?: string
           last_action?: string | null
+          last_email_sent_at?: string | null
+          last_email_subject?: string | null
           marketing_interest?: string | null
           name?: string | null
           owner_id?: string | null

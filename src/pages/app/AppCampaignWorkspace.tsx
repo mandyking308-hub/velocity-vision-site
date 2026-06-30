@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { useCredits } from "@/contexts/CreditsContext";
 import { CREDIT_COSTS } from "@/lib/credits";
 import HumanReviewButton from "@/components/app/HumanReviewButton";
+import EmailSequenceSender from "@/components/app/EmailSequenceSender";
 
 interface Campaign {
   id: string;
@@ -147,12 +148,7 @@ export default function AppCampaignWorkspace() {
           </TabsContent>
 
           <TabsContent value="emails" className="space-y-3 mt-4">
-            {pack.emails.map((e, i) => (
-              <Section key={i} title={`Email ${i + 1}: ${e.subject}`} copyText={`${e.subject}\n\n${e.body}`}>
-                <p className="text-xs text-muted-foreground mb-2">Preview: {e.preview}</p>
-                <pre className="whitespace-pre-wrap font-sans text-sm">{e.body}</pre>
-              </Section>
-            ))}
+            <EmailSequenceSender emails={pack.emails} campaignId={c.id} leads={leads} />
           </TabsContent>
 
           <TabsContent value="social" className="space-y-4 mt-4">
