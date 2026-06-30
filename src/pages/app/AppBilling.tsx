@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,29 +9,79 @@ import CreditMeter from "@/components/app/CreditMeter";
 import TopUpModal from "@/components/app/TopUpModal";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { Check, ArrowUpRight } from "lucide-react";
+import { Check, ArrowUpRight, CheckCircle2 } from "lucide-react";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
+import { PRICE_IDS } from "@/lib/stripe";
+import { toast } from "sonner";
+
+const PLAN_TO_PRICE: Record<PlanId, string> = {
+  starter: PRICE_IDS.starter,
+  growth: PRICE_IDS.growth,
+  agency: PRICE_IDS.agency,
+};
 
 export default function AppBilling() {
   const { user } = useAuth();
-  const { plan, planConfig, periodEnd, starterExpired, upgradePlan } = useCredits();
+  const { plan, planConfig, periodEnd, starterExpired, refresh } = useCredits();
   const [topupOpen, setTopupOpen] = useState(false);
   const [ledger, setLedger] = useState<any[]>([]);
   const [topups, setTopups] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
   const [emailConn, setEmailConn] = useState<any[]>([]);
+  const [payments, setPayments] = useState<any[]>([]);
+  const [stripeSub, setStripeSub] = useState<any>(null);
+  const { openCheckout, element } = useStripeCheckout();
+  const [params, setParams] = useSearchParams();
+  const navigate = useNavigate();
 
-  useEffect(() => {
+  const load = async () => {
     if (!user) return;
+    const [l, t, r, e, p, s] = await Promise.all([
+      supabase.from("credit_ledger").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(30),
+      supabase.from("credit_topups").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
+      supabase.from("human_reviews").select("*, campaigns(name)").eq("user_id", user.id).order("created_at", { ascending: false }),
+      supabase.from("email_connections").select("id, from_email, status, is_default").eq("user_id", user.id),
+      supabase.from("payment_intents").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(20),
+      supabase.from("stripe_subscriptions").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle(),
+    ]);
+    setLedger(l.data || []); setTopups(t.data || []); setReviews(r.data || []);
+    setEmailConn(e.data || []); setPayments(p.data || []); setStripeSub(s.data);
+  };
+
+  useEffect(() => { load(); }, [user]);
+
+  // Post-payment provisioning: handle ?checkout=success and route the user
+  useEffect(() => {
+    const flag = params.get("checkout");
+    if (!flag) return;
     (async () => {
-      const [l, t, r, e] = await Promise.all([
-        supabase.from("credit_ledger").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(30),
-        supabase.from("credit_topups").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
-        supabase.from("human_reviews").select("*, campaigns(name)").eq("user_id", user.id).order("created_at", { ascending: false }),
-        supabase.from("email_connections").select("id, from_email, status, is_default").eq("user_id", user.id),
-      ]);
-      setLedger(l.data || []); setTopups(t.data || []); setReviews(r.data || []); setEmailConn(e.data || []);
+      toast.success("Payment received — your account has been updated.");
+      // Webhook normally writes within 1-3s; refresh credits + tables a couple times
+      for (let i = 0; i < 4; i++) {
+        await new Promise((r) => setTimeout(r, 1200));
+        await refresh();
+        await load();
+      }
+      // Route based on what was bought
+      if (flag === "plan_starter" || flag.startsWith("checkout=plan_starter") || flag === "starter") {
+        navigate("/app/campaigns/new", { replace: true });
+      } else if (flag === "growth" || flag === "agency") {
+        navigate("/app", { replace: true });
+      } else {
+        // strip the query param
+        params.delete("checkout"); params.delete("session_id"); setParams(params, { replace: true });
+      }
     })();
-  }, [user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const buyPlan = (id: PlanId) => {
+    openCheckout({
+      priceId: PLAN_TO_PRICE[id],
+      title: `Subscribe to ${PLANS[id].name}`,
+      returnPath: `/app/billing?checkout=${id}`,
+    });
+  };
 
   const planEntries = (Object.keys(PLANS) as PlanId[]);
 
@@ -40,6 +91,18 @@ export default function AppBilling() {
         <h1 className="text-3xl font-bold">Billing</h1>
         <p className="text-muted-foreground">Manage your plan, Campaign Credits and add-ons.</p>
       </div>
+
+      {stripeSub?.status === "past_due" && (
+        <Card className="border-destructive">
+          <CardContent className="p-4 flex items-center justify-between gap-3">
+            <div>
+              <div className="font-semibold text-destructive">Payment failed</div>
+              <p className="text-sm text-muted-foreground">Your last renewal didn't go through. Update your payment method to keep your plan active.</p>
+            </div>
+            <Button onClick={() => buyPlan((stripeSub.plan as PlanId) || "growth")}>Retry payment</Button>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>
@@ -59,7 +122,6 @@ export default function AppBilling() {
           <a href="/app/settings/email"><Button variant="outline" size="sm">Manage email connections</Button></a>
         </CardContent>
       </Card>
-
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2"><CreditMeter /></div>
@@ -87,7 +149,7 @@ export default function AppBilling() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {planEntries.map((id) => {
             const cfg = PLANS[id];
-            const current = id === plan;
+            const current = id === plan && !starterExpired;
             return (
               <Card key={id} className={current ? "border-primary" : ""}>
                 <CardHeader>
@@ -103,8 +165,8 @@ export default function AppBilling() {
                   <ul className="text-sm text-muted-foreground space-y-1">
                     {cfg.features.map((f) => (<li key={f} className="flex gap-2"><Check className="h-4 w-4 text-accent mt-0.5 shrink-0" />{f}</li>))}
                   </ul>
-                  <Button className="w-full" variant={current ? "outline" : "default"} disabled={current} onClick={() => upgradePlan(id)}>
-                    {current ? "Current plan" : id === "starter" ? "Switch to Starter" : `Upgrade to ${cfg.name}`}
+                  <Button className="w-full" variant={current ? "outline" : "default"} disabled={current} onClick={() => buyPlan(id)}>
+                    {current ? "Current plan" : id === "starter" ? "Start Starter" : `Start ${cfg.name}`}
                   </Button>
                 </CardContent>
               </Card>
@@ -119,7 +181,7 @@ export default function AppBilling() {
           <CardContent className="p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <div className="font-semibold">Optional add-on — £{HUMAN_REVIEW_PRICE} per review</div>
-              <p className="text-sm text-muted-foreground">Senior strategist review of one campaign pack, written recommendations and one async revision pass. Purchase from inside any campaign.</p>
+              <p className="text-sm text-muted-foreground">Senior strategist review of one campaign pack. Purchase from inside any campaign.</p>
             </div>
             <Button variant="outline" asChild><a href="/app/campaigns">Choose a campaign <ArrowUpRight className="h-4 w-4 ml-2" /></a></Button>
           </CardContent>
@@ -134,6 +196,30 @@ export default function AppBilling() {
             ))}
           </div>
         )}
+      </section>
+
+      <section>
+        <h2 className="text-xl font-semibold mb-3">Billing history</h2>
+        <Card>
+          <CardContent className="p-0">
+            {payments.length === 0 ? (
+              <p className="p-4 text-sm text-muted-foreground">No charges yet.</p>
+            ) : (
+              <div className="divide-y divide-border">
+                {payments.map((p) => (
+                  <div key={p.id} className="p-3 flex justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      {p.status === "paid" && <CheckCircle2 className="h-4 w-4 text-accent" />}
+                      <span className="font-medium">{p.product_kind.replace(/_/g, " ")}</span>
+                      <Badge variant="outline">{p.status}</Badge>
+                    </div>
+                    <div className="text-muted-foreground">£{(p.amount / 100).toFixed(2)} · {new Date(p.created_at).toLocaleDateString()}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </section>
 
       <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -168,21 +254,8 @@ export default function AppBilling() {
         </Card>
       </section>
 
-      <section>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Cancel or downgrade</CardTitle>
-            <CardDescription>Manage subscription state. You keep access to existing campaigns and reports.</CardDescription>
-          </CardHeader>
-          <CardContent className="flex gap-2">
-            <Button variant="outline" disabled>Pause renewal</Button>
-            <Button variant="outline" disabled>Cancel plan</Button>
-            <span className="text-xs text-muted-foreground self-center">Available once payments are connected.</span>
-          </CardContent>
-        </Card>
-      </section>
-
       <TopUpModal open={topupOpen} onOpenChange={setTopupOpen} />
+      {element}
     </div>
   );
 }
