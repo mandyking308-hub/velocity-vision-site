@@ -109,8 +109,8 @@ const Pricing = () => {
   <>
 
     <SEO
-      title="Pricing — Velocity Vision self-serve marketing platform"
-      description="Self-serve pricing for businesses and agencies. Starter, Growth and Agency Workspace plans plus an optional Premium Human Review add-on."
+      title="Pricing — Velocity Vision commercial workspace"
+      description="Self-serve pricing for businesses and agencies. Generous data storage, governed sending, credits for heavy-value actions, and optional Premium Human Review."
       path="/pricing"
     />
     <Navbar />
@@ -120,17 +120,17 @@ const Pricing = () => {
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
             <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Pricing</p>
             <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">
-              Choose the plan that fits how you launch
+              Pay for governed action, not for stored data
             </h1>
             <p className="text-primary-foreground/75 text-lg mb-8 max-w-2xl mx-auto">
-              Self-serve pricing for businesses and agencies, with optional expert review when you want it.
+              Storage is generous. Sending stays safe. Credits cover heavy-value AI generations. Scale with top-ups, not surprise bills.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button variant="hero" size="lg" asChild>
-                <Link to="/app/billing">Start your first campaign <ArrowRight size={18} /></Link>
+                <Link to="/app/billing">Choose your plan <ArrowRight size={18} /></Link>
               </Button>
               <Button variant="hero-outline" size="lg" asChild>
-                <Link to="/contact">Talk to us</Link>
+                <Link to="/contact">Talk to us about volume</Link>
               </Button>
             </div>
           </motion.div>
