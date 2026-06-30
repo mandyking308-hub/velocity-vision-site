@@ -1,0 +1,35 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "dataVault": "Data Vault",
+    "activate": "Activate",
+    "campaigns": "Campaigns",
+    "followUp": "Follow-Up",
+    "pipeline": "Pipeline",
+    "leads": "Leads",
+    "templates": "Templates",
+    "email": "Email",
+    "performance": "Performance",
+    "workspaces": "Workspaces",
+    "billing": "Billing",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "title": "Command Centre",
+    "subtitle": "Your commercial workspace at a glance.",
+    "sections": {
+      "summary": "Summary",
+      "dataHealth": "Database Health",
+      "activation": "Activation Readiness",
+      "create": "Create Assets",
+      "replies": "Replies & Follow-up",
+      "pipeline": "Pipeline & Sales",
+      "nextBest": "Next Best Actions"
+    },
+    "empty": {
+      "title": "Nothing to act on yet",
+      "body": "Upload your data to start activating campaigns.",
+      "cta": "Upload data"
+    }
+  }
+}

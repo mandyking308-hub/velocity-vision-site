@@ -20,19 +20,24 @@ async function grantCredits(userId: string, credits: number, reason: string, met
   await db().from("credit_ledger").insert({ user_id: userId, delta: credits, reason, meta });
 }
 
-async function ensurePlan(userId: string, plan: string, recurring: boolean) {
+async function ensurePlan(userId: string, plan: string, recurring: boolean, currency?: string, billingCountry?: string | null) {
   const periodEnd = new Date(Date.now() + (recurring ? 30 : 30) * 24 * 60 * 60 * 1000).toISOString();
+  const upd: Record<string, unknown> = {
+    plan,
+    status: "active",
+    period_start: new Date().toISOString(),
+    period_end: periodEnd,
+  };
+  if (currency) upd.currency = currency.toUpperCase();
+  if (billingCountry) upd.billing_country = billingCountry;
   const { data } = await db().from("user_plans").select("id").eq("user_id", userId).maybeSingle();
   if (data) {
-    await db().from("user_plans").update({
-      plan,
-      status: "active",
-      period_start: new Date().toISOString(),
-      period_end: periodEnd,
-    }).eq("user_id", userId);
+    await db().from("user_plans").update(upd).eq("user_id", userId);
   } else {
     await db().from("user_plans").insert({
       user_id: userId, plan, status: "active", period_end: periodEnd,
+      ...(currency && { currency: currency.toUpperCase() }),
+      ...(billingCountry && { billing_country: billingCountry }),
     });
   }
 }
@@ -65,7 +70,8 @@ async function handleSubscriptionEvent(subscription: any, env: StripeEnv) {
 
   // On a fresh active subscription, set the user_plan + grant included credits
   if (subscription.status === "active" && planEntry?.plan && planEntry.credits) {
-    await ensurePlan(userId, planEntry.plan, true);
+    const subCurrency = (item?.price?.currency || "usd").toUpperCase();
+    await ensurePlan(userId, planEntry.plan, true, subCurrency);
     await grantCredits(userId, planEntry.credits, "plan_grant", { plan: planEntry.plan, source: "stripe", subscription: subscription.id });
   }
 }
@@ -101,7 +107,9 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
 
   // Side effects
   if (entry.kind === "plan_starter" && entry.credits && entry.plan) {
-    await ensurePlan(userId, entry.plan, false);
+    const sessCurrency = (session.currency || "usd").toUpperCase();
+    const country = session.customer_details?.address?.country ?? null;
+    await ensurePlan(userId, entry.plan, false, sessCurrency, country);
     await grantCredits(userId, entry.credits, "plan_grant", { plan: entry.plan, source: "stripe", session: session.id });
   } else if (entry.kind.startsWith("topup_") && entry.credits) {
     await db().from("credit_topups").insert({

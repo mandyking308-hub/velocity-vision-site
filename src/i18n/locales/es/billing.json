@@ -1,0 +1,12 @@
+{
+  "title": "Facturación",
+  "subtitle": "Plan, créditos y facturas.",
+  "currentPlan": "Plan actual",
+  "credits": "Créditos de Campaña",
+  "topUp": "Recargar",
+  "currency": "Moneda",
+  "billingCountry": "País de facturación",
+  "chargedIn": "Cobrado en {{currency}}",
+  "tax": "Impuestos",
+  "history": "Historial de pagos"
+}

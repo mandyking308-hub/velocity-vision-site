@@ -1,0 +1,40 @@
+{
+  "nav": {
+    "home": "Home",
+    "howItWorks": "How it works",
+    "pricing": "Pricing",
+    "forBusinesses": "For Businesses",
+    "forAgencies": "For Agencies",
+    "features": "Features",
+    "templates": "Templates",
+    "about": "About",
+    "help": "Help",
+    "seePricing": "See pricing",
+    "startCampaign": "Start your first campaign"
+  },
+  "hero": {
+    "eyebrow": "Self-serve campaign launchpad",
+    "ctaPrimary": "Start your first campaign",
+    "ctaSecondary": "See how it works"
+  },
+  "midCta": {
+    "title": "Ready to launch your next campaign?",
+    "body": "Build, schedule and track in one workspace.",
+    "button": "Start now"
+  },
+  "finalCta": {
+    "title": "Launch your first campaign today",
+    "body": "No agency, no waiting. Generate a full pack in minutes.",
+    "button": "Get started"
+  },
+  "footer": {
+    "tagline": "The self-serve growth launchpad.",
+    "product": "Product",
+    "company": "Company",
+    "legal": "Legal",
+    "rights": "All rights reserved."
+  },
+  "faq": {
+    "title": "Frequently asked questions"
+  }
+}

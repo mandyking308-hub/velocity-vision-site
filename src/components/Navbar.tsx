@@ -1,23 +1,27 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
-
-const navLinks = [
-  { label: "Home", path: "/" },
-  { label: "How it works", path: "/how-it-works" },
-  { label: "Pricing", path: "/pricing" },
-  { label: "For Businesses", path: "/for-businesses" },
-  { label: "For Agencies", path: "/for-agencies" },
-  { label: "Features", path: "/features" },
-  { label: "Templates", path: "/templates" },
-  { label: "About", path: "/about" },
-  { label: "Help", path: "/help" },
-];
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import CurrencySwitcher from "@/components/CurrencySwitcher";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const { t } = useTranslation("marketing");
+
+  const navLinks = [
+    { label: t("nav.home"), path: "/" },
+    { label: t("nav.howItWorks"), path: "/how-it-works" },
+    { label: t("nav.pricing"), path: "/pricing" },
+    { label: t("nav.forBusinesses"), path: "/for-businesses" },
+    { label: t("nav.forAgencies"), path: "/for-agencies" },
+    { label: t("nav.features"), path: "/features" },
+    { label: t("nav.templates"), path: "/templates" },
+    { label: t("nav.about"), path: "/about" },
+    { label: t("nav.help"), path: "/help" },
+  ];
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-glass border-b border-border/50">
@@ -39,11 +43,13 @@ const Navbar = () => {
               {link.label}
             </Link>
           ))}
+          <LanguageSwitcher />
+          <CurrencySwitcher />
           <Button variant="ghost" size="sm" asChild>
-            <Link to="/pricing">See pricing</Link>
+            <Link to="/pricing">{t("nav.seePricing")}</Link>
           </Button>
           <Button variant="cta" size="default" asChild>
-            <Link to="/auth">Start your first campaign</Link>
+            <Link to="/auth">{t("nav.startCampaign")}</Link>
           </Button>
         </div>
 
@@ -75,11 +81,15 @@ const Navbar = () => {
                 {link.label}
               </Link>
             ))}
+            <div className="flex items-center gap-2">
+              <LanguageSwitcher />
+              <CurrencySwitcher />
+            </div>
             <Button variant="ghost" size="sm" asChild>
-              <Link to="/pricing" onClick={() => setOpen(false)}>See pricing</Link>
+              <Link to="/pricing" onClick={() => setOpen(false)}>{t("nav.seePricing")}</Link>
             </Button>
             <Button variant="cta" size="default" asChild>
-              <Link to="/auth" onClick={() => setOpen(false)}>Start your first campaign</Link>
+              <Link to="/auth" onClick={() => setOpen(false)}>{t("nav.startCampaign")}</Link>
             </Button>
           </div>
         </div>

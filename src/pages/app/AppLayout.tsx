@@ -1,4 +1,5 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { LayoutDashboard, Rocket, Users, BarChart3, LayoutTemplate, Settings, Briefcase, LogOut, Plus, CreditCard, Database, MessageSquare, TrendingUp, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -6,20 +7,23 @@ import { useWorkspace, WorkspaceProvider } from "@/contexts/WorkspaceContext";
 import { CreditsProvider } from "@/contexts/CreditsContext";
 import { CreditPill } from "@/components/app/CreditMeter";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import CurrencySwitcher from "@/components/CurrencySwitcher";
+import { useLanguageSync } from "@/hooks/useLanguageSync";
 
-const nav = [
-  { to: "/app", label: "Dashboard", icon: LayoutDashboard, end: true },
-  { to: "/app/data-vault", label: "Data Vault", icon: Database },
-  { to: "/app/activate", label: "Activate", icon: Send },
-  { to: "/app/campaigns", label: "Campaigns", icon: Rocket },
-  { to: "/app/follow-up", label: "Follow-Up", icon: MessageSquare },
-  { to: "/app/leads", label: "Leads", icon: Users },
-  { to: "/app/pipeline", label: "Pipeline", icon: TrendingUp },
-  { to: "/app/performance", label: "Performance", icon: BarChart3 },
-  { to: "/app/templates", label: "Templates", icon: LayoutTemplate },
-  { to: "/app/billing", label: "Billing", icon: CreditCard },
-  { to: "/app/settings", label: "Settings", icon: Settings },
-  { to: "/app/workspaces", label: "Workspaces", icon: Briefcase },
+const navConfig: { to: string; key: string; icon: typeof LayoutDashboard; end?: boolean }[] = [
+  { to: "/app", key: "dashboard", icon: LayoutDashboard, end: true },
+  { to: "/app/data-vault", key: "dataVault", icon: Database },
+  { to: "/app/activate", key: "activate", icon: Send },
+  { to: "/app/campaigns", key: "campaigns", icon: Rocket },
+  { to: "/app/follow-up", key: "followUp", icon: MessageSquare },
+  { to: "/app/leads", key: "leads", icon: Users },
+  { to: "/app/pipeline", key: "pipeline", icon: TrendingUp },
+  { to: "/app/performance", key: "performance", icon: BarChart3 },
+  { to: "/app/templates", key: "templates", icon: LayoutTemplate },
+  { to: "/app/billing", key: "billing", icon: CreditCard },
+  { to: "/app/settings", key: "settings", icon: Settings },
+  { to: "/app/workspaces", key: "workspaces", icon: Briefcase },
 ];
 
 function WorkspaceSwitcher() {
@@ -42,6 +46,8 @@ function WorkspaceSwitcher() {
 function Shell() {
   const { signOut } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation("app");
+  useLanguageSync();
   return (
     <div className="min-h-screen flex w-full bg-background">
       <aside className="w-60 border-r border-border bg-card flex flex-col">
@@ -50,7 +56,7 @@ function Shell() {
           <div className="text-xs text-muted-foreground">Campaign launchpad</div>
         </div>
         <nav className="flex-1 p-3 space-y-1">
-          {nav.map((n) => (
+          {navConfig.map((n) => (
             <NavLink
               key={n.to}
               to={n.to}
@@ -62,7 +68,7 @@ function Shell() {
               }
             >
               <n.icon className="h-4 w-4" />
-              {n.label}
+              {t(`nav.${n.key}`)}
             </NavLink>
           ))}
         </nav>
@@ -76,6 +82,8 @@ function Shell() {
         <header className="h-14 border-b border-border bg-card flex items-center justify-between px-6 gap-3">
           <WorkspaceSwitcher />
           <div className="flex items-center gap-3">
+            <LanguageSwitcher />
+            <CurrencySwitcher />
             <CreditPill />
             <Button size="sm" onClick={() => navigate("/app/campaigns/new")}>
               <Plus className="h-4 w-4 mr-1" /> New campaign
