@@ -292,6 +292,14 @@ export default function AppBilling() {
 
       <TopUpModal open={topupOpen} onOpenChange={setTopupOpen} />
       {element}
+      <LegalAcceptanceGate
+        open={pendingPlan !== null}
+        onOpenChange={(v) => { if (!v) setPendingPlan(null); }}
+        title={pendingPlan ? `Confirm before subscribing to ${PLANS[pendingPlan].name}` : "Confirm"}
+        description="You must accept the legal stack before activating a paid plan."
+        confirmLabel="Continue to checkout"
+        onConfirm={confirmBuyPlan}
+      />
     </div>
   );
 }
