@@ -179,7 +179,7 @@ export default function AppBilling() {
                   <CardDescription>{cfg.tagline}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <div><span className="text-2xl font-bold">{cfg.price}</span> <span className="text-sm text-muted-foreground">{cfg.unit}</span></div>
+                  <div><span className="text-2xl font-bold">{priceFor(PLAN_TO_SKU[id], currency).formatted}</span> <span className="text-sm text-muted-foreground">{cfg.unit}</span></div>
                   <div className="text-sm font-medium">{cfg.includedCredits} Campaign Credits {cfg.cadence === "monthly" ? "/ month" : "included"}</div>
                   <ul className="text-sm text-muted-foreground space-y-1">
                     {cfg.features.map((f) => (<li key={f} className="flex gap-2"><Check className="h-4 w-4 text-accent mt-0.5 shrink-0" />{f}</li>))}
