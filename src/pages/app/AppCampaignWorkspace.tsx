@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { useCredits } from "@/contexts/CreditsContext";
 import { CREDIT_COSTS } from "@/lib/credits";
 import HumanReviewButton from "@/components/app/HumanReviewButton";
+import EmailSequenceSender from "@/components/app/EmailSequenceSender";
 
 interface Campaign {
   id: string;
