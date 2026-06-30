@@ -5,11 +5,19 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Mail, MapPin, ArrowRight } from "lucide-react";
+import { Mail, MapPin, ArrowRight, LifeBuoy, CreditCard, Building2, Handshake, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+
+const routes = [
+  { icon: Building2, title: "Sales — enterprise & agency volume", desc: "Multi-workspace rollouts, agency-scale send governance, custom commercial terms.", action: "Talk to sales", to: "/book-demo" },
+  { icon: LifeBuoy, title: "Product support", desc: "Help using the workspace — uploads, activation, sender setup, replies, pipeline.", action: "Open in-app support", to: "/app" },
+  { icon: CreditCard, title: "Billing & account help", desc: "Plan changes, currency, invoices, top-ups, tax queries.", action: "Open billing", to: "/app/billing" },
+  { icon: Handshake, title: "Partnerships & integrations", desc: "Integration partners, resellers, embedded use cases.", action: "Send a message", to: "#contact-form" },
+  { icon: MessageSquare, title: "General enquiries", desc: "Anything else — press, hiring, or a question that doesn't fit above.", action: "Send a message", to: "#contact-form" },
+];
 
 const Contact = () => {
   const [form, setForm] = useState({ name: "", email: "", company: "", message: "" });
@@ -49,10 +57,10 @@ const Contact = () => {
         status: "new" as const,
       });
 
-      toast.success("Message sent! We'll be in touch shortly.");
+      toast.success("Message sent. We'll respond within one business day.");
       setForm({ name: "", email: "", company: "", message: "" });
     } catch {
-      toast.success("Message sent! We'll be in touch shortly.");
+      toast.success("Message sent. We'll respond within one business day.");
       setForm({ name: "", email: "", company: "", message: "" });
     }
     setLoading(false);
@@ -60,56 +68,80 @@ const Contact = () => {
 
   return (
     <>
-      <SEO title={"Contact Velocity Influence — Talk to Our Team"} description={"Get in touch with Velocity Influence. Tell us about your brand and we'll come back within one business day."} path="/contact" />
+      <SEO title="Contact Velocity Vision — Sales, Support, Billing" description="Reach the right team fast: sales for enterprise and agency volume, product support, billing, partnerships, or general enquiries." path="/contact" />
       <Navbar />
       <main className="pt-20">
         <section className="section-padding bg-hero">
           <div className="max-w-7xl mx-auto">
             <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
               <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Contact</p>
-              <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">Let's talk growth</h1>
-              <p className="text-primary-foreground/70 text-lg max-w-2xl">Ready to accelerate? Get in touch and we'll respond within 24 hours.</p>
+              <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">Reach the right team fast</h1>
+              <p className="text-primary-foreground/70 text-lg max-w-2xl">Most people don't need a demo to get started — the workspace is self-serve. Pick the route that matches what you need.</p>
             </motion.div>
           </div>
         </section>
 
         <section className="section-padding bg-background">
-          <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
-            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-              <h2 className="text-2xl font-display font-bold text-foreground mb-8">Send us a message</h2>
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Input placeholder="Your name *" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-                  <Input placeholder="Email *" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-                </div>
-                <Input placeholder="Company" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
-                <Textarea placeholder="How can we help? *" rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} />
-                <Button variant="cta" size="lg" type="submit" disabled={loading}>
-                  {loading ? "Sending..." : "Send Message"} <ArrowRight size={18} />
-                </Button>
-              </form>
-            </motion.div>
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
+              {routes.map((r, i) => (
+                <motion.div
+                  key={r.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.45, delay: i * 0.05 }}
+                  className="bg-card border border-border/50 rounded-xl p-6 shadow-card flex flex-col"
+                >
+                  <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
+                    <r.icon className="text-accent" size={20} />
+                  </div>
+                  <h3 className="font-display font-semibold text-foreground mb-2">{r.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-5 flex-1">{r.desc}</p>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link to={r.to}>{r.action} <ArrowRight size={14} /></Link>
+                  </Button>
+                </motion.div>
+              ))}
+            </div>
 
-            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }} className="space-y-8">
-              <div>
-                <div className="flex items-center gap-2 mb-2"><Mail className="text-accent" size={18} /><h3 className="font-display font-semibold text-foreground">Email</h3></div>
-                <p className="text-muted-foreground text-sm">hello@velocityinfluence.com</p>
-              </div>
-              <div>
-                <div className="flex items-center gap-2 mb-2"><MapPin className="text-accent" size={18} /><h3 className="font-display font-semibold text-foreground">Global Offices</h3></div>
-                <div className="space-y-1 text-sm text-muted-foreground">
-                  <p>London, United Kingdom</p>
-                  <p>New York, United States</p>
-                  <p>Dubai, United Arab Emirates</p>
-                  <p>Singapore</p>
+            <div id="contact-form" className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+              <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
+                <h2 className="text-2xl font-display font-bold text-foreground mb-2">Send us a message</h2>
+                <p className="text-sm text-muted-foreground mb-8">For everything that doesn't fit a route above. Structured response within one business day.</p>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <Input placeholder="Your name *" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                    <Input placeholder="Email *" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+                  </div>
+                  <Input placeholder="Company" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
+                  <Textarea placeholder="How can we help? *" rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} />
+                  <Button variant="cta" size="lg" type="submit" disabled={loading}>
+                    {loading ? "Sending..." : "Send message"} <ArrowRight size={18} />
+                  </Button>
+                </form>
+              </motion.div>
+
+              <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }} className="space-y-8">
+                <div>
+                  <div className="flex items-center gap-2 mb-2"><Mail className="text-accent" size={18} /><h3 className="font-display font-semibold text-foreground">Email</h3></div>
+                  <p className="text-muted-foreground text-sm">support@velocity-outreach.com</p>
                 </div>
-              </div>
-              <div className="bg-card border border-border/50 rounded-xl p-6 shadow-card">
-                <h3 className="font-display font-semibold text-foreground mb-2">Prefer a live conversation?</h3>
-                <p className="text-muted-foreground text-sm mb-4">Book a 30-minute demo with our team.</p>
-                <Button variant="cta" size="default" asChild><Link to="/book-demo">Book a Demo</Link></Button>
-              </div>
-            </motion.div>
+                <div>
+                  <div className="flex items-center gap-2 mb-2"><MapPin className="text-accent" size={18} /><h3 className="font-display font-semibold text-foreground">Operating entity</h3></div>
+                  <div className="space-y-1 text-sm text-muted-foreground">
+                    <p>Global Solutions Management LLC</p>
+                    <p>Delaware, United States</p>
+                    <p>Used internationally · multi-currency · multilingual (EN/ES)</p>
+                  </div>
+                </div>
+                <div className="bg-card border border-border/50 rounded-xl p-6 shadow-card">
+                  <h3 className="font-display font-semibold text-foreground mb-2">Enterprise or agency volume?</h3>
+                  <p className="text-muted-foreground text-sm mb-4">For multi-workspace rollouts, pooled send governance, or custom terms — book a 30-minute call.</p>
+                  <Button variant="cta" size="default" asChild><Link to="/book-demo">Book an enterprise call</Link></Button>
+                </div>
+              </motion.div>
+            </div>
           </div>
         </section>
       </main>

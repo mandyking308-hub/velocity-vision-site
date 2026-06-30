@@ -2,40 +2,39 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
 
 const articles = [
-  { tag: "Marketing Trends", title: "The Death of the Funnel: Why Modern Marketing Demands a New Model", excerpt: "Linear funnels are broken. Today's buyers move fluidly across channels. Here's how to build a marketing engine that matches reality.", date: "Mar 2026", readTime: "6 min" },
-  { tag: "AI in Marketing", title: "How AI Is Reshaping Campaign Strategy in 2026", excerpt: "From predictive audience modelling to automated creative optimisation—AI is no longer optional. It's the competitive baseline.", date: "Feb 2026", readTime: "8 min" },
-  { tag: "Performance", title: "From Vanity Metrics to Value Metrics: Measuring What Matters", excerpt: "Impressions don't pay bills. Learn how leading brands are shifting measurement to revenue-attributed outcomes.", date: "Jan 2026", readTime: "5 min" },
-  { tag: "Industry Insights", title: "Healthcare Marketing in a Post-Trust Era", excerpt: "Trust in healthcare brands is at an all-time low. How can marketers rebuild credibility in a sceptical world?", date: "Dec 2025", readTime: "7 min" },
-  { tag: "PR Strategy", title: "Earned Media in 2026: Quality Over Quantity", excerpt: "The spray-and-pray era of PR is over. Strategic media relations now outperform volume-based approaches by 4x.", date: "Nov 2025", readTime: "6 min" },
-  { tag: "Social Media", title: "The Creator Economy Playbook for Enterprise Brands", excerpt: "How B2B and enterprise brands are leveraging creator partnerships to drive awareness and demand.", date: "Oct 2025", readTime: "9 min" },
+  { tag: "Activation", title: "Safe activation: what 'ready to send' actually means", excerpt: "Why activation readiness — verified sender, clean data, plan-tier caps — is the difference between pipeline and a deliverability problem.", date: "Jun 2026", readTime: "6 min" },
+  { tag: "Data quality", title: "The three states every record should have before activation", excerpt: "Valid, risky, blocked. How to triage a list so you only activate what is genuinely safe to contact.", date: "May 2026", readTime: "5 min" },
+  { tag: "Reply handling", title: "Reply queues beat inboxes for outbound teams", excerpt: "Why a structured follow-up queue with snooze, warm, dormant, and stuck-deal states outperforms a shared inbox.", date: "May 2026", readTime: "7 min" },
+  { tag: "Cadence", title: "Weekly, monthly, quarterly: choosing a cadence that compounds", excerpt: "A practical model for choosing send cadence based on list size, sender reputation, and offer maturity.", date: "Apr 2026", readTime: "6 min" },
+  { tag: "Pipeline discipline", title: "Moving conversations into pipeline without losing the thread", excerpt: "Why every reply should resolve to one of four states — and how that single decision protects pipeline integrity.", date: "Apr 2026", readTime: "5 min" },
+  { tag: "Operator workflows", title: "30 minutes a day: a founder-led outreach workflow", excerpt: "A repeatable daily loop for founders running their own outreach: queue, replies, follow-ups, pipeline movement.", date: "Mar 2026", readTime: "6 min" },
 ];
 
 const Insights = () => (
   <>
     <SEO
-        title={"Marketing Insights & Reports | Velocity Influence"}
-        description={"Data-driven insights on marketing strategy, AI, and growth from the Velocity Influence team."}
-        path="/insights"
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "CollectionPage",
-          "name": "Velocity Influence Insights",
-          "description": "Articles and reports on marketing strategy, AI, and growth.",
-          "url": "https://velocity-outreach.com/insights",
-          "publisher": { "@type": "Organization", "name": "Velocity Influence" },
-        }}
-      />
-      <Navbar />
+      title="Playbooks & Thinking | Velocity Vision"
+      description="Playbooks on activation, data quality, replies, cadence, and pipeline discipline — from a product built to run commercial workflows."
+      path="/insights"
+      jsonLd={{
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "Velocity Vision Playbooks",
+        "description": "Playbooks and operator thinking on activation, data quality, outreach, and pipeline.",
+        "url": "https://velocity-outreach.com/insights",
+        "publisher": { "@type": "Organization", "name": "Velocity Vision" },
+      }}
+    />
+    <Navbar />
     <main className="pt-20">
       <section className="section-padding bg-hero">
         <div className="max-w-7xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-            <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Insights</p>
-            <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6 max-w-3xl">Thought leadership & analysis</h1>
-            <p className="text-primary-foreground/70 text-lg max-w-2xl">Expert perspectives on marketing, PR, and growth strategy.</p>
+            <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Playbooks</p>
+            <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6 max-w-3xl">Operator thinking from inside the workspace</h1>
+            <p className="text-primary-foreground/70 text-lg max-w-2xl">Activation, data quality, replies, cadence, and pipeline discipline — written from a product built to run real commercial workflows.</p>
           </motion.div>
         </div>
       </section>
