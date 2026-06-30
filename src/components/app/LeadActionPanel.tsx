@@ -45,6 +45,7 @@ export default function LeadActionPanel({
   campaignName?: string | null;
 }) {
   const [pipelineOpen, setPipelineOpen] = useState(false);
+  const [snoozeOpen, setSnoozeOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const state = deriveFollowUpState(lead);
   const temp = deriveTemperature(lead);
