@@ -977,9 +977,12 @@ const LegalDocumentPage = () => {
                     <p className="text-xs text-muted-foreground">Delaware, United States</p>
                   </div>
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Legal, privacy, compliance and security enquiries: {CONTACT_EMAIL}
-                </p>
+                <Link
+                  to="/contact"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-accent text-accent-foreground text-xs font-semibold hover:bg-accent/90 transition-colors"
+                >
+                  Use the Contact page →
+                </Link>
               </div>
             </div>
           </div>
