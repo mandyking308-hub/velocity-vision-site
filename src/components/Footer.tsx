@@ -7,7 +7,7 @@ const Footer = () => (
         <div className="lg:col-span-2">
           <h3 className="text-2xl font-display font-bold mb-4">Velocity<span className="text-accent">.</span></h3>
           <p className="text-primary-foreground/70 text-sm leading-relaxed max-w-xs">
-            A commercial workspace for safe outreach and pipeline — for founders, lean teams, and agencies. Self-serve, governed, and built for international use.
+            A self-serve workspace for Data Vault, quality review, governed activation, replies, follow-up and pipeline. Built for founders, lean teams and agencies.
           </p>
         </div>
         <div>
@@ -16,7 +16,7 @@ const Footer = () => (
             {[
               { label: "How it works", path: "/how-it-works" },
               { label: "Features", path: "/features" },
-              { label: "Use cases", path: "/work" },
+              { label: "Templates", path: "/templates" },
               { label: "For businesses", path: "/for-businesses" },
               { label: "For agencies", path: "/for-agencies" },
               { label: "Pricing", path: "/pricing" },
@@ -31,7 +31,6 @@ const Footer = () => (
             {[
               { label: "About", path: "/about" },
               { label: "Playbooks", path: "/insights" },
-              { label: "Templates", path: "/templates" },
               { label: "Help", path: "/help" },
               { label: "Contact", path: "/contact" },
             ].map((l) => (
@@ -51,7 +50,7 @@ const Footer = () => (
           <div className="mt-6">
             <p className="text-sm text-primary-foreground/70 mb-2">support@velocity-outreach.com</p>
             <Link to="/auth" className="text-sm font-semibold text-accent hover:text-accent-warm transition-colors">
-              Open your workspace →
+              Start your workspace →
             </Link>
           </div>
         </div>
