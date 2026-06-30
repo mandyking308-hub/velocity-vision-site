@@ -70,6 +70,10 @@ import AppSettings from "./pages/app/AppSettings.tsx";
 import AppWorkspaces from "./pages/app/AppWorkspaces.tsx";
 import AppBilling from "./pages/app/AppBilling.tsx";
 import AppEmailConnections from "./pages/app/AppEmailConnections.tsx";
+import AppDataVault from "./pages/app/AppDataVault.tsx";
+import AppDataVaultUpload from "./pages/app/AppDataVaultUpload.tsx";
+import AppDataVaultImport from "./pages/app/AppDataVaultImport.tsx";
+import DemoDataVault from "./pages/demo/DemoDataVault.tsx";
 import HostedCapture from "./pages/HostedCapture.tsx";
 
 const queryClient = new QueryClient();
