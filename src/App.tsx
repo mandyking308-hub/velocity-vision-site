@@ -142,6 +142,7 @@ const AnimatedRoutes = () => {
           <Route path="legal-compliance" element={<LegalCompliancePage />} />
           <Route path="manual" element={<FounderManual />} />
           <Route path="monetisation" element={<FounderMonetisation />} />
+          <Route path="intelligence" element={<FounderIntelligence />} />
         </Route>
 
         {/* Self-serve customer app (protected) */}
