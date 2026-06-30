@@ -13,15 +13,15 @@ const sections = [
     items: [
       {
         q: "How do I start using Velocity Vision?",
-        a: "Sign up for a workspace, upload your audience into the Data Vault, choose or build a template, review the generated assets, and activate a safe outreach cadence. Everything is self-serve inside your workspace.",
+        a: "Create a workspace, add your contact data to the Data Vault, review the quality report, verify your sender, choose a template, then activate a safe cadence when the segment is ready. The core workflow is self-serve from inside the workspace.",
       },
       {
         q: "Do I need clean data before I start?",
-        a: "No. Velocity Vision is built for messy contact data. Upload a CSV, paste records, or import a spreadsheet. The Data Vault will flag duplicates, missing fields, risky formats and quality issues so you can clean it as you go.",
+        a: "No. Velocity Vision is built for messy commercial data. Upload a CSV, paste records, or import a spreadsheet. The Data Vault flags duplicates, missing fields, risky formats and blocked records so you can clean and segment the list before activation.",
       },
       {
         q: "What should I do first?",
-        a: "Add your data, review the quality flags, and run one template against a small test segment. This lets you see the output quality and sender verification flow before activating a larger cadence.",
+        a: "Start with one small audience. Upload it, review the quality statuses, fix obvious issues, verify your sender, and generate one template output. That gives you a safe test path before you activate a larger segment.",
       },
     ],
   },
@@ -30,15 +30,15 @@ const sections = [
     items: [
       {
         q: "What can I upload?",
-        a: "Contact lists from CSV, spreadsheet paste, or a structured import. The Data Vault maps common fields such as name, email, company, title, location, sector and any custom tags you want to segment by.",
+        a: "You can upload or paste structured contact data. Common fields include name, email, company, job title, location, sector, language preference, source and custom tags. The workspace uses those fields for segmentation, templates, activation and follow-up.",
       },
       {
         q: "What happens after upload?",
-        a: "Each row is validated, deduplicated, scored and placed into a quality bucket. You get a summary plus a recommended action list, and you can fix rows before they are activated.",
+        a: "Each row is mapped, checked, deduplicated and placed into a quality status. You receive a summary of what is ready, what needs review, what is risky, what is blocked and what appears duplicated before anything is activated.",
       },
       {
         q: "What do valid, needs review, risky, blocked and duplicate mean?",
-        a: "Valid rows are ready to use. Needs review rows have minor issues like missing optional fields. Risky rows have formatting or deliverability concerns. Blocked rows are missing required contact data or violate safety rules. Duplicate rows are already in your vault or in another workspace.",
+        a: "Valid records are ready for safe use. Needs review records have missing or uncertain fields you may want to fix. Risky records have deliverability or formatting concerns. Blocked records cannot be activated until the issue is resolved. Duplicate records appear to repeat an existing or newly uploaded contact.",
       },
     ],
   },
@@ -47,15 +47,15 @@ const sections = [
     items: [
       {
         q: "What is inside a template?",
-        a: "A template is a reusable workflow that generates outreach assets for your segment: email sequences, social posts, hooks, press releases, landing page copy and lead capture copy. You can start from a blank template or use a proven one.",
+        a: "A template is a reusable commercial workflow. It can produce outreach emails, follow-up steps, social copy, hooks, press copy, landing page copy and lead capture copy, depending on the use case. Templates connect back to the chosen segment, cadence and pipeline path.",
       },
       {
         q: "Can I edit the outputs?",
-        a: "Yes. Every asset is editable inside the workspace. You can change tone, copy, subject lines, CTAs and any other generated content before you activate it.",
+        a: "Yes. Outputs are drafts until you approve them. You can edit tone, subject lines, calls to action, body copy, sequence steps and supporting assets before anything is scheduled or sent.",
       },
       {
         q: "Can I regenerate part of an output pack?",
-        a: "Yes. You can regenerate a single email, one social post, or any other asset without rebuilding the whole template or campaign.",
+        a: "Yes. You can regenerate a single email, one social post, one follow-up step or another individual asset without rebuilding the whole workflow.",
       },
     ],
   },
@@ -64,15 +64,15 @@ const sections = [
     items: [
       {
         q: "Why do I need to verify a sender?",
-        a: "Sender verification proves you own the domain and protects deliverability. Without it, the platform blocks activation to keep your sending reputation safe and your domain out of spam filters.",
+        a: "Sender verification is required before activation. It protects your domain, supports deliverability and prevents accidental sending from an unapproved identity. If the sender is not verified, Velocity Vision blocks activation.",
       },
       {
         q: "What happens if a segment contains risky records?",
-        a: "Risky records are flagged before activation. You can either fix them, remove them, or override the flag with a clear audit trail. The safety engine also caps send volume and limits how many risky records can go live in a single batch.",
+        a: "Risky records are flagged before activation. You can fix them, remove them from the segment, or keep them held back. The safety engine applies plan limits, send controls and audit checks so activation stays governed.",
       },
       {
         q: "Can I schedule sends instead of activating immediately?",
-        a: "Yes. You can set a start date, recurrence and time window. The cadence runs automatically and you can pause, edit or reschedule it at any time.",
+        a: "Yes. You can set a start date, cadence and sending window. You can also pause, edit or reschedule the cadence before the next send step runs.",
       },
     ],
   },
@@ -81,15 +81,15 @@ const sections = [
     items: [
       {
         q: "Where do replies go?",
-        a: "Replies from your connected email address land in the follow-up queue inside the workspace. You can respond, snooze, mark as done, or move the contact into the pipeline.",
+        a: "Replies from connected sending accounts are organised into the follow-up workspace. From there you can reply, snooze, mark done, assign a next action or move a warm contact into pipeline.",
       },
       {
         q: "How do follow-up states work?",
-        a: "Replies are automatically grouped into states such as new, warm, snoozed, or needs action. You can add manual notes, set a custom snooze date, and see which contacts are going stale so nothing falls through the cracks.",
+        a: "Follow-up states help you separate new replies, warm conversations, snoozed items, dormant contacts and stuck opportunities. The aim is to stop useful replies disappearing into a normal inbox.",
       },
       {
         q: "When should I move someone into pipeline?",
-        a: "Move a contact into pipeline when they show buying intent, book a call, or ask for a proposal. The workspace tracks opportunity value and stage, so you can see live revenue movement without switching systems.",
+        a: "Move a contact into pipeline when they show intent: asking for details, requesting pricing, booking a call, asking for a proposal or showing clear commercial interest. Pipeline is for live opportunities, not every contact in the vault.",
       },
     ],
   },
@@ -98,15 +98,15 @@ const sections = [
     items: [
       {
         q: "What plans are available?",
-        a: "Starter, Growth and Agency Workspace plans. Each plan includes a base number of campaign credits, access to the Data Vault, templates and the workspace. See the pricing page for current limits and included features.",
+        a: "Velocity Vision has Starter, Growth and Agency Workspace options. Plans are designed around workspace access, governed activation, templates, credits and scale. See the pricing page for the current plan details.",
       },
       {
         q: "What happens when credits run out?",
-        a: "Your workspace, data, templates and assets remain intact. Activation and new asset generation are paused until you add more credits or upgrade your plan.",
+        a: "Your workspace and stored data remain in place. New asset generation, top-up actions or activation may pause until you add credits or move to a plan that fits your usage.",
       },
       {
         q: "Can I top up or upgrade?",
-        a: "Yes. You can buy a top-up credit pack at any time, or upgrade your plan to a higher tier. Both happen inside your workspace billing settings.",
+        a: "Yes. You can add credits or upgrade from billing settings. The model is designed so you can store data generously and pay when you activate, generate or scale usage.",
       },
     ],
   },
@@ -115,15 +115,15 @@ const sections = [
     items: [
       {
         q: "How are clients kept separate?",
-        a: "Each client gets its own workspace with isolated data, activation, templates, replies and pipeline. You switch between workspaces from one agency account and nothing is shared unless you choose to share it.",
+        a: "Each client runs in its own workspace with isolated data, templates, activation, replies and pipeline. Agency users can switch between client workspaces without mixing lists, senders or opportunities.",
       },
       {
         q: "Can I reuse templates across clients?",
-        a: "Yes. Save a template at the agency level and deploy it inside any client workspace. Each deployment still uses that client's own data and sender settings.",
+        a: "Yes. Agencies can reuse proven templates and workflows across client workspaces, while each client still uses its own data, sender settings, segmentation and pipeline.",
       },
       {
         q: "How do pooled credits work?",
-        a: "Agency Workspace credits are pooled across the account. Use them where the work lands, set internal limits per client, and keep a single billing rhythm for your whole book.",
+        a: "Agency Workspace credits are pooled at account level so they can be used where the work lands. Client workspaces remain separate, while billing and usage visibility stay centralised.",
       },
     ],
   },
@@ -132,15 +132,15 @@ const sections = [
     items: [
       {
         q: "What can I export?",
-        a: "You can export contact lists, campaign assets, pipeline data, send audit logs and follow-up reports. Exports are available in common formats such as CSV and PDF.",
+        a: "Depending on your workspace and permissions, you can export contact data, quality review results, generated assets, follow-up information, pipeline data and reports in common formats such as CSV or PDF.",
       },
       {
         q: "Are seeded demo assets real downloads?",
-        a: "Demo assets are realistic sample data designed for testing. They show you what the workspace looks like with live inputs, but they are not tied to real contacts or real sending.",
+        a: "Seeded walkthrough data is there to help you review the product experience. Some seeded qa-seed:// asset pointers are placeholders, not real binary downloads. For a true export test, generate a fresh real asset in the workspace and export that file.",
       },
       {
         q: "How do I test a real export?",
-        a: "Upload your own data or generate a small real test segment, then use the export button from any report, asset list or pipeline view. This confirms the formatting matches your workflow before a full send.",
+        a: "Use a small real test segment, generate one new asset or report, then download it from the relevant workspace screen. That confirms the real export path, rather than only checking seeded demo data.",
       },
     ],
   },
@@ -150,7 +150,7 @@ const Help = () => (
   <>
     <SEO
       title="Help — Velocity Vision knowledge base"
-      description="Practical answers for Velocity Vision: getting started, Data Vault, templates, safe activation, follow-up, billing, agency workspaces and exports."
+      description="Practical answers for Velocity Vision: Data Vault, quality review, templates, safe activation, replies, follow-up, pipeline, credits, agency workspaces and exports."
       path="/help"
     />
     <Navbar />
@@ -160,7 +160,7 @@ const Help = () => (
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
             <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Help</p>
             <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-4">Knowledge base</h1>
-            <p className="text-primary-foreground/75 text-lg">Practical answers to the questions users actually ask.</p>
+            <p className="text-primary-foreground/75 text-lg">Practical answers for running data, activation, replies and pipeline inside Velocity Vision.</p>
           </motion.div>
         </div>
       </section>
@@ -187,7 +187,7 @@ const Help = () => (
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground mb-4">Ready to put your workspace to work?</h2>
           <p className="text-primary-foreground/75 text-lg mb-8 max-w-2xl mx-auto">
-            Open your workspace and start moving data into outreach, replies and pipeline.
+            Open your workspace and start moving data into safe outreach, replies, follow-up and pipeline.
           </p>
           <Button variant="hero" size="lg" asChild>
             <Link to="/auth">Open your workspace <ArrowRight size={18} /></Link>
