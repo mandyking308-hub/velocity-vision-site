@@ -113,9 +113,15 @@ const WorkflowSavings = () => {
                 <Input id="free" type="number" min={0} value={freelancerSpend} onChange={(e) => setFreelancerSpend(Number(e.target.value))} />
               </div>
 
-              <p className="text-xs text-muted-foreground pt-2">
-                Time valued at {fmt(HOURLY_RATE)}/hr blended. Adjust to your own rate mentally if your team is more senior.
-              </p>
+              <div className="space-y-2">
+                <Label htmlFor="rate" className="flex items-center gap-2">
+                  <DollarSign size={16} className="text-accent" /> Blended hourly rate (£/hr)
+                </Label>
+                <Input id="rate" type="number" min={0} value={hourlyRate} onChange={(e) => setHourlyRate(Number(e.target.value))} />
+                <p className="text-xs text-muted-foreground">
+                  Default {fmt(DEFAULT_HOURLY_RATE)}/hr. Edit to match your team. All outputs are estimates, not guaranteed savings.
+                </p>
+              </div>
             </CardContent>
           </Card>
 

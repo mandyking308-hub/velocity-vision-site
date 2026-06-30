@@ -17,7 +17,7 @@ const FinalCTA = () => (
           Stop running commercial work across six tools
         </h2>
         <p className="text-primary-foreground/75 text-lg mb-10 max-w-xl mx-auto">
-          Start your workspace today. Upload your data, activate safely and move opportunities into pipeline — from one login.
+          Not another retainer. Not another stack of disconnected tools. Not a blank AI generator. Upload your data, activate safely and move opportunities into pipeline — from one login.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button variant="hero" size="lg" asChild>
