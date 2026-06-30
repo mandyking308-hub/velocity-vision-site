@@ -93,27 +93,44 @@ export default function AppCampaignWorkspace() {
   if (!c) return <p className="text-muted-foreground">Loading…</p>;
   const pack = c.pack;
   const brief = c.brief;
+  const lifecycleCfg = {
+    cadence_type: (c.cadence_type || "one_off") as CadenceType,
+    start_at: c.start_at, cadence_end_at: c.cadence_end_at,
+    cadence_max_runs: c.cadence_max_runs ?? null,
+  };
+  const lifecycle = deriveLifecycle(c.status, lifecycleCfg, c.runs_completed || 0);
+  const lifecycleTone = LIFECYCLE_TONE[lifecycle];
 
-  return (
-    <div className="space-y-4 max-w-6xl">
-      <button onClick={() => navigate("/app/campaigns")} className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
-        <ArrowLeft className="h-3 w-3" /> All campaigns
-      </button>
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold">{c.name}</h1>
-          <div className="flex items-center gap-2 mt-2">
-            <Badge>{c.status}</Badge>
-            {c.goal && <Badge variant="outline">{c.goal}</Badge>}
-            {c.campaign_kind && <Badge variant="outline">{c.campaign_kind.replace("_", " ")}</Badge>}
-          </div>
-        </div>
-        <div className="flex gap-2 flex-wrap">
-          <Button variant="outline" size="sm" onClick={regenerate}><Sparkles className="h-4 w-4 mr-1" />Regenerate ({CREDIT_COSTS.full_campaign_pack} credits)</Button>
-          <Button variant="outline" size="sm" onClick={exportMd}><Download className="h-4 w-4 mr-1" />Export</Button>
-          <HumanReviewButton campaignId={c.id} />
-        </div>
-      </div>
+  const toggleStatus = async (newStatus: "paused" | "active") => {
+    await (supabase.from("campaigns") as any).update({ status: newStatus }).eq("id", c.id);
+    setC({ ...c, status: newStatus });
+    toast.success(newStatus === "paused" ? "Campaign paused" : "Campaign resumed");
+  };
+
+  const advanceRun = async () => {
+    const cfg = {
+      cadence_type: (c.cadence_type || "one_off") as CadenceType,
+      cadence_interval: c.cadence_interval || 1,
+      cadence_unit: (c.cadence_unit || "week") as any,
+      start_at: c.start_at, timezone: c.timezone || "UTC",
+      cadence_end_at: c.cadence_end_at, cadence_max_runs: c.cadence_max_runs ?? null,
+      refresh_strategy: (c.refresh_strategy || "reuse") as RefreshStrategy,
+    };
+    const next = computeNextRun(cfg, new Date());
+    await (supabase.from("campaigns") as any).update({
+      last_run_at: new Date().toISOString(),
+      runs_completed: (c.runs_completed || 0) + 1,
+      next_run_at: next ? next.toISOString() : null,
+      status: next ? "active" : "completed",
+    }).eq("id", c.id);
+    toast.success(next ? "Run logged · next run scheduled" : "Final run logged · campaign completed");
+    setC({
+      ...c, last_run_at: new Date().toISOString(),
+      runs_completed: (c.runs_completed || 0) + 1,
+      next_run_at: next ? next.toISOString() : null,
+      status: next ? "active" : "completed",
+    });
+  };
 
       {!pack ? (
         <Card><CardContent className="p-8 text-center">No pack generated yet.</CardContent></Card>
