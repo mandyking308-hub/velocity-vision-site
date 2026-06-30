@@ -8,6 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Copy, ExternalLink, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 interface Field { id: string; label: string; type: string; required?: boolean }
 interface Config {
