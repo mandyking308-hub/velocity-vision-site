@@ -25,8 +25,6 @@ interface CreditsContextValue {
   refresh: () => Promise<void>;
   /** Returns true on success, false (and shows toast) if not enough credits. */
   consume: (action: CreditAction, refId?: string, label?: string) => Promise<boolean>;
-  buyTopup: (packId: typeof TOPUP_PACKS[number]["id"]) => Promise<void>;
-  upgradePlan: (next: PlanId) => Promise<void>;
   purchaseHumanReview: (campaignId: string) => Promise<void>;
 }
 
@@ -40,24 +38,24 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
 
   const ensurePlan = useCallback(async (): Promise<UserPlan | null> => {
     if (!user) return null;
-    const { data } = await supabase.from("user_plans").select("plan, status, period_start, period_end").eq("user_id", user.id).maybeSingle();
+    const { data } = await supabase
+      .from("user_plans")
+      .select("plan, status, period_start, period_end")
+      .eq("user_id", user.id)
+      .maybeSingle();
     if (data) return data as UserPlan;
-    // Lazy-create starter plan + initial credit grant
-    const periodEnd = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
-    const { data: created } = await supabase.from("user_plans").insert({
-      user_id: user.id,
-      plan: "starter",
-      status: "active",
-      period_end: periodEnd,
-    }).select("plan, status, period_start, period_end").single();
-    await supabase.from("credit_ledger").insert({
-      user_id: user.id,
-      delta: PLANS.starter.includedCredits,
-      reason: "plan_grant",
-      meta: { plan: "starter" },
-    });
-    return created as UserPlan;
+    // Lazy-provision the free Starter plan via security-definer RPC.
+    // Plan upgrades and credit grants happen exclusively in the Stripe webhook.
+    const { data: provisioned, error } = await supabase.rpc("provision_starter_plan");
+    if (error || !provisioned) return null;
+    return {
+      plan: (provisioned as any).plan,
+      status: (provisioned as any).status,
+      period_start: (provisioned as any).period_start,
+      period_end: (provisioned as any).period_end,
+    };
   }, [user]);
+
 
   const load = useCallback(async () => {
     if (!user) { setLoading(false); return; }
