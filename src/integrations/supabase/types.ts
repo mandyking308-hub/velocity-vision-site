@@ -1767,6 +1767,36 @@ export type Database = {
         }
         Relationships: []
       }
+      send_audit_log: {
+        Row: {
+          action: string
+          campaign_id: string | null
+          created_at: string
+          details: Json
+          id: string
+          user_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          campaign_id?: string | null
+          created_at?: string
+          details?: Json
+          id?: string
+          user_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          campaign_id?: string | null
+          created_at?: string
+          details?: Json
+          id?: string
+          user_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
       stripe_subscriptions: {
         Row: {
           cancel_at_period_end: boolean | null
