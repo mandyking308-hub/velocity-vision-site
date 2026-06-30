@@ -185,16 +185,16 @@ const Pricing = () => {
       <section className="section-padding bg-background border-t border-border">
         <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
           <div>
-            <h3 className="font-display font-semibold text-lg mb-2">Plans include Campaign Credits</h3>
-            <p className="text-muted-foreground text-sm">Every plan includes a generous allowance of credits for AI-heavy actions: full campaign packs, social, press, video and email sequences. Browsing, editing, pipeline and reports are always free.</p>
+            <h3 className="font-display font-semibold text-lg mb-2">Generous data, governed action</h3>
+            <p className="text-muted-foreground text-sm">Store companies, contacts and segments without per-record fees. Heavy-value actions — full outreach packs, social packs, press releases, video packs — draw on Campaign Credits.</p>
           </div>
           <div>
-            <h3 className="font-display font-semibold text-lg mb-2">Scale with top-ups, not surprises</h3>
-            <p className="text-muted-foreground text-sm">Need more in a busy month? Add a credit top-up in seconds — Small, Medium or Large. Top-ups never expire while your plan is active.</p>
+            <h3 className="font-display font-semibold text-lg mb-2">Safe scaling, no surprise bills</h3>
+            <p className="text-muted-foreground text-sm">Tiered daily caps protect deliverability. Top up credits when a month gets busy — Small, Medium or Large. Top-ups never expire while your plan is active.</p>
           </div>
           <div>
-            <h3 className="font-display font-semibold text-lg mb-2">Human review when you want it</h3>
-            <p className="text-muted-foreground text-sm">Optional Premium Human Review ({priceFor("vv_human_review_oneoff", currency).formatted}) adds a senior strategist's eyes to any campaign — never required, available from inside the workspace.</p>
+            <h3 className="font-display font-semibold text-lg mb-2">International by default</h3>
+            <p className="text-muted-foreground text-sm">Multi-currency pricing (GBP, USD, EUR and more), localised tax at checkout, multilingual outreach. Built for distributed teams from day one.</p>
           </div>
         </div>
       </section>
