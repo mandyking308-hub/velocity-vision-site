@@ -221,6 +221,8 @@ export function computeSafety(input: SafetyInput): SafetyResult {
       review: input.vault.needs_review,
     },
     reviewShare,
+    agencyPooledSendsToday: input.plan === "agency" ? (input.agencyPooledSendsToday ?? 0) : undefined,
+    agencyPooledRemaining,
   };
 }
 
