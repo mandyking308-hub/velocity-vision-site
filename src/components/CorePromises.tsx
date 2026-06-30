@@ -1,21 +1,21 @@
 import { motion } from "framer-motion";
-import { Compass, Target, UserCheck } from "lucide-react";
+import { ShieldCheck, Layers, GitBranch } from "lucide-react";
 
 const promises = [
   {
-    icon: Compass,
-    title: "Guided, not blank-page",
-    desc: "Answer a short brief and the platform builds your campaign plan.",
+    icon: Layers,
+    title: "Data to action in one place",
+    desc: "Upload contacts, review quality, build safe segments and activate — without exporting to another tool.",
   },
   {
-    icon: Target,
-    title: "Built for revenue, not vanity",
-    desc: "Campaign packs, lead capture and follow-up are structured to move buyers.",
+    icon: ShieldCheck,
+    title: "Governed sending by default",
+    desc: "Sender verification, tiered daily limits and safety checks before any campaign goes live.",
   },
   {
-    icon: UserCheck,
-    title: "Self-serve with optional expert review",
-    desc: "Run it yourself and only add human review if you want it.",
+    icon: GitBranch,
+    title: "Replies and pipeline, not just sends",
+    desc: "Work inbound replies, follow-up states and warm opportunities inside the same workspace.",
   },
 ];
 
