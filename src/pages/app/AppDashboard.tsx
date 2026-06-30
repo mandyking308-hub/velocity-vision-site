@@ -43,6 +43,16 @@ interface InteractionStats {
   bounces: number;
 }
 
+import { CADENCE_LABELS, CadenceType, LIFECYCLE_TONE, deriveLifecycle, nextActionLabel } from "@/lib/cadence";
+
+interface CadenceRow {
+  id: string; name: string; status: string;
+  cadence_type: CadenceType | null;
+  start_at: string | null; cadence_end_at: string | null;
+  next_run_at: string | null; timezone: string | null;
+  runs_completed: number | null;
+}
+
 export default function AppDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -50,6 +60,8 @@ export default function AppDashboard() {
   const [firstName, setFirstName] = useState("");
   const [activeCampaigns, setActiveCampaigns] = useState(0);
   const [latestCampaignId, setLatestCampaignId] = useState<string | null>(null);
+  const [campaignRows, setCampaignRows] = useState<CadenceRow[]>([]);
+
   const [vault, setVault] = useState<VaultStats>({
     total_contacts: 0, total_companies: 0, imports: 0, clean: 0,
     needs_review: 0, risky: 0, blocked: 0, duplicates: 0, safe_to_activate: 0,
