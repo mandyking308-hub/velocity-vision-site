@@ -5,15 +5,15 @@ import { motion } from "framer-motion";
 import { FileText, Shield, Scale } from "lucide-react";
 
 const legalDocs = [
-  { title: "Platform Terms of Service", path: "/legal/terms-of-service", description: "The core rules governing use of the Velocity Vision software platform and website." },
-  { title: "Customer Agreement", path: "/legal/client-services-agreement", description: "The commercial agreement between Velocity Vision and paying platform customers." },
-  { title: "Data Processing Agreement", path: "/legal/data-processing-agreement", description: "How personal data uploaded to or processed by the platform is handled under applicable data-protection laws." },
-  { title: "Privacy Policy", path: "/legal/privacy-policy", description: "How personal information about website visitors and platform users is collected, used, and stored." },
-  { title: "Acceptable Use Policy", path: "/legal/acceptable-use-policy", description: "What customers may and may not do when using the platform, including outreach conduct." },
-  { title: "Marketing Compliance Policy", path: "/legal/marketing-compliance-policy", description: "Customer responsibilities for lawful outreach, consent, and contact-data usage inside the platform." },
-  { title: "Cookie Policy", path: "/legal/cookie-policy", description: "How cookies and similar tracking technologies are used on the public website." },
-  { title: "Platform Security Policy", path: "/legal/platform-security-policy", description: "The measures used to protect customer data, sender governance, and platform integrity." },
-  { title: "Service Level Agreement", path: "/legal/service-level-agreement", description: "Expected platform availability and support response standards." },
+  { title: "Platform Terms of Service", path: "/legal/terms-of-service", description: "The core rules for using the Velocity Vision website, app, workspaces, data tools, activation controls and generated outputs." },
+  { title: "Customer Agreement", path: "/legal/client-services-agreement", description: "The commercial subscription, billing, credits, plan, agency-workspace and customer-use agreement for paying customers." },
+  { title: "Data Processing Agreement", path: "/legal/data-processing-agreement", description: "Processor terms for customer-uploaded personal data, including processing scope, subprocessors, transfers, security, deletion and audit support." },
+  { title: "Privacy Policy", path: "/legal/privacy-policy", description: "How Velocity Vision handles website, account, billing, support, usage and customer-uploaded data across the platform." },
+  { title: "Acceptable Use Policy", path: "/legal/acceptable-use-policy", description: "Rules that prohibit unlawful data use, spam, misuse, platform abuse, security evasion and harmful or restricted content." },
+  { title: "Marketing Compliance Policy", path: "/legal/marketing-compliance-policy", description: "Customer responsibilities for lawful outreach, sender identity, consent, opt-outs, suppression lists, agencies and jurisdiction-specific rules." },
+  { title: "Cookie Policy", path: "/legal/cookie-policy", description: "How cookies and similar technologies are used for essential functions, preferences, analytics, performance and lawful marketing." },
+  { title: "Platform Security Policy", path: "/legal/platform-security-policy", description: "Shared security responsibilities, platform safeguards, sender governance, incident response and responsible reporting." },
+  { title: "Service Level Agreement", path: "/legal/service-level-agreement", description: "Operational service targets for availability, maintenance, support response and exclusions for the self-serve workspace." },
 ];
 
 const LegalCentre = () => (
@@ -27,10 +27,12 @@ const LegalCentre = () => (
             <h1 className="text-3xl lg:text-4xl font-display font-bold text-foreground">Legal Centre</h1>
           </div>
           <p className="text-muted-foreground leading-relaxed mt-4 max-w-3xl">
-            This Legal Centre is the home for the terms, policies, and agreements that govern use of the Velocity Vision software platform. Together, these documents cover platform use, customer responsibilities, data processing, privacy, security, marketing compliance, and service standards.
+            This Legal Centre contains the terms, policies and agreements that govern use of the Velocity Vision software platform. Together, these documents cover workspace access, customer responsibilities, Data Vault processing, safe activation, outreach compliance, privacy, security, billing, service standards and agency workspace use.
           </p>
-          <div className="mt-4 p-4 bg-muted/40 rounded-xl border border-border/50 text-sm text-muted-foreground">
+          <div className="mt-4 p-4 bg-muted/40 rounded-xl border border-border/50 text-sm text-muted-foreground space-y-2">
             <p><strong className="text-foreground">Operating entity:</strong> Global Solutions Management LLC — incorporated in the State of Delaware, United States — operator of the Velocity Vision platform.</p>
+            <p><strong className="text-foreground">Document stack:</strong> The Platform Terms govern general use. The Customer Agreement governs paid plans, credits and subscriptions. The Data Processing Agreement governs customer-uploaded personal data. Product policies apply to all customers and workspaces.</p>
+            <p><strong className="text-foreground">Review note:</strong> These documents are a hardened platform draft and should be reviewed by qualified counsel before high-volume paid rollout or enterprise contracting.</p>
           </div>
         </motion.div>
 
