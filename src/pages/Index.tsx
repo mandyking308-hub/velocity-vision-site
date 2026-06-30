@@ -16,7 +16,32 @@ import FinalCTA from "@/components/FinalCTA";
 
 const Index = () => (
   <>
-    <SEO title={"Velocity Influence — Marketing Platform + Agency for Growth"} description={"Run campaigns end-to-end with a marketing platform plus a full-service team. Try it instantly or book a demo with Velocity Influence."} path="/" />
+    <SEO
+        title={"Velocity Influence — Marketing Platform + Agency for Growth"}
+        description={"Run campaigns end-to-end with a marketing platform plus a full-service team. Try it instantly or book a demo with Velocity Influence."}
+        path="/"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "name": "Velocity Influence",
+              "url": "https://velocity-outreach.com",
+              "description": "Global marketing and PR platform plus full-service agency for businesses and agencies.",
+            },
+            {
+              "@type": "WebSite",
+              "name": "Velocity Influence",
+              "url": "https://velocity-outreach.com",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://velocity-outreach.com/insights?q={search_term_string}",
+                "query-input": "required name=search_term_string",
+              },
+            },
+          ],
+        }}
+      />
       <Navbar />
     <main>
       <HeroSection />

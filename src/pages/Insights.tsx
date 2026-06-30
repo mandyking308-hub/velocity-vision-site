@@ -15,7 +15,19 @@ const articles = [
 
 const Insights = () => (
   <>
-    <SEO title={"Marketing Insights & Reports | Velocity Influence"} description={"Data-driven insights on marketing strategy, AI, and growth from the Velocity Influence team."} path="/insights" />
+    <SEO
+        title={"Marketing Insights & Reports | Velocity Influence"}
+        description={"Data-driven insights on marketing strategy, AI, and growth from the Velocity Influence team."}
+        path="/insights"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          "name": "Velocity Influence Insights",
+          "description": "Articles and reports on marketing strategy, AI, and growth.",
+          "url": "https://velocity-outreach.com/insights",
+          "publisher": { "@type": "Organization", "name": "Velocity Influence" },
+        }}
+      />
       <Navbar />
     <main className="pt-20">
       <section className="section-padding bg-hero">
