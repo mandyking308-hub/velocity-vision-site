@@ -42,6 +42,20 @@ export default function FounderIntelligence() {
 
   useEffect(() => {
     (async () => {
+      // Best-effort access log — governance signal that this internal
+      // dashboard was viewed, by whom, and when. Reuses send_audit_log
+      // so no extra surface area / migration.
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          await (supabase as any).from("send_audit_log").insert({
+            user_id: user.id,
+            action: "intelligence_view",
+            details: { path: "/crm/intelligence", at: new Date().toISOString() },
+          });
+        }
+      } catch { /* non-blocking */ }
+
       const results = await Promise.all([
         supabase.from("contacts").select("id, country, language, company_id, quality_status, suppressed, blocked, created_at"),
         supabase.from("companies").select("id, country, industry, created_at"),
@@ -53,7 +67,7 @@ export default function FounderIntelligence() {
         supabase.from("user_plans").select("user_id, plan, status, currency"),
         supabase.from("credit_topups").select("user_id, credits, amount, created_at"),
         supabase.from("credit_ledger").select("user_id, delta, reason, created_at"),
-        supabase.from("send_audit_log").select("user_id, action, created_at"),
+        supabase.from("send_audit_log").select("user_id, action, created_at").order("created_at", { ascending: false }).limit(50),
       ]);
       setContacts((results[0].data as Row[]) || []);
       setCompanies((results[1].data as Row[]) || []);
@@ -273,10 +287,26 @@ export default function FounderIntelligence() {
       </Card>
 
       <Card>
-        <CardHeader><CardTitle className="flex items-center gap-2"><ShieldCheck size={18} /> Governance</CardTitle></CardHeader>
-        <CardContent className="text-sm text-muted-foreground space-y-1">
-          <p>This dashboard shows aggregate platform intelligence and customer-level commercial proxies. Raw cross-tenant contact data is not surfaced here.</p>
-          <p>Access is restricted to founder / admin roles via the CRM route guard. Drill-down into customer-specific data is performed via the standard CRM screens, which carry their own audit trails.</p>
+        <CardHeader><CardTitle className="flex items-center gap-2"><ShieldCheck size={18} /> Governance & Internal Access</CardTitle></CardHeader>
+        <CardContent className="text-sm space-y-3">
+          <div className="text-muted-foreground space-y-1">
+            <p>This dashboard shows aggregate platform intelligence and customer-level commercial proxies. Raw cross-tenant contact data is not surfaced here.</p>
+            <p>Access is restricted to founder / admin roles via the CRM route guard. Drill-down into customer-specific data is performed via the standard CRM screens, which carry their own audit trails.</p>
+          </div>
+          <div>
+            <div className="text-xs font-semibold mb-2 uppercase text-muted-foreground">Recent internal access</div>
+            <div className="rounded-md border divide-y">
+              {audit.filter((a) => ["intelligence_view", "risky_override", "safety_change"].includes(a.action)).slice(0, 8).map((a, i) => (
+                <div key={i} className="flex justify-between px-3 py-2 text-xs">
+                  <span><Badge variant="outline" className="mr-2">{a.action}</Badge><span className="font-mono">{(a.user_id || "—").toString().slice(0, 10)}…</span></span>
+                  <span className="text-muted-foreground">{new Date(a.created_at).toLocaleString()}</span>
+                </div>
+              ))}
+              {audit.filter((a) => ["intelligence_view", "risky_override", "safety_change"].includes(a.action)).length === 0 && (
+                <div className="px-3 py-3 text-xs text-muted-foreground">No internal access events recorded yet.</div>
+              )}
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>
