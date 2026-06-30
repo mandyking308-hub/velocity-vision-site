@@ -37,6 +37,7 @@ export default function AppDashboard() {
 
   const cards = [
     { title: "Start a campaign", desc: "Begin a new guided brief", icon: Rocket, to: "/app/campaigns/new", primary: true },
+    { title: "Data Vault", desc: "Upload, clean and organise your contacts", icon: Database, to: "/app/data-vault" },
     { title: "My current campaigns", desc: "See active and draft campaigns", icon: FolderOpen, to: "/app/campaigns" },
     { title: "Lead capture & pipeline", desc: "See new leads and what needs action", icon: Users, to: "/app/leads" },
     { title: "Performance review", desc: "See what worked and what to improve", icon: BarChart3, to: "/app/performance" },
