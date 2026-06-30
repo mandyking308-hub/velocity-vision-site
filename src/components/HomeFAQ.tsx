@@ -5,12 +5,12 @@ import { ArrowRight } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const faqs = [
-  { q: "Is this self-serve or done-for-you?", a: "Self-serve by design. You answer a guided brief and the platform generates your campaign pack. Optional Human Review is available if you want expert eyes on it." },
-  { q: "Do I need to book a call?", a: "No. Pick a plan, sign up and launch. Calls are only for enterprise or large agency volume." },
-  { q: "Can agencies use this for multiple clients?", a: "Yes. The Agency Workspace plan gives you separate client workspaces, reusable templates and branded reporting exports." },
-  { q: "What happens after I pay?", a: "You go straight into onboarding, complete the guided brief and your first campaign pack is generated inside your workspace." },
-  { q: "Does it include social and video assets?", a: "Yes. Every campaign pack includes a social media pack and a video pack (scripts, hooks, shot list, storyboard outline and captions)." },
-  { q: "What happens when credits run out?", a: "Your workspace stays accessible. You can top up, upgrade or pause — nothing is deleted and your templates remain reusable." },
+  { q: "Is this self-serve or done-for-you?", a: "Self-serve. You upload data, review quality, activate safely and run outreach from your own workspace. Optional Premium Human Review is available if you want expert eyes on a specific campaign." },
+  { q: "What does activation actually mean?", a: "Activation is the governed step where you connect and verify your sender, pick a safe segment from your Data Vault, set cadence, and only then begin sending. Daily caps and risky-record limits are enforced by the platform." },
+  { q: "Do I still need a CRM or email tool?", a: "Not for the core flow. The workspace covers data, sending, replies, follow-up states and pipeline movement in one place. You can export at any time." },
+  { q: "Can agencies run multiple clients?", a: "Yes. Agency Workspace provides isolated workspaces per client, pooled credits and pooled sending governance across the account." },
+  { q: "What happens when credits run out?", a: "Your workspace stays accessible — data, pipeline, replies and reporting remain live. Only new AI-heavy generations pause until you top up or upgrade." },
+  { q: "Does it work outside the UK?", a: "Yes. Multilingual outreach (English and Spanish today, French in rollout), multi-currency pricing and localised checkout for international teams." },
 ];
 
 const HomeFAQ = () => (
