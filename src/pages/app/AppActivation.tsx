@@ -107,9 +107,9 @@ export default function AppActivation() {
 
   async function audit(action: string, details: any) {
     try {
-      await supabase.from("send_audit_log").insert({
+      await (supabase as any).from("send_audit_log").insert({
         action, details, user_id: user!.id, campaign_id: campaignId,
-      } as any);
+      });
     } catch { /* table is optional/best-effort */ }
   }
 
