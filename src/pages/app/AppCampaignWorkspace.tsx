@@ -126,7 +126,7 @@ export default function AppCampaignWorkspace() {
       next_run_at: next ? next.toISOString() : null,
       status: next ? "active" : "completed",
     }).eq("id", c.id);
-    toast.success(next ? "Run logged · next run scheduled" : "Final run logged · campaign completed");
+    toast.success(t(next ? "campaigns.toasts.runLogged" : "campaigns.toasts.finalRunLogged"));
     setC({
       ...c, last_run_at: new Date().toISOString(),
       runs_completed: (c.runs_completed || 0) + 1,
