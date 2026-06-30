@@ -12,7 +12,7 @@ import heroAbstract from "@/assets/hero-abstract.jpg";
 const HeroSection = () => (
   <section className="relative bg-hero min-h-[90vh] flex items-center overflow-hidden">
     <div className="absolute inset-0">
-      <img src={heroAbstract} alt="" className="w-full h-full object-cover opacity-25" loading="eager" />
+      <img src={heroAbstract} alt="" width={1920} height={1080} className="w-full h-full object-cover opacity-25" loading="eager" fetchPriority="high" decoding="async" />
       <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/95 to-primary/70" />
     </div>
     <div className="absolute top-20 right-10 w-72 h-72 rounded-full bg-accent/10 blur-3xl" />
