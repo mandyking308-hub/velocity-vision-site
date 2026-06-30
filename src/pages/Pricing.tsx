@@ -184,7 +184,7 @@ const Pricing = () => {
       </section>
 
 
-      <section className="section-padding bg-background border-t border-border">
+      <section className="bg-background border-t border-border px-6 md:px-12 lg:px-20 py-14 md:py-16 lg:py-20">
         <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
           <div>
             <h3 className="font-display font-semibold text-lg mb-2">Generous data, governed action</h3>
@@ -201,7 +201,7 @@ const Pricing = () => {
         </div>
       </section>
 
-      <section className="section-padding bg-secondary">
+      <section className="bg-secondary px-6 md:px-12 lg:px-20 py-14 md:py-16 lg:py-20">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-8">Pricing FAQ</h2>
           <Accordion type="single" collapsible>
