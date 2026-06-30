@@ -38,7 +38,7 @@ const plans: PlanDef[] = [
       "Replies, follow-up & pipeline",
       "30 days workspace access",
     ],
-    cta: "Start Starter",
+    cta: "Start your workspace",
   },
   {
     sku: "vv_growth_monthly",
@@ -56,7 +56,7 @@ const plans: PlanDef[] = [
       "Replies inbox with follow-up states",
       "Monthly performance review",
     ],
-    cta: "Start Growth",
+    cta: "Choose Growth",
   },
   {
     sku: "vv_agency_monthly",
