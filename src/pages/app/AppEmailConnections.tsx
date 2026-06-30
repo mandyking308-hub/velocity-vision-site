@@ -49,6 +49,7 @@ const PROVIDER_HELP: Record<string, { label: string; help: string; host: string;
 };
 
 export default function AppEmailConnections() {
+  const tc = useTranslation("common").t;
   const [connections, setConnections] = useState<Connection[]>([]);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Connection | null>(null);
