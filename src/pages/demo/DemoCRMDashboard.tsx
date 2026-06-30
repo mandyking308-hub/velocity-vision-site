@@ -102,15 +102,34 @@ export default function DemoCRMDashboard() {
             </div>
           </div>
 
-          {/* Activation Readiness */}
+          {/* Activation Readiness + Send Safety Engine */}
           <div>
-            <h3 className="text-lg font-semibold mb-2">Activation Readiness</h3>
-            <Card><CardContent className="p-4 text-sm space-y-1">
-              <p>✅ 1,284 contacts safe to activate</p>
-              <p>⚠️ 92 need review · 37 risky excluded · 14 blocked</p>
-              <p>📤 Today's safe send limit: 80 · Recommended: 50 warm contacts</p>
-              <p>📧 Domain auth: SPF ✓ DKIM ✓ · Scheduled today: 0</p>
-            </CardContent></Card>
+            <h3 className="text-lg font-semibold mb-2">Activation Readiness & Send Safety</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <Card className="md:col-span-2"><CardContent className="p-4 text-sm space-y-2">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                  <Stat label="Send credits" value={420} />
+                  <Stat label="Safe send today" value={40} />
+                  <Stat label="Risky excluded" value={37} />
+                  <Stat label="Blocked" value={14} />
+                </div>
+                <div className="rounded-md bg-muted/50 p-3 space-y-1">
+                  <p>✅ 1,284 contacts safe to activate · 92 need review</p>
+                  <p>⚠️ Today's safe send limit reduced from 80 → 40</p>
+                  <p className="text-muted-foreground text-xs">Reasons: new sender account · domain not authenticated · 12% of segment needs review.</p>
+                  <p>📤 Recommended send today: <b>25</b> warm contacts</p>
+                </div>
+              </CardContent></Card>
+              <Card><CardHeader className="pb-2"><CardTitle className="text-base">Sender status</CardTitle></CardHeader>
+                <CardContent className="text-sm space-y-1">
+                  <p>Connected: founder@acme.com</p>
+                  <p>Domain auth: <Badge variant="outline">SPF / DKIM pending</Badge></p>
+                  <p>Health: <Badge className="bg-amber-100 text-amber-700 border-0">Warming up</Badge></p>
+                  <p>Scheduled today: 0</p>
+                </CardContent>
+              </Card>
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">Store data generously. Activate carefully. We won't let you ruin your sender reputation.</p>
           </div>
 
           {/* Create assets */}
