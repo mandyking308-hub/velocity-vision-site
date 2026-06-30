@@ -57,7 +57,7 @@ export interface ResolveCurrencyInput {
   locale?: string | null;
 }
 
-/** Order: explicit -> billing country -> browser locale -> GBP. */
+/** Order: explicit -> billing country -> browser locale -> USD fallback. */
 export function resolveCurrency(input: ResolveCurrencyInput = {}): Currency {
   const explicit = (input.explicit || "").toUpperCase();
   if ((SUPPORTED_CURRENCIES as readonly string[]).includes(explicit)) {
