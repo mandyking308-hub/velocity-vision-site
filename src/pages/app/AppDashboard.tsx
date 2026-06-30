@@ -16,6 +16,7 @@ import CreditMeter from "@/components/app/CreditMeter";
 import FollowUpReminders from "@/components/app/FollowUpReminders";
 import SendSafetyPanel from "@/components/app/SendSafetyPanel";
 import SenderStatusCard from "@/components/app/SenderStatusCard";
+import OnboardingChecklist from "@/components/app/OnboardingChecklist";
 import { computeSafety, DEFAULT_SENDER_STATE, type SenderState } from "@/lib/sendSafety";
 import type { PlanId } from "@/lib/credits";
 import { deriveFollowUpState } from "@/lib/leadStates";
