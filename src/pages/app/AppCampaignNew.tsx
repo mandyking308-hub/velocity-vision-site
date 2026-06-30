@@ -205,6 +205,22 @@ export default function AppCampaignNew() {
               </div>
             </div>
             <div className="md:col-span-2">
+              <Label className="mb-2 block">Output language</Label>
+              <Select value={brief.language || "en"} onValueChange={(v) => update("language", v as CampaignLanguage)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {CAMPAIGN_LANGUAGES.map((l) => (
+                    <SelectItem key={l.value} value={l.value}>
+                      {l.label}{!l.supported && " — falls back to English"}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground mt-1">
+                English and Spanish generate natively. Other languages store metadata and render English copy for now.
+              </p>
+            </div>
+            <div className="md:col-span-2">
               <Label>Notes / existing assets</Label>
               <Textarea value={brief.notes} onChange={(e) => update("notes", e.target.value)} rows={3} />
             </div>
