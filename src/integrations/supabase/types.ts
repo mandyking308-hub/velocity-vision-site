@@ -349,6 +349,11 @@ export type Database = {
         Row: {
           brief: Json | null
           budget: number | null
+          cadence_end_at: string | null
+          cadence_interval: number
+          cadence_max_runs: number | null
+          cadence_type: string
+          cadence_unit: string
           campaign_kind: string | null
           company_id: string | null
           created_at: string
@@ -357,16 +362,22 @@ export type Database = {
           end_date: string | null
           goal: string | null
           id: string
+          last_run_at: string | null
           lead_form_config: Json | null
           lead_form_published: boolean
           name: string
+          next_run_at: string | null
           objective: string | null
           owner_id: string | null
           pack: Json | null
+          refresh_strategy: string
+          runs_completed: number
           slug: string | null
+          start_at: string | null
           start_date: string | null
           status: Database["public"]["Enums"]["campaign_status"]
           target_audience_description: string | null
+          timezone: string
           type: Database["public"]["Enums"]["campaign_type"]
           updated_at: string
           workspace_id: string | null
@@ -374,6 +385,11 @@ export type Database = {
         Insert: {
           brief?: Json | null
           budget?: number | null
+          cadence_end_at?: string | null
+          cadence_interval?: number
+          cadence_max_runs?: number | null
+          cadence_type?: string
+          cadence_unit?: string
           campaign_kind?: string | null
           company_id?: string | null
           created_at?: string
@@ -382,16 +398,22 @@ export type Database = {
           end_date?: string | null
           goal?: string | null
           id?: string
+          last_run_at?: string | null
           lead_form_config?: Json | null
           lead_form_published?: boolean
           name: string
+          next_run_at?: string | null
           objective?: string | null
           owner_id?: string | null
           pack?: Json | null
+          refresh_strategy?: string
+          runs_completed?: number
           slug?: string | null
+          start_at?: string | null
           start_date?: string | null
           status?: Database["public"]["Enums"]["campaign_status"]
           target_audience_description?: string | null
+          timezone?: string
           type?: Database["public"]["Enums"]["campaign_type"]
           updated_at?: string
           workspace_id?: string | null
@@ -399,6 +421,11 @@ export type Database = {
         Update: {
           brief?: Json | null
           budget?: number | null
+          cadence_end_at?: string | null
+          cadence_interval?: number
+          cadence_max_runs?: number | null
+          cadence_type?: string
+          cadence_unit?: string
           campaign_kind?: string | null
           company_id?: string | null
           created_at?: string
@@ -407,16 +434,22 @@ export type Database = {
           end_date?: string | null
           goal?: string | null
           id?: string
+          last_run_at?: string | null
           lead_form_config?: Json | null
           lead_form_published?: boolean
           name?: string
+          next_run_at?: string | null
           objective?: string | null
           owner_id?: string | null
           pack?: Json | null
+          refresh_strategy?: string
+          runs_completed?: number
           slug?: string | null
+          start_at?: string | null
           start_date?: string | null
           status?: Database["public"]["Enums"]["campaign_status"]
           target_audience_description?: string | null
+          timezone?: string
           type?: Database["public"]["Enums"]["campaign_type"]
           updated_at?: string
           workspace_id?: string | null
@@ -1977,7 +2010,13 @@ export type Database = {
         | "campaign_interaction"
       app_role: "admin" | "sales" | "marketing" | "founder" | "client"
       campaign_request_status: "pending" | "reviewed" | "approved" | "rejected"
-      campaign_status: "active" | "scheduled" | "completed" | "paused" | "draft"
+      campaign_status:
+        | "active"
+        | "scheduled"
+        | "completed"
+        | "paused"
+        | "draft"
+        | "expired"
       campaign_type:
         | "email"
         | "social_media"
@@ -2139,7 +2178,14 @@ export const Constants = {
       ],
       app_role: ["admin", "sales", "marketing", "founder", "client"],
       campaign_request_status: ["pending", "reviewed", "approved", "rejected"],
-      campaign_status: ["active", "scheduled", "completed", "paused", "draft"],
+      campaign_status: [
+        "active",
+        "scheduled",
+        "completed",
+        "paused",
+        "draft",
+        "expired",
+      ],
       campaign_type: [
         "email",
         "social_media",

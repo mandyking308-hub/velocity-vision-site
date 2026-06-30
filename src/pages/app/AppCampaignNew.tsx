@@ -16,6 +16,12 @@ import { CampaignBrief, CampaignGoal, CampaignKind, generatePack, makeSlug } fro
 import { toast } from "sonner";
 import { useCredits } from "@/contexts/CreditsContext";
 import { CREDIT_COSTS } from "@/lib/credits";
+import {
+  CadenceConfig, CADENCE_LABELS, CadenceType, COMMON_TIMEZONES, REFRESH_LABELS,
+  RefreshStrategy, computeNextRun, defaultCadence, plainEnglish,
+} from "@/lib/cadence";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 
 const GOALS: { id: CampaignGoal; label: string; desc: string }[] = [
   { id: "leads", label: "Leads", desc: "Capture qualified prospects" },
@@ -69,8 +75,11 @@ export default function AppCampaignNew() {
     notes: "",
     outputs: ["full"],
   });
+  const [cadence, setCadence] = useState<CadenceConfig>(defaultCadence());
+  const updateCadence = <K extends keyof CadenceConfig>(k: K, v: CadenceConfig[K]) =>
+    setCadence((c) => ({ ...c, [k]: v }));
 
-  const totalSteps = 5;
+  const totalSteps = 6;
   const next = () => setStep((s) => Math.min(s + 1, totalSteps));
   const back = () => setStep((s) => Math.max(s - 1, 1));
   const update = <K extends keyof CampaignBrief>(k: K, v: CampaignBrief[K]) => setBrief((b) => ({ ...b, [k]: v }));
@@ -81,12 +90,14 @@ export default function AppCampaignNew() {
     try {
       const pack = generatePack(brief);
       const slug = makeSlug(brief.name || "campaign");
+      const nextRun = computeNextRun(cadence);
+      const startIsFuture = cadence.start_at && new Date(cadence.start_at) > new Date();
       const insertRow: any = {
         name: brief.name,
         description: brief.offer,
         goal: brief.goal,
         campaign_kind: brief.kind,
-        status: "active",
+        status: startIsFuture ? "scheduled" : "active",
         type: "marketing",
         owner_id: user.id,
         created_by: user.id,
@@ -97,6 +108,15 @@ export default function AppCampaignNew() {
         slug,
         objective: `${brief.goal} — ${brief.cta}`,
         target_audience_description: brief.audience,
+        cadence_type: cadence.cadence_type,
+        cadence_interval: cadence.cadence_interval,
+        cadence_unit: cadence.cadence_unit,
+        start_at: cadence.start_at,
+        timezone: cadence.timezone,
+        cadence_end_at: cadence.cadence_end_at,
+        cadence_max_runs: cadence.cadence_max_runs,
+        next_run_at: nextRun ? nextRun.toISOString() : cadence.start_at,
+        refresh_strategy: cadence.refresh_strategy,
       };
       const { data, error } = await (supabase.from("campaigns") as any)
         .insert(insertRow)
@@ -105,7 +125,6 @@ export default function AppCampaignNew() {
       if (error) throw error;
       const ok = await consume("full_campaign_pack", data.id, brief.name);
       if (!ok) {
-        // Campaign saved as draft but no credits charged
         toast.message("Campaign saved as draft", { description: "Top up credits to unlock the AI-generated pack." });
       } else {
         toast.success("Campaign pack generated");
@@ -117,6 +136,7 @@ export default function AppCampaignNew() {
       setSaving(false);
     }
   };
+
 
   const blocked = remaining < CREDIT_COSTS.full_campaign_pack || starterExpired;
 
@@ -223,6 +243,111 @@ export default function AppCampaignNew() {
 
       {step === 5 && (
         <Card>
+          <CardHeader>
+            <CardTitle>Timing and cadence</CardTitle>
+            <p className="text-sm text-muted-foreground mt-1">When does this start, and does it repeat?</p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label className="mb-2 block">Cadence</Label>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {(Object.keys(CADENCE_LABELS) as CadenceType[]).map((t) => {
+                  const on = cadence.cadence_type === t;
+                  return (
+                    <button key={t} type="button" onClick={() => updateCadence("cadence_type", t)}
+                      className={`px-3 py-2 rounded-md text-sm border text-left ${on ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-muted"}`}>
+                      {CADENCE_LABELS[t]}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <Label>Start date</Label>
+                <Input type="date" value={cadence.start_at ? cadence.start_at.slice(0, 10) : ""}
+                  onChange={(e) => {
+                    const time = cadence.start_at ? cadence.start_at.slice(11, 16) : "09:00";
+                    updateCadence("start_at", e.target.value ? new Date(`${e.target.value}T${time}:00`).toISOString() : null);
+                  }} />
+              </div>
+              <div>
+                <Label>Start time</Label>
+                <Input type="time" value={cadence.start_at ? cadence.start_at.slice(11, 16) : "09:00"}
+                  onChange={(e) => {
+                    const day = cadence.start_at ? cadence.start_at.slice(0, 10) : new Date().toISOString().slice(0, 10);
+                    updateCadence("start_at", new Date(`${day}T${e.target.value}:00`).toISOString());
+                  }} />
+              </div>
+              <div>
+                <Label>Timezone</Label>
+                <Select value={cadence.timezone} onValueChange={(v) => updateCadence("timezone", v)}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {COMMON_TIMEZONES.map((tz) => <SelectItem key={tz} value={tz}>{tz}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {cadence.cadence_type === "custom" && (
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Repeat every</Label>
+                  <Input type="number" min={1} value={cadence.cadence_interval}
+                    onChange={(e) => updateCadence("cadence_interval", Math.max(1, parseInt(e.target.value) || 1))} />
+                </div>
+                <div>
+                  <Label>Unit</Label>
+                  <Select value={cadence.cadence_unit} onValueChange={(v) => updateCadence("cadence_unit", v as any)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="day">Day(s)</SelectItem>
+                      <SelectItem value="week">Week(s)</SelectItem>
+                      <SelectItem value="month">Month(s)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
+
+            {cadence.cadence_type !== "one_off" && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label>End date (optional)</Label>
+                  <Input type="date" value={cadence.cadence_end_at ? cadence.cadence_end_at.slice(0, 10) : ""}
+                    onChange={(e) => updateCadence("cadence_end_at", e.target.value ? new Date(`${e.target.value}T23:59:00`).toISOString() : null)} />
+                </div>
+                <div>
+                  <Label>Max runs (optional)</Label>
+                  <Input type="number" min={1} value={cadence.cadence_max_runs ?? ""}
+                    onChange={(e) => updateCadence("cadence_max_runs", e.target.value ? parseInt(e.target.value) : null)} />
+                </div>
+                <div className="md:col-span-2">
+                  <Label>Asset strategy for each new run</Label>
+                  <Select value={cadence.refresh_strategy} onValueChange={(v) => updateCadence("refresh_strategy", v as RefreshStrategy)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {(Object.keys(REFRESH_LABELS) as RefreshStrategy[]).map((s) => (
+                        <SelectItem key={s} value={s}>{REFRESH_LABELS[s]}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
+
+            <div className="rounded-md bg-muted/60 p-3 text-sm">
+              <div className="font-medium mb-1">Schedule preview</div>
+              <div className="text-muted-foreground">{plainEnglish(cadence)}</div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {step === 6 && (
+        <Card>
           <CardHeader><CardTitle>Review and generate</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
             <Row label="Name" v={brief.name} />
@@ -234,9 +359,12 @@ export default function AppCampaignNew() {
             <Row label="Geography" v={brief.geography} />
             <Row label="Channels" v={brief.channels.join(", ")} />
             <Row label="Outputs" v={brief.outputs.join(", ")} />
+            <Row label="Cadence" v={CADENCE_LABELS[cadence.cadence_type]} />
+            <Row label="Schedule" v={plainEnglish(cadence)} />
           </CardContent>
         </Card>
       )}
+
 
       <div className="flex justify-between">
         <Button variant="outline" onClick={back} disabled={step === 1}>
