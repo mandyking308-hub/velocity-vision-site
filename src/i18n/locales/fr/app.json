@@ -66,7 +66,45 @@
     "new": "Nouvelle campagne",
     "schedule": "Planification",
     "cadence": "Cadence",
-    "language": "Langue de la campagne"
+    "language": "Langue de la campagne",
+    "toasts": {
+      "paused": "Campagne mise en pause",
+      "resumed": "Campagne reprise",
+      "runLogged": "Exécution enregistrée · prochaine exécution planifiée",
+      "finalRunLogged": "Dernière exécution enregistrée · campagne terminée",
+      "packRegenerated": "Pack régénéré",
+      "draftSaved": "Campagne enregistrée comme brouillon",
+      "draftSavedDesc": "Rechargez des crédits pour débloquer le pack généré par IA.",
+      "packGenerated": "Pack de campagne généré",
+      "generateFailed": "Échec de la génération de la campagne"
+    }
+  },
+  "sender": {
+    "toasts": {
+      "noDomain": "Aucun domaine d'expéditeur à vérifier pour le moment.",
+      "verified": "Domaine vérifié",
+      "verifiedDesc": "SPF et DKIM corrects pour {{domain}}.",
+      "notVerified": "Domaine non entièrement vérifié",
+      "verifyFailed": "Échec de la vérification"
+    }
+  },
+  "email": {
+    "toasts": {
+      "credentialsRequired": "E-mail, identifiant et mot de passe requis",
+      "savedConnectError": "Enregistré mais connexion impossible : {{error}}",
+      "inboxConnected": "Boîte connectée",
+      "connectFirst": "Connectez d'abord un e-mail",
+      "pickLead": "Sélectionnez au moins un lead avec e-mail",
+      "scheduled": "{{count}} planifié(s)",
+      "sent": "{{count}} envoyé(s)",
+      "failed": "{{count}} échec(s)"
+    }
+  },
+  "leadForm": {
+    "toasts": {
+      "saveFailed": "Impossible d'enregistrer le formulaire",
+      "saved": "Formulaire de leads enregistré"
+    }
   },
   "followUp": {
     "title": "Réponses & relances",
