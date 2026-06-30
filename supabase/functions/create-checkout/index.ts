@@ -49,7 +49,19 @@ Deno.serve(async (req) => {
     if (!user) return json({ error: "unauthorized" }, 401);
 
     const stripe = createStripeClient(environment as StripeEnv);
-    const prices = await stripe.prices.list({ lookup_keys: [priceId] });
+
+    // Resolve price by lookup_key. If a currency-suffixed variant is not yet
+    // configured in Stripe, fall back to the GBP base SKU so checkout never
+    // breaks — the client surfaces the actual charged currency on success.
+    let prices = await stripe.prices.list({ lookup_keys: [priceId] });
+    let fellBackToBase = false;
+    if (!prices.data.length) {
+      const base = priceId.replace(/_(usd|eur|cad|aud|mxn)$/i, "");
+      if (base !== priceId) {
+        prices = await stripe.prices.list({ lookup_keys: [base] });
+        fellBackToBase = prices.data.length > 0;
+      }
+    }
     if (!prices.data.length) return json({ error: "price not found" }, 404);
     const stripePrice = prices.data[0];
     const isRecurring = stripePrice.type === "recurring";
@@ -73,6 +85,7 @@ Deno.serve(async (req) => {
       metadata: {
         userId: user.id,
         priceId,
+        currency_fallback: fellBackToBase ? "true" : "false",
         ...(refId && { refId }),
         ...(workspaceId && { workspaceId }),
       },
@@ -88,13 +101,14 @@ Deno.serve(async (req) => {
       managed_payments: { enabled: true },
     } as any);
 
-    return json({ clientSecret: session.client_secret });
+    return json({ clientSecret: session.client_secret, currencyFallback: fellBackToBase });
   } catch (e) {
     console.error("create-checkout error:", e);
-    return json({ error: (e as Error).message }, 500);
+    return json({ error: "Unable to start checkout. Please try again or contact support." }, 500);
   }
 });
 
 function json(b: unknown, s = 200) {
   return new Response(JSON.stringify(b), { status: s, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 }
+
