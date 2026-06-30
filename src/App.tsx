@@ -159,8 +159,10 @@ const AnimatedRoutes = () => {
         </Route>
 
         {/* Legacy client portal (still available, kept for billing/legal/docs) */}
+        {/* Legacy client portal — kept for billing/legal/docs sub-routes only.
+            Standard customers are routed to /app; /portal root redirects there. */}
         <Route path="/portal" element={<ProtectedRoute><PortalLayout /></ProtectedRoute>}>
-          <Route index element={<PortalDashboard />} />
+          <Route index element={<Navigate to="/app" replace />} />
           <Route path="campaigns" element={<PortalCampaigns />} />
           <Route path="documents" element={<PortalDocuments />} />
           <Route path="messages" element={<PortalMessages />} />
