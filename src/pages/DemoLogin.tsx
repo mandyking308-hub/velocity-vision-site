@@ -34,31 +34,19 @@ const DemoLogin = () => {
             <div className="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <Eye size={28} className="text-accent" />
             </div>
-            <h2 className="text-xl font-display font-bold text-foreground">Explore the Platform</h2>
+            <h2 className="text-xl font-display font-bold text-foreground">Walk through the real product</h2>
             <p className="text-sm text-muted-foreground">
-              Experience the Velocity Influence platform with preloaded sample campaigns, CRM data, and analytics dashboards.
+              A guided demo of the live Velocity workspace — upload, review, activate, send, follow up and move deals through pipeline, end to end.
             </p>
           </div>
 
           <div className="bg-muted/30 rounded-lg p-4 border border-border/30">
-            <p className="text-xs text-muted-foreground mb-2 font-medium">Demo includes:</p>
+            <p className="text-xs text-muted-foreground mb-2 font-medium">The demo walks the same journey as the real app:</p>
             <ul className="text-xs text-muted-foreground space-y-1.5">
-              <li className="flex items-center gap-2">
-                <span className="w-1 h-1 rounded-full bg-accent shrink-0" />
-                300 sample CRM contacts with full pipeline
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1 h-1 rounded-full bg-accent shrink-0" />
-                3 live campaign examples with real metrics
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1 h-1 rounded-full bg-accent shrink-0" />
-                Agency workspace with 3 client accounts
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1 h-1 rounded-full bg-accent shrink-0" />
-                Analytics dashboards and performance charts
-              </li>
+              <li className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-accent shrink-0" />Data Vault upload + quality review</li>
+              <li className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-accent shrink-0" />Activation readiness + safe send limits</li>
+              <li className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-accent shrink-0" />Asset creation, cadence and follow-up</li>
+              <li className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-accent shrink-0" />Replies, pipeline and next best actions</li>
             </ul>
           </div>
 
