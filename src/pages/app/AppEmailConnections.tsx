@@ -161,6 +161,8 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 function ConnectionDialog({ editing, onDone }: { editing: Connection | null; onDone: () => void }) {
+  const { t } = useTranslation("app");
+  const tc = useTranslation("common").t;
   const [provider, setProvider] = useState<"gmail" | "outlook" | "smtp">(editing?.provider || "gmail");
   const [fromEmail, setFromEmail] = useState(editing?.from_email || "");
   const [fromName, setFromName] = useState(editing?.from_name || "");
