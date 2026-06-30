@@ -5,15 +5,15 @@ import { motion } from "framer-motion";
 import { FileText, Shield, Scale } from "lucide-react";
 
 const legalDocs = [
-  { title: "Platform Terms of Service", path: "/legal/terms-of-service", description: "Defines the core rules governing use of the Velocity Influence platform and website." },
-  { title: "Client Services Agreement", path: "/legal/client-services-agreement", description: "Defines the contractual relationship between Velocity Influence and paying customers." },
-  { title: "Data Processing Agreement", path: "/legal/data-processing-agreement", description: "Explains how personal data is processed and protected under applicable data protection laws." },
-  { title: "Privacy Policy", path: "/legal/privacy-policy", description: "Describes how personal information is collected, used, and stored." },
-  { title: "Acceptable Use Policy", path: "/legal/acceptable-use-policy", description: "Defines permitted and prohibited uses of the platform." },
-  { title: "Marketing Compliance Policy", path: "/legal/marketing-compliance-policy", description: "Explains responsibilities for lawful marketing campaigns and customer data usage." },
-  { title: "Cookie Policy", path: "/legal/cookie-policy", description: "Explains how cookies and tracking technologies are used on the website." },
-  { title: "Platform Security Policy", path: "/legal/platform-security-policy", description: "Describes the measures used to protect customer data and platform integrity." },
-  { title: "Service Level Agreement", path: "/legal/service-level-agreement", description: "Defines expected platform availability and support response standards." },
+  { title: "Platform Terms of Service", path: "/legal/terms-of-service", description: "The core rules governing use of the Velocity Vision software platform and website." },
+  { title: "Customer Agreement", path: "/legal/client-services-agreement", description: "The commercial agreement between Velocity Vision and paying platform customers." },
+  { title: "Data Processing Agreement", path: "/legal/data-processing-agreement", description: "How personal data uploaded to or processed by the platform is handled under applicable data-protection laws." },
+  { title: "Privacy Policy", path: "/legal/privacy-policy", description: "How personal information about website visitors and platform users is collected, used, and stored." },
+  { title: "Acceptable Use Policy", path: "/legal/acceptable-use-policy", description: "What customers may and may not do when using the platform, including outreach conduct." },
+  { title: "Marketing Compliance Policy", path: "/legal/marketing-compliance-policy", description: "Customer responsibilities for lawful outreach, consent, and contact-data usage inside the platform." },
+  { title: "Cookie Policy", path: "/legal/cookie-policy", description: "How cookies and similar tracking technologies are used on the public website." },
+  { title: "Platform Security Policy", path: "/legal/platform-security-policy", description: "The measures used to protect customer data, sender governance, and platform integrity." },
+  { title: "Service Level Agreement", path: "/legal/service-level-agreement", description: "Expected platform availability and support response standards." },
 ];
 
 const LegalCentre = () => (
@@ -27,10 +27,10 @@ const LegalCentre = () => (
             <h1 className="text-3xl lg:text-4xl font-display font-bold text-foreground">Legal Centre</h1>
           </div>
           <p className="text-muted-foreground leading-relaxed mt-4 max-w-3xl">
-            This Legal Centre contains the terms, policies, and agreements that govern the use of the Velocity Influence platform and services. Together, these documents define the rights, responsibilities, and protections for customers using the platform.
+            This Legal Centre is the home for the terms, policies, and agreements that govern use of the Velocity Vision software platform. Together, these documents cover platform use, customer responsibilities, data processing, privacy, security, marketing compliance, and service standards.
           </p>
           <div className="mt-4 p-4 bg-muted/40 rounded-xl border border-border/50 text-sm text-muted-foreground">
-            <p><strong className="text-foreground">Operating Entity:</strong> Global Solutions Management LLC — a company incorporated in the State of Delaware, United States, trading as Velocity Influence Agency.</p>
+            <p><strong className="text-foreground">Operating entity:</strong> Global Solutions Management LLC — incorporated in the State of Delaware, United States — operator of the Velocity Vision platform.</p>
           </div>
         </motion.div>
 
