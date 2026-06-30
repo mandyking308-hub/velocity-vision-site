@@ -91,11 +91,11 @@ export default function FounderIntelligence() {
   const failures = sends.filter((s) => s.status === "failed").length;
 
   // Pipeline
-  const pipelineValue = opps.reduce((s, o) => s + (Number(o.value) || 0), 0);
+  const pipelineValue = opps.reduce((s, o) => s + (Number(o.estimated_value) || 0), 0);
   const wins = opps.filter((o) => o.stage === "won" || o.stage === "closed_won").length;
   const losses = opps.filter((o) => o.stage === "lost" || o.stage === "closed_lost").length;
-  const replies = leads.filter((l) => l.status === "replied" || l.lead_follow_state === "replied").length;
-  const warm = leads.filter((l) => l.lead_follow_state === "warm" || l.status === "warm").length;
+  const replies = leads.filter((l) => l.status === "replied" || l.follow_up_state === "replied").length;
+  const warm = leads.filter((l) => l.follow_up_state === "warm" || l.status === "warm").length;
 
   // Per-user usage
   const userUsage = useMemo(() => {
