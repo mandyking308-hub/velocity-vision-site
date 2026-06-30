@@ -23,7 +23,9 @@
     "viewAll": "Tout voir",
     "learnMore": "En savoir plus",
     "getStarted": "Commencer",
-    "tryDemo": "Essayer la démo"
+    "tryDemo": "Essayer la démo",
+    "refresh": "Actualiser",
+    "copy": "Copier"
   },
   "status": {
     "draft": "Brouillon",
@@ -33,6 +35,15 @@
     "completed": "Terminé",
     "expired": "Expiré",
     "failed": "Échoué"
+  },
+  "toasts": {
+    "saved": "Enregistré",
+    "copied": "Copié",
+    "updated": "Mis à jour",
+    "updateFailed": "Échec de la mise à jour",
+    "moved": "Déplacé vers {{stage}}",
+    "movedToPipeline": "Déplacé dans le pipeline",
+    "moveToPipelineFailed": "Impossible de déplacer dans le pipeline"
   },
   "errors": {
     "generic": "Une erreur est survenue. Veuillez réessayer.",

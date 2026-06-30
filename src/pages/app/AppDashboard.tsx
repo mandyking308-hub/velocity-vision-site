@@ -17,6 +17,7 @@ import FollowUpReminders from "@/components/app/FollowUpReminders";
 import SendSafetyPanel from "@/components/app/SendSafetyPanel";
 import SenderStatusCard from "@/components/app/SenderStatusCard";
 import OnboardingChecklist from "@/components/app/OnboardingChecklist";
+import PriorityStrip from "@/components/app/PriorityStrip";
 import { computeSafety, DEFAULT_SENDER_STATE, type SenderState } from "@/lib/sendSafety";
 import type { PlanId } from "@/lib/credits";
 import { deriveFollowUpState } from "@/lib/leadStates";
@@ -221,6 +222,16 @@ export default function AppDashboard() {
 
   return (
     <div className="space-y-8 max-w-7xl">
+      {/* A0. Priority strip — most urgent commercial actions, always on top */}
+      <PriorityStrip
+        repliesDue={inter.replies_due}
+        overdue={inter.followups_today}
+        stuck={pipeline.stuck}
+        senderConnected={sender.connected}
+        senderVerified={sender.domain_authenticated}
+        creditsRemaining={remaining}
+      />
+
       {/* A. Top summary bar */}
       <div className="rounded-xl border border-border bg-gradient-to-br from-primary/5 via-background to-accent/5 p-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">

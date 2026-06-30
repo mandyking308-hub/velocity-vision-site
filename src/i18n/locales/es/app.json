@@ -14,6 +14,21 @@
     "billing": "Facturación",
     "settings": "Ajustes"
   },
+  "priority": {
+    "title": "Requiere tu atención hoy",
+    "empty": "Estás al día — nada urgente.",
+    "repliesDue": "{{count}} respuesta requiere acción",
+    "repliesDue_plural": "{{count}} respuestas requieren acción",
+    "overdue": "{{count}} seguimiento atrasado",
+    "overdue_plural": "{{count}} seguimientos atrasados",
+    "stuck": "{{count}} oportunidad atascada 14+ días",
+    "stuck_plural": "{{count}} oportunidades atascadas 14+ días",
+    "senderUnverified": "Dominio del remitente sin verificar",
+    "senderDisconnected": "Remitente no conectado",
+    "creditsLow": "Créditos bajos — recarga para seguir enviando",
+    "creditsExhausted": "Créditos agotados",
+    "open": "Abrir"
+  },
   "dashboard": {
     "title": "Centro de mando",
     "subtitle": "Tu espacio comercial de un vistazo.",
@@ -41,7 +56,10 @@
     "title": "Activar",
     "subtitle": "Lleva datos verificados a campañas en vivo.",
     "readiness": "Preparación",
-    "launch": "Lanzar"
+    "launch": "Lanzar",
+    "toasts": {
+      "prepared": "Activación preparada para {{count}} contactos. Abre tu campaña para programar el envío."
+    }
   },
   "campaigns": {
     "title": "Campañas",
@@ -51,18 +69,53 @@
     "language": "Idioma de la campaña"
   },
   "followUp": {
-    "title": "Seguimiento",
-    "subtitle": "Respuestas y recordatorios que necesitan tu atención."
+    "title": "Respuestas y seguimiento",
+    "subtitle": "Quién respondió, quién está atrasado, qué está caliente. Empieza tu día aquí.",
+    "stats": {
+      "needsAction": "Requiere acción",
+      "replied": "Respondió",
+      "overdue": "Atrasado",
+      "due": "Hoy",
+      "warm": "Caliente",
+      "dormant": "Dormido",
+      "inPipeline": "En pipeline",
+      "snoozed": "Pospuesto",
+      "bounced": "Rebotado"
+    },
+    "filters": {
+      "search": "Buscar por nombre o email…",
+      "allCampaigns": "Todas las campañas"
+    },
+    "empty": {
+      "title": "Aún no hay leads en tu cola de seguimiento",
+      "description": "Cuando actives una campaña, las respuestas y seguimientos aparecerán aquí automáticamente.",
+      "caughtUp": "Nada en esta cola. Estás al día.",
+      "tryFilter": "Nada en esta cola. Prueba otro filtro."
+    }
   },
   "pipeline": {
     "title": "Pipeline",
+    "subtitle": "Oportunidades activas y dónde se mueve — o se atasca — el ingreso.",
+    "stats": {
+      "opportunities": "Oportunidades",
+      "active": "Activas",
+      "value": "Valor del pipeline",
+      "stuck": "Atascadas 14d+",
+      "overdue": "Acción atrasada",
+      "won": "Ganadas",
+      "lost": "Perdidas"
+    },
     "stages": {
-      "new": "Nuevo",
-      "qualified": "Cualificado",
-      "meeting": "Reunión",
+      "discovery": "Descubrimiento",
+      "demo": "Demo",
       "proposal": "Propuesta",
+      "negotiation": "Negociación",
       "won": "Ganado",
       "lost": "Perdido"
+    },
+    "empty": {
+      "title": "Aún no hay oportunidades en tu pipeline",
+      "description": "Las oportunidades se crean cuando promueves un lead respondido o caliente desde la cola de Seguimiento."
     }
   },
   "billing": {
