@@ -124,7 +124,21 @@ export default function DemoCRMDashboard() {
           <Section title="Big idea">{pack.strategy.bigIdea}</Section>
           <div className="grid md:grid-cols-2 gap-3">
             <Card><CardHeader><CardTitle className="text-base flex items-center gap-2"><Megaphone className="h-4 w-4" />Social pack</CardTitle></CardHeader><CardContent className="text-sm text-muted-foreground">{pack.social.launchPosts.length} launch posts, {pack.social.followUps.length} follow-ups, 7-day plan.</CardContent></Card>
-            <Card><CardHeader><CardTitle className="text-base flex items-center gap-2"><Mail className="h-4 w-4" />Email sequence</CardTitle></CardHeader><CardContent className="text-sm text-muted-foreground">{pack.emails.length} emails, ready to send.</CardContent></Card>
+            <Card>
+              <CardHeader><CardTitle className="text-base flex items-center gap-2"><Mail className="h-4 w-4" />Email sequence</CardTitle></CardHeader>
+              <CardContent className="text-sm text-muted-foreground space-y-2">
+                <p>{pack.emails.length} emails, ready to send.</p>
+                <div className="flex items-center gap-2">
+                  <Badge className="bg-green-600">Connected: demo@velocity-outreach.com</Badge>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" variant="outline" disabled onClick={() => {}}>Send (demo)</Button>
+                  <Button size="sm" variant="outline" disabled>Schedule (demo)</Button>
+                  <Button size="sm" variant="ghost">Export</Button>
+                </div>
+                <p className="text-xs">Reminder: 3 leads need follow-up · 2 sequences ready to send</p>
+              </CardContent>
+            </Card>
             <Card><CardHeader><CardTitle className="text-base flex items-center gap-2"><Newspaper className="h-4 w-4" />Press release</CardTitle></CardHeader><CardContent className="text-sm text-muted-foreground">Headline, body, quote, boilerplate.</CardContent></Card>
             <Card><CardHeader><CardTitle className="text-base flex items-center gap-2"><Video className="h-4 w-4" />Video pack</CardTitle></CardHeader><CardContent className="text-sm text-muted-foreground">3 hooks, 30s + 60s scripts, shot list.</CardContent></Card>
           </div>
