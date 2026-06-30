@@ -46,7 +46,10 @@ export default function DemoCRMDashboard() {
           <h1 className="text-3xl font-bold">Launch dashboard</h1>
           <p className="text-muted-foreground text-sm">A live walk-through of the self-serve campaign launchpad. No changes are saved.</p>
         </div>
-        <Button onClick={() => setTab("builder")}><Rocket className="h-4 w-4 mr-2" />Start a campaign</Button>
+        <div className="flex gap-2">
+          <Button variant="outline" asChild><a href="/demo/data-vault"><Sparkles className="h-4 w-4 mr-2" />Data Vault demo</a></Button>
+          <Button onClick={() => setTab("builder")}><Rocket className="h-4 w-4 mr-2" />Start a campaign</Button>
+        </div>
       </div>
 
       <Tabs value={tab} onValueChange={setTab}>
