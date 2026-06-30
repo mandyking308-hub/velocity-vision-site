@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Rocket, FolderOpen, Users, BarChart3, LayoutTemplate, Settings, Briefcase, ArrowRight } from "lucide-react";
+import { Rocket, FolderOpen, Users, BarChart3, LayoutTemplate, Settings, Briefcase, ArrowRight, Database } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import CreditMeter from "@/components/app/CreditMeter";
