@@ -34,6 +34,8 @@ const STAGE_TONE: Record<Stage, string> = {
 };
 
 export default function AppPipeline() {
+  const { t } = useTranslation("app");
+  const tc = useTranslation("common").t;
   const [opps, setOpps] = useState<Opp[]>([]);
   const [campaigns, setCampaigns] = useState<Record<string, string>>({});
   const [edit, setEdit] = useState<Opp | null>(null);
