@@ -8,7 +8,6 @@ import HowItWorksPreview from "@/components/HowItWorksPreview";
 import WorkflowSavings from "@/components/WorkflowSavings";
 import PricingTeaser from "@/components/PricingTeaser";
 import AudienceSplit from "@/components/AudienceSplit";
-import NotAnotherX from "@/components/NotAnotherX";
 import HomeFAQ from "@/components/HomeFAQ";
 import FinalCTA from "@/components/FinalCTA";
 
@@ -49,7 +48,6 @@ const Index = () => (
       <WorkflowSavings />
       <PricingTeaser />
       <AudienceSplit />
-      <NotAnotherX />
       <HomeFAQ />
       <FinalCTA />
     </main>
