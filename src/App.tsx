@@ -57,6 +57,16 @@ import PortalLegal from "./pages/portal/PortalLegal.tsx";
 import DemoLogin from "./pages/DemoLogin.tsx";
 import DemoCRMLayout from "./pages/demo/DemoCRMLayout.tsx";
 import DemoCRMDashboard from "./pages/demo/DemoCRMDashboard.tsx";
+import AppLayout from "./pages/app/AppLayout.tsx";
+import AppDashboard from "./pages/app/AppDashboard.tsx";
+import AppCampaigns from "./pages/app/AppCampaigns.tsx";
+import AppCampaignNew from "./pages/app/AppCampaignNew.tsx";
+import AppCampaignWorkspace from "./pages/app/AppCampaignWorkspace.tsx";
+import AppLeads from "./pages/app/AppLeads.tsx";
+import AppTemplates from "./pages/app/AppTemplates.tsx";
+import AppPerformance from "./pages/app/AppPerformance.tsx";
+import AppSettings from "./pages/app/AppSettings.tsx";
+import AppWorkspaces from "./pages/app/AppWorkspaces.tsx";
 
 const queryClient = new QueryClient();
 
@@ -117,7 +127,20 @@ const AnimatedRoutes = () => {
           <Route path="manual" element={<FounderManual />} />
         </Route>
 
-        {/* Client Portal (protected) */}
+        {/* Self-serve customer app (protected) */}
+        <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+          <Route index element={<AppDashboard />} />
+          <Route path="campaigns" element={<AppCampaigns />} />
+          <Route path="campaigns/new" element={<AppCampaignNew />} />
+          <Route path="campaigns/:id" element={<AppCampaignWorkspace />} />
+          <Route path="leads" element={<AppLeads />} />
+          <Route path="performance" element={<AppPerformance />} />
+          <Route path="templates" element={<AppTemplates />} />
+          <Route path="settings" element={<AppSettings />} />
+          <Route path="workspaces" element={<AppWorkspaces />} />
+        </Route>
+
+        {/* Legacy client portal (still available, kept for billing/legal/docs) */}
         <Route path="/portal" element={<ProtectedRoute><PortalLayout /></ProtectedRoute>}>
           <Route index element={<PortalDashboard />} />
           <Route path="campaigns" element={<PortalCampaigns />} />
