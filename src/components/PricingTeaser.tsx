@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
 const plans = [
-  { name: "Starter", price: "£149", unit: "one-off", desc: "One guided campaign launch with full pack and 30-day workspace access." },
-  { name: "Growth", price: "£249", unit: "per month", desc: "Recurring campaign credits, templates, follow-up sequences and monthly review.", highlight: true },
-  { name: "Agency Workspace", price: "£499", unit: "per month", desc: "Multi-client workspaces, branded reporting and reusable assets." },
-  { name: "Premium Human Review", price: "£199", unit: "per review", desc: "Optional strategist review with written recommendations and one revision pass." },
+  { name: "Starter", price: "£149", unit: "one-off", desc: "One activated campaign with Data Vault, governed sending, replies and pipeline — 30 days workspace access." },
+  { name: "Growth", price: "£249", unit: "per month", desc: "Recurring campaigns, larger sending caps, cadence scheduling, follow-up automation and monthly review.", highlight: true },
+  { name: "Agency Workspace", price: "£499", unit: "per month", desc: "Multiple client workspaces, pooled credits and pooled sending governance across the account." },
+  { name: "Premium Human Review", price: "£199", unit: "per review", desc: "Optional strategist review of one activation with written recommendations and a revision pass." },
 ];
 
 const PricingTeaser = () => (
@@ -22,9 +22,9 @@ const PricingTeaser = () => (
       >
         <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Pricing</p>
         <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">
-          Simple pricing for self-serve growth
+          Pay for governed action, not for stored data
         </h2>
-        <p className="text-muted-foreground text-lg">No quotes. No long calls. Pick a plan, start launching.</p>
+        <p className="text-muted-foreground text-lg">Storage is generous. Credits cover heavy-value actions. Sending stays safe at every tier.</p>
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
