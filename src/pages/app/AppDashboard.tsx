@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Rocket, FolderOpen, Users, BarChart3, LayoutTemplate, Settings, Briefcase, ArrowRight } from "lucide-react";
+import { Rocket, FolderOpen, Users, BarChart3, LayoutTemplate, Settings, Briefcase, ArrowRight, Database } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import CreditMeter from "@/components/app/CreditMeter";
 import FollowUpReminders from "@/components/app/FollowUpReminders";
+import DataVaultDashboardWidget from "@/components/app/datavault/DataVaultDashboardWidget";
 
 export default function AppDashboard() {
   const { user } = useAuth();
@@ -36,6 +37,7 @@ export default function AppDashboard() {
 
   const cards = [
     { title: "Start a campaign", desc: "Begin a new guided brief", icon: Rocket, to: "/app/campaigns/new", primary: true },
+    { title: "Data Vault", desc: "Upload, clean and organise your contacts", icon: Database, to: "/app/data-vault" },
     { title: "My current campaigns", desc: "See active and draft campaigns", icon: FolderOpen, to: "/app/campaigns" },
     { title: "Lead capture & pipeline", desc: "See new leads and what needs action", icon: Users, to: "/app/leads" },
     { title: "Performance review", desc: "See what worked and what to improve", icon: BarChart3, to: "/app/performance" },
@@ -70,7 +72,10 @@ export default function AppDashboard() {
 
       <FollowUpReminders />
 
+      <DataVaultDashboardWidget />
+
       <CreditMeter />
+
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {cards.map((c) => (

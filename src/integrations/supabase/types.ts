@@ -594,7 +594,10 @@ export type Database = {
           created_by: string | null
           id: string
           industry: string | null
+          language: string | null
           name: string
+          region: string | null
+          source_upload_id: string | null
           status: Database["public"]["Enums"]["company_status"]
           updated_at: string
           website: string | null
@@ -607,7 +610,10 @@ export type Database = {
           created_by?: string | null
           id?: string
           industry?: string | null
+          language?: string | null
           name: string
+          region?: string | null
+          source_upload_id?: string | null
           status?: Database["public"]["Enums"]["company_status"]
           updated_at?: string
           website?: string | null
@@ -620,54 +626,95 @@ export type Database = {
           created_by?: string | null
           id?: string
           industry?: string | null
+          language?: string | null
           name?: string
+          region?: string | null
+          source_upload_id?: string | null
           status?: Database["public"]["Enums"]["company_status"]
           updated_at?: string
           website?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "companies_source_upload_id_fkey"
+            columns: ["source_upload_id"]
+            isOneToOne: false
+            referencedRelation: "data_uploads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       contacts: {
         Row: {
+          blocked: boolean
           company_id: string | null
+          country: string | null
           created_at: string
           created_by: string | null
           decision_maker_level: string | null
+          duplicate_flag: boolean
           email: string | null
           first_name: string
           id: string
           job_title: string | null
+          language: string | null
+          last_contacted_at: string | null
+          last_interaction_at: string | null
           last_name: string
+          last_verified_at: string | null
           linkedin_url: string | null
           phone: string | null
+          quality_status: string | null
+          source_upload_id: string | null
+          suppressed: boolean
           updated_at: string
         }
         Insert: {
+          blocked?: boolean
           company_id?: string | null
+          country?: string | null
           created_at?: string
           created_by?: string | null
           decision_maker_level?: string | null
+          duplicate_flag?: boolean
           email?: string | null
           first_name: string
           id?: string
           job_title?: string | null
+          language?: string | null
+          last_contacted_at?: string | null
+          last_interaction_at?: string | null
           last_name: string
+          last_verified_at?: string | null
           linkedin_url?: string | null
           phone?: string | null
+          quality_status?: string | null
+          source_upload_id?: string | null
+          suppressed?: boolean
           updated_at?: string
         }
         Update: {
+          blocked?: boolean
           company_id?: string | null
+          country?: string | null
           created_at?: string
           created_by?: string | null
           decision_maker_level?: string | null
+          duplicate_flag?: boolean
           email?: string | null
           first_name?: string
           id?: string
           job_title?: string | null
+          language?: string | null
+          last_contacted_at?: string | null
+          last_interaction_at?: string | null
           last_name?: string
+          last_verified_at?: string | null
           linkedin_url?: string | null
           phone?: string | null
+          quality_status?: string | null
+          source_upload_id?: string | null
+          suppressed?: boolean
           updated_at?: string
         }
         Relationships: [
@@ -676,6 +723,13 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contacts_source_upload_id_fkey"
+            columns: ["source_upload_id"]
+            isOneToOne: false
+            referencedRelation: "data_uploads"
             referencedColumns: ["id"]
           },
         ]
@@ -736,6 +790,164 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      data_upload_mappings: {
+        Row: {
+          created_at: string
+          destination_field: string | null
+          id: string
+          ignored: boolean
+          owner_id: string
+          source_column: string
+          upload_id: string
+        }
+        Insert: {
+          created_at?: string
+          destination_field?: string | null
+          id?: string
+          ignored?: boolean
+          owner_id?: string
+          source_column: string
+          upload_id: string
+        }
+        Update: {
+          created_at?: string
+          destination_field?: string | null
+          id?: string
+          ignored?: boolean
+          owner_id?: string
+          source_column?: string
+          upload_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "data_upload_mappings_upload_id_fkey"
+            columns: ["upload_id"]
+            isOneToOne: false
+            referencedRelation: "data_uploads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      data_upload_rows: {
+        Row: {
+          created_at: string
+          duplicate_of_contact_id: string | null
+          duplicate_status: string
+          id: string
+          import_status: string
+          imported_contact_id: string | null
+          issues: Json
+          mapped_fields: Json
+          owner_id: string
+          raw_fields: Json
+          row_number: number
+          upload_id: string
+          validation_status: string
+        }
+        Insert: {
+          created_at?: string
+          duplicate_of_contact_id?: string | null
+          duplicate_status?: string
+          id?: string
+          import_status?: string
+          imported_contact_id?: string | null
+          issues?: Json
+          mapped_fields?: Json
+          owner_id?: string
+          raw_fields?: Json
+          row_number: number
+          upload_id: string
+          validation_status?: string
+        }
+        Update: {
+          created_at?: string
+          duplicate_of_contact_id?: string | null
+          duplicate_status?: string
+          id?: string
+          import_status?: string
+          imported_contact_id?: string | null
+          issues?: Json
+          mapped_fields?: Json
+          owner_id?: string
+          raw_fields?: Json
+          row_number?: number
+          upload_id?: string
+          validation_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "data_upload_rows_duplicate_of_contact_id_fkey"
+            columns: ["duplicate_of_contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "data_upload_rows_imported_contact_id_fkey"
+            columns: ["imported_contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "data_upload_rows_upload_id_fkey"
+            columns: ["upload_id"]
+            isOneToOne: false
+            referencedRelation: "data_uploads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      data_uploads: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_type: string
+          id: string
+          owner_id: string
+          row_count: number
+          source_path: string | null
+          status: string
+          summary: Json
+          updated_at: string
+          workspace_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_type?: string
+          id?: string
+          owner_id?: string
+          row_count?: number
+          source_path?: string | null
+          status?: string
+          summary?: Json
+          updated_at?: string
+          workspace_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_type?: string
+          id?: string
+          owner_id?: string
+          row_count?: number
+          source_path?: string | null
+          status?: string
+          summary?: Json
+          updated_at?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "data_uploads_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "client_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       email_connection_secrets: {
         Row: {

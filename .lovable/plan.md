@@ -1,99 +1,131 @@
-## Sprint 2 — Reshape the Logged-In Product Into a Self-Serve Campaign Launchpad
 
-The goal is to turn the existing `/portal` + `/crm` surfaces into a guided, campaign-first product without rebuilding the underlying tables, auth, or agency model. Customers should land on a Launch Dashboard, run a guided builder, and end up in a campaign pack workspace with social / press / video / lead capture / pipeline / reporting all in one place.
+# Sprint: Data Vault + Upload + Mapping + Import Preview
 
-### 1. New customer-facing app namespace: `/app`
+Purely additive. No existing pages, routes, billing, credits, workspace, pipeline, demo, or founder flows are removed or restructured.
 
-Customers (role: `client`) and agency users currently land in `/portal`. We'll introduce a new `/app` namespace that becomes the self-serve launchpad. `/portal/*` stays as a thin compatibility layer (redirects to the `/app` equivalents) so we don't break existing sessions.
+---
 
-```text
-/app                        Launch Dashboard (new)
-/app/campaigns              My campaigns (active + drafts)
-/app/campaigns/new          Guided 5-step builder
-/app/campaigns/:id          Campaign pack workspace (tabs)
-/app/leads                  Mini pipeline (Kanban: New → Contacted → Qualified → Won → Lost)
-/app/performance            Cross-campaign performance review
-/app/templates              Template gallery + clone
-/app/workspaces             Agency client workspace switcher (agency only)
-/app/settings               Billing, integrations, profile, email connection
+## 1. Database changes (one migration)
+
+New tables, all workspace-scoped via `workspace_id` (using existing `client_workspaces.id`) plus `owner_id = auth.uid()`.
+
+- `data_uploads` — one row per file/paste upload
+  - `file_name`, `file_type` (`csv|paste|manual|xlsx`), `source` (storage path, nullable), `row_count`, `status` (`uploaded|mapped|previewed|imported|failed`), `workspace_id`, `owner_id`, `uploaded_by`, `summary jsonb` (final import report)
+- `data_upload_rows` — staging rows
+  - `upload_id`, `row_number`, `raw_fields jsonb`, `mapped_fields jsonb`, `validation_status` (`valid|needs_review|risky|blocked`), `duplicate_status` (`none|possible|likely|existing`), `duplicate_of_contact_id` (nullable), `issues jsonb`, `imported_contact_id` (nullable), `import_status` (`pending|imported|skipped|failed`)
+- `data_upload_mappings` — saved column→field mapping per upload
+  - `upload_id`, `source_column`, `destination_field` (enum-like text), `ignored bool`
+
+Extend existing tables (nullable adds only — no breaking changes):
+
+- `contacts`: add `source_upload_id`, `quality_status`, `duplicate_flag bool`, `blocked bool`, `suppressed bool`, `country`, `language`, `last_verified_at`, `last_contacted_at`, `last_interaction_at`
+- `companies`: add `source_upload_id`, `country`, `region`, `language`
+
+Storage: reuse `client-documents` bucket under prefix `data-uploads/<workspace_id>/<upload_id>/raw.csv`. Add UPDATE/DELETE policies scoped to owner.
+
+RLS: standard workspace + owner scoping. GRANTs to `authenticated` + `service_role`. No `anon`.
+
+---
+
+## 2. Routes (added to `App.tsx`, under `/app`)
+
+- `/app/data-vault` — Vault dashboard
+- `/app/data-vault/upload` — 5-step wizard (Upload → Map → Preview → Confirm → Report)
+- `/app/data-vault/imports/:id` — past import detail + report
+
+Sidebar (`AppLayout.tsx`): insert "Data Vault" (Database icon) directly above Campaigns.
+
+---
+
+## 3. Files to create
+
+```
+src/pages/app/AppDataVault.tsx          # dashboard
+src/pages/app/AppDataVaultUpload.tsx    # wizard shell
+src/pages/app/AppDataVaultImport.tsx    # import detail / report
+src/components/app/datavault/
+  UploadStep.tsx          # CSV file / paste textarea / manual rows
+  MappingStep.tsx         # two-column source→destination dropdowns
+  PreviewStep.tsx         # sample rows, statuses, duplicates summary
+  ConfirmStep.tsx         # final confirm + create active records
+  ImportReport.tsx        # rows uploaded, created, dupes, etc.
+  VaultSummaryCards.tsx   # top stat cards
+  RecentImportsTable.tsx
+  DataHealthPanel.tsx
+  RecommendedActions.tsx
+  DataVaultDashboardWidget.tsx  # reused on Launch Dashboard
+src/lib/dataVault/
+  parseCsv.ts             # tiny CSV parser (no new dep — handles quoted fields)
+  detectFields.ts         # header → destination_field guesser
+  validate.ts             # email regex, role-account detect, missing-field checks → quality_status
+  duplicates.ts           # match against existing contacts + within-batch
+  destinationFields.ts    # canonical field list + labels
 ```
 
-### 2. Launch Dashboard (`/app`)
+## 4. Files to edit
 
-Top band:
-- "Welcome back, {first name}"
-- Primary CTA: **Start a new campaign** → `/app/campaigns/new`
-- Secondary CTA: **Open my latest campaign** → most recent `campaigns` row
-- Stat strip: active campaigns, leads captured, follow-ups due, last campaign performance snapshot
+- `src/App.tsx` — register 3 new routes inside the `/app` layout
+- `src/pages/app/AppLayout.tsx` — add Data Vault nav entry (Database icon)
+- `src/pages/app/AppDashboard.tsx` — mount `DataVaultDashboardWidget`
+- `src/pages/demo/DemoCRMDashboard.tsx` (and add `src/pages/demo/DemoDataVault.tsx`) — show seeded demo upload, mapping preview, duplicates, report; CTA "Upload your own data" → `/auth`
+- `src/integrations/supabase/types.ts` regenerates after migration
 
-Below, six core cards (plus a 7th for agencies):
-Start a campaign · My current campaigns · Lead capture & pipeline · Performance review · Templates · Workspace settings · Client workspaces (agency only).
+## 5. Upload flow detail
 
-### 3. Guided campaign builder (`/app/campaigns/new`)
+1. **Upload**: CSV via file input, paste textarea (tab/comma auto-detect), or manual-row entry table. Parse client-side, insert `data_uploads` row + `data_upload_rows` rows with `raw_fields`. For CSV files <5MB, upload raw to storage in parallel; skip for paste/manual.
+2. **Map**: `detectFields` pre-fills mapping; user adjusts via dropdowns; saved to `data_upload_mappings`. "Ignore" option supported.
+3. **Preview**: Compute `mapped_fields`, run `validate` → quality_status, run `duplicates` against existing `contacts` in workspace + within batch. Persist back to `data_upload_rows`. Show 25-row sample, totals, top issues.
+4. **Confirm**: User chooses what to import (valid / needs_review / risky / blocked toggles; default = valid + needs_review). On confirm, insert into `contacts`/`companies` with `source_upload_id`, `quality_status`, etc. Update `data_upload_rows.imported_contact_id` and `import_status`.
+5. **Report**: Render `ImportReport` with rows uploaded, contacts created, companies created, duplicates, risky, blocked, safe-to-send estimate, recommended next actions, link to pipeline.
 
-Replace the existing one-shot form with a 5-step wizard with a progress bar:
-1. **Goal** — leads / sales / sign-ups / bookings / awareness
-2. **Business brief** — campaign name, offer, audience, industry, geography, price, tone, key CTA, channels, deadline, notes
-3. **Campaign type** — lead gen / launch / promo / nurture / re-engagement / PR push
-4. **Output preferences** — checklist of pack components (social, email, landing, PR, video, full bundle)
-5. **Review** — summary card → **Generate campaign pack**
+## 6. Quality status rules (initial, conservative)
 
-Submission writes one row to `campaigns` (existing table) with brief data in a JSON column (`brief jsonb` — add via migration if missing) and a generated `pack jsonb` produced client-side from a deterministic template library (no AI call yet; we wire AI in a follow-up). Each generated section is stored so the workspace can read it back.
+- `blocked`: malformed email AND no name AND no company; or matches suppressed list
+- `risky`: role-account pattern (info@, admin@, sales@, noreply@), or free-email + no company, or email TLD obviously off
+- `needs_review`: missing key field (name OR company), suspicious typos, name in email field
+- `valid`: everything else
 
-### 4. Campaign pack workspace (`/app/campaigns/:id`)
+All checks return `issues: string[]` stored on the row for transparency.
 
-Replace the current `CampaignDetailPage` with a tabbed workspace. Tabs:
-Overview · Strategy · Landing Page Copy · Offer Copy · Email Sequence · Social Pack · Press Release · Video Pack · Lead Capture · Pipeline · Performance.
+## 7. Duplicate detection rules
 
-Each tab renders the corresponding slice of `pack jsonb` with copy-to-clipboard, "regenerate this section" stub, and export buttons (markdown / pdf reuse the existing `jspdf` setup).
+Within batch + against existing workspace contacts:
+- same normalized email → `likely`
+- same full_name + same company_name → `possible`
+- email already in `contacts` table → `existing`
+Otherwise `none`. User can override per-row in preview (import as new / skip).
 
-Required content shapes:
-- **Social pack** — launch posts, follow-ups, hook variations, CTA variations, platform variants (LinkedIn / Instagram / X / Facebook / TikTok), short + long captions, visual prompts, launch-week sequence, repost ideas.
-- **Press release** — headline, subheadline, opening para, body, quote draft, boilerplate, CTA / contact line.
-- **Video pack** — 3 hook options, 30s + 60s scripts, talking-head + B-roll versions, shot list, storyboard outline, on-screen text prompts, caption text, CTA endings. No rendering this sprint.
-- **Lead capture** — form title, field preview, CTA label, thank-you message, hosted capture URL placeholder (`/c/:slug`), leads-from-this-campaign list.
-- **Pipeline** — campaign-scoped slice of `leads` table.
-- **Performance** — leads, response volume, conversion %, best performer note, next-step prompt, "Clone campaign" button.
+## 8. Vault dashboard widgets
 
-### 5. Mini pipeline (`/app/leads`)
+- 8 summary cards: total contacts, total companies, imports, clean, needs review, risky, blocked, duplicates — counts pulled from `contacts` + latest `data_uploads.summary`.
+- Recent imports table (10 most recent).
+- Data health donut (clean/needs review/risky/blocked).
+- Recommended actions list — derived from current vault state.
+- Primary CTA: "Upload contacts" → wizard.
 
-Kanban with 5 stages (New, Contacted, Qualified, Won, Lost) reading from the existing `leads` table. Each card: name, source campaign, created date, stage, last action, follow-up status. Drag to change stage updates `leads.status`.
+## 9. Launch Dashboard addition
 
-### 6. Templates (`/app/templates`)
+`DataVaultDashboardWidget` shows: contacts uploaded, valid, needs review, safe-to-send estimate, latest import row, CTA "Open Data Vault".
 
-Static template gallery with six starter types (lead gen, launch, nurture, promo, re-engagement, PR push) plus a "Clone from existing" list pulled from the user's past campaigns. Selecting a template prefills the builder.
+## 10. Demo
 
-### 7. Agency workspace integration
+Add `/demo/data-vault` route showing seeded `clients_q4_outreach.csv` upload: 247 rows, 12 duplicates, 18 risky, 9 blocked, 208 safe-to-send. Mapping preview, sample preview rows, report. CTA "Upload your own data" → `/auth`. No DB writes — pure read-only seeded constants.
 
-Reuse existing `client_workspaces`. Add a workspace-switcher dropdown in the `/app` shell header for users with more than one workspace; all `/app` reads are scoped by selected `workspace_id` held in context + localStorage. Same flows, just scoped.
+## 11. Out of scope (called out for next sprint)
 
-### 8. Demo environment
+- Enrichment / verification provider integration
+- Merge UI for duplicates (status flag + filter only this sprint)
+- XLSX parsing (UI shows "Coming soon" tile; CSV/paste/manual ship now)
+- Bulk suppression/segment builder
+- Credit charging for activation (model in place via `source_upload_id`; pricing hooks added next sprint)
 
-Reshape `/demo/crm` to mirror the new `/app` experience using `DemoContext` (no DB writes). Pre-seed one fully generated example campaign so the demo shows: builder → pack → social → PR → video → lead capture → pipeline → reporting.
+---
 
-### 9. Cleanup / compatibility
+## Founder decisions needed before Prompt 2
 
-- `/portal` routes become thin redirects to `/app` equivalents (Navigate components) — preserves bookmarks and any links in transactional emails.
-- Internal CRM (`/crm/*`) is untouched — it stays the staff-side tool.
-- Old `CampaignsPage` / `CampaignDetailPage` in `/crm` remain for staff but are no longer the customer's primary surface.
+1. **Storage tier**: confirm reusing `client-documents` bucket for raw uploads, or do you want a separate `data-vault-raw` bucket so you can apply a cheaper lifecycle policy later?
+2. **Default import policy**: should `needs_review` rows be imported by default (current plan) or held in staging until reviewed?
+3. **Free upload caps**: any per-workspace row limit for Starter (e.g. 5,000 staged rows) to protect cost before activation pricing lands in Prompt 2?
+4. **XLSX**: ship now (adds `xlsx` dep ~400KB) or defer to Prompt 2?
 
-### Technical details
-
-- New folder: `src/pages/app/` for the launchpad pages, `src/components/app/` for builder steps, workspace tabs, pipeline board, template cards.
-- New context: `src/contexts/WorkspaceContext.tsx` — selected workspace id, switcher, scoped query helpers.
-- New util: `src/lib/campaignPack.ts` — pure-function template generators that take the brief and return the full `pack` object (social, PR, video, etc.). Deterministic, no network. AI hook stub left as `TODO: replace with AI Gateway call`.
-- Migration: add `brief jsonb`, `pack jsonb`, `slug text unique` to `campaigns` if absent. Grants kept consistent (`authenticated`, `service_role`). RLS unchanged.
-- Update `src/App.tsx` with the new `/app/*` route tree under `ProtectedRoute`, plus `/portal/*` → `/app/*` redirects.
-- Update `src/lib/platformManual.ts` with a new chapter "Self-Serve Campaign Launchpad" and add a build-log entry.
-
-### Out of scope this sprint (called out for founder decisions)
-
-- Real AI generation for pack content (currently deterministic templates). Decision: do we wire Lovable AI Gateway next sprint?
-- Hosted capture page rendering at `/c/:slug` — placeholder route only.
-- Stripe billing / paywalling tiers (Starter / Growth / Agency).
-- Email sending for follow-up sequences (drafts only).
-- Real analytics ingestion (UTM / pixel) — performance numbers are computed from `leads` for now.
-
-### Deliverables when complete
-
-Launch Dashboard, guided builder, campaign pack workspace with all 11 tabs, full social / PR / video outputs, mini pipeline, templates, agency workspace switcher, refreshed demo, `/portal` redirects, updated ops manual, and a short list of founder decisions before the monetisation sprint.
+Answer those and I'll execute. If you want me to proceed with sensible defaults (reuse bucket, import valid+needs_review, 10k staged-row cap, defer XLSX), say "go".

@@ -70,6 +70,10 @@ import AppSettings from "./pages/app/AppSettings.tsx";
 import AppWorkspaces from "./pages/app/AppWorkspaces.tsx";
 import AppBilling from "./pages/app/AppBilling.tsx";
 import AppEmailConnections from "./pages/app/AppEmailConnections.tsx";
+import AppDataVault from "./pages/app/AppDataVault.tsx";
+import AppDataVaultUpload from "./pages/app/AppDataVaultUpload.tsx";
+import AppDataVaultImport from "./pages/app/AppDataVaultImport.tsx";
+import DemoDataVault from "./pages/demo/DemoDataVault.tsx";
 import HostedCapture from "./pages/HostedCapture.tsx";
 
 const queryClient = new QueryClient();
@@ -115,6 +119,7 @@ const AnimatedRoutes = () => {
         <Route path="/demo/crm" element={<DemoCRMLayout />}>
           <Route index element={<DemoCRMDashboard />} />
         </Route>
+        <Route path="/demo/data-vault" element={<DemoDataVault />} />
 
         {/* CRM (protected - internal team) */}
         <Route path="/crm" element={<CRMProtectedRoute><CRMLayout /></CRMProtectedRoute>}>
@@ -138,6 +143,9 @@ const AnimatedRoutes = () => {
         {/* Self-serve customer app (protected) */}
         <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
           <Route index element={<AppDashboard />} />
+          <Route path="data-vault" element={<AppDataVault />} />
+          <Route path="data-vault/upload" element={<AppDataVaultUpload />} />
+          <Route path="data-vault/imports/:id" element={<AppDataVaultImport />} />
           <Route path="campaigns" element={<AppCampaigns />} />
           <Route path="campaigns/new" element={<AppCampaignNew />} />
           <Route path="campaigns/:id" element={<AppCampaignWorkspace />} />
