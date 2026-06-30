@@ -1,20 +1,20 @@
 import { motion } from "framer-motion";
 import {
-  FileText, LayoutTemplate, Tag, Mail, Megaphone, Share2, Newspaper, Video, FormInput, GitBranch, LineChart,
+  Database, ShieldCheck, Send, Mail, Share2, Newspaper, Video, Inbox, GitBranch, BarChart3, Users,
 } from "lucide-react";
 
 const cards = [
-  { icon: FileText, title: "Campaign strategy summary", desc: "A clear plan you can act on — audience, message, channels, sequencing." },
-  { icon: LayoutTemplate, title: "Landing page copy", desc: "Conversion-ready copy you can paste into any page builder." },
-  { icon: Tag, title: "Offer copy", desc: "Headline, sub, bullets, CTA — written to move buyers, not impress writers." },
-  { icon: Mail, title: "Email sequence", desc: "Multi-step nurture and follow-up emails that keep buyers warm." },
-  { icon: Megaphone, title: "Ad variants", desc: "Multiple ad concepts so you can test what wins, not guess." },
-  { icon: Share2, title: "Social media pack", desc: "Launch posts, follow-up posts, hooks, CTAs and platform variants — ready to schedule." },
-  { icon: Newspaper, title: "Press release", desc: "Distribution-ready announcement to amplify launches and milestones." },
-  { icon: Video, title: "Video pack", desc: "Scripts, hooks, shot list, storyboard outline, captions and CTA endings." },
-  { icon: FormInput, title: "Lead capture", desc: "Every campaign has a clear way to collect interest and move it into the pipeline." },
-  { icon: GitBranch, title: "Simple pipeline", desc: "Track leads from first contact to closed — no separate CRM required." },
-  { icon: LineChart, title: "Monthly review", desc: "Auto-generated performance report so you see what worked and what to repeat." },
+  { icon: Database, title: "Data Vault", desc: "Upload CSVs or paste rows. Field-map once. Store companies, contacts and segments in one place." },
+  { icon: ShieldCheck, title: "Quality review", desc: "See duplicates, missing fields, risky records and what's safe to activate — before you send a thing." },
+  { icon: Send, title: "Safe activation", desc: "Sender verification, daily caps and risky-record limits. Activation only proceeds when it's safe." },
+  { icon: Mail, title: "Outreach email & cadence", desc: "Build sequences, set timing, schedule recurring runs. Stop, pause or refresh assets at any time." },
+  { icon: Share2, title: "Social pack", desc: "Launch posts, hooks and platform variants ready to schedule alongside outreach." },
+  { icon: Newspaper, title: "Press release", desc: "Distribution-ready announcement for launches and milestones — generated from the same brief." },
+  { icon: Video, title: "Video pack", desc: "Scripts, hooks, shot list, storyboard outline and captions for short-form video." },
+  { icon: Inbox, title: "Replies & follow-up", desc: "Action queue for inbound replies with snooze, follow-up states and stuck-deal alerts." },
+  { icon: GitBranch, title: "Pipeline movement", desc: "Move warm contacts into opportunities, track value and watch deals progress — no separate CRM." },
+  { icon: BarChart3, title: "Performance review", desc: "Reply rates, pipeline value and activation health summarised every cycle." },
+  { icon: Users, title: "Agency workspaces", desc: "One account, multiple isolated client workspaces with pooled governance and credits." },
 ];
 
 const CampaignCapabilities = () => (
@@ -27,12 +27,12 @@ const CampaignCapabilities = () => (
         transition={{ duration: 0.6 }}
         className="max-w-2xl mb-14"
       >
-        <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">What you get</p>
+        <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">What's inside the workspace</p>
         <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">
-          Everything you need to launch a real campaign
+          A full commercial operating system, not just a content generator
         </h2>
         <p className="text-muted-foreground text-lg">
-          Generated from your brief. Editable in the workspace. Built around revenue, not output volume.
+          Data, activation, outreach, replies and pipeline — connected end to end so the same workflow keeps producing revenue.
         </p>
       </motion.div>
 
