@@ -18,6 +18,7 @@ import SendSafetyPanel from "@/components/app/SendSafetyPanel";
 import SenderStatusCard from "@/components/app/SenderStatusCard";
 import { computeSafety, DEFAULT_SENDER_STATE, type SenderState } from "@/lib/sendSafety";
 import type { PlanId } from "@/lib/credits";
+import { deriveFollowUpState } from "@/lib/leadStates";
 
 interface VaultStats {
   total_contacts: number;
@@ -38,6 +39,8 @@ interface PipelineStats {
   won: number;
   lost: number;
   by_stage: Record<string, number>;
+  stuck: number;
+  next_action_due: number;
 }
 
 interface InteractionStats {
@@ -76,7 +79,7 @@ export default function AppDashboard() {
     needs_review: 0, risky: 0, blocked: 0, duplicates: 0, safe_to_activate: 0,
   });
   const [pipeline, setPipeline] = useState<PipelineStats>({
-    leads: 0, opportunities: 0, pipeline_value: 0, won: 0, lost: 0, by_stage: {},
+    leads: 0, opportunities: 0, pipeline_value: 0, won: 0, lost: 0, by_stage: {}, stuck: 0, next_action_due: 0,
   });
   const [inter, setInter] = useState<InteractionStats>({
     replies_due: 0, followups_today: 0, dormant: 0, warm: 0, bounces: 0,
@@ -101,7 +104,7 @@ export default function AppDashboard() {
       ] = await Promise.all([
         supabase.from("profiles").select("first_name").eq("user_id", user.id).maybeSingle(),
         supabase.from("campaigns").select("id, name, status, created_at, cadence_type, start_at, cadence_end_at, next_run_at, timezone, runs_completed").order("created_at", { ascending: false }),
-        supabase.from("leads").select("id, status, follow_up_at, last_contacted_at"),
+        supabase.from("leads").select("id, status, follow_up_at, follow_up_state, replied_at, snoozed_until, last_email_sent_at, last_contacted_at, last_interaction_at, opportunity_id, blocked, suppressed"),
         supabase.from("contacts").select("*", { count: "exact", head: true }).not("source_upload_id", "is", null),
         supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "valid").not("source_upload_id", "is", null),
         supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "needs_review").not("source_upload_id", "is", null),
@@ -109,7 +112,7 @@ export default function AppDashboard() {
         supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "blocked").not("source_upload_id", "is", null),
         supabase.from("companies").select("*", { count: "exact", head: true }),
         supabase.from("data_uploads").select("*", { count: "exact", head: true }),
-        supabase.from("opportunities").select("id, stage, estimated_value"),
+        supabase.from("opportunities").select("id, stage, estimated_value, stage_changed_at, next_action_at"),
         supabase.from("email_sends").select("status, sent_at"),
       ]);
 
@@ -136,28 +139,37 @@ export default function AppDashboard() {
       const ls = leads || [];
       const now = Date.now();
       const dayMs = 24 * 60 * 60 * 1000;
-      const followups_today = ls.filter((l: any) => l.follow_up_at && new Date(l.follow_up_at).getTime() <= now).length;
-      const warm = ls.filter((l: any) => ["contacted", "demo_scheduled", "proposal_sent"].includes(l.status)).length;
-      const dormant = ls.filter((l: any) => l.last_contacted_at && (now - new Date(l.last_contacted_at).getTime()) > 30 * dayMs).length;
+      const states = ls.map((l: any) => deriveFollowUpState(l));
+      const replies_due = states.filter((s) => s === "replied").length;
+      const followups_today = states.filter((s) => s === "due" || s === "overdue").length;
+      const warm = states.filter((s) => s === "warm" || s === "replied").length;
+      const dormant = states.filter((s) => s === "dormant").length;
       const bounces = (sends || []).filter((s: any) => s.status === "failed" || s.status === "bounced").length;
-      setInter({ replies_due: 0, followups_today, dormant, warm, bounces });
+      setInter({ replies_due, followups_today, dormant, warm, bounces });
 
       const opp = opps || [];
       const by_stage: Record<string, number> = {};
       let pipeline_value = 0;
+      let stuck = 0;
+      let nextActionDue = 0;
       opp.forEach((o: any) => {
         by_stage[o.stage] = (by_stage[o.stage] || 0) + 1;
-        if (o.stage !== "closed_lost" && o.stage !== "closed_won") {
+        const isOpen = o.stage !== "lost" && o.stage !== "won";
+        if (isOpen) {
           pipeline_value += Number(o.estimated_value || 0);
+          if (o.stage_changed_at && (now - new Date(o.stage_changed_at).getTime()) > 14 * dayMs) stuck++;
+          if (o.next_action_at && new Date(o.next_action_at).getTime() < now) nextActionDue++;
         }
       });
       setPipeline({
         leads: ls.length,
         opportunities: opp.length,
         pipeline_value,
-        won: opp.filter((o: any) => o.stage === "closed_won").length,
-        lost: opp.filter((o: any) => o.stage === "closed_lost").length,
+        won: opp.filter((o: any) => o.stage === "won").length,
+        lost: opp.filter((o: any) => o.stage === "lost").length,
         by_stage,
+        stuck,
+        next_action_due: nextActionDue,
       });
     })();
   }, [user]);
@@ -316,15 +328,15 @@ export default function AppDashboard() {
       <SectionHeader
         icon={MessageSquare}
         title="Replies and follow-up"
-        desc="Interaction intelligence — never miss a warm signal."
-        cta={{ label: "Open interaction queue", to: "/app/leads" }}
+        desc="Who replied, who's overdue, what's warm. This is where you start your day."
+        cta={{ label: "Open follow-up queue", to: "/app/follow-up" }}
       />
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <BigStat label="Replies need action" value={inter.replies_due} icon={MessageSquare} tone="warn" />
-        <BigStat label="Follow-ups due today" value={inter.followups_today} icon={Mail} tone="warn" />
-        <BigStat label="Warm contacts" value={inter.warm} icon={Zap} tone="good" />
-        <BigStat label="Dormant" value={inter.dormant} icon={AlertTriangle} />
-        <BigStat label="Bounces" value={inter.bounces} icon={AlertTriangle} tone="danger" />
+        <Link to="/app/follow-up?tab=replied"><BigStat label="Replies need action" value={inter.replies_due} icon={MessageSquare} tone="warn" /></Link>
+        <Link to="/app/follow-up?tab=overdue"><BigStat label="Follow-ups due / overdue" value={inter.followups_today} icon={Mail} tone="warn" /></Link>
+        <Link to="/app/follow-up?tab=warm"><BigStat label="Warm contacts" value={inter.warm} icon={Zap} tone="good" /></Link>
+        <Link to="/app/follow-up?tab=dormant"><BigStat label="Dormant" value={inter.dormant} icon={AlertTriangle} /></Link>
+        <Link to="/app/follow-up?tab=bounced"><BigStat label="Bounces" value={inter.bounces} icon={AlertTriangle} tone="danger" /></Link>
       </div>
       <FollowUpReminders />
 
@@ -333,13 +345,15 @@ export default function AppDashboard() {
         icon={TrendingUp}
         title="Pipeline and sales"
         desc="From activated data to closed revenue."
-        cta={{ label: "Open pipeline", to: "/app/leads" }}
+        cta={{ label: "Open pipeline", to: "/app/pipeline" }}
       />
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
         <BigStat label="Leads" value={pipeline.leads} icon={Users} />
         <BigStat label="Opportunities" value={pipeline.opportunities} icon={Briefcase} />
         <BigStat label="Pipeline value" value={`£${pipeline.pipeline_value.toLocaleString()}`} icon={TrendingUp} tone="good" />
-        <BigStat label="Closed won" value={pipeline.won} icon={CheckCircle2} tone="good" />
+        <BigStat label="Stuck 14d+" value={pipeline.stuck} icon={AlertTriangle} tone="warn" />
+        <BigStat label="Actions overdue" value={pipeline.next_action_due} icon={Clock} tone="danger" />
+        <BigStat label="Won" value={pipeline.won} icon={CheckCircle2} tone="good" />
       </div>
       {Object.keys(pipeline.by_stage).length > 0 && (
         <Card>
@@ -483,14 +497,17 @@ function AssetCard({ icon: Icon, title, desc, onClick }: { icon: any; title: str
 
 function buildNextActions(v: VaultStats, i: InteractionStats, p: PipelineStats, credits: number) {
   const acts: Array<{ title: string; desc: string; icon: any; to: string; toneClass: string }> = [];
+  if (i.replies_due > 0) acts.push({ title: `${i.replies_due} replies need action`, desc: "Respond to warm replies before they cool.", icon: MessageSquare, to: "/app/follow-up?tab=replied", toneClass: "bg-emerald-100 text-emerald-700" });
+  if (i.followups_today > 0) acts.push({ title: `${i.followups_today} follow-ups due / overdue`, desc: "Catch up your outreach queue.", icon: Mail, to: "/app/follow-up?tab=overdue", toneClass: "bg-amber-100 text-amber-700" });
+  if (i.warm > 0) acts.push({ title: `${i.warm} warm contacts ready for pipeline`, desc: "Move qualified leads into opportunities.", icon: TrendingUp, to: "/app/follow-up?tab=warm", toneClass: "bg-primary/10 text-primary" });
+  if (p.stuck > 0) acts.push({ title: `${p.stuck} deals stuck 14+ days`, desc: "Unblock or update next-action dates.", icon: AlertTriangle, to: "/app/pipeline", toneClass: "bg-amber-100 text-amber-700" });
+  if (p.next_action_due > 0) acts.push({ title: `${p.next_action_due} opportunity actions overdue`, desc: "Chase proposals and negotiations.", icon: Clock, to: "/app/pipeline", toneClass: "bg-rose-100 text-rose-700" });
+  if (i.dormant > 0) acts.push({ title: `${i.dormant} dormant contacts to revisit`, desc: "Re-engage cold lists with a fresh angle.", icon: AlertTriangle, to: "/app/follow-up?tab=dormant", toneClass: "bg-slate-100 text-slate-700" });
   if (v.risky > 0) acts.push({ title: `Review ${v.risky} risky contacts`, desc: "Decide what's safe to activate.", icon: AlertTriangle, to: "/app/data-vault", toneClass: "bg-amber-100 text-amber-700" });
-  if (v.duplicates > 0) acts.push({ title: `Resolve ${v.duplicates} duplicates`, desc: "Merge or remove duplicate records.", icon: AlertTriangle, to: "/app/data-vault", toneClass: "bg-amber-100 text-amber-700" });
-  if (v.safe_to_activate > 0) acts.push({ title: `Send to ${Math.min(50, v.safe_to_activate)} safe contacts`, desc: "Activate a warm segment today.", icon: Send, to: "/app/leads", toneClass: "bg-emerald-100 text-emerald-700" });
-  if (i.followups_today > 0) acts.push({ title: `Follow up ${i.followups_today} contacts`, desc: "Follow-ups due today.", icon: Mail, to: "/app/leads", toneClass: "bg-primary/10 text-primary" });
-  if (p.leads > 0 && p.opportunities === 0) acts.push({ title: `Move ${Math.min(4, p.leads)} contacts into pipeline`, desc: "Promote qualified leads to opportunities.", icon: TrendingUp, to: "/app/leads", toneClass: "bg-primary/10 text-primary" });
+  if (v.safe_to_activate > 0) acts.push({ title: `Send to ${Math.min(50, v.safe_to_activate)} safe contacts`, desc: "Activate a warm segment today.", icon: Send, to: "/app/activate", toneClass: "bg-emerald-100 text-emerald-700" });
+  if (p.leads > 0 && p.opportunities === 0) acts.push({ title: `Move ${Math.min(4, p.leads)} contacts into pipeline`, desc: "Promote qualified leads to opportunities.", icon: TrendingUp, to: "/app/follow-up", toneClass: "bg-primary/10 text-primary" });
   if (credits < 20) acts.push({ title: "Top up credits", desc: "You're running low — keep sending without interruption.", icon: Zap, to: "/app/billing", toneClass: "bg-rose-100 text-rose-700" });
   acts.push({ title: "Authenticate sender domain", desc: "Improve deliverability with SPF / DKIM.", icon: ShieldCheck, to: "/app/settings", toneClass: "bg-primary/10 text-primary" });
-  acts.push({ title: "Create a social pack for your next outreach", desc: "Launch posts, follow-ups and hooks in minutes.", icon: Megaphone, to: "/app/campaigns/new?focus=social", toneClass: "bg-accent/20 text-accent-foreground" });
   if (v.total_contacts === 0) acts.unshift({ title: "Upload your first contact list", desc: "Get data into the vault to unlock activation.", icon: Upload, to: "/app/data-vault/upload", toneClass: "bg-primary/10 text-primary" });
   return acts.slice(0, 9);
 }
