@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Mail, ShieldCheck, AlertTriangle, RefreshCw, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { SENDER_HEALTH_LABEL, SENDER_HEALTH_TONE, type SenderHealth, type SenderState } from "@/lib/sendSafety";
 
