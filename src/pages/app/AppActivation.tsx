@@ -37,8 +37,10 @@ export default function AppActivation() {
   const [batchSize, setBatchSize] = useState<number>(0);
   const [sender, setSender] = useState<SenderState>(DEFAULT_SENDER_STATE);
   const [fromEmail, setFromEmail] = useState<string | null>(null);
+  const [connectionId, setConnectionId] = useState<string | null>(null);
   const [usedToday, setUsedToday] = useState(0);
   const [scheduledToday, setScheduledToday] = useState(0);
+  const [agencyPooled, setAgencyPooled] = useState<number>(0);
 
   useEffect(() => {
     if (!user) return;
