@@ -51,8 +51,11 @@ Deno.serve(async (req) => {
       results.push({ id: s.id, ok: true });
     } catch (e) {
       const msg = (e as Error).message;
+      console.error("[email-process-queue] send failed", s.id, msg);
+      // Persist full detail for the operator (status row) but don't leak the raw
+      // upstream banner back to whatever called the function.
       await admin.from("email_sends").update({ status: "failed", error: msg }).eq("id", s.id);
-      results.push({ id: s.id, ok: false, error: msg });
+      results.push({ id: s.id, ok: false, error: "send_failed" });
     }
   }
   return new Response(JSON.stringify({ processed: results.length, results }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });

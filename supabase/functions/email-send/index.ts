@@ -46,7 +46,10 @@ Deno.serve(async (req) => {
         status: body.scheduled_for ? "scheduled" : "sending",
       };
       const { data, error } = await admin.from("email_sends").insert(insert).select().single();
-      if (error) return json({ error: error.message }, 400);
+      if (error) {
+        console.error("[email-send] insert failed", error);
+        return json({ error: "Could not queue email. Please retry." }, 400);
+      }
       sendRow = data;
     }
 
@@ -102,12 +105,15 @@ Deno.serve(async (req) => {
       return json({ id: sendRow.id, status: "sent" });
     } catch (e) {
       const msg = (e as Error).message;
+      console.error("[email-send] SMTP failure", msg);
       await admin.from("email_sends").update({ status: "failed", error: msg }).eq("id", sendRow.id);
       await admin.from("email_connections").update({ status: "error", last_error: msg }).eq("id", conn.id);
-      return json({ error: msg }, 502);
+      // Don't leak raw upstream SMTP banners — keep full detail in logs only.
+      return json({ error: "Send failed at the upstream SMTP server. Check sender configuration." }, 502);
     }
   } catch (e) {
-    return json({ error: (e as Error).message }, 500);
+    console.error("[email-send] unhandled", (e as Error).message);
+    return json({ error: "Internal error" }, 500);
   }
 });
 

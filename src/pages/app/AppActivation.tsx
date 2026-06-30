@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +26,7 @@ import JourneyEmptyState from "@/components/app/JourneyEmptyState";
 interface Counts { valid: number; needs_review: number; risky: number; blocked: number; suppressed: number; }
 
 export default function AppActivation() {
+  const { t } = useTranslation("app");
   const { user } = useAuth();
   const { remaining, planConfig } = useCredits();
   const navigate = useNavigate();
@@ -130,7 +132,7 @@ export default function AppActivation() {
     await audit("activation_started", {
       batch: sendNow, includeReview, riskyOverride: riskyClamped, plan, safeAllowance: safety.safeAllowance,
     });
-    toast.success(`Activation prepared for ${sendNow} contacts. Open your campaign to schedule the send.`);
+    toast.success(t("activate.toasts.prepared", { count: sendNow }));
     if (campaignId) navigate(`/app/campaigns/${campaignId}`);
     else navigate("/app/campaigns");
   }
