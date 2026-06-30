@@ -14,6 +14,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { CampaignBrief, CampaignGoal, CampaignKind, generatePack, makeSlug } from "@/lib/campaignPack";
 import { toast } from "sonner";
+import { useCredits } from "@/contexts/CreditsContext";
+import { CREDIT_COSTS } from "@/lib/credits";
 
 const GOALS: { id: CampaignGoal; label: string; desc: string }[] = [
   { id: "leads", label: "Leads", desc: "Capture qualified prospects" },
@@ -47,6 +49,7 @@ export default function AppCampaignNew() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { currentId: workspaceId } = useWorkspace();
+  const { remaining, consume, starterExpired } = useCredits();
   const [params] = useSearchParams();
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
@@ -100,7 +103,13 @@ export default function AppCampaignNew() {
         .select("id")
         .single();
       if (error) throw error;
-      toast.success("Campaign pack generated");
+      const ok = await consume("full_campaign_pack", data.id, brief.name);
+      if (!ok) {
+        // Campaign saved as draft but no credits charged
+        toast.message("Campaign saved as draft", { description: "Top up credits to unlock the AI-generated pack." });
+      } else {
+        toast.success("Campaign pack generated");
+      }
       navigate(`/app/campaigns/${data.id}`);
     } catch (e: any) {
       toast.error(e.message || "Failed to generate campaign");
@@ -108,6 +117,8 @@ export default function AppCampaignNew() {
       setSaving(false);
     }
   };
+
+  const blocked = remaining < CREDIT_COSTS.full_campaign_pack || starterExpired;
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
