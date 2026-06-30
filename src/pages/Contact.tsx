@@ -14,7 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 const routes = [
   { icon: Building2, title: "Sales — enterprise & agency volume", desc: "Multi-workspace rollouts, agency-scale send governance, custom commercial terms.", action: "Talk to sales", to: "/book-demo" },
   { icon: LifeBuoy, title: "Product support", desc: "Help using the workspace — uploads, activation, sender setup, replies, pipeline.", action: "Open in-app support", to: "/app" },
-  { icon: CreditCard, title: "Billing & account help", desc: "Plan changes, currency, invoices, top-ups, tax queries.", action: "Open billing", to: "/app/billing" },
+  { icon: CreditCard, title: "Billing & account help", desc: "Plan changes, currency, invoices, top-ups, tax queries.", action: "Open billing help", to: "/app/billing" },
   { icon: Handshake, title: "Partnerships & integrations", desc: "Integration partners, resellers, embedded use cases.", action: "Send a message", to: "#contact-form" },
   { icon: MessageSquare, title: "General enquiries", desc: "Anything else — press, hiring, or a question that doesn't fit above.", action: "Send a message", to: "#contact-form" },
 ];
