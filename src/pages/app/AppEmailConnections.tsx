@@ -177,7 +177,7 @@ function ConnectionDialog({ editing, onDone }: { editing: Connection | null; onD
 
   const submit = async () => {
     if (!fromEmail || !smtpUser || (!smtpPassword && !editing)) {
-      toast.error("Email, username and password are required");
+      toast.error(t("email.toasts.credentialsRequired"));
       return;
     }
     setSaving(true);
@@ -196,13 +196,13 @@ function ConnectionDialog({ editing, onDone }: { editing: Connection | null; onD
     });
     setSaving(false);
     if (error || (data as any)?.error) {
-      toast.error((data as any)?.error || error?.message || "Failed to save");
+      toast.error((data as any)?.error || error?.message || tc("toasts.saveFailed"));
       return;
     }
     if ((data as any).status === "error") {
-      toast.error(`Saved but couldn't connect: ${(data as any).last_error}`);
+      toast.error(t("email.toasts.savedConnectError", { error: (data as any).last_error }));
     } else {
-      toast.success("Inbox connected");
+      toast.success(t("email.toasts.inboxConnected"));
     }
     onDone();
   };
