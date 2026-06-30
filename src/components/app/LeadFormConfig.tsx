@@ -68,7 +68,7 @@ export default function LeadFormConfig({ campaignId, slug, initial, packDefaults
             <>
               <div className="flex items-center gap-2 flex-wrap">
                 <code className="text-sm bg-muted px-2 py-1 rounded flex-1 min-w-[200px] truncate">{url}</code>
-                <Button size="sm" variant="outline" onClick={() => { navigator.clipboard.writeText(url); toast.success("Link copied"); }}><Copy className="h-3 w-3 mr-1" />Copy</Button>
+                <Button size="sm" variant="outline" onClick={() => { navigator.clipboard.writeText(url); toast.success(tc("toasts.linkCopied")); }}><Copy className="h-3 w-3 mr-1" />Copy</Button>
                 <Button size="sm" variant="outline" asChild><a href={url} target="_blank" rel="noreferrer"><ExternalLink className="h-3 w-3 mr-1" />Open</a></Button>
               </div>
               <div className="flex items-center gap-2 text-sm">
