@@ -39,6 +39,8 @@ interface PipelineStats {
   won: number;
   lost: number;
   by_stage: Record<string, number>;
+  stuck: number;
+  next_action_due: number;
 }
 
 interface InteractionStats {
