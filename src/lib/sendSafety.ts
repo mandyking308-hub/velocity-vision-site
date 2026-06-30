@@ -157,8 +157,9 @@ export function computeSafety(input: SafetyInput): SafetyResult {
     factor = 0;
   }
   if (!input.sender.domain_authenticated && input.sender.connected) {
-    adjustments.push({ factor: 0.5, reason: "Sender domain is not authenticated (SPF / DKIM missing)." });
-    factor *= 0.5;
+    // Founder decision: sender verification is a hard block on Activate.
+    pause.push("Sender domain is not verified (SPF / DKIM missing). Verify your domain to activate.");
+    factor = 0;
   }
   if (input.sender.newly_connected && input.sender.connected) {
     adjustments.push({ factor: 0.4, reason: "New sender account — warming up." });
