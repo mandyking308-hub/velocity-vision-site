@@ -174,7 +174,7 @@ const Pricing = () => {
                     </li>
                   ))}
                 </ul>
-                <Button variant={p.highlight ? "cta" : p.addon ? "outline" : "default"} asChild>
+                <Button variant={p.addon ? "outline" : "cta"} asChild>
                   <Link to="/app/billing">{p.cta}</Link>
                 </Button>
               </motion.div>
