@@ -73,10 +73,25 @@ export async function verifyWebhook(req: Request, env: StripeEnv): Promise<{ typ
 // Map price_id -> product_kind + credit grant for our catalog.
 export const PRICE_CATALOG: Record<string, { kind: string; credits?: number; plan?: string }> = {
   vv_starter_oneoff: { kind: "plan_starter", credits: 25, plan: "starter" },
+  vv_starter_oneoff_gbp: { kind: "plan_starter", credits: 25, plan: "starter" },
+  vv_starter_oneoff_eur: { kind: "plan_starter", credits: 25, plan: "starter" },
   vv_growth_monthly: { kind: "plan_growth", credits: 80, plan: "growth" },
+  vv_growth_monthly_gbp: { kind: "plan_growth", credits: 80, plan: "growth" },
+  vv_growth_monthly_eur: { kind: "plan_growth", credits: 80, plan: "growth" },
   vv_agency_monthly: { kind: "plan_agency", credits: 250, plan: "agency" },
+  vv_agency_monthly_gbp: { kind: "plan_agency", credits: 250, plan: "agency" },
+  vv_agency_monthly_eur: { kind: "plan_agency", credits: 250, plan: "agency" },
   vv_human_review_oneoff: { kind: "human_review" },
+  vv_human_review_oneoff_gbp: { kind: "human_review" },
+  vv_human_review_oneoff_eur: { kind: "human_review" },
   vv_topup_small: { kind: "topup_small", credits: 25 },
+  vv_topup_small_gbp: { kind: "topup_small", credits: 25 },
+  vv_topup_small_eur: { kind: "topup_small", credits: 25 },
   vv_topup_medium: { kind: "topup_medium", credits: 75 },
+  vv_topup_medium_gbp: { kind: "topup_medium", credits: 75 },
+  vv_topup_medium_eur: { kind: "topup_medium", credits: 75 },
   vv_topup_large: { kind: "topup_large", credits: 200 },
+  vv_topup_large_gbp: { kind: "topup_large", credits: 200 },
+  vv_topup_large_eur: { kind: "topup_large", credits: 200 },
 };
+
