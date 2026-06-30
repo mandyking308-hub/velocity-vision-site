@@ -105,6 +105,7 @@ export type Database = {
           file_size: number | null
           file_url: string
           id: string
+          language: string
           name: string
           uploaded_by: string | null
         }
@@ -115,6 +116,7 @@ export type Database = {
           file_size?: number | null
           file_url: string
           id?: string
+          language?: string
           name: string
           uploaded_by?: string | null
         }
@@ -125,6 +127,7 @@ export type Database = {
           file_size?: number | null
           file_url?: string
           id?: string
+          language?: string
           name?: string
           uploaded_by?: string | null
         }
@@ -368,6 +371,7 @@ export type Database = {
           name: string
           next_run_at: string | null
           objective: string | null
+          output_language: string
           owner_id: string | null
           pack: Json | null
           refresh_strategy: string
@@ -404,6 +408,7 @@ export type Database = {
           name: string
           next_run_at?: string | null
           objective?: string | null
+          output_language?: string
           owner_id?: string | null
           pack?: Json | null
           refresh_strategy?: string
@@ -440,6 +445,7 @@ export type Database = {
           name?: string
           next_run_at?: string | null
           objective?: string | null
+          output_language?: string
           owner_id?: string | null
           pack?: Json | null
           refresh_strategy?: string
@@ -580,6 +586,7 @@ export type Database = {
           contact_email: string | null
           contact_name: string | null
           created_at: string
+          default_language: string
           id: string
           industry: string | null
           name: string
@@ -591,6 +598,7 @@ export type Database = {
           contact_email?: string | null
           contact_name?: string | null
           created_at?: string
+          default_language?: string
           id?: string
           industry?: string | null
           name: string
@@ -602,6 +610,7 @@ export type Database = {
           contact_email?: string | null
           contact_name?: string | null
           created_at?: string
+          default_language?: string
           id?: string
           industry?: string | null
           name?: string
@@ -1789,34 +1798,46 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          billing_country: string | null
           company_id: string | null
           created_at: string
           email: string | null
           first_name: string | null
           id: string
           last_name: string | null
+          preferred_currency: string
+          preferred_language: string
+          timezone: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           avatar_url?: string | null
+          billing_country?: string | null
           company_id?: string | null
           created_at?: string
           email?: string | null
           first_name?: string | null
           id?: string
           last_name?: string | null
+          preferred_currency?: string
+          preferred_language?: string
+          timezone?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           avatar_url?: string | null
+          billing_country?: string | null
           company_id?: string | null
           created_at?: string
           email?: string | null
           first_name?: string | null
           id?: string
           last_name?: string | null
+          preferred_currency?: string
+          preferred_language?: string
+          timezone?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -2052,7 +2073,9 @@ export type Database = {
       }
       user_plans: {
         Row: {
+          billing_country: string | null
           created_at: string
+          currency: string
           id: string
           period_end: string | null
           period_start: string
@@ -2062,7 +2085,9 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          billing_country?: string | null
           created_at?: string
+          currency?: string
           id?: string
           period_end?: string | null
           period_start?: string
@@ -2072,7 +2097,9 @@ export type Database = {
           user_id: string
         }
         Update: {
+          billing_country?: string | null
           created_at?: string
+          currency?: string
           id?: string
           period_end?: string | null
           period_start?: string
@@ -2117,7 +2144,9 @@ export type Database = {
       provision_starter_plan: {
         Args: never
         Returns: {
+          billing_country: string | null
           created_at: string
+          currency: string
           id: string
           period_end: string | null
           period_start: string

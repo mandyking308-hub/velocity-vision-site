@@ -1,131 +1,90 @@
+## Sprint A — i18n framework + EN/ES (public site + /app shell)
 
-# Sprint: Data Vault + Upload + Mapping + Import Preview
+### Dependencies
+- `bun add i18next react-i18next i18next-browser-languagedetector`
 
-Purely additive. No existing pages, routes, billing, credits, workspace, pipeline, demo, or founder flows are removed or restructured.
+### Database
+Single migration adds:
+- `profiles.preferred_language` text default `'en'`
+- `profiles.timezone` text (IANA, nullable; UI default from browser)
+- `client_workspaces.default_language` text default `'en'`
+- `campaigns.output_language` text default `'en'`
+- `campaign_assets.language` text default `'en'`
 
----
+No RLS changes (columns inherit existing policies).
 
-## 1. Database changes (one migration)
+### i18n scaffold
+- `src/i18n/index.ts` — initializes i18next with `en` + `es` resources, browser detector, localStorage persistence under key `vv_lang`, fallback `en`.
+- `src/i18n/locales/en/{common,marketing,app,auth,billing}.json`
+- `src/i18n/locales/es/{common,marketing,app,auth,billing}.json`
+- Init imported in `src/main.tsx` before `<App/>` mounts.
+- `src/lib/format.ts` — `formatCurrency`, `formatDate`, `formatNumber`, `formatRelativeTime` driven by current `i18n.language` + user timezone.
 
-New tables, all workspace-scoped via `workspace_id` (using existing `client_workspaces.id`) plus `owner_id = auth.uid()`.
+### Language sync
+- `src/hooks/useLanguageSync.ts` — on auth load, reads `profiles.preferred_language`, calls `i18n.changeLanguage`. On manual change, writes back to profile.
+- `src/components/LanguageSwitcher.tsx` — EN / ES dropdown, used in:
+  - public `Navbar.tsx`
+  - `AppLayout.tsx` (top bar)
 
-- `data_uploads` — one row per file/paste upload
-  - `file_name`, `file_type` (`csv|paste|manual|xlsx`), `source` (storage path, nullable), `row_count`, `status` (`uploaded|mapped|previewed|imported|failed`), `workspace_id`, `owner_id`, `uploaded_by`, `summary jsonb` (final import report)
-- `data_upload_rows` — staging rows
-  - `upload_id`, `row_number`, `raw_fields jsonb`, `mapped_fields jsonb`, `validation_status` (`valid|needs_review|risky|blocked`), `duplicate_status` (`none|possible|likely|existing`), `duplicate_of_contact_id` (nullable), `issues jsonb`, `imported_contact_id` (nullable), `import_status` (`pending|imported|skipped|failed`)
-- `data_upload_mappings` — saved column→field mapping per upload
-  - `upload_id`, `source_column`, `destination_field` (enum-like text), `ignored bool`
+### Translated surfaces (this sprint)
+- Public: `Navbar`, `Footer`, `HeroSection`, `MidPageCTA`, `PricingTeaser`, `FinalCTA`, `HomeFAQ` (keys only, EN+ES copy).
+- App shell: `AppLayout` sidebar items, dashboard section titles, empty-state CTAs in `AppDashboard`.
+- Auth: `AuthPage` labels/buttons.
+- Billing shell: page title, plan card labels in `AppBilling`.
+- Deep CRM/founder pages remain English (out of scope per decision).
 
-Extend existing tables (nullable adds only — no breaking changes):
-
-- `contacts`: add `source_upload_id`, `quality_status`, `duplicate_flag bool`, `blocked bool`, `suppressed bool`, `country`, `language`, `last_verified_at`, `last_contacted_at`, `last_interaction_at`
-- `companies`: add `source_upload_id`, `country`, `region`, `language`
-
-Storage: reuse `client-documents` bucket under prefix `data-uploads/<workspace_id>/<upload_id>/raw.csv`. Add UPDATE/DELETE policies scoped to owner.
-
-RLS: standard workspace + owner scoping. GRANTs to `authenticated` + `service_role`. No `anon`.
-
----
-
-## 2. Routes (added to `App.tsx`, under `/app`)
-
-- `/app/data-vault` — Vault dashboard
-- `/app/data-vault/upload` — 5-step wizard (Upload → Map → Preview → Confirm → Report)
-- `/app/data-vault/imports/:id` — past import detail + report
-
-Sidebar (`AppLayout.tsx`): insert "Data Vault" (Database icon) directly above Campaigns.
-
----
-
-## 3. Files to create
-
-```
-src/pages/app/AppDataVault.tsx          # dashboard
-src/pages/app/AppDataVaultUpload.tsx    # wizard shell
-src/pages/app/AppDataVaultImport.tsx    # import detail / report
-src/components/app/datavault/
-  UploadStep.tsx          # CSV file / paste textarea / manual rows
-  MappingStep.tsx         # two-column source→destination dropdowns
-  PreviewStep.tsx         # sample rows, statuses, duplicates summary
-  ConfirmStep.tsx         # final confirm + create active records
-  ImportReport.tsx        # rows uploaded, created, dupes, etc.
-  VaultSummaryCards.tsx   # top stat cards
-  RecentImportsTable.tsx
-  DataHealthPanel.tsx
-  RecommendedActions.tsx
-  DataVaultDashboardWidget.tsx  # reused on Launch Dashboard
-src/lib/dataVault/
-  parseCsv.ts             # tiny CSV parser (no new dep — handles quoted fields)
-  detectFields.ts         # header → destination_field guesser
-  validate.ts             # email regex, role-account detect, missing-field checks → quality_status
-  duplicates.ts           # match against existing contacts + within-batch
-  destinationFields.ts    # canonical field list + labels
-```
-
-## 4. Files to edit
-
-- `src/App.tsx` — register 3 new routes inside the `/app` layout
-- `src/pages/app/AppLayout.tsx` — add Data Vault nav entry (Database icon)
-- `src/pages/app/AppDashboard.tsx` — mount `DataVaultDashboardWidget`
-- `src/pages/demo/DemoCRMDashboard.tsx` (and add `src/pages/demo/DemoDataVault.tsx`) — show seeded demo upload, mapping preview, duplicates, report; CTA "Upload your own data" → `/auth`
-- `src/integrations/supabase/types.ts` regenerates after migration
-
-## 5. Upload flow detail
-
-1. **Upload**: CSV via file input, paste textarea (tab/comma auto-detect), or manual-row entry table. Parse client-side, insert `data_uploads` row + `data_upload_rows` rows with `raw_fields`. For CSV files <5MB, upload raw to storage in parallel; skip for paste/manual.
-2. **Map**: `detectFields` pre-fills mapping; user adjusts via dropdowns; saved to `data_upload_mappings`. "Ignore" option supported.
-3. **Preview**: Compute `mapped_fields`, run `validate` → quality_status, run `duplicates` against existing `contacts` in workspace + within batch. Persist back to `data_upload_rows`. Show 25-row sample, totals, top issues.
-4. **Confirm**: User chooses what to import (valid / needs_review / risky / blocked toggles; default = valid + needs_review). On confirm, insert into `contacts`/`companies` with `source_upload_id`, `quality_status`, etc. Update `data_upload_rows.imported_contact_id` and `import_status`.
-5. **Report**: Render `ImportReport` with rows uploaded, contacts created, companies created, duplicates, risky, blocked, safe-to-send estimate, recommended next actions, link to pipeline.
-
-## 6. Quality status rules (initial, conservative)
-
-- `blocked`: malformed email AND no name AND no company; or matches suppressed list
-- `risky`: role-account pattern (info@, admin@, sales@, noreply@), or free-email + no company, or email TLD obviously off
-- `needs_review`: missing key field (name OR company), suspicious typos, name in email field
-- `valid`: everything else
-
-All checks return `issues: string[]` stored on the row for transparency.
-
-## 7. Duplicate detection rules
-
-Within batch + against existing workspace contacts:
-- same normalized email → `likely`
-- same full_name + same company_name → `possible`
-- email already in `contacts` table → `existing`
-Otherwise `none`. User can override per-row in preview (import as new / skip).
-
-## 8. Vault dashboard widgets
-
-- 8 summary cards: total contacts, total companies, imports, clean, needs review, risky, blocked, duplicates — counts pulled from `contacts` + latest `data_uploads.summary`.
-- Recent imports table (10 most recent).
-- Data health donut (clean/needs review/risky/blocked).
-- Recommended actions list — derived from current vault state.
-- Primary CTA: "Upload contacts" → wizard.
-
-## 9. Launch Dashboard addition
-
-`DataVaultDashboardWidget` shows: contacts uploaded, valid, needs review, safe-to-send estimate, latest import row, CTA "Open Data Vault".
-
-## 10. Demo
-
-Add `/demo/data-vault` route showing seeded `clients_q4_outreach.csv` upload: 247 rows, 12 duplicates, 18 risky, 9 blocked, 208 safe-to-send. Mapping preview, sample preview rows, report. CTA "Upload your own data" → `/auth`. No DB writes — pure read-only seeded constants.
-
-## 11. Out of scope (called out for next sprint)
-
-- Enrichment / verification provider integration
-- Merge UI for duplicates (status flag + filter only this sprint)
-- XLSX parsing (UI shows "Coming soon" tile; CSV/paste/manual ship now)
-- Bulk suppression/segment builder
-- Credit charging for activation (model in place via `source_upload_id`; pricing hooks added next sprint)
+Hard-coded English strings inside the targeted files get replaced with `t('namespace.key')` — other files keep current strings to limit blast radius.
 
 ---
 
-## Founder decisions needed before Prompt 2
+## Sprint B — International payments (GBP/USD/EUR)
 
-1. **Storage tier**: confirm reusing `client-documents` bucket for raw uploads, or do you want a separate `data-vault-raw` bucket so you can apply a cheaper lifecycle policy later?
-2. **Default import policy**: should `needs_review` rows be imported by default (current plan) or held in staging until reviewed?
-3. **Free upload caps**: any per-workspace row limit for Starter (e.g. 5,000 staged rows) to protect cost before activation pricing lands in Prompt 2?
-4. **XLSX**: ship now (adds `xlsx` dep ~400KB) or defer to Prompt 2?
+### Stripe prices (via `payments--batch_create_product`)
+Add GBP + EUR prices to existing products. Price IDs follow `<existing>_gbp` / `<existing>_eur` naming:
+- `vv_starter_oneoff_gbp`, `_eur`
+- `vv_growth_monthly_gbp`, `_eur`
+- `vv_agency_monthly_gbp`, `_eur`
+- `vv_human_review_oneoff_gbp`, `_eur`
+- `vv_topup_small_gbp/_eur`, `vv_topup_medium_gbp/_eur`, `vv_topup_large_gbp/_eur`
 
-Answer those and I'll execute. If you want me to proceed with sensible defaults (reuse bucket, import valid+needs_review, 10k staged-row cap, defer XLSX), say "go".
+Amounts mirror current USD with rounded local conversions (GBP ~0.80x, EUR ~0.95x of GBP base — I'll confirm exact numbers from the Pricing page before creating).
+
+### Currency model
+- `src/lib/currency.ts`:
+  - `SUPPORTED = ['GBP','USD','EUR']`
+  - `resolveCurrency({ explicit, billingCountry, locale })` — order: explicit selection → billing country (GB→GBP, EU set→EUR, fallback USD) → browser locale → USD.
+  - `priceIdFor(baseId, currency)` — appends `_gbp`/`_eur`, returns base for USD.
+- Persisted user choice in `localStorage` key `vv_currency`, mirrored to `profiles.preferred_currency` (added in Sprint B migration).
+
+### Migration B
+- `profiles.preferred_currency` text default `'USD'`
+- `profiles.billing_country` text nullable
+- `user_plans.currency` text default `'USD'` (so billing UI can show what was charged)
+
+### Checkout integration
+- `useStripeCheckout` accepts an optional `currency`; resolves the localized priceId via `priceIdFor` before invoking `create-checkout`.
+- `TopUpModal` + `Pricing.tsx` + `PricingTeaser.tsx` read selected currency and render localized amounts using `formatCurrency`.
+- Add `CurrencySelector` component next to `LanguageSwitcher` in public Navbar and `AppBilling`.
+
+### Tax / compliance
+Already `managed_payments: { enabled: true }` on checkout sessions — keeps end-to-end compliance handling. No code change needed; verify in `create-checkout/index.ts`.
+
+### Billing UX
+- `AppBilling` shows: charged currency, billing country (from `user_plans.currency` and `profiles.billing_country`), tax line where webhook provides it.
+- Webhook (`payments-webhook`) updates `user_plans.currency` from the session's `currency` field on plan provisioning (small additive change).
+
+---
+
+## Out of scope (explicit)
+- Translating CRM/founder dashboards, demo data text, legal docs.
+- Multilingual AI generation (campaigns store `output_language` but generators stay EN).
+- Currencies beyond GBP/USD/EUR.
+- Auto-geolocation via IP (browser locale + manual override only).
+
+## Final QA
+After both sprints, the previously-queued connected QA prompt must be re-run — I'll flag this in the closing message, not execute it here.
+
+## Risk notes
+- Stripe price creation is irreversible (prices are immutable). I'll double-check amounts against current `Pricing.tsx` before calling `batch_create_product`.
+- i18n key replacement is wide; I'll keep edits surgical to the listed files to avoid regressions in untranslated areas.
+- Two DB migrations (one per sprint) so each can be reviewed independently.
