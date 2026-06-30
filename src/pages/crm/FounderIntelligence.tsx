@@ -151,8 +151,10 @@ export default function FounderIntelligence() {
       const totalRev = planRevenue + topupRev;
       const allowance = usage.granted + usage.topup;
       const burnPct = allowance > 0 ? usage.used / allowance : 0;
-      const intensity = usage.sends + usage.uploads * 2;
-      const marginScore = totalRev - intensity * 0.05; // rough proxy
+      const intensity =
+        usage.sends * COST_COEFFICIENTS.perSendProxy +
+        usage.uploads * COST_COEFFICIENTS.perUploadProxy;
+      const marginScore = totalRev - intensity; // PROXY — see COST_COEFFICIENTS
       return {
         user_id: p.user_id,
         plan: p.plan,
@@ -174,7 +176,7 @@ export default function FounderIntelligence() {
     customers.forEach((c) => {
       if (c.burnPct >= 0.9) out.push({ tone: "warn", text: `${c.plan} customer ${c.user_id.slice(0, 8)} at ${Math.round(c.burnPct * 100)}% allowance — upsell candidate.` });
       if (c.uploads > 5 && c.sends === 0) out.push({ tone: "info", text: `Customer ${c.user_id.slice(0, 8)} uploaded ${c.uploads} times but hasn't activated.` });
-      if (c.marginScore < 0) out.push({ tone: "danger", text: `Customer ${c.user_id.slice(0, 8)} shows negative margin proxy — high usage vs revenue.` });
+      if (c.marginScore < COST_COEFFICIENTS.marginWarningBelow) out.push({ tone: "danger", text: `Customer ${c.user_id.slice(0, 8)} shows negative margin proxy — high usage vs revenue.` });
     });
     if (bounces > totalSends * 0.05 && totalSends > 0) out.push({ tone: "warn", text: `Platform bounce rate ${Math.round((bounces / totalSends) * 100)}% — investigate sender health.` });
     return out.slice(0, 8);
