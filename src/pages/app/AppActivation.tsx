@@ -287,6 +287,8 @@ export default function AppActivation() {
           onVerified={(r) => setSender((s) => ({ ...s, domain_authenticated: !!r?.verified }))}
         />
       </div>
+      </>
+      )}
     </div>
   );
 }
