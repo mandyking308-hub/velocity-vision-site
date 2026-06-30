@@ -117,6 +117,8 @@ export interface SafetyInput {
   sendsUsedToday: number;
   sendsScheduledToday: number;
   sendCreditsRemaining: number;
+  /** Agency only: total sends today pooled across all child workspaces. */
+  agencyPooledSendsToday?: number;
 }
 
 export interface SafetyResult {
@@ -129,6 +131,10 @@ export interface SafetyResult {
   health: SenderHealth;
   excluded: { risky: number; blocked: number; review: number };
   reviewShare: number;          // share of audience flagged as review
+  /** Agency only: pooled sends today across the whole workspace. */
+  agencyPooledSendsToday?: number;
+  /** Agency only: pooled remaining capacity across the whole workspace. */
+  agencyPooledRemaining?: number;
 }
 
 export function computeSafety(input: SafetyInput): SafetyResult {
@@ -176,7 +182,22 @@ export function computeSafety(input: SafetyInput): SafetyResult {
   }
 
   const adjusted = Math.floor(ceiling * factor);
-  const safeAllowance = Math.max(0, Math.min(adjusted, input.sendCreditsRemaining, input.vault.valid));
+  let safeAllowance = Math.max(0, Math.min(adjusted, input.sendCreditsRemaining, input.vault.valid));
+
+  // Agency pooled enforcement — the 1,000/day ceiling is shared across all child workspaces.
+  let agencyPooledRemaining: number | undefined = undefined;
+  if (input.plan === "agency") {
+    const pooledUsed = input.agencyPooledSendsToday ?? 0;
+    agencyPooledRemaining = Math.max(0, ceiling - pooledUsed);
+    if (pooledUsed >= ceiling) {
+      pause.push(`Agency pooled cap reached — ${pooledUsed.toLocaleString()} / ${ceiling.toLocaleString()} sends today across all client workspaces.`);
+      safeAllowance = 0;
+    } else if (agencyPooledRemaining < safeAllowance) {
+      adjustments.push({ factor: agencyPooledRemaining / Math.max(safeAllowance, 1), reason: `Agency pooled cap: ${agencyPooledRemaining.toLocaleString()} sends left today across all client workspaces.` });
+      safeAllowance = agencyPooledRemaining;
+    }
+  }
+
   const usedAndScheduled = input.sendsUsedToday + input.sendsScheduledToday;
   const remainingToday = Math.max(0, safeAllowance - usedAndScheduled);
   if (usedAndScheduled >= safeAllowance && safeAllowance > 0) {
@@ -200,6 +221,8 @@ export function computeSafety(input: SafetyInput): SafetyResult {
       review: input.vault.needs_review,
     },
     reviewShare,
+    agencyPooledSendsToday: input.plan === "agency" ? (input.agencyPooledSendsToday ?? 0) : undefined,
+    agencyPooledRemaining,
   };
 }
 

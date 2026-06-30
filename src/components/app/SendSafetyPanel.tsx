@@ -40,6 +40,11 @@ export default function SendSafetyPanel({ s, used, scheduled }: { s: SafetyResul
           <Line warn icon={AlertTriangle}>{s.excluded.risky} risky records excluded by default</Line>
           <Line warn icon={AlertTriangle}>{s.excluded.review} need review before activation</Line>
           <Line danger icon={AlertTriangle}>{s.excluded.blocked} blocked / suppressed (cannot be overridden)</Line>
+          {typeof s.agencyPooledRemaining === "number" && (
+            <Line ok icon={ShieldCheck}>
+              Agency pooled cap: <b className="ml-1">{s.agencyPooledSendsToday?.toLocaleString()}</b>&nbsp;/&nbsp;{s.planCeiling.toLocaleString()} sends today across all client workspaces ({s.agencyPooledRemaining.toLocaleString()} left)
+            </Line>
+          )}
         </div>
 
         {s.adjustments.length > 0 && (
