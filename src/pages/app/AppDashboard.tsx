@@ -18,6 +18,7 @@ import SendSafetyPanel from "@/components/app/SendSafetyPanel";
 import SenderStatusCard from "@/components/app/SenderStatusCard";
 import { computeSafety, DEFAULT_SENDER_STATE, type SenderState } from "@/lib/sendSafety";
 import type { PlanId } from "@/lib/credits";
+import { deriveFollowUpState } from "@/lib/leadStates";
 
 interface VaultStats {
   total_contacts: number;
