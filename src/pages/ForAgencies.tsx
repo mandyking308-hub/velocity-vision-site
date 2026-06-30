@@ -110,7 +110,7 @@ const ForAgencies = () => (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               { icon: XCircle, title: "Spreadsheets per client", desc: "Replace scattered contact lists with field-mapped, deduplicated data vaults for each account." },
-              { icon: XCircle, title: "Disconnected CRM / email / content tools", desc: "Outreach, social, PR, replies and pipeline live in one connected workspace." },
+              { icon: XCircle, title: "Disconnected sales / email / content tools", desc: "Outreach, social, PR, replies and pipeline live in one connected workspace." },
               { icon: XCircle, title: "Messy handoffs", desc: "Every client has its own workspace. No more guessing which list or thread belongs to whom." },
               { icon: Clock, title: "Unclear follow-up ownership", desc: "Replies land in a single action queue per client with clear states and snooze logic." },
               { icon: Layers, title: "Tool sprawl across the team", desc: "One platform, one login, one billing rhythm. Reduce seats, reduce context switching." },
