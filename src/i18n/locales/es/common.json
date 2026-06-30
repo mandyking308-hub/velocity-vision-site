@@ -1,26 +1,48 @@
 {
-  "actions": {
-    "save": "Guardar",
-    "cancel": "Cancelar",
-    "continue": "Continuar",
-    "back": "Atrás",
-    "next": "Siguiente",
-    "close": "Cerrar",
-    "delete": "Eliminar",
-    "edit": "Editar",
-    "loading": "Cargando…",
-    "retry": "Reintentar"
-  },
   "language": {
     "label": "Idioma",
     "english": "English",
-    "spanish": "Español"
+    "spanish": "Español",
+    "french": "Français"
   },
-  "currency": {
-    "label": "Moneda"
+  "actions": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "continue": "Continuar",
+    "loading": "Cargando…",
+    "search": "Buscar",
+    "upload": "Subir",
+    "download": "Descargar",
+    "send": "Enviar",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "viewAll": "Ver todo",
+    "learnMore": "Saber más",
+    "getStarted": "Empezar",
+    "tryDemo": "Probar la demo"
   },
-  "states": {
-    "empty": "Aún no hay nada aquí.",
-    "error": "Algo salió mal."
+  "status": {
+    "draft": "Borrador",
+    "scheduled": "Programado",
+    "active": "Activo",
+    "paused": "Pausado",
+    "completed": "Completado",
+    "expired": "Expirado",
+    "failed": "Fallido"
+  },
+  "errors": {
+    "generic": "Algo salió mal. Inténtalo de nuevo.",
+    "network": "Error de red. Comprueba tu conexión.",
+    "unauthorized": "No tienes permiso para hacer esto."
+  },
+  "footer": {
+    "rights": "Todos los derechos reservados.",
+    "privacy": "Privacidad",
+    "terms": "Términos",
+    "contact": "Contacto"
   }
 }

@@ -1,0 +1,48 @@
+{
+  "language": {
+    "label": "Langue",
+    "english": "English",
+    "spanish": "Español",
+    "french": "Français"
+  },
+  "actions": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "back": "Retour",
+    "next": "Suivant",
+    "continue": "Continuer",
+    "loading": "Chargement…",
+    "search": "Rechercher",
+    "upload": "Téléverser",
+    "download": "Télécharger",
+    "send": "Envoyer",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "viewAll": "Tout voir",
+    "learnMore": "En savoir plus",
+    "getStarted": "Commencer",
+    "tryDemo": "Essayer la démo"
+  },
+  "status": {
+    "draft": "Brouillon",
+    "scheduled": "Planifié",
+    "active": "Actif",
+    "paused": "En pause",
+    "completed": "Terminé",
+    "expired": "Expiré",
+    "failed": "Échoué"
+  },
+  "errors": {
+    "generic": "Une erreur est survenue. Veuillez réessayer.",
+    "network": "Erreur réseau. Vérifiez votre connexion.",
+    "unauthorized": "Vous n'avez pas la permission requise."
+  },
+  "footer": {
+    "rights": "Tous droits réservés.",
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "contact": "Contact"
+  }
+}

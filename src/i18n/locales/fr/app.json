@@ -1,0 +1,81 @@
+{
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "dataVault": "Coffre-fort de données",
+    "activate": "Activer",
+    "campaigns": "Campagnes",
+    "followUp": "Relances",
+    "pipeline": "Pipeline",
+    "leads": "Leads",
+    "templates": "Modèles",
+    "email": "Email",
+    "performance": "Performance",
+    "workspaces": "Espaces",
+    "billing": "Facturation",
+    "settings": "Paramètres"
+  },
+  "dashboard": {
+    "title": "Centre de commande",
+    "subtitle": "Votre espace commercial en un coup d'œil.",
+    "sections": {
+      "summary": "Résumé",
+      "dataHealth": "Santé des données",
+      "activation": "Prêt à activer",
+      "create": "Créer des contenus",
+      "replies": "Réponses & relances",
+      "pipeline": "Pipeline & ventes",
+      "nextBest": "Prochaines actions"
+    },
+    "empty": {
+      "title": "Rien à traiter pour le moment",
+      "body": "Importez vos données pour activer une campagne.",
+      "cta": "Importer des données"
+    }
+  },
+  "dataVault": {
+    "title": "Coffre-fort de données",
+    "subtitle": "Importez, mappez et vérifiez vos contacts.",
+    "upload": "Importer"
+  },
+  "activate": {
+    "title": "Activer",
+    "subtitle": "Passez des données propres aux campagnes actives.",
+    "readiness": "Prêt à activer",
+    "launch": "Lancer"
+  },
+  "campaigns": {
+    "title": "Campagnes",
+    "new": "Nouvelle campagne",
+    "schedule": "Planification",
+    "cadence": "Cadence",
+    "language": "Langue de la campagne"
+  },
+  "followUp": {
+    "title": "Relances",
+    "subtitle": "Réponses et rappels qui attendent votre action."
+  },
+  "pipeline": {
+    "title": "Pipeline",
+    "stages": {
+      "new": "Nouveau",
+      "qualified": "Qualifié",
+      "meeting": "Rendez-vous",
+      "proposal": "Proposition",
+      "won": "Gagné",
+      "lost": "Perdu"
+    }
+  },
+  "billing": {
+    "title": "Facturation",
+    "currentPlan": "Offre actuelle",
+    "credits": "Crédits de campagne",
+    "topUp": "Recharger"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "language": "Langue",
+    "timezone": "Fuseau horaire",
+    "currency": "Devise",
+    "country": "Pays"
+  }
+}

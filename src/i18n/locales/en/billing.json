@@ -1,12 +1,11 @@
 {
   "title": "Billing",
-  "subtitle": "Plan, credits, and invoices.",
+  "subtitle": "Manage your plan, Campaign Credits and add-ons.",
   "currentPlan": "Current plan",
   "credits": "Campaign Credits",
   "topUp": "Top up",
-  "currency": "Currency",
-  "billingCountry": "Billing country",
-  "chargedIn": "Charged in {{currency}}",
-  "tax": "Tax",
-  "history": "Payment history"
+  "history": "Billing history",
+  "noHistory": "No charges yet.",
+  "taxNotice": "Prices exclude VAT/sales tax. Tax is calculated at checkout.",
+  "humanReview": "Premium Human Review"
 }

@@ -1,0 +1,41 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "pricing": "Tarifs",
+    "howItWorks": "Fonctionnement",
+    "features": "Fonctionnalités",
+    "forBusinesses": "Pour les entreprises",
+    "forAgencies": "Pour les agences",
+    "help": "Aide",
+    "login": "Connexion",
+    "signup": "S'inscrire"
+  },
+  "hero": {
+    "eyebrow": "Plateforme de croissance marketing",
+    "title": "Lancez des campagnes complètes en minutes — pas en semaines.",
+    "subtitle": "Importez votre audience, activez une campagne et laissez Velocity Influence gérer l'outbound, les relances et le pipeline. En autonomie. Multilingue. Conçue pour les équipes internationales.",
+    "ctaPrimary": "Démarrer l'essai gratuit",
+    "ctaSecondary": "Voir la démo"
+  },
+  "pricing": {
+    "title": "Tarifs simples et transparents",
+    "subtitle": "Chaque plan inclut les Crédits de campagne, le Data Vault et l'espace pipeline complet.",
+    "month": "/mois",
+    "oneTime": "paiement unique",
+    "perReview": "par revue",
+    "taxNotice": "Prix hors TVA. Les taxes sont calculées au paiement.",
+    "starter": "Starter",
+    "growth": "Croissance",
+    "agency": "Agence",
+    "choosePlan": "Choisir l'offre"
+  },
+  "howItWorks": {
+    "title": "Comment ça marche",
+    "subtitle": "De vos données aux revenus en 5 étapes guidées.",
+    "step1": "Importez vos données",
+    "step2": "Vérifiez et activez",
+    "step3": "Générez les contenus",
+    "step4": "Lancez la campagne",
+    "step5": "Traitez les réponses"
+  }
+}

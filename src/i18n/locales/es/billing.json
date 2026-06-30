@@ -1,12 +1,11 @@
 {
   "title": "Facturación",
-  "subtitle": "Plan, créditos y facturas.",
+  "subtitle": "Gestiona tu plan, Créditos de campaña y complementos.",
   "currentPlan": "Plan actual",
-  "credits": "Créditos de Campaña",
+  "credits": "Créditos de campaña",
   "topUp": "Recargar",
-  "currency": "Moneda",
-  "billingCountry": "País de facturación",
-  "chargedIn": "Cobrado en {{currency}}",
-  "tax": "Impuestos",
-  "history": "Historial de pagos"
+  "history": "Historial",
+  "noHistory": "Aún no hay cargos.",
+  "taxNotice": "Los precios no incluyen IVA ni impuestos sobre ventas. Se calcula al pagar.",
+  "humanReview": "Revisión humana premium"
 }
