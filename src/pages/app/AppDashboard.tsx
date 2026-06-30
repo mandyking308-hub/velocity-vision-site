@@ -162,8 +162,49 @@ export default function AppDashboard() {
     })();
   }, [user]);
 
-  const safeSendToday = Math.min(80, vault.safe_to_activate);
-  const recommendedSend = Math.min(50, vault.safe_to_activate);
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const [{ data: conns }, { data: sends }] = await Promise.all([
+        supabase.from("email_connections").select("*").eq("user_id", user.id).order("is_default", { ascending: false }),
+        supabase.from("email_sends").select("status, sent_at, scheduled_at"),
+      ]);
+      const def = (conns || [])[0];
+      const today = new Date(); today.setHours(0,0,0,0);
+      const used = (sends || []).filter((x: any) => x.sent_at && new Date(x.sent_at) >= today).length;
+      const sched = (sends || []).filter((x: any) => x.scheduled_at && new Date(x.scheduled_at) >= today && !x.sent_at).length;
+      setSendsUsedToday(used);
+      setSendsScheduledToday(sched);
+      if (def) {
+        setSenderEmail(def.from_email);
+        const lastSend = (sends || []).filter((x: any) => x.status === "sent").map((x: any) => x.sent_at).filter(Boolean).sort().pop() || null;
+        const totalSends = (sends || []).length || 1;
+        const bounces = (sends || []).filter((x: any) => x.status === "bounced" || x.status === "failed").length;
+        const newly = def.last_verified_at ? (Date.now() - new Date(def.last_verified_at).getTime()) < 7 * 86400000 : true;
+        setSender({
+          connected: def.status === "connected",
+          domain_authenticated: false,
+          reconnect_required: def.status === "reconnect_required",
+          newly_connected: newly,
+          last_send_at: lastSend,
+          bounce_rate: bounces / totalSends,
+          unsubscribe_rate: 0,
+        });
+      }
+    })();
+  }, [user]);
+
+  const plan = (planConfig.id as PlanId) || "starter";
+  const safety = computeSafety({
+    plan,
+    vault: { valid: vault.clean, needs_review: vault.needs_review, risky: vault.risky, blocked: vault.blocked, duplicates: vault.duplicates },
+    sender,
+    sendsUsedToday,
+    sendsScheduledToday,
+    sendCreditsRemaining: remaining,
+  });
+  const safeSendToday = safety.safeAllowance;
+  const recommendedSend = safety.recommendedToday;
 
   return (
     <div className="space-y-8 max-w-7xl">
@@ -185,7 +226,7 @@ export default function AppDashboard() {
           </div>
         </div>
         <div className="flex flex-wrap gap-2 mt-6">
-          <Button size="lg" onClick={() => navigate("/app/leads")}>
+        <Button size="lg" onClick={() => navigate("/app/activate")}>
             <Send className="h-4 w-4 mr-2" /> Activate a safe segment
           </Button>
           <Button size="lg" variant="outline" onClick={() => navigate("/app/data-vault/upload")}>
