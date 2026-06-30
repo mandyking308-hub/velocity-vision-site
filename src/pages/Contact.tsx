@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Mail, MapPin, ArrowRight, LifeBuoy, CreditCard, Building2, Handshake, MessageSquare } from "lucide-react";
+import { MapPin, ArrowRight, LifeBuoy, CreditCard, Building2, Handshake, MessageSquare, Scale } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -15,6 +15,7 @@ const routes = [
   { icon: Building2, title: "Sales — enterprise & agency volume", desc: "Multi-workspace rollouts, agency-scale send governance, custom commercial terms.", action: "Talk to sales", to: "/book-demo" },
   { icon: LifeBuoy, title: "Product support", desc: "Help using the workspace — uploads, activation, sender setup, replies, pipeline.", action: "Open in-app support", to: "/app" },
   { icon: CreditCard, title: "Billing & account help", desc: "Plan changes, currency, invoices, top-ups, tax queries.", action: "Open billing help", to: "/app/billing" },
+  { icon: Scale, title: "Legal & compliance", desc: "Terms, privacy, data processing, security and compliance questions.", action: "Open legal route", to: "#contact-form" },
   { icon: Handshake, title: "Partnerships & integrations", desc: "Integration partners, resellers, embedded use cases.", action: "Send a message", to: "#contact-form" },
   { icon: MessageSquare, title: "General enquiries", desc: "Anything else — press, hiring, or a question that doesn't fit above.", action: "Send a message", to: "#contact-form" },
 ];
@@ -68,7 +69,7 @@ const Contact = () => {
 
   return (
     <>
-      <SEO title="Contact Velocity Vision — Sales, Support, Billing" description="Reach the right team fast: sales for enterprise and agency volume, product support, billing, partnerships, or general enquiries." path="/contact" />
+      <SEO title="Contact Velocity Vision — Sales, Support, Billing" description="Reach the right route fast: sales for enterprise and agency volume, product support, billing, legal and compliance, partnerships, or general enquiries." path="/contact" />
       <Navbar />
       <main className="pt-20">
         <section className="section-padding bg-hero">
@@ -124,14 +125,11 @@ const Contact = () => {
 
               <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }} className="space-y-8">
                 <div>
-                  <div className="flex items-center gap-2 mb-2"><Mail className="text-accent" size={18} /><h3 className="font-display font-semibold text-foreground">Email</h3></div>
-                  <p className="text-muted-foreground text-sm">support@velocity-outreach.com</p>
-                </div>
-                <div>
                   <div className="flex items-center gap-2 mb-2"><MapPin className="text-accent" size={18} /><h3 className="font-display font-semibold text-foreground">Operating entity</h3></div>
                   <div className="space-y-1 text-sm text-muted-foreground">
                     <p>Global Solutions Management LLC</p>
                     <p>Delaware, United States</p>
+                    <p>Velocity Vision operates at velocity-outreach.com</p>
                     <p>Used internationally · multi-currency · multilingual (EN/ES)</p>
                   </div>
                 </div>
