@@ -1,18 +1,10 @@
 import { motion } from "framer-motion";
-import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, LayoutDashboard, Mail, BarChart3 } from "lucide-react";
+import { ArrowRight, Sparkles, Database, ShieldCheck, GitBranch } from "lucide-react";
 import heroAbstract from "@/assets/hero-abstract.jpg";
 
-/*
- * Alternate headline for later A/B testing:
- *   "Your marketing department, in a login."
- */
-
-const HeroSection = () => {
-  const { t } = useTranslation("marketing");
-  return (
+const HeroSection = () => (
   <section className="relative bg-hero min-h-[90vh] flex items-center overflow-hidden">
     <div className="absolute inset-0">
       <img src={heroAbstract} alt="" width={1920} height={1080} className="w-full h-full object-cover opacity-25" loading="eager" fetchPriority="high" decoding="async" />
@@ -23,7 +15,6 @@ const HeroSection = () => {
 
     <div className="relative max-w-7xl mx-auto px-6 md:px-12 lg:px-20 py-28 w-full">
       <div className="grid lg:grid-cols-12 gap-12 items-center">
-        {/* Left: copy */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -31,28 +22,27 @@ const HeroSection = () => {
           className="lg:col-span-7"
         >
           <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-6 inline-flex items-center gap-2">
-            <Sparkles size={14} /> {t("hero.eyebrow")}
+            <Sparkles size={14} /> Commercial operating workspace
           </p>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-primary-foreground leading-[1.05] mb-6">
-            Launch your next marketing campaign in a <span className="text-gradient">weekend</span> — not a quarter.
+            From messy data to live pipeline — in <span className="text-gradient">one workspace</span>.
           </h1>
           <p className="text-lg md:text-xl text-primary-foreground/75 max-w-xl mb-10 leading-relaxed">
-            Guided onboarding, AI-generated campaign packs, lead capture, pipeline tracking and monthly performance reports — all in one platform you control. No agency retainer, no strategy calls required.
+            Upload your commercial data, review what's usable, activate the right contacts safely, create outreach assets, work the replies and move opportunities into pipeline — without bolting six tools together.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button variant="hero" size="lg" asChild>
-              <Link to="/auth">{t("hero.ctaPrimary")} <ArrowRight size={18} /></Link>
+              <Link to="/auth">Start your workspace <ArrowRight size={18} /></Link>
             </Button>
             <Button variant="hero-outline" size="lg" asChild>
-              <Link to="/pricing">{t("nav.seePricing")}</Link>
+              <Link to="/pricing">See pricing</Link>
             </Button>
           </div>
           <p className="text-xs text-primary-foreground/75 mt-4">
-            Self-serve. Guided. Cancel, pause or upgrade anytime.
+            Self-serve. Governed sending built in. Cancel, pause or upgrade anytime.
           </p>
         </motion.div>
 
-        {/* Right: product mockup */}
         <motion.div
           initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
@@ -65,30 +55,30 @@ const HeroSection = () => {
             <div className="relative bg-card/95 backdrop-blur rounded-2xl border border-border/40 shadow-2xl p-5 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <LayoutDashboard className="text-accent" size={18} />
-                  <span className="text-sm font-semibold text-foreground">Campaign workspace</span>
+                  <Database className="text-accent" size={18} />
+                  <span className="text-sm font-semibold text-foreground">Commercial workspace</span>
                 </div>
                 <span className="text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-accent/10 text-accent font-semibold">Live</span>
               </div>
               <div className="grid grid-cols-3 gap-3">
                 <div className="rounded-lg bg-secondary/60 p-3">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Leads</p>
-                  <p className="text-xl font-display font-bold text-foreground">342</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Usable contacts</p>
+                  <p className="text-xl font-display font-bold text-foreground">1,284</p>
                 </div>
                 <div className="rounded-lg bg-secondary/60 p-3">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">CTR</p>
-                  <p className="text-xl font-display font-bold text-foreground">4.8%</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Reply rate</p>
+                  <p className="text-xl font-display font-bold text-foreground">6.2%</p>
                 </div>
                 <div className="rounded-lg bg-secondary/60 p-3">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Revenue</p>
-                  <p className="text-xl font-display font-bold text-foreground">£28k</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Pipeline</p>
+                  <p className="text-xl font-display font-bold text-foreground">£47k</p>
                 </div>
               </div>
               <div className="space-y-2">
                 {[
-                  { i: Mail, label: "Email sequence — sent", val: "5 / 5" },
-                  { i: BarChart3, label: "Landing page", val: "Live" },
-                  { i: Sparkles, label: "Social pack generated", val: "12 posts" },
+                  { i: Database, label: "Data Vault — quality reviewed", val: "92% clean" },
+                  { i: ShieldCheck, label: "Sender verified & cadence set", val: "Active" },
+                  { i: GitBranch, label: "Replies → pipeline movement", val: "8 warm" },
                 ].map((row) => (
                   <div key={row.label} className="flex items-center justify-between bg-secondary/40 rounded-md px-3 py-2">
                     <span className="flex items-center gap-2 text-xs text-foreground">
@@ -104,7 +94,6 @@ const HeroSection = () => {
       </div>
     </div>
   </section>
-  );
-};
+);
 
 export default HeroSection;
