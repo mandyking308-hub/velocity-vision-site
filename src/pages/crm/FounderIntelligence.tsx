@@ -2,8 +2,23 @@ import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { Brain, Database, Globe, Send, MessageSquare, TrendingUp, AlertTriangle, ShieldCheck } from "lucide-react";
+import { Brain, Database, Globe, Send, MessageSquare, TrendingUp, AlertTriangle, ShieldCheck, Info } from "lucide-react";
 import { PLANS, PlanId } from "@/lib/credits";
+
+/**
+ * COST COEFFICIENTS — PROXY VALUES (NOT REAL COST ACCOUNTING)
+ * ------------------------------------------------------------
+ * These are placeholders used by the founder intelligence layer to estimate
+ * relative customer intensity. They are NOT plumbed into billing, NOT GAAP
+ * cost data, and NOT exposed to customers. Replace with real per-unit cost
+ * data (Stripe MRR + Supabase usage + AI gateway spend) when cost telemetry
+ * is wired in. See `marginScore` below for the formula.
+ */
+const COST_COEFFICIENTS = {
+  perSendProxy: 0.03,     // proxy: estimated infra + deliverability blended cost per send
+  perUploadProxy: 0.10,   // proxy: estimated parse + storage + validation cost per upload batch
+  marginWarningBelow: 0,  // marginScore threshold for "negative margin" alert
+} as const;
 
 type Row = Record<string, any>;
 
