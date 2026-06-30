@@ -43,13 +43,13 @@ export default function FounderIntelligence() {
   useEffect(() => {
     (async () => {
       const results = await Promise.all([
-        supabase.from("contacts").select("id, country, language, company_id, created_at"),
+        supabase.from("contacts").select("id, country, language, company_id, quality_status, suppressed, blocked, created_at"),
         supabase.from("companies").select("id, country, industry, created_at"),
         supabase.from("data_uploads").select("id, user_id, status, row_count, created_at"),
-        supabase.from("data_upload_rows").select("id, quality_status, upload_id"),
+        supabase.from("data_upload_rows").select("id, validation_status, duplicate_status, import_status, upload_id"),
         supabase.from("email_sends").select("id, status, sent_at, workspace_id, user_id, error"),
-        supabase.from("leads").select("id, status, owner_id, lead_follow_state, value, created_at"),
-        supabase.from("opportunities").select("id, stage, value, owner_id, created_at"),
+        supabase.from("leads").select("id, status, owner_id, follow_up_state, created_at"),
+        supabase.from("opportunities").select("id, stage, estimated_value, owner_id, created_at"),
         supabase.from("user_plans").select("user_id, plan, status, currency"),
         supabase.from("credit_topups").select("user_id, credits, amount, created_at"),
         supabase.from("credit_ledger").select("user_id, delta, reason, created_at"),
