@@ -8,6 +8,8 @@ import { Copy, Download, Sparkles, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { CampaignBrief, CampaignPack, generatePack } from "@/lib/campaignPack";
 import { toast } from "sonner";
+import i18n from "@/i18n";
+import { useTranslation } from "react-i18next";
 import { useCredits } from "@/contexts/CreditsContext";
 import { CREDIT_COSTS } from "@/lib/credits";
 import HumanReviewButton from "@/components/app/HumanReviewButton";
