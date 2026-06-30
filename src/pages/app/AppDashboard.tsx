@@ -101,7 +101,7 @@ export default function AppDashboard() {
       ] = await Promise.all([
         supabase.from("profiles").select("first_name").eq("user_id", user.id).maybeSingle(),
         supabase.from("campaigns").select("id, name, status, created_at, cadence_type, start_at, cadence_end_at, next_run_at, timezone, runs_completed").order("created_at", { ascending: false }),
-        supabase.from("leads").select("id, status, follow_up_at, last_contacted_at"),
+        supabase.from("leads").select("id, status, follow_up_at, follow_up_state, replied_at, snoozed_until, last_email_sent_at, last_contacted_at, last_interaction_at, opportunity_id, blocked, suppressed"),
         supabase.from("contacts").select("*", { count: "exact", head: true }).not("source_upload_id", "is", null),
         supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "valid").not("source_upload_id", "is", null),
         supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "needs_review").not("source_upload_id", "is", null),
@@ -109,7 +109,7 @@ export default function AppDashboard() {
         supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "blocked").not("source_upload_id", "is", null),
         supabase.from("companies").select("*", { count: "exact", head: true }),
         supabase.from("data_uploads").select("*", { count: "exact", head: true }),
-        supabase.from("opportunities").select("id, stage, estimated_value"),
+        supabase.from("opportunities").select("id, stage, estimated_value, stage_changed_at, next_action_at"),
         supabase.from("email_sends").select("status, sent_at"),
       ]);
 
