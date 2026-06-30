@@ -43,6 +43,7 @@ import BillingPage from "./pages/crm/BillingPage.tsx";
 import QADashboard from "./pages/crm/QADashboard.tsx";
 import LegalCompliancePage from "./pages/crm/LegalCompliancePage.tsx";
 import FounderManual from "./pages/crm/FounderManual.tsx";
+import FounderMonetisation from "./pages/crm/FounderMonetisation.tsx";
 import PortalLayout from "./pages/PortalLayout.tsx";
 import PortalDashboard from "./pages/portal/PortalDashboard.tsx";
 import PortalCampaigns from "./pages/portal/PortalCampaigns.tsx";
@@ -126,6 +127,7 @@ const AnimatedRoutes = () => {
           <Route path="qa" element={<QADashboard />} />
           <Route path="legal-compliance" element={<LegalCompliancePage />} />
           <Route path="manual" element={<FounderManual />} />
+          <Route path="monetisation" element={<FounderMonetisation />} />
         </Route>
 
         {/* Self-serve customer app (protected) */}
