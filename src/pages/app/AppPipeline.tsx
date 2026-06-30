@@ -207,7 +207,7 @@ function OppEditor({ opp, onClose, onMove, onSaved }: {
       reason_lost: reason || null,
       last_interaction_at: new Date().toISOString(),
     } as any).eq("id", opp.id);
-    toast.success("Saved");
+    toast.success(tc("toasts.saved"));
     onSaved(); onClose();
   };
 
