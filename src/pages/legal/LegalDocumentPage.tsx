@@ -3,11 +3,13 @@ import { useState, useEffect, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
-import { ArrowLeft, ChevronDown, ChevronRight, Mail, Building2 } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronRight, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
-const ENTITY = "Global Solutions Management LLC, a company incorporated in the State of Delaware, United States, trading as Velocity Influence Agency";
+const PLATFORM = "Velocity Vision";
+const ENTITY = "Global Solutions Management LLC, a company incorporated in the State of Delaware, United States, and operator of Velocity Vision";
+const CONTACT_EMAIL = "support@velocity-outreach.com";
 
 type LegalSection = {
   heading: string;
@@ -23,1248 +25,799 @@ type LegalDoc = {
   sections: LegalSection[];
 };
 
+const standardContact = (topic: string) => [
+  `For ${topic}, contact ${CONTACT_EMAIL}.`,
+  `${ENTITY}.`,
+];
+
 const docs: Record<string, LegalDoc> = {
   "terms-of-service": {
     title: "Platform Terms of Service",
-    effectiveDate: "1 March 2026",
-    lastUpdated: "1 March 2026",
-    version: "1.0",
+    effectiveDate: "30 June 2026",
+    lastUpdated: "30 June 2026",
+    version: "2.0",
     sections: [
       {
-        heading: "1. Service Provider",
+        heading: "1. Service Provider and Scope",
         paragraphs: [
-          `Velocity Influence Agency is a trading name of ${ENTITY}.`,
-          `Throughout this agreement, the terms "Velocity Influence", "the Platform", "we", "our", and "us" refer to Global Solutions Management LLC.`,
-          `These Terms of Service ("Terms") govern your access to and use of the Velocity Influence platform, website, and all related services. By accessing or using the Platform, you agree to be bound by these Terms in their entirety.`,
+          `${PLATFORM} is operated by ${ENTITY}. These Platform Terms of Service govern access to and use of the ${PLATFORM} website, application, workspaces, features, software, generated outputs, account tools and related services.`,
+          `${PLATFORM} is a self-serve commercial workspace for Data Vault storage, data quality review, templates, governed activation, cadence scheduling, replies, follow-up and pipeline movement. It is not a law firm, compliance adviser, broker, marketing agency, email service provider of record, or guaranteed revenue service.`,
         ],
       },
       {
-        heading: "2. Scope of the Platform",
+        heading: "2. Agreement and Document Hierarchy",
         paragraphs: [
-          "The Platform provides marketing campaign infrastructure and tools including:",
+          "By creating an account, accessing a workspace, purchasing credits, subscribing to a plan, inviting users or using the platform, you agree to these Terms and all policies incorporated by reference.",
+          "If these Terms conflict with a signed order form or separately executed written agreement, the signed document controls for the conflicting commercial term only. The Data Processing Agreement controls for processor obligations. The Acceptable Use Policy and Marketing Compliance Policy always apply to platform conduct and outreach activity.",
+        ],
+      },
+      {
+        heading: "3. Accounts, Users and Authority",
+        paragraphs: [
+          "You must provide accurate account, billing and workspace information and keep credentials secure. You are responsible for all activity under your account, including actions by employees, contractors, invited users, agencies, clients and anyone using your login or workspace access.",
+          "If you create an account for an organisation, you represent that you have authority to bind that organisation and to upload, process and activate data on its behalf.",
         ],
         bullets: [
-          "Marketing campaign management and execution",
-          "Customer relationship management (CRM) tools",
-          "Campaign analytics and performance tracking",
-          "Marketing automation tools",
-          "Client reporting dashboards",
+          "You must maintain appropriate internal permissions for every user you invite.",
+          "You must promptly remove users who no longer require access.",
+          "You must notify us promptly if you suspect unauthorised account access or misuse.",
         ],
       },
       {
-        heading: "3. Account Registration",
+        heading: "4. Platform Functionality",
         paragraphs: [
-          "Users must create an account to access the Platform. By registering an account, you agree that:",
+          "The platform may include data upload, mapping, deduplication, quality status assignment, sender verification, safe activation checks, template generation, outreach assets, cadence scheduling, reply organisation, follow-up states, pipeline tracking, billing tools, exports and reporting.",
+          "Features may be added, changed, suspended or removed as the product evolves. We may improve safety controls, usage limits, interface flows, billing logic and quality checks at any time to protect the platform, customers, senders, recipients and infrastructure.",
+        ],
+      },
+      {
+        heading: "5. Customer Data Responsibility",
+        paragraphs: [
+          "You retain responsibility for all data you upload, import, paste, generate, enrich, segment, activate or export through the platform. This includes contact lists, company records, email addresses, names, job titles, notes, tags, source information, customer records, client records and any other workspace content.",
+          "You represent and warrant that you have all rights, permissions, notices, consents and lawful bases required to collect, store, upload, process, use, contact and retain the data you place into the platform.",
         ],
         bullets: [
-          "All information provided during registration is accurate, complete, and current",
-          "You will maintain the security and confidentiality of your account credentials",
-          "You are responsible for all activities that occur under your account, whether or not authorised by you",
-          "You will notify us immediately of any unauthorised access or use of your account",
+          "Do not upload unlawfully obtained data, scraped data without lawful basis, purchased lists that cannot lawfully be used, sensitive personal data unless expressly authorised, or data about minors.",
+          "Do not upload data subject to restrictions that prevent processing, outreach, transfer, storage or use inside a SaaS platform.",
+          "You must maintain your own records of source, permission, consent, legitimate interest assessment, suppression status and lawful basis where required.",
         ],
       },
       {
-        heading: "4. Customer Responsibilities",
+        heading: "6. Outreach, Activation and Sender Governance",
         paragraphs: [
-          "As a customer of the Platform, you agree that you are solely responsible for:",
+          "The platform provides governance controls such as sender verification, quality flags, risky-record checks, plan limits, cadence controls and activation gates. These controls help reduce risk but do not make your outreach lawful by themselves.",
+          "You are solely responsible for deciding whether each contact may lawfully be contacted, whether the message is lawful in the recipient's jurisdiction, whether unsubscribe or opt-out obligations apply, and whether your sender identity, content and records meet applicable rules.",
         ],
         bullets: [
-          "All marketing data uploaded to the Platform",
-          "All campaign content created, distributed, or managed using the Platform",
-          "Compliance with all applicable marketing, advertising, and data protection laws in the jurisdictions in which you operate",
+          "Sender verification may be required before activation.",
+          "We may block, throttle, pause, restrict or review activation if data, sender setup, content, volume, complaint activity or platform signals create risk.",
+          "We do not guarantee deliverability, inbox placement, replies, meetings, sales, funding, revenue, pipeline value or any commercial outcome.",
         ],
       },
       {
-        heading: "5. Agency Use of the Platform",
+        heading: "7. AI, Templates and Generated Outputs",
         paragraphs: [
-          "Agencies, consultants, and marketing firms may use the Platform to manage and execute marketing campaigns on behalf of their third-party clients using the Agency Plan. In doing so:",
+          "Templates and generated outputs are workflow tools. Outputs may include outreach copy, social copy, follow-up steps, summaries, reports, pipeline notes, prompts or other draft materials. Outputs are not legal, tax, accounting, financial, medical, regulatory or professional advice.",
+          "You must review, edit and approve outputs before use. You are responsible for ensuring that generated materials are accurate, lawful, non-deceptive, non-infringing, suitable for your audience and compliant with your policies and applicable law.",
         ],
         bullets: [
-          "The agency remains fully and solely responsible for the actions, content, and data of all client workspaces and accounts created under its agency account",
-          "Velocity Influence does not enter into any contractual, legal, or commercial relationship with the agency's end clients",
-          "The agency is responsible for ensuring that its clients' data and campaign materials comply with all applicable laws",
-          "The agency shall indemnify Velocity Influence against any claims arising from the activities of its client accounts",
+          "Generated outputs may be incomplete, inaccurate, repetitive or unsuitable for a particular recipient or jurisdiction.",
+          "Do not rely on generated outputs as a substitute for professional review where legal, compliance, financial, regulated or sensitive content is involved.",
+          "We may use aggregated, de-identified usage signals to improve product quality, safety and reliability, subject to our Privacy Policy and Data Processing Agreement.",
         ],
       },
       {
-        heading: "6. Acceptable Use",
+        heading: "8. Subscriptions, Credits, Billing and Taxes",
         paragraphs: [
-          "You agree not to use the Platform to:",
+          "Plans, credits, top-ups, billing cycles, usage limits, included features and currencies are shown at checkout, in billing settings or in an applicable order form. Credits may be consumed by generation, activation, export, processing or other chargeable product actions depending on the plan.",
+          "Stored data may remain available when credits run out, but chargeable actions may pause until credits are added or the plan is upgraded. Unless required by law or expressly stated in writing, fees, subscriptions and credit purchases are non-refundable once the paid period begins or the credits are used or made available.",
         ],
         bullets: [
-          "Upload, store, or distribute unlawful marketing lists or contact databases",
-          "Send spam, unsolicited bulk communications, or messages that violate applicable anti-spam legislation",
-          "Conduct fraudulent, deceptive, or misleading marketing campaigns",
-          "Upload malicious software, viruses, harmful code, or any material intended to disrupt the operation of the Platform",
-          "Harvest, scrape, or collect personal data from the Platform without authorisation",
-          "Attempt to gain unauthorised access to Platform systems, other user accounts, or connected services",
-          "Use the Platform in any manner that infringes the intellectual property rights of any third party",
+          "You are responsible for applicable taxes, withholding, duties, exchange-rate effects and payment-provider charges.",
+          "We may suspend or limit access for failed payments, chargebacks, fraud signals or overdue invoices.",
+          "Plan changes may affect credits, limits, features, workspace access and billing dates.",
         ],
       },
       {
-        heading: "7. Intellectual Property",
+        heading: "9. Agency and Multi-Workspace Use",
         paragraphs: [
-          "The Velocity Influence Platform, including all software, code, design, user interface, branding, logos, and documentation, is and remains the exclusive property of Global Solutions Management LLC and is protected by applicable intellectual property laws.",
-          "Customers retain full ownership of:",
+          "Agency Workspace users may operate separate client workspaces from one account. Each agency remains solely responsible for its client relationships, client data, client permissions, workspace configuration, sender setup, generated outputs, activation decisions and compliance obligations.",
+          `${PLATFORM} does not enter into a contract with an agency's end clients unless separately agreed in writing. The agency account holder is responsible for all end-client activity under the agency account and must indemnify us for claims arising from its client workspaces.`
+        ],
+      },
+      {
+        heading: "10. Prohibited Use",
+        paragraphs: [
+          "You must comply with the Acceptable Use Policy and must not use the platform for unlawful, harmful, deceptive, abusive, high-risk or rights-infringing activity.",
         ],
         bullets: [
-          "Their campaign content and creative materials",
-          "Their marketing data and uploaded assets",
-          "Their contact lists and audience data",
+          "No spam, unlawful unsolicited messaging, deceptive headers, misleading subject lines, impersonation or sender misrepresentation.",
+          "No malware, phishing, credential theft, evasion of platform limits, abusive automation, scraping of the platform, reverse engineering or security testing without permission.",
+          "No content or outreach involving illegal goods or services, exploitation, harassment, hate, discrimination, sexual exploitation, regulated activities without authorisation, or vulnerable-person targeting.",
+          "No attempt to bypass sender verification, suppression lists, data-quality holds, plan-tier limits, safety checks or compliance controls.",
         ],
       },
       {
-        heading: "8. Platform Availability",
+        heading: "11. Intellectual Property",
         paragraphs: [
-          "Velocity Influence aims to provide reliable, continuous service but does not guarantee uninterrupted or error-free access to the Platform. The Platform may experience:",
-        ],
-        bullets: [
-          "Scheduled maintenance windows (communicated in advance where practicable)",
-          "Technical updates, upgrades, and improvements",
-          "Temporary service interruptions due to unforeseen technical issues",
+          "We and our licensors own the platform, software, interfaces, workflows, templates, product logic, designs, documentation, branding, systems, safety controls and all related intellectual property. You receive a limited, revocable, non-exclusive, non-transferable right to use the platform according to these Terms.",
+          "You retain ownership of your customer data and customer-provided content. Subject to the Data Processing Agreement and Privacy Policy, you grant us the rights necessary to host, process, transmit, secure, back up, display and operate that data to provide the platform.",
         ],
       },
       {
-        heading: "9. Third-Party Services",
+        heading: "12. Third-Party Services and Integrations",
         paragraphs: [
-          "The Platform may integrate with or depend upon third-party services, including but not limited to:",
-        ],
-        bullets: [
-          "Payment processors (e.g. Stripe)",
-          "Social media platforms",
-          "Email delivery providers",
-          "Analytics and tracking tools",
-          "Cloud infrastructure providers",
+          "The platform may rely on third-party providers for hosting, authentication, analytics, payments, email connectivity, AI processing, data storage, monitoring, communications or other infrastructure. Third-party services may have their own terms, policies, outages, rate limits, errors, suspensions and compliance requirements.",
+          "We are not responsible for third-party service failures, policy changes, deliverability decisions, payment processing interruptions, email-provider restrictions or external platform behaviour outside our reasonable control.",
         ],
       },
       {
-        heading: "10. Limitation of Liability",
+        heading: "13. Privacy and Data Processing",
         paragraphs: [
-          "Velocity Influence provides marketing tools and infrastructure but does not guarantee specific marketing outcomes, campaign performance, or commercial results.",
-          "To the maximum extent permitted by applicable law, Velocity Influence's total aggregate liability shall not exceed the total amount paid by the customer in the twelve (12) months immediately preceding the event giving rise to the claim.",
-          "Velocity Influence shall not be liable for:",
-        ],
-        bullets: [
-          "Loss of profits, revenue, or anticipated savings",
-          "Loss of data or data corruption",
-          "Loss of business opportunity or goodwill",
-          "Any indirect, incidental, special, consequential, or punitive damages, howsoever arising",
+          "Our Privacy Policy explains how we collect and use personal information about website visitors, platform users and contacts who interact with us directly. The Data Processing Agreement governs personal data that customers upload and that we process as a processor on the customer's behalf.",
+          "You must provide all required privacy notices to your own contacts, customers, prospects and end clients and must respond to their legal rights requests unless we are legally required to respond directly.",
         ],
       },
       {
-        heading: "11. Indemnification",
+        heading: "14. Suspension and Termination",
         paragraphs: [
-          "You agree to indemnify, defend, and hold harmless Velocity Influence, its officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, costs, and expenses (including reasonable legal fees) arising from or related to:",
-        ],
-        bullets: [
-          "Your unlawful marketing practices or non-compliance with applicable laws",
-          "Your improper collection, use, or processing of personal data",
-          "Your violation of applicable marketing, advertising, or data protection regulations",
-          "Content you upload, create, or distribute through the Platform",
-          "Your breach of these Terms",
+          "We may suspend, restrict, throttle, disable or terminate access to any account, workspace, sender, activation, export or feature if we reasonably believe there is legal risk, security risk, payment failure, platform abuse, policy breach, data misuse, deliverability risk, complaint activity, regulatory concern or harm to us, customers, recipients, infrastructure or third parties.",
+          "After termination, you may lose access to the workspace, generated outputs, data, reports and credits. We may retain limited records where required for legal, tax, security, audit, billing, dispute, fraud prevention or compliance purposes.",
         ],
       },
       {
-        heading: "12. Termination",
+        heading: "15. Disclaimers",
         paragraphs: [
-          "Velocity Influence may suspend or terminate your account and access to the Platform if:",
-        ],
-        bullets: [
-          "You violate these Terms or any applicable Platform policies",
-          "Required payments are overdue and remain unpaid after reasonable notice",
-          "The Platform is being misused or used in a manner inconsistent with its intended purpose",
-          "We are required to do so by law or regulatory order",
+          "The platform is provided on an 'as is' and 'as available' basis to the maximum extent permitted by law. We do not warrant that the platform will be uninterrupted, error-free, secure against every threat, compatible with every system, or suitable for every jurisdiction or use case.",
+          "We do not guarantee the accuracy of data-quality scoring, generated outputs, reply classification, pipeline values, profitability estimates, export formatting, integrations, deliverability, inbox placement, legal compliance, commercial performance or revenue outcomes.",
         ],
       },
       {
-        heading: "13. Governing Law and Jurisdiction",
+        heading: "16. Limitation of Liability",
         paragraphs: [
-          "These Terms of Service shall be governed by and construed in accordance with the laws of the State of Delaware, United States, without regard to its conflict of law principles.",
-          "Any disputes arising under or in connection with these Terms shall be subject to the exclusive jurisdiction of the state and federal courts located in the State of Delaware.",
+          "To the maximum extent permitted by law, our total aggregate liability arising out of or relating to the platform, these Terms or any incorporated policy is limited to the amounts paid by you to us for the platform during the twelve months immediately before the event giving rise to the claim.",
+          "To the maximum extent permitted by law, we are not liable for indirect, incidental, special, consequential, exemplary or punitive damages, or for loss of profits, revenue, goodwill, opportunity, data, use, business interruption, deliverability, reputation or anticipated savings.",
         ],
       },
       {
-        heading: "14. Updates to the Terms",
+        heading: "17. Indemnity",
         paragraphs: [
-          "Velocity Influence reserves the right to update, modify, or replace these Terms of Service at any time. When material changes are made, we will:",
-        ],
-        bullets: [
-          "Post the updated Terms on the Platform with a revised effective date",
-          "Notify registered users via email or in-platform notification",
+          "You agree to defend, indemnify and hold harmless Global Solutions Management LLC, its owners, officers, employees, contractors, service providers and agents from claims, losses, liabilities, damages, penalties, costs and expenses arising from or related to your account, workspaces, data, content, outreach, client activity, breach of these Terms, breach of law, infringement, unlawful marketing, data protection violation, sender misuse or misuse of the platform.",
         ],
       },
       {
-        heading: "15. Contact Information",
+        heading: "18. Governing Law, Changes and Contact",
         paragraphs: [
-          "For legal enquiries, questions about these Terms, or to report a concern, please contact us at:",
-          "Global Solutions Management LLC\nTrading as Velocity Influence Agency\nState of Delaware, United States",
-          "Email: legal@velocityinfluence.com\nGeneral enquiries: hello@velocityinfluence.com",
-        ],
-      },
-      {
-        heading: "16. Acceptance",
-        paragraphs: [
-          "By creating an account, purchasing a subscription, or upgrading your plan, you confirm that you have read, understood, and agree to be bound by these Terms of Service.",
-          "Your acceptance is recorded by the Platform, including the timestamp and associated account information, to create a verifiable legal audit trail.",
+          "These Terms are governed by the laws of the State of Delaware, United States, without regard to conflict-of-law principles. Courts located in Delaware have exclusive jurisdiction unless a mandatory law requires otherwise.",
+          "We may update these Terms and incorporated policies. Material updates may be notified by posting, email or in-platform notice. Continued use after the effective date means acceptance of the updated terms.",
+          ...standardContact("legal notices and questions about these Terms"),
         ],
       },
     ],
   },
   "client-services-agreement": {
-    title: "Client Services Agreement",
-    effectiveDate: "1 March 2026",
-    lastUpdated: "1 March 2026",
-    version: "1.0",
+    title: "Customer Agreement",
+    effectiveDate: "30 June 2026",
+    lastUpdated: "30 June 2026",
+    version: "2.0",
     sections: [
       {
-        heading: "1. Service Provider",
+        heading: "1. Agreement Purpose",
         paragraphs: [
-          `Velocity Influence Agency is a trading name of ${ENTITY}.`,
-          `Throughout this agreement, the terms "Velocity Influence", "the Agency", "the Platform", "we", "our", and "us" refer to Global Solutions Management LLC.`,
-          `This Client Services Agreement ("Agreement") defines the contractual relationship between Velocity Influence and customers who purchase marketing services or subscribe to the Platform.`,
+          `This Customer Agreement applies to customers who purchase, subscribe to or use paid features of ${PLATFORM}. It supplements the Platform Terms of Service and governs commercial use of the self-serve workspace.`,
+          "This is a software and workspace agreement. It does not create an agency retainer, managed marketing service, professional advisory engagement, legal compliance engagement, deliverability guarantee or revenue guarantee unless a separately signed written order expressly says so.",
         ],
       },
       {
-        heading: "2. Scope of Services",
+        heading: "2. Workspace Access and Plans",
         paragraphs: [
-          "Velocity Influence provides marketing services and campaign infrastructure including:",
+          "A plan may include workspace access, Data Vault usage, templates, generation, governed activation, cadence scheduling, replies, follow-up, pipeline, reporting, exports, support level, agency workspaces and credits. Available features, currencies, limits and pricing may differ by plan, region, account status and checkout configuration.",
         ],
         bullets: [
-          "Marketing campaign strategy and planning",
-          "Digital advertising management and optimisation",
-          "Outreach campaign tools and automation",
-          "Marketing automation workflows",
-          "Campaign analytics, reporting, and performance dashboards",
+          "Starter, Growth and Agency Workspace plans may have different limits and rights.",
+          "Some features may be in preview, beta, limited release or founder-review mode.",
+          "Workspace access is subject to successful payment, verification and compliance with all platform policies.",
         ],
       },
       {
-        heading: "3. Customer Responsibilities",
+        heading: "3. Credits, Top-Ups and Usage",
         paragraphs: [
-          "Customers are responsible for:",
+          "Credits are platform usage units and are not cash balances, stored-value instruments, bank deposits or refundable currency. Credits may be applied to asset generation, activation, exports, processing or other product actions as described at the time of purchase or in the workspace.",
+          "Unused, expired, promotional, test or bonus credits may be subject to plan-specific rules. We may correct obvious credit errors, fraud, abuse, duplicate grants or miscalculations.",
+        ],
+      },
+      {
+        heading: "4. Payment, Billing and Taxes",
+        paragraphs: [
+          "You authorise us and our payment providers to charge the payment method you provide for subscriptions, renewals, top-ups, upgrades, overages, taxes and other agreed charges. You must keep billing details accurate and pay all amounts when due.",
         ],
         bullets: [
-          "Providing accurate and complete campaign information and briefs",
-          "Supplying approved marketing materials and brand assets",
-          "Ensuring campaign instructions comply with applicable laws and regulations",
-          "Reviewing and approving campaign deliverables in a timely manner",
+          "Prices may be displayed in multiple currencies; taxes and payment-provider charges may apply.",
+          "You are responsible for VAT, sales tax, GST, withholding, duties and similar charges unless we are legally required to collect them.",
+          "Failed payments, chargebacks, suspected fraud or overdue amounts may result in suspension, downgrade or termination.",
         ],
       },
       {
-        heading: "4. Agency Use of the Platform",
+        heading: "5. Renewals, Cancellation and Refunds",
         paragraphs: [
-          "Agencies and consultants may use Velocity Influence to run campaigns on behalf of their own clients. However:",
+          "Subscription plans renew according to the billing cycle shown at purchase unless cancelled before renewal. Cancellation stops future renewal but does not automatically refund past charges, current billing periods, used credits or top-ups unless required by law or expressly stated in writing.",
+          "If a plan is downgraded, cancelled or paused, access to features, credits, activation, exports, workspaces or stored data may change at the end of the paid period or immediately if required for compliance or non-payment.",
+        ],
+      },
+      {
+        heading: "6. Customer Obligations",
+        paragraphs: [
+          "You are responsible for your data, instructions, configuration, users, senders, clients, generated outputs, approval decisions, activation decisions, follow-up actions and pipeline records. You must operate the workspace lawfully and maintain appropriate internal approvals.",
         ],
         bullets: [
-          "Velocity Influence contracts only with the agency account holder",
-          "Velocity Influence has no contractual relationship with the agency's end clients",
-          "The agency remains fully responsible for its own client relationships, data, and compliance obligations",
-          "The agency shall ensure that all data provided by its clients complies with applicable laws",
+          "You must ensure all uploaded data can lawfully be processed and used for the intended purpose.",
+          "You must review generated outputs before use.",
+          "You must comply with anti-spam, privacy, data protection, advertising, consumer protection, platform, sector-specific and local laws.",
+          "You must maintain suppression lists, unsubscribe records and opt-out records where required.",
         ],
       },
       {
-        heading: "5. Campaign Performance Disclaimer",
+        heading: "7. Agency Workspace Customers",
         paragraphs: [
-          "Velocity Influence provides marketing strategy and campaign execution tools. Marketing outcomes depend on multiple external factors including:",
-        ],
-        bullets: [
-          "Market conditions and competitive landscape",
-          "Audience behaviour and engagement patterns",
-          "Advertising platform algorithms and policy changes",
-          "Quality and relevance of campaign content",
-          "Budget allocation and campaign duration",
+          "Agency customers may use client workspaces for their own clients. The agency remains the contracting customer and is responsible for end-client permissions, lawful data sourcing, sender setup, approvals, compliance, billing allocation, user access and all activity in each client workspace.",
+          "End clients do not receive direct rights against us unless we separately contract with them in writing.",
         ],
       },
       {
-        heading: "6. Client Data and Marketing Lists",
+        heading: "8. Human Support and Professional Review",
         paragraphs: [
-          "Customers may upload marketing lists or campaign data to the Platform. By uploading data, customers confirm that:",
-        ],
-        bullets: [
-          "They have lawful authority to use and process the data",
-          "The data was obtained in compliance with applicable marketing and data protection laws",
-          "All necessary consents have been obtained from data subjects where required",
-          "The data does not include information obtained through unlawful means",
+          "Support may help with product usage, account access and workflow questions. Unless expressly agreed in a signed written statement of work, support does not include managed campaign delivery, legal review, tax advice, financial advice, deliverability consulting, compliance sign-off or professional services.",
         ],
       },
       {
-        heading: "7. Intellectual Property and Creative Work",
+        heading: "9. No Outcome Guarantee",
         paragraphs: [
-          "Customers retain ownership of:",
-        ],
-        bullets: [
-          "Their marketing content and brand assets",
-          "Campaign creative materials provided by the customer",
-          "Customer data and contact lists",
-        ],
-      },
-      {
-        heading: "8. Fees and Payment Terms",
-        paragraphs: [
-          "Customers agree to pay all applicable fees associated with their use of the Platform and marketing services. Payments may include:",
-        ],
-        bullets: [
-          "Monthly or annual subscription plan fees",
-          "Campaign execution and management fees",
-          "Additional marketing services as agreed in service orders",
-          "Advertising spend passed through at cost where applicable",
-        ],
-      },
-      {
-        heading: "9. Campaign Changes and Approvals",
-        paragraphs: [
-          "Customers are responsible for reviewing and approving campaign materials before launch. Velocity Influence will present campaign deliverables for approval before execution where practicable.",
-          "Velocity Influence is not responsible for delays caused by late approvals, incomplete briefs, or failure to provide required materials. Campaign timelines may be adjusted accordingly.",
+          "Commercial outcomes depend on data quality, sender reputation, message quality, legal permissions, audience behaviour, market conditions, offer strength, timing, customer response and third-party systems. We do not guarantee replies, meetings, sales, conversion, funding, press coverage, revenue, deliverability, inbox placement or pipeline value.",
         ],
       },
       {
         heading: "10. Confidentiality",
         paragraphs: [
-          "Both parties agree to maintain the confidentiality of sensitive business information exchanged during the course of the relationship. Confidential information includes, but is not limited to:",
-        ],
-        bullets: [
-          "Business strategies and plans",
-          "Customer lists and contact data",
-          "Campaign performance data and analytics",
-          "Pricing, financial, and commercial terms",
-          "Proprietary methodologies and processes",
+          "Each party may receive non-public business, technical, operational, pricing, product or customer information from the other. Each party must protect confidential information using reasonable care and use it only for the relationship unless disclosure is required by law, professional advisers, payment providers or infrastructure providers bound by confidentiality obligations.",
         ],
       },
       {
-        heading: "11. Limitation of Liability",
+        heading: "11. Intellectual Property and Output Rights",
         paragraphs: [
-          "To the maximum extent permitted by applicable law, Velocity Influence's total aggregate liability for any and all claims arising under or in connection with this Agreement shall not exceed the total fees paid by the customer during the twelve (12) months immediately preceding the event giving rise to the claim.",
-          "Velocity Influence shall not be liable for:",
-        ],
-        bullets: [
-          "Loss of profits, revenue, or anticipated savings",
-          "Loss of data or data corruption",
-          "Loss of business opportunity or goodwill",
-          "Any indirect, incidental, special, consequential, or punitive damages, howsoever arising",
+          "We own the platform, product logic, templates, workflows, interfaces, software, documentation, safety systems and underlying technology. You retain your customer data and customer-provided content. Subject to payment and compliance, you may use generated outputs for your business purposes after reviewing and approving them.",
+          "You may not copy, resell, white-label, reverse engineer or commercially exploit the platform, templates or workflow logic outside your authorised workspace use.",
         ],
       },
       {
-        heading: "12. Indemnification",
+        heading: "12. Suspension, Termination and Data Export",
         paragraphs: [
-          "Customers agree to indemnify, defend, and hold harmless Velocity Influence, its officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, costs, and expenses arising from:",
-        ],
-        bullets: [
-          "Unlawful marketing practices conducted through the Platform",
-          "Improper collection, use, or processing of personal data",
-          "Violations of applicable marketing, advertising, or data protection regulations",
-          "Campaign content that infringes third-party rights",
+          "We may suspend or terminate access for non-payment, chargeback, security risk, legal risk, platform misuse, high complaint activity, sender abuse, data misuse, policy breach or other conduct that may harm the platform, recipients, customers, infrastructure or third parties.",
+          "Where technically available and legally permitted, you may export certain data before termination. We may retain limited records as required for tax, legal, security, billing, dispute, fraud and compliance purposes.",
         ],
       },
       {
-        heading: "13. Termination of Services",
+        heading: "13. Liability, Indemnity and Governing Law",
         paragraphs: [
-          "Either party may terminate services in accordance with the applicable billing and subscription terms.",
-          "Velocity Influence may suspend services if:",
-        ],
-        bullets: [
-          "Payments are overdue and remain unpaid after reasonable notice",
-          "Platform policies or these Terms are violated",
-          "The Platform is being used in a manner inconsistent with its intended purpose",
-          "Required by law or regulatory order",
-        ],
-      },
-      {
-        heading: "14. Governing Law",
-        paragraphs: [
-          "This Agreement shall be governed by and construed in accordance with the laws of the State of Delaware, United States, without regard to its conflict of law principles.",
-          "Any disputes arising under or in connection with this Agreement shall be subject to the exclusive jurisdiction of the state and federal courts located in the State of Delaware.",
-        ],
-      },
-      {
-        heading: "15. Contact Information",
-        paragraphs: [
-          "For contractual or legal enquiries relating to this Agreement, please contact us at:",
-          "Global Solutions Management LLC\nTrading as Velocity Influence Agency\nState of Delaware, United States",
-          "Email: legal@velocityinfluence.com\nGeneral enquiries: hello@velocityinfluence.com",
+          "Liability limits, disclaimers, indemnities, governing law and dispute terms are set out in the Platform Terms of Service and apply to this Customer Agreement. This Agreement is governed by the laws of Delaware, United States, unless mandatory law requires otherwise.",
+          ...standardContact("customer agreement, billing or contract questions"),
         ],
       },
     ],
   },
   "data-processing-agreement": {
     title: "Data Processing Agreement",
-    effectiveDate: "1 March 2026",
-    lastUpdated: "1 March 2026",
-    version: "1.0",
+    effectiveDate: "30 June 2026",
+    lastUpdated: "30 June 2026",
+    version: "2.0",
     sections: [
       {
-        heading: "1. Service Provider",
+        heading: "1. Purpose and Incorporation",
         paragraphs: [
-          `Velocity Influence Agency is a trading name of ${ENTITY}.`,
-          `For the purposes of this Data Processing Agreement ("DPA"), the terms "Velocity Influence", "the Platform", "we", "our", and "us" refer to Global Solutions Management LLC.`,
-          "This DPA governs how personal data is processed within the Velocity Influence platform and forms part of the contractual agreement between Velocity Influence and its customers.",
+          `This Data Processing Agreement (DPA) forms part of the agreement between the customer and ${ENTITY}. It applies when ${PLATFORM} processes Customer Personal Data on behalf of a customer in the course of providing the platform.`,
+          "For Customer Personal Data, the customer is the controller or business and Global Solutions Management LLC is the processor or service provider, except where we process personal data for our own account administration, security, billing, legal or product operations as described in the Privacy Policy.",
         ],
       },
       {
-        heading: "2. Definitions",
+        heading: "2. Processing Details",
         paragraphs: [
-          "The following terms have the meanings set out below, aligned with internationally recognised data protection frameworks including the GDPR, UK GDPR, and CCPA:",
+          "The subject matter is the provision of a self-serve commercial workspace. The duration is the term of the customer's account plus any legally required retention period. The nature and purpose of processing is to host, store, map, validate, deduplicate, quality-check, segment, generate outputs from, activate, schedule, route, report on, export, secure and support customer data as instructed through the platform.",
         ],
         bullets: [
-          "Personal Data — any information relating to an identified or identifiable natural person",
-          "Processing — any operation performed on personal data, including collection, storage, use, disclosure, and deletion",
-          "Data Controller — the party that determines the purposes and means of processing personal data",
-          "Data Processor — the party that processes personal data on behalf of the Data Controller",
-          "Subprocessor — a third party engaged by the Data Processor to assist with processing activities",
-          "Data Subject — an identified or identifiable natural person whose personal data is processed",
+          "Types of personal data may include names, email addresses, telephone numbers, company names, job titles, business contact details, location, language preference, tags, notes, source information, reply data, pipeline data and other fields uploaded by the customer.",
+          "Categories of data subjects may include prospects, customers, business contacts, employees of organisations, agency client contacts, suppliers and other individuals whose data the customer chooses to upload.",
+          "Special category data, children's data, criminal offence data, health data, financial account data and government identifiers must not be uploaded unless expressly authorised in writing and lawful for the intended processing.",
         ],
       },
       {
-        heading: "3. Roles of the Parties",
+        heading: "3. Customer Instructions",
         paragraphs: [
-          "The relationship between the parties for data protection purposes is as follows:",
-        ],
-        bullets: [
-          "The customer acts as the Data Controller, determining the purposes and means of processing personal data uploaded to the Platform",
-          "Velocity Influence acts as the Data Processor, processing personal data on behalf of the customer solely to deliver the Platform services",
+          "We process Customer Personal Data only on documented customer instructions, including instructions given through platform configuration, uploads, settings, API calls, integrations, activation actions, support requests and written communications. We may refuse or suspend an instruction if we believe it is unlawful, unsafe, outside the platform scope or likely to breach this DPA or platform policies.",
         ],
       },
       {
-        heading: "4. Scope of Data Processing",
+        heading: "4. Processor Obligations",
         paragraphs: [
-          "Velocity Influence processes personal data solely for the purpose of providing Platform services, including:",
+          "We will maintain appropriate technical and organisational measures, restrict access to authorised personnel, require confidentiality obligations, assist with customer data protection obligations where reasonably possible, and make available information reasonably necessary to demonstrate compliance with this DPA.",
         ],
         bullets: [
-          "Campaign management and execution",
-          "Customer relationship management (CRM) tools",
-          "Marketing analytics and performance tracking",
-          "Reporting dashboards and campaign insights",
+          "We will not sell Customer Personal Data.",
+          "We will not use Customer Personal Data for cross-customer targeting or to contact the customer's contacts for our own marketing unless independently permitted by law and outside the processor role.",
+          "We may process aggregated or de-identified information to maintain, secure and improve the platform, provided it does not identify the customer or data subjects.",
         ],
       },
       {
-        heading: "5. Customer Responsibilities",
+        heading: "5. Customer Obligations",
         paragraphs: [
-          "Customers agree that:",
+          "The customer is responsible for the lawfulness of Customer Personal Data and all instructions. The customer must maintain appropriate privacy notices, legal bases, consent records, legitimate interest assessments, suppression lists and data subject response processes where required by law.",
         ],
         bullets: [
-          "They have lawful authority to process and upload personal data to the Platform",
-          "They comply with all applicable privacy and data protection laws in the jurisdictions in which they operate",
-          "They maintain appropriate privacy notices and legal bases for data subjects whose data is processed through the Platform",
-          "They obtain all necessary consents from data subjects where required by law",
+          "The customer must not upload data it has no right to process.",
+          "The customer must ensure outreach and activation decisions are lawful in each relevant jurisdiction.",
+          "The customer must respond to data subject requests unless we are legally required to respond directly.",
         ],
       },
       {
         heading: "6. Security Measures",
         paragraphs: [
-          "Velocity Influence implements appropriate technical and organisational measures to protect personal data against unauthorised access, loss, destruction, or damage. These measures include:",
-        ],
-        bullets: [
-          "Encrypted data transmission using TLS 1.2 or higher",
-          "Secure authentication and multi-factor access controls",
-          "Role-based access control policies with the principle of least privilege",
-          "Continuous system monitoring and intrusion detection",
-          "Regular security updates, vulnerability assessments, and penetration testing",
-          "Encrypted backups stored in geographically separate locations",
+          "We maintain security measures appropriate to the nature of the platform and the risk of processing. Measures may include encrypted transmission, hosted access controls, role-based permissions, authentication controls, backups, monitoring, logging, vulnerability management, environment separation and operational procedures.",
+          "No internet service is completely secure. Customer responsibilities include using strong credentials, restricting user access, protecting connected email accounts, securing devices and promptly reporting suspected compromise.",
         ],
       },
       {
         heading: "7. Subprocessors",
         paragraphs: [
-          "Velocity Influence may engage third-party service providers (subprocessors) to assist in delivering the Platform. Examples of subprocessors include:",
-        ],
-        bullets: [
-          "Cloud infrastructure providers for hosting and data storage",
-          "Analytics services for campaign performance measurement",
-          "Payment processors for subscription and invoice management",
-          "Email delivery providers for campaign communications",
+          "We may use subprocessors to provide hosting, storage, authentication, payments, analytics, monitoring, communications, email connectivity, AI processing, support and other infrastructure. We will impose data protection obligations on subprocessors that are materially consistent with this DPA.",
+          "Where legally required, the customer gives general authorisation for subprocessors and may request current subprocessor information. If a customer reasonably objects to a new subprocessor, the customer's remedy is to stop using the affected feature or terminate the service if we cannot reasonably resolve the objection.",
         ],
       },
       {
-        heading: "8. International Data Transfers",
+        heading: "8. International Transfers",
         paragraphs: [
-          "Personal data may be transferred between jurisdictions as necessary to deliver Platform services. Velocity Influence will ensure that international transfers comply with recognised safeguards, including:",
-        ],
-        bullets: [
-          "Standard contractual clauses approved by relevant data protection authorities",
-          "Adequacy decisions where applicable",
-          "Other recognised international data transfer mechanisms as required by law",
+          "Customer Personal Data may be processed in the United States, United Kingdom, European Economic Area and other jurisdictions where we or our subprocessors operate. Where required, transfers will rely on recognised mechanisms such as adequacy decisions, standard contractual clauses, the UK international data transfer addendum or other lawful transfer mechanisms.",
         ],
       },
       {
-        heading: "9. Data Breach Notification",
+        heading: "9. Data Subject Requests and Regulatory Assistance",
         paragraphs: [
-          "Velocity Influence will notify customers without undue delay upon becoming aware of a security incident that may affect personal data processed on the Platform. Notification will include:",
-        ],
-        bullets: [
-          "A description of the nature of the breach",
-          "The categories and approximate number of data subjects affected",
-          "The likely consequences of the breach",
-          "Measures taken or proposed to address and mitigate the breach",
+          "Taking into account the nature of processing and information available to us, we will provide reasonable assistance to the customer for data subject access, deletion, correction, portability, objection, restriction, security, breach, data protection impact assessment and regulator enquiries. Assistance outside standard platform functionality may be charged at reasonable rates.",
         ],
       },
       {
-        heading: "10. Data Retention and Deletion",
+        heading: "10. Security Incidents",
         paragraphs: [
-          "Personal data will be retained only as long as necessary to provide Platform services and fulfil the purposes for which it was collected.",
-          "Upon account termination, customers may request deletion of their stored personal data. Velocity Influence will delete or return all personal data within 30 days of a verified request, except where retention is required by law.",
+          "We will notify affected customers without undue delay after becoming aware of a confirmed personal data breach affecting Customer Personal Data. Notice may include available information about the nature of the incident, affected data, likely consequences, mitigation steps and recommended customer actions. The customer remains responsible for any regulator or data subject notification obligations unless the law requires us to notify directly.",
         ],
       },
       {
-        heading: "11. Audit Rights",
+        heading: "11. Return, Deletion and Retention",
         paragraphs: [
-          "Customers may request reasonable information regarding the Platform's data protection practices to verify compliance with this DPA.",
-          "Velocity Influence may provide compliance documentation, security summaries, or relevant certifications to satisfy audit requests. On-site audits may be arranged at the customer's expense with reasonable advance notice.",
+          "During the account term, customers may export or delete certain data through available platform tools. After termination or verified deletion request, we will delete or return Customer Personal Data within a reasonable period unless retention is required for legal, tax, security, billing, dispute, fraud prevention, backup or compliance purposes.",
+          "Backups and logs may persist for a limited period before ordinary deletion cycles complete.",
         ],
       },
       {
-        heading: "12. Confidentiality",
+        heading: "12. Audits and Information",
         paragraphs: [
-          "All personnel handling personal data on behalf of Velocity Influence are subject to appropriate confidentiality obligations. Access to personal data is restricted to authorised personnel on a need-to-know basis.",
+          "We will make available reasonable information to demonstrate compliance with this DPA. On-site audits are available only where legally required, after reasonable notice, during normal business hours, subject to confidentiality, security restrictions and reimbursement of reasonable costs. Audits must not compromise other customers, platform security or confidential information.",
         ],
       },
       {
-        heading: "13. Liability",
+        heading: "13. Liability and Contact",
         paragraphs: [
-          "Liability for data protection matters under this DPA is subject to the limitations described in the Platform Terms of Service and the Client Services Agreement.",
-          "Each party shall be liable for damages caused by processing that infringes applicable data protection laws, to the extent attributable to that party's breach of its obligations.",
-        ],
-      },
-      {
-        heading: "14. Governing Law",
-        paragraphs: [
-          "This Data Processing Agreement shall be governed by and construed in accordance with the laws of the State of Delaware, United States, without regard to its conflict of law principles.",
-          "Any disputes arising under or in connection with this DPA shall be subject to the exclusive jurisdiction of the state and federal courts located in the State of Delaware.",
-        ],
-      },
-      {
-        heading: "15. Contact Information",
-        paragraphs: [
-          "For privacy or data protection enquiries relating to this DPA, please contact us at:",
-          "Global Solutions Management LLC\nTrading as Velocity Influence Agency\nState of Delaware, United States",
-          "Data Protection enquiries: privacy@velocityinfluence.com\nLegal enquiries: legal@velocityinfluence.com\nGeneral enquiries: hello@velocityinfluence.com",
+          "Liability under this DPA is subject to the limitations in the Platform Terms of Service and Customer Agreement, except to the extent those limitations are prohibited by applicable law.",
+          ...standardContact("privacy and data processing enquiries"),
         ],
       },
     ],
   },
   "privacy-policy": {
     title: "Privacy Policy",
-    effectiveDate: "1 March 2026",
-    lastUpdated: "1 March 2026",
-    version: "1.0",
+    effectiveDate: "30 June 2026",
+    lastUpdated: "30 June 2026",
+    version: "2.0",
     sections: [
       {
-        heading: "1. Introduction",
+        heading: "1. Overview",
         paragraphs: [
-          "This Privacy Policy describes how Velocity Influence collects, uses, and protects personal information when individuals interact with our website, platform, and related services.",
-          "By accessing or using the Velocity Influence platform or website, you acknowledge that you have read and understood this Privacy Policy.",
+          `This Privacy Policy explains how ${ENTITY} collects, uses, shares and protects personal information in connection with the ${PLATFORM} website, platform, workspaces, support, billing and related services.`,
+          "For customer-uploaded contact data that we process on behalf of customers, the customer is usually the controller and our Data Processing Agreement applies. For account, website, billing, support, security and operational data, we may act as controller or business depending on the law.",
         ],
       },
       {
-        heading: "2. Service Provider",
+        heading: "2. Information We Collect",
         paragraphs: [
-          `Velocity Influence Agency is a trading name of ${ENTITY}.`,
-          `Throughout this policy, the terms "Velocity Influence", "we", "our", and "us" refer to Global Solutions Management LLC.`,
-        ],
-      },
-      {
-        heading: "3. Information We Collect",
-        paragraphs: [
-          "We collect the following categories of personal data when you interact with our website or platform:",
+          "We may collect information directly from users, customers, website visitors, payment providers, authentication providers, support communications, platform usage, cookies, connected services and customer uploads.",
         ],
         bullets: [
-          "Contact information such as name, email address, and phone number",
-          "Company and job information including company name, job title, and industry",
-          "Account login information including email and password credentials",
-          "Marketing campaign data uploaded by customers, including contact lists and audience segments",
-          "Usage data from interactions with the platform, including pages visited, features used, and session duration",
-          "Technical data such as IP address, browser type, device information, and operating system",
-          "Payment and billing information processed through our payment providers",
+          "Account and contact details such as name, email address, company, role and login information.",
+          "Billing and transaction information processed by payment providers.",
+          "Platform usage data such as pages viewed, features used, uploads, exports, settings, activation actions, logs and support requests.",
+          "Customer-uploaded workspace data such as contact records, company records, tags, notes, source fields, replies and pipeline information.",
+          "Technical data such as IP address, device, browser, operating system, approximate location, cookies and diagnostics.",
         ],
       },
       {
-        heading: "4. How We Use Information",
+        heading: "3. How We Use Information",
         paragraphs: [
-          "We use the personal data we collect for the following purposes:",
+          "We use personal information to operate, secure, improve and support the platform, provide workspaces, process billing, authenticate users, deliver support, maintain legal records, prevent abuse, communicate service updates and comply with law.",
         ],
         bullets: [
-          "Providing access to the Velocity Influence platform and delivering our services",
-          "Delivering marketing campaign services and managing campaign infrastructure",
-          "Improving platform functionality, performance, and user experience",
-          "Responding to enquiries, support requests, and demo bookings",
-          "Communicating service updates, product announcements, and account notifications",
-          "Processing payments and managing billing and subscriptions",
-          "Ensuring platform security, detecting fraud, and preventing abuse",
-          "Complying with applicable legal and regulatory obligations",
+          "To provide Data Vault, quality review, templates, governed activation, replies, follow-up, pipeline, exports and reports.",
+          "To process payments, invoices, taxes, plan changes and credits.",
+          "To detect security incidents, fraud, abuse, policy breaches and deliverability risk.",
+          "To send administrative messages, service notices, security alerts and legally required communications.",
+          "To improve product performance, usability, reliability and safety using aggregated, de-identified or limited operational data where appropriate.",
         ],
       },
       {
-        heading: "5. Marketing Communications",
+        heading: "4. Customer-Uploaded Contact Data",
         paragraphs: [
-          "You may receive communications from us related to:",
-        ],
-        bullets: [
-          "Service updates and platform changes",
-          "Account notifications and security alerts",
-          "Marketing insights, industry reports, and thought leadership content",
-          "Product announcements and feature releases",
+          "Customers control what contact data they upload and how they use it. We process that data to provide the platform according to the customer's instructions and the Data Processing Agreement. Customers are responsible for providing required privacy notices and maintaining lawful bases for their own contacts.",
+          "If you are a contact in a customer's workspace, please contact that customer first for access, deletion, opt-out or correction requests. We may redirect requests to the relevant customer unless we are legally required to respond directly.",
         ],
       },
       {
-        heading: "6. Cookies and Tracking Technologies",
+        heading: "5. AI and Generated Outputs",
         paragraphs: [
-          "The Velocity Influence website uses cookies and similar technologies to:",
-        ],
-        bullets: [
-          "Analyse website traffic and visitor behaviour",
-          "Improve user experience and platform performance",
-          "Remember user preferences and session settings",
-          "Deliver relevant content and measure marketing effectiveness",
+          "The platform may use AI-enabled services to generate drafts, summaries, outreach assets, classifications, reports, quality suggestions or workflow recommendations. Inputs and outputs may be processed by us and service providers to provide and secure the feature.",
+          "Customers should not submit sensitive, regulated or highly confidential data into generation features unless they have confirmed that such use is lawful and appropriate for their plan, settings and risk requirements.",
         ],
       },
       {
-        heading: "7. Sharing of Information",
+        heading: "6. Sharing Information",
         paragraphs: [
-          "We may share personal data with trusted third-party service providers who assist in delivering our platform and services. These may include:",
-        ],
-        bullets: [
-          "Cloud infrastructure providers for hosting and data storage",
-          "Analytics providers for platform usage analysis and performance monitoring",
-          "Payment processors for subscription and invoice management",
-          "Email delivery providers for transactional and campaign communications",
-          "Professional advisors including legal, accounting, and compliance consultants",
+          "We may share personal information with service providers, subprocessors, payment processors, hosting providers, authentication providers, analytics providers, communications tools, professional advisers, regulators, law enforcement, acquirers or affiliates where necessary and lawful.",
+          "We do not sell customer-uploaded contact data. We do not use customer contact lists to market to those contacts for our own purposes while acting as processor for the customer.",
         ],
       },
       {
-        heading: "8. Data Security",
+        heading: "7. Cookies and Analytics",
         paragraphs: [
-          "Velocity Influence implements appropriate technical and organisational measures to protect personal data against unauthorised access, loss, destruction, or damage. These measures include:",
-        ],
-        bullets: [
-          "Encrypted data transmission using TLS 1.2 or higher",
-          "Secure authentication with multi-factor access controls",
-          "Role-based access control systems with the principle of least privilege",
-          "Continuous system monitoring and intrusion detection",
-          "Regular security updates, vulnerability assessments, and penetration testing",
+          "We use cookies and similar technologies for essential site functions, login sessions, preferences, security, analytics and performance. The Cookie Policy explains cookie categories and how users can manage preferences.",
         ],
       },
       {
-        heading: "9. International Data Transfers",
+        heading: "8. International Transfers",
         paragraphs: [
-          "Personal data may be transferred to and processed in countries outside your jurisdiction as necessary to deliver the Velocity Influence platform and services.",
-          "Velocity Influence uses recognised safeguards to ensure appropriate protection of personal data during international transfers, including standard contractual clauses approved by relevant data protection authorities and adequacy decisions where applicable.",
+          "We are operated from the United States and may use providers in multiple countries. Personal information may be transferred to or processed in jurisdictions that may have different data protection laws from your location. Where required, we use recognised transfer mechanisms such as standard contractual clauses, UK addenda, adequacy decisions or other lawful safeguards.",
         ],
       },
       {
-        heading: "10. Data Retention",
+        heading: "9. Retention",
         paragraphs: [
-          "Personal data is retained only as long as necessary to fulfil the purposes for which it was collected, provide our services, or comply with applicable legal obligations.",
-          "When a customer account is closed, customers may request deletion of their stored personal data. Velocity Influence will process verified deletion requests within 30 days, except where retention is required by law.",
+          "We retain personal information for as long as necessary to provide the platform, manage accounts, meet legal and tax obligations, resolve disputes, enforce agreements, prevent fraud, maintain security, support audits and comply with law. Customer workspace data may be retained until deleted by the customer, the account is terminated or deletion is requested, subject to backups and legal retention requirements.",
         ],
       },
       {
-        heading: "11. Your Privacy Rights",
+        heading: "10. Your Rights",
         paragraphs: [
-          "Depending on your jurisdiction, you may have the following rights regarding your personal data:",
-        ],
-        bullets: [
-          "Right of access — to request a copy of the personal data we hold about you",
-          "Right to rectification — to request correction of inaccurate or incomplete personal data",
-          "Right to erasure — to request deletion of your personal data where there is no compelling reason for continued processing",
-          "Right to restriction — to request that we restrict the processing of your personal data in certain circumstances",
-          "Right to data portability — to request transfer of your personal data in a structured, commonly used format",
-          "Right to object — to object to processing based on legitimate interests or for direct marketing purposes",
+          "Depending on your location, you may have rights to access, correct, delete, restrict, object, port or withdraw consent in relation to personal information. These rights may be limited by law, security, identity verification, customer-controller instructions or our legal obligations.",
+          "Requests about customer-uploaded data should normally be directed to the customer that controls the workspace. Requests about your account, website or billing data may be sent to us.",
         ],
       },
       {
-        heading: "12. Third-Party Links",
+        heading: "11. Children's Data and Sensitive Data",
         paragraphs: [
-          "The Velocity Influence platform and website may contain links to external websites and third-party services that are not operated or controlled by us.",
-          "Velocity Influence is not responsible for the privacy practices, content, or security of third-party websites. We encourage you to review the privacy policies of any external sites you visit.",
+          "The platform is intended for business use and is not directed to children. Customers must not upload children's data, special category data, health data, criminal offence data, payment-card data, government identifiers or other sensitive data unless expressly authorised in writing and lawful for the intended use.",
         ],
       },
       {
-        heading: "13. Updates to This Policy",
+        heading: "12. Security and Contact",
         paragraphs: [
-          "Velocity Influence may update this Privacy Policy periodically to reflect changes in our practices, legal requirements, or platform functionality.",
-          "When significant changes are made, we will notify registered users via email or in-platform notification and update the \"Last Updated\" date at the top of this page.",
-        ],
-      },
-      {
-        heading: "14. Contact Information",
-        paragraphs: [
-          "For privacy-related enquiries, data subject requests, or questions about this Privacy Policy, please contact us at:",
-          "Global Solutions Management LLC\nTrading as Velocity Influence Agency\nState of Delaware, United States",
-          "Privacy enquiries: privacy@velocityinfluence.com\nLegal enquiries: legal@velocityinfluence.com\nGeneral enquiries: hello@velocityinfluence.com",
+          "We use reasonable technical and organisational measures to protect personal information, but no system is completely secure. Customers and users are responsible for account security, strong passwords, device security and prompt reporting of suspected compromise.",
+          ...standardContact("privacy rights, data enquiries or security concerns"),
         ],
       },
     ],
   },
   "acceptable-use-policy": {
     title: "Acceptable Use Policy",
-    effectiveDate: "1 March 2026",
-    lastUpdated: "1 March 2026",
-    version: "1.0",
+    effectiveDate: "30 June 2026",
+    lastUpdated: "30 June 2026",
+    version: "2.0",
     sections: [
       {
-        heading: "1. Introduction",
+        heading: "1. Purpose",
         paragraphs: [
-          "This Acceptable Use Policy (\"AUP\") outlines the permitted and prohibited uses of the Velocity Influence platform.",
-          "All customers, users, and account holders must comply with this policy when using the platform to manage marketing campaigns, upload data, or access platform services.",
+          `This Acceptable Use Policy protects ${PLATFORM}, customers, recipients, senders, infrastructure and third parties. It applies to all accounts, workspaces, users, agencies, client workspaces, uploads, generated outputs, activations, exports and integrations.`,
         ],
       },
       {
-        heading: "2. Service Provider",
+        heading: "2. Lawful Use Only",
         paragraphs: [
-          `Velocity Influence Agency is a trading name of ${ENTITY}.`,
-          `Throughout this policy, references to "Velocity Influence", "the Platform", "we", "our", and "us" refer to Global Solutions Management LLC.`,
-        ],
-      },
-      {
-        heading: "3. Permitted Uses of the Platform",
-        paragraphs: [
-          "Customers may use the Velocity Influence platform for legitimate marketing and campaign management purposes including:",
+          "You may use the platform only for lawful business purposes and in compliance with all applicable laws, regulations, platform policies, provider rules and third-party rights.",
         ],
         bullets: [
-          "Managing and executing marketing campaigns across supported channels",
-          "Analysing marketing performance using platform analytics and reporting tools",
-          "Managing marketing contact databases and audience segments",
-          "Generating campaign reports and performance dashboards",
-          "Collaborating with team members and clients through platform workspaces",
+          "No unlawful data collection, processing, sale, enrichment, contact or export.",
+          "No misleading, deceptive, fraudulent, defamatory, infringing, harassing, discriminatory or harmful activity.",
+          "No use that would cause us, our providers or other customers to breach law, contract or policy.",
         ],
       },
       {
-        heading: "4. Prohibited Activities",
+        heading: "3. Data and List Restrictions",
         paragraphs: [
-          "Users may not use the platform to engage in any of the following activities:",
+          "You must not upload or use data that you cannot lawfully process for the intended purpose. You must not use the platform with illegally obtained, unlawfully scraped, stolen, leaked, purchased-without-lawful-basis, suppressed, do-not-contact or otherwise restricted contact data.",
+        ],
+      },
+      {
+        heading: "4. Outreach and Sender Restrictions",
+        paragraphs: [
+          "You must not use the platform for spam, unlawful unsolicited communications, deceptive headers, misleading subject lines, impersonation, domain spoofing, phishing, credential harvesting, evasion of opt-outs, suppression-list misuse or sending that violates anti-spam, privacy, advertising or communications laws.",
+        ],
+      },
+      {
+        heading: "5. Content Restrictions",
+        paragraphs: [
+          "You must not create, upload, generate, send or promote content that is illegal, exploitative, abusive, hateful, discriminatory, deceptive, sexually exploitative, violent, infringing, malicious, harmful to minors, or targeted at vulnerable people in an inappropriate way.",
         ],
         bullets: [
-          "Sending unsolicited spam, bulk communications, or messages that violate applicable anti-spam legislation",
-          "Uploading unlawful, illegally obtained, or non-consented contact lists or marketing databases",
-          "Distributing malware, viruses, harmful software, or any material intended to disrupt platform operations",
-          "Conducting fraudulent, deceptive, or misleading marketing campaigns",
-          "Impersonating another individual, organisation, or entity",
-          "Harvesting, scraping, or collecting personal data from the platform without authorisation",
-          "Infringing the intellectual property rights of any third party",
-          "Using the platform in any manner that violates applicable laws or regulations",
+          "Regulated products or services may require additional permissions and may be refused or restricted.",
+          "High-risk sectors such as health, finance, legal, immigration, employment, politics, insurance, credit, education, gambling, weapons, adult content and controlled substances must comply with all applicable sector rules and may be blocked.",
+          "You must not use generated outputs to misrepresent facts, qualifications, endorsements, pricing, legal rights, regulatory status or product capabilities.",
         ],
       },
       {
-        heading: "5. Marketing List Requirements",
+        heading: "6. Platform Abuse and Security",
         paragraphs: [
-          "Customers uploading marketing contact lists to the platform must ensure that:",
-        ],
-        bullets: [
-          "The data was collected lawfully and in compliance with applicable data protection laws",
-          "Individuals have provided appropriate consent where required by law",
-          "Marketing communications sent using the data comply with applicable regulations",
-          "Contact lists do not contain information obtained through unlawful or deceptive means",
+          "You must not interfere with, probe, scan, disrupt, reverse engineer, overload, copy, scrape, bypass, resell or misuse the platform, infrastructure, source code, APIs, security controls, billing systems, safety checks, sender verification, quality holds or plan limits.",
         ],
       },
       {
-        heading: "6. Platform Security and Integrity",
+        heading: "7. Agency and Client Workspace Conduct",
         paragraphs: [
-          "Customers must not attempt to compromise the security or integrity of the Velocity Influence platform. The following activities are strictly prohibited:",
-        ],
-        bullets: [
-          "Accessing unauthorised areas of the platform or other users' accounts",
-          "Bypassing, disabling, or circumventing platform security measures",
-          "Exploiting vulnerabilities, bugs, or errors in the platform software",
-          "Overloading, flooding, or deliberately disrupting system infrastructure",
-          "Reverse engineering, decompiling, or attempting to extract the source code of the platform",
+          "Agencies are responsible for all client workspaces, invited users, client data, sender setup, permissions, approvals and activation decisions. Agencies must not mix client data, misrepresent client authority or use one client's data for another client's benefit without lawful permission.",
         ],
       },
       {
-        heading: "7. Enforcement Actions",
+        heading: "8. Monitoring and Enforcement",
         paragraphs: [
-          "Velocity Influence reserves the right to take enforcement actions if this policy is violated. Enforcement actions may include:",
-        ],
-        bullets: [
-          "Issuing a formal warning to the account holder",
-          "Temporary suspension of platform access pending investigation",
-          "Permanent termination of accounts found to be in violation",
-          "Removal of unlawful data, content, or marketing materials from the platform",
-          "Reporting illegal activities to relevant law enforcement or regulatory authorities where required",
+          "We may investigate suspected violations and may block uploads, hold records, pause activation, restrict exports, throttle usage, require verification, remove content, suspend senders, disable workspaces, terminate accounts or report unlawful activity where appropriate.",
+          "We are not required to monitor all activity, but our failure to act immediately does not waive our rights.",
         ],
       },
       {
-        heading: "8. Reporting Violations",
-        paragraphs: [
-          "Users who become aware of any violations of this Acceptable Use Policy are encouraged to report concerns through the platform's support channels or by contacting us directly.",
-          "Reports can be submitted to: compliance@velocityinfluence.com",
-          "All reports will be reviewed and investigated in a timely manner. Velocity Influence may take appropriate action based on the findings of any investigation.",
-        ],
-      },
-      {
-        heading: "9. Updates to This Policy",
-        paragraphs: [
-          "Velocity Influence may update this Acceptable Use Policy periodically to reflect changes in platform functionality, legal requirements, or industry standards.",
-          "When significant changes are made, customers will be notified via email or in-platform notification. Continued use of the platform after notification constitutes acceptance of the updated policy.",
-        ],
-      },
-      {
-        heading: "10. Contact Information",
-        paragraphs: [
-          "For enquiries related to this Acceptable Use Policy or platform usage, please contact us at:",
-          "Global Solutions Management LLC\nTrading as Velocity Influence Agency\nState of Delaware, United States",
-          "Compliance enquiries: compliance@velocityinfluence.com\nLegal enquiries: legal@velocityinfluence.com\nGeneral enquiries: hello@velocityinfluence.com",
-        ],
+        heading: "9. Contact",
+        paragraphs: standardContact("acceptable use, abuse reports or compliance concerns"),
       },
     ],
   },
   "marketing-compliance-policy": {
     title: "Marketing Compliance Policy",
-    effectiveDate: "1 March 2026",
-    lastUpdated: "1 March 2026",
-    version: "1.0",
+    effectiveDate: "30 June 2026",
+    lastUpdated: "30 June 2026",
+    version: "2.0",
     sections: [
       {
-        heading: "1. Introduction",
+        heading: "1. Customer Responsibility",
         paragraphs: [
-          "This Marketing Compliance Policy defines the requirements customers must follow when using the Velocity Influence platform to conduct marketing campaigns.",
-          "The platform provides marketing tools and campaign infrastructure, but customers are solely responsible for ensuring that their marketing activities comply with all applicable laws and regulations.",
+          `${PLATFORM} provides tools for governed activation, but customers are solely responsible for ensuring every outreach activity, contact source, message, sender identity, opt-out process and follow-up action complies with all applicable laws.`,
+          "Relevant laws may include GDPR, UK GDPR, PECR, ePrivacy rules, CAN-SPAM, CASL, the Australian Spam Act, consumer protection laws, advertising standards, sector-specific rules and local laws in the recipient's jurisdiction.",
         ],
       },
       {
-        heading: "2. Service Provider",
+        heading: "2. Lawful Basis and Consent",
         paragraphs: [
-          `Velocity Influence Agency is a trading name of ${ENTITY}.`,
-          `Throughout this policy, references to "Velocity Influence", "the Platform", "we", "our", and "us" refer to Global Solutions Management LLC.`,
+          "Before activating any contact, you must confirm that you have a lawful basis or required consent for the message, recipient, channel, jurisdiction and purpose. You must maintain records sufficient to prove consent, legitimate interest, existing relationship, soft opt-in, conspicuous publication, contract or other lawful basis where applicable.",
         ],
       },
       {
-        heading: "3. Responsibility for Marketing Activities",
+        heading: "3. Email and Message Requirements",
         paragraphs: [
-          "Customers are solely responsible for all marketing campaigns conducted through the Velocity Influence platform. This includes responsibility for:",
+          "Commercial messages must comply with applicable identification, transparency, sender, unsubscribe, recordkeeping and content requirements. The platform may assist with templates and fields, but you remain responsible for final compliance.",
         ],
         bullets: [
-          "Campaign messaging, content, and creative materials",
-          "Marketing strategies and targeting decisions",
-          "Selection and management of marketing audiences and contact lists",
-          "Compliance with all applicable marketing, advertising, and data protection laws in every jurisdiction in which campaigns are conducted",
+          "Sender, From, Reply-To and routing information must be accurate and not misleading.",
+          "Subject lines and preview text must not be deceptive.",
+          "Messages must identify the sender or promoted organisation where required.",
+          "Messages must include a valid opt-out or unsubscribe mechanism where required.",
+          "Opt-out and unsubscribe requests must be honoured promptly and suppression lists must be maintained.",
+          "Postal address, business identity, advertisement disclosures or other notices must be included where required by local law.",
         ],
       },
       {
-        heading: "4. Lawful Basis for Marketing Communications",
+        heading: "4. Suppression Lists and Opt-Outs",
         paragraphs: [
-          "Customers must ensure that they have a lawful basis for contacting individuals through marketing campaigns. A lawful basis may include:",
-        ],
-        bullets: [
-          "Explicit consent obtained from the individual",
-          "Legitimate interest where permitted by applicable law",
-          "An existing customer or business relationship",
-          "Other legal grounds recognised under applicable data protection legislation",
+          "You must maintain suppression lists and opt-out records for your own business and client workspaces. You must not contact individuals who have opted out, withdrawn consent, objected, unsubscribed or otherwise requested no further marketing where that request applies.",
+          "Suppression data may only be used for compliance and must not be sold, reused or activated for unrelated marketing.",
         ],
       },
       {
-        heading: "5. Email Marketing Compliance",
+        heading: "5. Data Source and List Hygiene",
         paragraphs: [
-          "When conducting email campaigns through the platform, customers must comply with all applicable email marketing regulations. Examples of applicable regulations include:",
+          "You must maintain records showing where contact data came from, when it was collected, what notices were provided, what lawful basis applies, whether the recipient opted out, and whether any jurisdiction-specific restrictions apply.",
         ],
         bullets: [
-          "General Data Protection Regulation (GDPR) — European Union",
-          "CAN-SPAM Act — United States",
-          "Privacy and Electronic Communications Regulations (PECR) — United Kingdom",
-          "Canada's Anti-Spam Legislation (CASL) — Canada",
-          "ePrivacy Directive — European Union",
+          "Do not use harvested addresses, dictionary-generated addresses, unlawfully scraped data or purchased lists without a lawful basis and appropriate documentation.",
+          "Do not rely on platform quality flags as proof of legal permission.",
+          "Data marked risky, blocked, duplicate or needs review must be handled before activation according to platform controls and your legal obligations.",
         ],
       },
       {
-        heading: "6. Data Collection Requirements",
+        heading: "6. B2B, B2C and International Outreach",
         paragraphs: [
-          "Customers must ensure that personal data used for marketing campaigns has been collected lawfully and in accordance with applicable data protection laws. This includes ensuring that:",
-        ],
-        bullets: [
-          "Individuals were informed of how their data would be used at the point of collection",
-          "Appropriate privacy notices were provided to data subjects",
-          "Consent was obtained where required by applicable law",
-          "Data was not obtained through deceptive, fraudulent, or unlawful means",
+          "Rules differ between business and consumer recipients and between countries. A business email address can still be personal data. Some jurisdictions require opt-in consent; others permit limited opt-out marketing subject to strict conditions. You must apply the strictest rule needed for the recipient, channel, message and jurisdiction.",
         ],
       },
       {
         heading: "7. Agency Responsibilities",
         paragraphs: [
-          "Agencies using the Velocity Influence platform to conduct campaigns on behalf of their clients must ensure that their clients comply with all applicable marketing laws and regulations.",
-          "The agency remains fully responsible for ensuring that all data uploaded to the platform on behalf of its clients is used lawfully and in compliance with this policy.",
-          "Velocity Influence does not enter into contractual relationships with the agency's end clients. The agency account holder is solely responsible for all activity conducted through its account and associated workspaces.",
+          "Agencies must ensure each client has lawful authority for the data and outreach conducted through the client's workspace. Agencies must obtain appropriate client approvals, maintain records, prevent cross-client data mixing and indemnify us for client workspace claims.",
         ],
       },
       {
-        heading: "8. Prohibited Marketing Practices",
+        heading: "8. Platform Controls Are Not Legal Approval",
         paragraphs: [
-          "Customers may not use the Velocity Influence platform to conduct any of the following activities:",
-        ],
-        bullets: [
-          "Sending unsolicited bulk spam communications or messages that violate anti-spam legislation",
-          "Using illegally obtained or non-consented marketing databases or contact lists",
-          "Conducting misleading, deceptive, or fraudulent marketing campaigns",
-          "Impersonating individuals, organisations, or brands",
-          "Distributing content that promotes illegal activities or violates applicable advertising standards",
-          "Engaging in marketing practices that target vulnerable individuals or minors inappropriately",
+          "Sender verification, quality checks, send limits, cadence controls and activation gates are operational safeguards. They are not legal advice, compliance certification, deliverability guarantees or confirmation that a message may lawfully be sent.",
         ],
       },
       {
-        heading: "9. Enforcement and Suspension",
+        heading: "9. Enforcement and Indemnity",
         paragraphs: [
-          "Velocity Influence reserves the right to take enforcement actions against accounts that violate this Marketing Compliance Policy. Enforcement actions may include:",
-        ],
-        bullets: [
-          "Issuing a formal warning to the account holder",
-          "Suspension of active campaigns pending investigation",
-          "Removal of unlawful data, content, or marketing materials from the platform",
-          "Temporary or permanent suspension of platform access",
-          "Termination of the customer account",
-          "Reporting illegal activities to relevant regulatory or law enforcement authorities where required",
+          "We may pause, block, throttle, review, suspend or terminate outreach activity if we believe it creates legal, deliverability, reputational, provider, recipient or platform risk. You must indemnify us for claims, fines, penalties, complaints, investigations, costs or losses arising from your outreach, data, sender use, client activity or non-compliance.",
         ],
       },
       {
-        heading: "10. Updates to This Policy",
-        paragraphs: [
-          "Velocity Influence may update this Marketing Compliance Policy periodically to reflect changes in legal requirements, industry standards, or platform functionality.",
-          "When material changes are made, customers will be notified via email or in-platform notification. Continued use of the platform after notification constitutes acceptance of the updated policy.",
-        ],
-      },
-      {
-        heading: "11. Contact Information",
-        paragraphs: [
-          "For enquiries regarding marketing compliance or legal obligations, please contact us at:",
-          "Global Solutions Management LLC\nTrading as Velocity Influence Agency\nState of Delaware, United States",
-          "Compliance enquiries: compliance@velocityinfluence.com\nLegal enquiries: legal@velocityinfluence.com\nGeneral enquiries: hello@velocityinfluence.com",
-        ],
+        heading: "10. Contact",
+        paragraphs: standardContact("marketing compliance questions"),
       },
     ],
   },
   "cookie-policy": {
     title: "Cookie Policy",
-    effectiveDate: "1 March 2026",
-    lastUpdated: "1 March 2026",
-    version: "1.0",
+    effectiveDate: "30 June 2026",
+    lastUpdated: "30 June 2026",
+    version: "2.0",
     sections: [
       {
-        heading: "1. Introduction",
+        heading: "1. Overview",
         paragraphs: [
-          "This Cookie Policy describes how cookies and similar tracking technologies are used when individuals visit the Velocity Influence website or access the platform.",
-          "Cookies help improve website functionality, analyse usage patterns, and enhance the overall user experience.",
+          `This Cookie Policy explains how ${PLATFORM} uses cookies and similar technologies on the public website and platform. Cookies help operate the site, keep users signed in, remember preferences, protect security, analyse usage and improve performance.`,
         ],
       },
       {
-        heading: "2. Service Provider",
+        heading: "2. Types of Cookies",
         paragraphs: [
-          `Velocity Influence Agency is a trading name of ${ENTITY}.`,
-          `Throughout this policy, references to "Velocity Influence", "we", "our", and "us" refer to Global Solutions Management LLC.`,
-        ],
-      },
-      {
-        heading: "3. What Cookies Are",
-        paragraphs: [
-          "Cookies are small text files that are stored on a user's device (computer, tablet, or mobile phone) when they visit a website.",
-          "Cookies allow websites to recognise returning visitors, store certain preferences, and collect information about how the site is used. Cookies may be set by the website itself (first-party cookies) or by third-party services operating on the website.",
-        ],
-      },
-      {
-        heading: "4. Types of Cookies We Use",
-        paragraphs: [
-          "The Velocity Influence website and platform may use the following types of cookies:",
+          "We may use the following categories of cookies and similar technologies:",
         ],
         bullets: [
-          "Essential cookies — required for the basic functionality of the website and platform, such as user authentication and security",
-          "Functional cookies — allow the website to remember user preferences and provide enhanced, personalised features",
-          "Analytics cookies — help us understand how visitors interact with the website by collecting and reporting usage data",
+          "Essential cookies required for authentication, security, routing, load balancing and basic platform functions.",
+          "Preference cookies that remember language, region, currency or interface choices.",
+          "Analytics cookies that help us understand website and product usage.",
+          "Performance and diagnostics cookies that help detect errors, measure speed and improve reliability.",
+          "Marketing cookies only where enabled and lawful, used to understand campaign effectiveness or provide relevant communications.",
         ],
       },
       {
-        heading: "5. Analytics Cookies",
+        heading: "3. Third-Party Technologies",
         paragraphs: [
-          "Analytics cookies help us understand how visitors interact with the Velocity Influence website. These cookies collect information such as:",
-        ],
-        bullets: [
-          "Pages visited and content viewed",
-          "Time spent on individual pages and the overall session",
-          "Navigation behaviour and click patterns",
-          "Referring websites or sources that directed visitors to our site",
-          "General geographic location based on IP address",
+          "Third-party providers may set cookies or similar technologies when they provide hosting, analytics, payments, support, embedded tools, authentication, security, monitoring or communications. Their use may be governed by their own policies as well as our agreements with them.",
         ],
       },
       {
-        heading: "6. Functional Cookies",
+        heading: "4. Managing Cookies",
         paragraphs: [
-          "Functional cookies allow the website and platform to remember user preferences and deliver a more personalised experience. These cookies may store information such as:",
-        ],
-        bullets: [
-          "Login session data to keep users authenticated",
-          "Language and regional preferences",
-          "Interface settings and display preferences",
-          "Previously viewed content or selected options",
+          "You can control cookies through browser settings and, where available, website consent tools. Blocking some cookies may affect login, security, billing, preferences or platform functionality.",
         ],
       },
       {
-        heading: "7. Managing Cookie Preferences",
+        heading: "5. Updates and Contact",
         paragraphs: [
-          "Users can control and manage cookies through their browser settings. Most browsers allow users to:",
-        ],
-        bullets: [
-          "Accept all cookies",
-          "Block all cookies or specific categories of cookies",
-          "Delete cookies that are already stored on their device",
-          "Configure the browser to notify them when cookies are being set",
-        ],
-      },
-      {
-        heading: "8. Third-Party Cookies",
-        paragraphs: [
-          "Some cookies on the Velocity Influence website may be placed by third-party service providers that assist in delivering our platform and services. These third parties may include:",
-        ],
-        bullets: [
-          "Analytics providers for website traffic analysis and usage reporting",
-          "Performance monitoring tools for platform reliability",
-          "Payment processors for subscription and billing services",
-          "Social media platforms for content sharing and engagement features",
-        ],
-      },
-      {
-        heading: "9. Updates to This Policy",
-        paragraphs: [
-          "Velocity Influence may update this Cookie Policy periodically to reflect changes in technology, legal requirements, or the types of cookies used on the website.",
-          "When significant changes are made, users will be notified via an updated notice on the website. The \"Last Updated\" date at the top of this page will be revised accordingly.",
-        ],
-      },
-      {
-        heading: "10. Contact Information",
-        paragraphs: [
-          "For enquiries related to cookies, website tracking technologies, or this Cookie Policy, please contact us at:",
-          "Global Solutions Management LLC\nTrading as Velocity Influence Agency\nState of Delaware, United States",
-          "Privacy enquiries: privacy@velocityinfluence.com\nLegal enquiries: legal@velocityinfluence.com\nGeneral enquiries: hello@velocityinfluence.com",
+          "We may update this Cookie Policy when our technology, providers, legal requirements or product features change.",
+          ...standardContact("cookie or tracking technology questions"),
         ],
       },
     ],
   },
   "platform-security-policy": {
     title: "Platform Security Policy",
-    effectiveDate: "1 March 2026",
-    lastUpdated: "1 March 2026",
-    version: "1.0",
+    effectiveDate: "30 June 2026",
+    lastUpdated: "30 June 2026",
+    version: "2.0",
     sections: [
       {
-        heading: "1. Introduction",
+        heading: "1. Security Approach",
         paragraphs: [
-          "This Platform Security Policy describes the security practices implemented to protect the Velocity Influence platform, infrastructure, and customer data.",
-          "The goal is to maintain a secure and reliable platform for all customers, agencies, and users accessing Velocity Influence services.",
+          `${PLATFORM} is designed to protect customer workspaces, uploaded data, sender controls, activation workflows, replies, pipeline records and platform integrity using reasonable technical and organisational measures appropriate to a self-serve SaaS platform.`,
+          "Security is a shared responsibility. We protect the platform environment; customers must protect their own accounts, users, devices, data, senders and connected services.",
         ],
       },
       {
-        heading: "2. Service Provider",
+        heading: "2. Access Controls",
         paragraphs: [
-          `Velocity Influence Agency is a trading name of ${ENTITY}.`,
-          `Throughout this policy, references to "Velocity Influence", "the Platform", "we", "our", and "us" refer to Global Solutions Management LLC.`,
-        ],
-      },
-      {
-        heading: "3. Security Philosophy",
-        paragraphs: [
-          "Velocity Influence is designed with security as a core principle embedded into all aspects of platform development and operations. Our security practices focus on:",
+          "We use access controls intended to restrict platform and administrative access to authorised users and personnel. Customer workspaces use account-based permissions, and agency workspaces are designed to separate client data and activity.",
         ],
         bullets: [
-          "Protecting customer data against unauthorised access, loss, or misuse",
-          "Maintaining the integrity and reliability of platform systems",
-          "Preventing unauthorised access to accounts, infrastructure, and services",
-          "Ensuring reliable and consistent service delivery for all customers",
-          "Continuously improving security practices in response to evolving threats",
+          "Customers should use strong passwords and secure authentication practices.",
+          "Customers should invite only authorised users and remove access when no longer needed.",
+          "Customers are responsible for securing connected email, billing and third-party accounts.",
         ],
       },
       {
-        heading: "4. Platform Infrastructure Security",
+        heading: "3. Data Protection Measures",
         paragraphs: [
-          "The Velocity Influence platform is built on secure infrastructure environments designed to maintain system stability, resilience, and availability. Infrastructure protections include:",
-        ],
-        bullets: [
-          "Secure cloud hosting environments with enterprise-grade reliability",
-          "Network security controls including firewalls and traffic filtering",
-          "System redundancy and failover mechanisms to minimise service disruption",
-          "Infrastructure monitoring for performance and availability tracking",
-          "Distributed denial-of-service (DDoS) protection measures",
-          "Geographically distributed backups for disaster recovery",
+          "Security measures may include encrypted transmission, secure hosting, permission controls, operational logging, backup procedures, monitoring, vulnerability management, supplier review and incident response processes. Specific controls may change as the platform evolves.",
         ],
       },
       {
-        heading: "5. Data Protection Measures",
+        heading: "4. Sender and Activation Governance",
         paragraphs: [
-          "Velocity Influence implements appropriate technical and organisational measures to protect stored and transmitted data. These measures include:",
-        ],
-        bullets: [
-          "Encrypted data transmission using TLS 1.2 or higher for all connections",
-          "Secure data storage practices with encryption at rest where appropriate",
-          "Access control policies restricting data access to authorised personnel",
-          "Regular security updates, patches, and vulnerability remediation",
-          "Data backup procedures with encrypted storage in geographically separate locations",
-        ],
-      },
-      {
-        heading: "6. Access Control and Authentication",
-        paragraphs: [
-          "Platform access is protected using robust authentication and permission controls to ensure that only authorised users can access platform data and features. Access controls include:",
-        ],
-        bullets: [
-          "Secure login authentication with password complexity requirements",
-          "Multi-factor authentication (MFA) for administrative and sensitive access",
-          "Role-based access permissions following the principle of least privilege",
-          "Restricted access to administrative systems and internal infrastructure",
-          "Session management controls including automatic timeout for inactive sessions",
-        ],
-      },
-      {
-        heading: "7. Monitoring and Threat Detection",
-        paragraphs: [
-          "The Velocity Influence platform uses monitoring systems designed to detect potential security threats, unusual system activity, and performance anomalies. Monitoring capabilities include:",
-        ],
-        bullets: [
-          "Continuous system and infrastructure monitoring",
-          "Intrusion detection and prevention systems",
-          "Automated alerting for suspicious or anomalous activity",
-          "Log collection and analysis for security investigation purposes",
-          "Regular review of monitoring data to identify emerging threats",
-        ],
-      },
-      {
-        heading: "8. Incident Response",
-        paragraphs: [
-          "Velocity Influence maintains documented procedures to respond to potential security incidents promptly and effectively. Our incident response process includes:",
-        ],
-        bullets: [
-          "Identification and classification of the security incident",
-          "Containment measures to limit the impact of the incident",
-          "Investigation and root cause analysis",
-          "Remediation and recovery actions",
-          "Post-incident review and implementation of preventive measures",
-        ],
-      },
-      {
-        heading: "9. Customer Security Responsibilities",
-        paragraphs: [
-          "Customers are responsible for maintaining the security of their own accounts and the data they manage through the platform. Customer responsibilities include:",
-        ],
-        bullets: [
-          "Protecting login credentials and not sharing account passwords",
-          "Restricting platform access to authorised personnel within their organisation",
-          "Ensuring secure handling and management of their marketing data and contact lists",
-          "Promptly notifying Velocity Influence if they believe their account security has been compromised",
-          "Keeping their own systems and devices secure when accessing the platform",
-        ],
-      },
-      {
-        heading: "10. Updates to This Policy",
-        paragraphs: [
-          "Velocity Influence may update this Platform Security Policy periodically to reflect changes in security practices, technology, or regulatory requirements.",
-          "When significant changes are made, customers will be notified via email or in-platform notification. The \"Last Updated\" date at the top of this page will be revised accordingly.",
-        ],
-      },
-      {
-        heading: "11. Contact Information",
-        paragraphs: [
-          "For security-related enquiries, vulnerability reports, or questions about this Platform Security Policy, please contact us at:",
-          "Global Solutions Management LLC\nTrading as Velocity Influence Agency\nState of Delaware, United States",
-          "Security enquiries: security@velocityinfluence.com\nLegal enquiries: legal@velocityinfluence.com\nGeneral enquiries: hello@velocityinfluence.com",
-        ],
-      },
-    ],
-  },
-  "service-level-agreement": {
-    title: "Service Level Agreement",
-    effectiveDate: "1 March 2026",
-    lastUpdated: "1 March 2026",
-    version: "1.0",
-    sections: [
-      {
-        heading: "1. Introduction",
-        paragraphs: [
-          "This Service Level Agreement (\"SLA\") outlines the service standards Velocity Influence aims to maintain for customers using the platform.",
-          "This agreement describes platform availability expectations, support procedures, and the shared responsibilities of both Velocity Influence and its customers.",
-        ],
-      },
-      {
-        heading: "2. Service Provider",
-        paragraphs: [
-          `Velocity Influence Agency is a trading name of ${ENTITY}.`,
-          `Throughout this agreement, references to "Velocity Influence", "the Platform", "we", "our", and "us" refer to Global Solutions Management LLC.`,
-        ],
-      },
-      {
-        heading: "3. Platform Availability",
-        paragraphs: [
-          "Velocity Influence aims to maintain reliable and consistent access to the platform for all customers. Our target availability goal is:",
-        ],
-        bullets: [
-          "99% platform uptime measured on a monthly basis",
-        ],
-      },
-      {
-        heading: "4. Scheduled Maintenance",
-        paragraphs: [
-          "The platform may occasionally require scheduled maintenance to maintain performance, security, and reliability. During maintenance periods:",
-        ],
-        bullets: [
-          "Access to certain features or services may be temporarily unavailable",
-          "Users may receive advance notice where possible to minimise disruption",
-          "Maintenance windows are designed to occur during periods of lower platform usage",
-          "Emergency maintenance may be performed without advance notice when required to address critical security or stability issues",
+          "The platform may use sender verification, activation gates, quality statuses, risky-record flags, plan limits, cadence controls and audit records to reduce operational and deliverability risk. These safeguards do not remove the customer's responsibility for lawful outreach.",
         ],
       },
       {
         heading: "5. Incident Response",
         paragraphs: [
-          "If a platform incident occurs, Velocity Influence will take reasonable steps to investigate and resolve the issue in a timely manner. Response priorities may depend on the severity and impact of the incident. Examples of incidents include:",
+          "If we become aware of a security incident affecting customer data or platform integrity, we will investigate, take reasonable containment and remediation steps, and notify affected customers where required by law or contract.",
+        ],
+      },
+      {
+        heading: "6. Vulnerability Reporting",
+        paragraphs: [
+          "Customers and researchers must not conduct intrusive testing, scanning, exploitation, social engineering, denial-of-service testing or access to other customers' data without written permission. Security concerns should be reported responsibly.",
+        ],
+      },
+      {
+        heading: "7. No Absolute Security Warranty",
+        paragraphs: [
+          "No internet, cloud or software platform can guarantee absolute security. We do not warrant that unauthorised access, data loss, vulnerability, outage or attack can never occur. Customers should maintain their own backups, compliance processes and business continuity plans.",
+        ],
+      },
+      {
+        heading: "8. Contact",
+        paragraphs: standardContact("security reports or platform security questions"),
+      },
+    ],
+  },
+  "service-level-agreement": {
+    title: "Service Level Agreement",
+    effectiveDate: "30 June 2026",
+    lastUpdated: "30 June 2026",
+    version: "2.0",
+    sections: [
+      {
+        heading: "1. Purpose",
+        paragraphs: [
+          `This Service Level Agreement describes operational service standards for ${PLATFORM}. It is a service target document, not a guarantee of uninterrupted access and not a service-credit agreement unless a signed order form expressly provides service credits.`,
+        ],
+      },
+      {
+        heading: "2. Availability Target",
+        paragraphs: [
+          "For paid production workspaces, we aim to maintain 99% monthly platform availability for core workspace access, excluding scheduled maintenance, emergency maintenance, beta features, third-party outages, customer-side issues, force majeure, security actions, payment suspension, misuse enforcement and external network failures.",
+        ],
+      },
+      {
+        heading: "3. Maintenance",
+        paragraphs: [
+          "We may perform scheduled or emergency maintenance to improve performance, security, reliability or functionality. We will try to provide advance notice for scheduled maintenance where practical. Emergency maintenance may occur without notice.",
+        ],
+      },
+      {
+        heading: "4. Support Channels and Targets",
+        paragraphs: [
+          "Support is provided through designated support channels. Response times are targets and may vary by plan, severity, volume, complexity, holidays, weekends and whether the issue depends on third-party providers.",
         ],
         bullets: [
-          "Platform outages affecting customer access to services",
-          "Critical system failures impacting core platform functionality",
-          "Security incidents that may affect customer data or platform integrity",
-          "Significant performance degradation affecting multiple customers",
+          "Critical platform access issue affecting multiple paid customers: target initial response within one business day.",
+          "Standard product, billing or workspace support: target initial response within two business days.",
+          "Feature guidance, exports, data questions or non-critical requests: handled in ordinary support queues.",
         ],
       },
       {
-        heading: "6. Support Requests",
+        heading: "5. Customer Responsibilities",
         paragraphs: [
-          "Customers may submit support requests through designated support channels. Support requests may include issues related to:",
-        ],
-        bullets: [
-          "Platform access and authentication issues",
-          "Campaign management tools and workflow functionality",
-          "Billing questions, invoice enquiries, and subscription management",
-          "System errors, bugs, or unexpected platform behaviour",
-          "Feature enquiries and usage guidance",
+          "Customers must maintain accurate account information, use supported browsers, secure credentials, protect connected accounts, report issues with sufficient detail, follow platform policies and avoid actions that create avoidable incidents or deliverability risk.",
         ],
       },
       {
-        heading: "7. Customer Responsibilities",
+        heading: "6. Exclusions",
         paragraphs: [
-          "Customers share responsibility for maintaining service reliability and ensuring a productive experience on the platform. Customers should:",
-        ],
-        bullets: [
-          "Maintain secure login credentials and protect account access",
-          "Follow all platform usage policies including the Acceptable Use Policy",
-          "Report technical issues, bugs, or security concerns promptly through support channels",
-          "Keep their own systems, browsers, and devices up to date when accessing the platform",
-          "Provide accurate and complete information when submitting support requests",
+          "Availability and support targets do not apply to preview, beta, seeded demo, qa-seed, experimental, discontinued or free features unless expressly stated. They also do not apply to third-party systems, payment processors, email providers, DNS issues, customer networks, customer data errors or customer misconfiguration.",
         ],
       },
       {
-        heading: "8. Service Limitations",
-        paragraphs: [
-          "Platform performance and availability may be affected by factors outside the control of Velocity Influence. These factors may include:",
-        ],
-        bullets: [
-          "Internet connectivity issues affecting the customer's network or region",
-          "Third-party service disruptions from providers integrated with the platform",
-          "External infrastructure outages beyond the platform's hosting environment",
-          "Force majeure events including natural disasters, conflicts, or government actions",
-          "Customer-side hardware or software failures",
-        ],
-      },
-      {
-        heading: "9. Updates to the SLA",
-        paragraphs: [
-          "Velocity Influence may update this Service Level Agreement periodically to reflect improvements to platform infrastructure, changes in operational procedures, or evolving service standards.",
-          "When significant updates are made, customers will be notified via email or in-platform notification. The \"Last Updated\" date at the top of this page will be revised accordingly.",
-        ],
-      },
-      {
-        heading: "10. Contact Information",
-        paragraphs: [
-          "For enquiries related to service reliability, platform availability, or support, please contact us at:",
-          "Global Solutions Management LLC\nTrading as Velocity Influence Agency\nState of Delaware, United States",
-          "Support enquiries: support@velocityinfluence.com\nLegal enquiries: legal@velocityinfluence.com\nGeneral enquiries: hello@velocityinfluence.com",
-        ],
+        heading: "7. Contact",
+        paragraphs: standardContact("service level or support questions"),
       },
     ],
   },
@@ -1280,14 +833,12 @@ const LegalDocumentPage = () => {
   const [openSections, setOpenSections] = useState<Set<number>>(new Set());
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
 
-  // Open all sections by default
   useEffect(() => {
     if (doc) {
       setOpenSections(new Set(doc.sections.map((_, i) => i)));
     }
-  }, [slug]);
+  }, [slug, doc]);
 
-  // Intersection observer for active TOC tracking
   useEffect(() => {
     if (!doc) return;
     const observer = new IntersectionObserver(
@@ -1330,31 +881,21 @@ const LegalDocumentPage = () => {
       <Navbar />
       <main className="pt-24 pb-20">
         <div className="max-w-6xl mx-auto px-6 lg:px-8">
-          {/* Header */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
             <Link to="/legal" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-accent transition-colors mb-6">
               <ArrowLeft size={14} /> Back to Legal Centre
             </Link>
             <h1 className="text-3xl lg:text-4xl font-display font-bold text-foreground">{doc.title}</h1>
             <div className="flex flex-wrap gap-x-6 gap-y-1 mt-3">
-              <p className="text-sm text-muted-foreground">
-                <span className="font-medium text-foreground/70">Effective Date:</span> {doc.effectiveDate}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                <span className="font-medium text-foreground/70">Last Updated:</span> {doc.lastUpdated}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                <span className="font-medium text-foreground/70">Version:</span> {doc.version}
-              </p>
+              <p className="text-sm text-muted-foreground"><span className="font-medium text-foreground/70">Effective Date:</span> {doc.effectiveDate}</p>
+              <p className="text-sm text-muted-foreground"><span className="font-medium text-foreground/70">Last Updated:</span> {doc.lastUpdated}</p>
+              <p className="text-sm text-muted-foreground"><span className="font-medium text-foreground/70">Version:</span> {doc.version}</p>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">
-              Global Solutions Management LLC — Delaware, United States — trading as Velocity Influence Agency
-            </p>
+            <p className="text-xs text-muted-foreground mt-2">Global Solutions Management LLC — Delaware, United States — operator of Velocity Vision</p>
+            <p className="text-xs text-muted-foreground mt-2 max-w-3xl">These online terms are designed for product clarity and operational protection. They should be reviewed by qualified counsel before high-volume paid rollout or enterprise contracting.</p>
           </motion.div>
 
-          {/* Two-column layout */}
           <div className="flex gap-10">
-            {/* Sticky sidebar TOC — hidden on small screens */}
             <aside className="hidden lg:block w-64 shrink-0">
               <div className="sticky top-24">
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/60 mb-3">Table of Contents</p>
@@ -1379,9 +920,7 @@ const LegalDocumentPage = () => {
                         }}
                         className={cn(
                           "block pl-4 py-1.5 text-xs leading-snug border-l-2 -ml-px transition-colors",
-                          isActive
-                            ? "border-accent text-accent font-medium"
-                            : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+                          isActive ? "border-accent text-accent font-medium" : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
                         )}
                       >
                         {s.heading}
@@ -1392,44 +931,29 @@ const LegalDocumentPage = () => {
               </div>
             </aside>
 
-            {/* Document content */}
-            <div className="flex-1 min-w-0 max-w-[700px]">
+            <div className="flex-1 min-w-0 max-w-[760px]">
               <div className="space-y-2">
                 {doc.sections.map((s, i) => {
                   const id = slugify(s.heading);
                   const isOpen = openSections.has(i);
                   return (
                     <Collapsible key={i} open={isOpen} onOpenChange={() => toggleSection(i)}>
-                      <div
-                        ref={(el) => { sectionRefs.current[i] = el; }}
-                        id={id}
-                        className="scroll-mt-24"
-                      >
+                      <div ref={(el) => { sectionRefs.current[i] = el; }} id={id} className="scroll-mt-24">
                         <CollapsibleTrigger asChild>
                           <button className="w-full flex items-center gap-2 py-3 text-left group hover:text-accent transition-colors border-b border-border/30">
-                            {isOpen
-                              ? <ChevronDown size={16} className="text-muted-foreground shrink-0" />
-                              : <ChevronRight size={16} className="text-muted-foreground shrink-0" />}
-                            <h2 className="text-base lg:text-lg font-display font-semibold text-foreground group-hover:text-accent transition-colors">
-                              {s.heading}
-                            </h2>
+                            {isOpen ? <ChevronDown size={16} className="text-muted-foreground shrink-0" /> : <ChevronRight size={16} className="text-muted-foreground shrink-0" />}
+                            <h2 className="text-base lg:text-lg font-display font-semibold text-foreground group-hover:text-accent transition-colors">{s.heading}</h2>
                           </button>
                         </CollapsibleTrigger>
                         <CollapsibleContent>
-                          <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="pt-3 pb-5 pl-6 space-y-3"
-                          >
+                          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pt-3 pb-5 pl-6 space-y-3">
                             {s.paragraphs.map((p, pi) => (
-                              <p key={pi} className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
-                                {p}
-                              </p>
+                              <p key={pi} className="text-sm text-foreground/75 leading-relaxed whitespace-pre-line">{p}</p>
                             ))}
                             {s.bullets && (
                               <ul className="space-y-1.5 pl-1">
                                 {s.bullets.map((b, bi) => (
-                                  <li key={bi} className="flex gap-2 text-sm text-muted-foreground leading-relaxed">
+                                  <li key={bi} className="flex gap-2 text-sm text-foreground/75 leading-relaxed">
                                     <span className="text-accent mt-1 shrink-0">•</span>
                                     <span>{b}</span>
                                   </li>
@@ -1444,24 +968,18 @@ const LegalDocumentPage = () => {
                 })}
               </div>
 
-              {/* Legal footer */}
               <div className="mt-16 pt-8 border-t border-border/50">
                 <div className="flex items-start gap-3 mb-4">
                   <Building2 size={18} className="text-accent shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-semibold text-foreground">Velocity Influence Agency</p>
-                    <p className="text-xs text-muted-foreground">A trading name of Global Solutions Management LLC</p>
+                    <p className="text-sm font-semibold text-foreground">Velocity Vision</p>
+                    <p className="text-xs text-muted-foreground">Operated by Global Solutions Management LLC</p>
                     <p className="text-xs text-muted-foreground">Delaware, United States</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3">
-                  <Mail size={18} className="text-accent shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Contact for Legal Enquiries</p>
-                    <p className="text-xs text-muted-foreground">legal@velocityinfluence.com</p>
-                    <p className="text-xs text-muted-foreground">hello@velocityinfluence.com</p>
-                  </div>
-                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Legal, privacy, compliance and security enquiries: {CONTACT_EMAIL}
+                </p>
               </div>
             </div>
           </div>
