@@ -79,11 +79,11 @@ export default function MoveToPipelineDialog({
         });
       }
 
-      toast.success("Moved to pipeline");
+      toast.success(tc("toasts.movedToPipeline"));
       onOpenChange(false);
       onDone?.();
     } catch (e: any) {
-      toast.error(e.message || "Failed to move to pipeline");
+      toast.error(e.message || tc("toasts.moveToPipelineFailed"));
     } finally {
       setBusy(false);
     }
