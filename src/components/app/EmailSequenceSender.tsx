@@ -157,6 +157,7 @@ function SendStatusBadge({ status }: { status: string }) {
 
 function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspaceId, onClose }:
   { email: SequenceEmail; stepIndex: number; leads: Lead[]; connectionId?: string; campaignId: string; workspaceId?: string | null; onClose: () => void; }) {
+  const { t } = useTranslation("app");
   const [subject, setSubject] = useState(email.subject);
   const [body, setBody] = useState(email.body);
   const [mode, setMode] = useState<"now" | "schedule">("now");
