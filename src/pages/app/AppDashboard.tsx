@@ -466,3 +466,86 @@ function buildNextActions(v: VaultStats, i: InteractionStats, p: PipelineStats, 
   if (v.total_contacts === 0) acts.unshift({ title: "Upload your first contact list", desc: "Get data into the vault to unlock activation.", icon: Upload, to: "/app/data-vault/upload", toneClass: "bg-primary/10 text-primary" });
   return acts.slice(0, 9);
 }
+
+function CadenceSection({ rows, navigate }: { rows: CadenceRow[]; navigate: (to: string) => void }) {
+  if (rows.length === 0) {
+    return (
+      <Card>
+        <CardContent className="p-6 text-sm text-muted-foreground flex items-center justify-between gap-3">
+          <span>No campaigns scheduled yet. Set a cadence to make this workspace run on rhythm.</span>
+          <Button size="sm" onClick={() => navigate("/app/campaigns/new")}>
+            <Rocket className="h-4 w-4 mr-2" /> Start a campaign
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const now = Date.now();
+  const dayMs = 86_400_000;
+  const enriched = rows.map((r) => {
+    const lc = deriveLifecycle(r.status, {
+      cadence_type: (r.cadence_type || "one_off") as CadenceType,
+      start_at: r.start_at, cadence_end_at: r.cadence_end_at,
+    }, r.runs_completed || 0);
+    const nextMs = r.next_run_at ? new Date(r.next_run_at).getTime() : r.start_at ? new Date(r.start_at).getTime() : Infinity;
+    const endMs = r.cadence_end_at ? new Date(r.cadence_end_at).getTime() : Infinity;
+    return { r, lc, nextMs, endMs };
+  });
+
+  const startingSoon = enriched.filter((x) => x.lc === "scheduled" && x.nextMs - now <= 14 * dayMs).sort((a, b) => a.nextMs - b.nextMs).slice(0, 5);
+  const dueNext = enriched.filter((x) => x.lc === "active" && isFinite(x.nextMs) && x.nextMs - now <= 14 * dayMs).sort((a, b) => a.nextMs - b.nextMs).slice(0, 5);
+  const endingSoon = enriched.filter((x) => x.lc !== "completed" && x.lc !== "expired" && isFinite(x.endMs) && x.endMs - now <= 14 * dayMs && x.endMs >= now).sort((a, b) => a.endMs - b.endMs).slice(0, 5);
+  const paused = enriched.filter((x) => x.lc === "paused").slice(0, 5);
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <CadenceList icon={Rocket} title="Starting soon" empty="Nothing scheduled in the next 14 days." items={startingSoon} action="Review" navigate={navigate} />
+      <CadenceList icon={Repeat} title="Due for next run" empty="No recurring runs due in the next 14 days." items={dueNext} action="Open" navigate={navigate} />
+      <CadenceList icon={RefreshCw} title="Ending soon" empty="No campaigns expiring in the next 14 days." items={endingSoon} action="Extend" navigate={navigate} />
+      <CadenceList icon={Pause} title="Paused" empty="No paused campaigns." items={paused} action="Resume" navigate={navigate} />
+    </div>
+  );
+}
+
+function CadenceList({
+  icon: Icon, title, empty, items, action, navigate,
+}: {
+  icon: any; title: string; empty: string;
+  items: { r: CadenceRow; lc: keyof typeof LIFECYCLE_TONE }[];
+  action: string; navigate: (to: string) => void;
+}) {
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base flex items-center gap-2"><Icon className="h-4 w-4 text-primary" />{title}</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        {items.length === 0 ? (
+          <p className="text-sm text-muted-foreground">{empty}</p>
+        ) : items.map(({ r, lc }) => {
+          const tone = LIFECYCLE_TONE[lc];
+          return (
+            <div key={r.id} className="flex items-start justify-between gap-3 p-2 rounded-md border border-border">
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-medium truncate">{r.name}</div>
+                <div className="text-xs text-muted-foreground mt-0.5">
+                  {CADENCE_LABELS[(r.cadence_type || "one_off") as CadenceType]} · {nextActionLabel({
+                    next_run_at: r.next_run_at, start_at: r.start_at,
+                    cadence_type: (r.cadence_type || "one_off") as CadenceType,
+                    cadence_end_at: r.cadence_end_at, timezone: r.timezone || "UTC",
+                  } as any)}
+                </div>
+              </div>
+              <div className="flex flex-col items-end gap-1">
+                <Badge className={tone.cls}>{tone.label}</Badge>
+                <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={() => navigate(`/app/campaigns/${r.id}`)}>{action} <ArrowRight className="h-3 w-3 ml-1" /></Button>
+              </div>
+            </div>
+          );
+        })}
+      </CardContent>
+    </Card>
+  );
+}
+
