@@ -182,7 +182,22 @@ export function computeSafety(input: SafetyInput): SafetyResult {
   }
 
   const adjusted = Math.floor(ceiling * factor);
-  const safeAllowance = Math.max(0, Math.min(adjusted, input.sendCreditsRemaining, input.vault.valid));
+  let safeAllowance = Math.max(0, Math.min(adjusted, input.sendCreditsRemaining, input.vault.valid));
+
+  // Agency pooled enforcement — the 1,000/day ceiling is shared across all child workspaces.
+  let agencyPooledRemaining: number | undefined = undefined;
+  if (input.plan === "agency") {
+    const pooledUsed = input.agencyPooledSendsToday ?? 0;
+    agencyPooledRemaining = Math.max(0, ceiling - pooledUsed);
+    if (pooledUsed >= ceiling) {
+      pause.push(`Agency pooled cap reached — ${pooledUsed.toLocaleString()} / ${ceiling.toLocaleString()} sends today across all client workspaces.`);
+      safeAllowance = 0;
+    } else if (agencyPooledRemaining < safeAllowance) {
+      adjustments.push({ factor: agencyPooledRemaining / Math.max(safeAllowance, 1), reason: `Agency pooled cap: ${agencyPooledRemaining.toLocaleString()} sends left today across all client workspaces.` });
+      safeAllowance = agencyPooledRemaining;
+    }
+  }
+
   const usedAndScheduled = input.sendsUsedToday + input.sendsScheduledToday;
   const remainingToday = Math.max(0, safeAllowance - usedAndScheduled);
   if (usedAndScheduled >= safeAllowance && safeAllowance > 0) {
