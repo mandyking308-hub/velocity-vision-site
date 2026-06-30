@@ -1,13 +1,31 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 
 const plans = [
-  { name: "Starter", price: "£149", unit: "one-off", desc: "One activated campaign with Data Vault, governed sending, replies and pipeline — 30 days workspace access." },
-  { name: "Growth", price: "£249", unit: "per month", desc: "Recurring campaigns, larger sending caps, cadence scheduling, follow-up automation and monthly review.", highlight: true },
-  { name: "Agency Workspace", price: "£499", unit: "per month", desc: "Multiple client workspaces, pooled credits and pooled sending governance across the account." },
-  { name: "Premium Human Review", price: "£199", unit: "per review", desc: "Optional strategist review of one activation with written recommendations and a revision pass." },
+  {
+    name: "Starter",
+    price: "£149",
+    unit: "one-off",
+    desc: "Test the full workflow on one campaign.",
+    bullets: ["1 activated campaign", "Data Vault + quality review", "Email + social + press pack", "Replies & pipeline access", "30 days workspace access"],
+  },
+  {
+    name: "Growth",
+    price: "£249",
+    unit: "per month",
+    desc: "Run outreach and pipeline as your main workflow.",
+    bullets: ["Recurring campaigns & cadence", "Larger sending caps", "Follow-up automation", "Pipeline tracking", "Monthly review"],
+    highlight: true,
+  },
+  {
+    name: "Agency",
+    price: "£499",
+    unit: "per month",
+    desc: "Manage multiple clients in one account.",
+    bullets: ["Multiple client workspaces", "Pooled credits", "Pooled sending governance", "Per-client reporting", "Agency-level controls"],
+  },
 ];
 
 const PricingTeaser = () => (
@@ -22,12 +40,14 @@ const PricingTeaser = () => (
       >
         <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Pricing</p>
         <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">
-          Pay for governed action, not for stored data
+          One workspace. Far less than the tools you'd replace.
         </h2>
-        <p className="text-muted-foreground text-lg">Storage is generous. Credits cover heavy-value actions. Sending stays safe at every tier.</p>
+        <p className="text-muted-foreground text-lg">
+          Outreach, follow-up and pipeline together — for less than most teams spend on disconnected tools, freelancers and lost replies.
+        </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
         {plans.map((p, i) => (
           <motion.div
             key={p.name}
@@ -35,24 +55,40 @@ const PricingTeaser = () => (
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: i * 0.08 }}
-            className={`rounded-2xl p-6 shadow-card border ${p.highlight ? "bg-card border-accent/60 ring-1 ring-accent/30" : "bg-card border-border/50"}`}
+            className={`rounded-2xl p-6 shadow-card border flex flex-col ${p.highlight ? "bg-card border-accent/60 ring-1 ring-accent/30" : "bg-card border-border/50"}`}
           >
             {p.highlight && (
-              <span className="inline-block text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-accent/15 text-accent font-semibold mb-3">Most popular</span>
+              <span className="inline-block self-start text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-accent/15 text-accent font-semibold mb-3">Most popular</span>
             )}
             <h3 className="font-display font-semibold text-foreground mb-2">{p.name}</h3>
-            <p className="mb-3">
+            <p className="mb-2">
               <span className="text-3xl font-display font-bold text-foreground">{p.price}</span>
               <span className="text-muted-foreground text-sm ml-1">{p.unit}</span>
             </p>
-            <p className="text-muted-foreground text-sm leading-relaxed">{p.desc}</p>
+            <p className="text-muted-foreground text-sm mb-4">{p.desc}</p>
+            <ul className="space-y-2 mb-6 flex-1">
+              {p.bullets.map((b) => (
+                <li key={b} className="flex items-start gap-2 text-sm text-foreground/90">
+                  <Check size={14} className="text-accent mt-1 shrink-0" />
+                  <span>{b}</span>
+                </li>
+              ))}
+            </ul>
+            <Button variant={p.highlight ? "cta" : "outline"} asChild className="self-stretch">
+              <Link to="/auth">Start with {p.name} <ArrowRight size={16} /></Link>
+            </Button>
           </motion.div>
         ))}
       </div>
 
-      <Button variant="cta" size="lg" asChild>
-        <Link to="/pricing">See pricing <ArrowRight size={18} /></Link>
-      </Button>
+      <div className="flex flex-col sm:flex-row gap-3">
+        <Button variant="cta" size="lg" asChild>
+          <Link to="/pricing">See full pricing <ArrowRight size={18} /></Link>
+        </Button>
+        <p className="text-xs text-muted-foreground self-center">
+          Optional Premium Human Review available at £199/review. Multi-currency checkout supported.
+        </p>
+      </div>
     </div>
   </section>
 );
