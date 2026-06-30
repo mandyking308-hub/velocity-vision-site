@@ -106,6 +106,18 @@ const CRMSidebar = () => {
               <Book size={18} className="shrink-0" />
               {!collapsed && <span>Ops Manual</span>}
             </Link>
+            <Link
+              to="/crm/monetisation"
+              className={cn(
+                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors border border-accent/20",
+                location.pathname === "/crm/monetisation"
+                  ? "bg-accent text-accent-foreground"
+                  : "text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/5"
+              )}
+            >
+              <CreditCard size={18} className="shrink-0" />
+              {!collapsed && <span>Monetisation</span>}
+            </Link>
           </>
         )}
       </nav>
