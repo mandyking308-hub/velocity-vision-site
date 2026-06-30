@@ -52,6 +52,7 @@ const copy = (text: string) => {
 };
 
 export default function AppCampaignWorkspace() {
+  const { t } = useTranslation("app");
   const { id } = useParams();
   const navigate = useNavigate();
   const [c, setC] = useState<Campaign | null>(null);
