@@ -6,8 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import {
   Rocket, FolderOpen, Users, BarChart3, LayoutTemplate, Settings, Briefcase, ArrowRight,
   Database, ShieldCheck, Send, Megaphone, Mail, Newspaper, Video, FileText, MessageSquare,
-  TrendingUp, AlertTriangle, Upload, Sparkles, Wand2, Zap, CheckCircle2,
+  TrendingUp, AlertTriangle, Upload, Sparkles, Wand2, Zap, CheckCircle2, Clock, Repeat, Pause, RefreshCw,
 } from "lucide-react";
+
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCredits } from "@/contexts/CreditsContext";
