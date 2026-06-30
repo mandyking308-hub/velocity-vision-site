@@ -59,7 +59,7 @@ export default function AppCampaignWorkspace() {
     if (!id) return;
     (async () => {
       const [{ data: camp }, { data: ld }] = await Promise.all([
-        supabase.from("campaigns").select("id, name, status, goal, campaign_kind, brief, pack, slug, lead_form_config, lead_form_published").eq("id", id).maybeSingle(),
+        supabase.from("campaigns").select("id, name, status, goal, campaign_kind, brief, pack, slug, lead_form_config, lead_form_published, cadence_type, cadence_interval, cadence_unit, start_at, timezone, cadence_end_at, cadence_max_runs, next_run_at, last_run_at, runs_completed, refresh_strategy").eq("id", id).maybeSingle(),
         supabase.from("leads").select("id, name, email, status, created_at, last_action").eq("campaign_id", id).order("created_at", { ascending: false }),
       ]);
       setC(camp as any);
