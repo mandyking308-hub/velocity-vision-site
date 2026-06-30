@@ -2,6 +2,11 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 import {
   Mail, MessageSquare, Clock, ArrowRight, Snowflake, Flame,
   CheckCircle2, XCircle, PauseCircle, NotebookPen, Send, TrendingUp, Trash2,
@@ -40,6 +45,7 @@ export default function LeadActionPanel({
   campaignName?: string | null;
 }) {
   const [pipelineOpen, setPipelineOpen] = useState(false);
+  const [snoozeOpen, setSnoozeOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const state = deriveFollowUpState(lead);
   const temp = deriveTemperature(lead);
@@ -68,6 +74,11 @@ export default function LeadActionPanel({
   const snooze = (days: number) => {
     const until = new Date(Date.now() + days * 86400000).toISOString();
     return update({ snoozed_until: until, follow_up_state: "snoozed", follow_up_at: until, last_action: `Snoozed ${days}d` }, "snoozed", { days });
+  };
+  const snoozeUntil = (date: Date) => {
+    const until = date.toISOString();
+    setSnoozeOpen(false);
+    return update({ snoozed_until: until, follow_up_state: "snoozed", follow_up_at: until, last_action: `Snoozed until ${format(date, "PP")}` }, "snoozed", { until });
   };
   const markWarm = () => update({ follow_up_state: "warm", last_action: "Marked warm" }, "marked_warm");
   const markDormant = () => update({ follow_up_state: "dormant", last_action: "Marked dormant" }, "marked_dormant");
@@ -112,6 +123,22 @@ export default function LeadActionPanel({
           <Quick onClick={markDormant} icon={Snowflake}>Dormant</Quick>
           <Quick onClick={() => snooze(3)} icon={PauseCircle}>Snooze 3d</Quick>
           <Quick onClick={() => snooze(7)} icon={PauseCircle}>Snooze 7d</Quick>
+          <Popover open={snoozeOpen} onOpenChange={setSnoozeOpen}>
+            <PopoverTrigger asChild>
+              <Button size="sm" variant="outline" className="h-7 text-xs px-2">
+                <CalendarIcon className="h-3 w-3 mr-1" />Custom
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                disabled={(d) => d < new Date(new Date().setHours(0, 0, 0, 0))}
+                onSelect={(d) => d && snoozeUntil(d)}
+                initialFocus
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
           <Quick onClick={markWon} icon={CheckCircle2}>Won</Quick>
           <Quick onClick={markLost} icon={XCircle}>Lost</Quick>
         </div>
