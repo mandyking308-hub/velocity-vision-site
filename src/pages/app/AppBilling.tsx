@@ -210,7 +210,7 @@ export default function AppBilling() {
             {reviews.map((r) => (
               <div key={r.id} className="flex justify-between border border-border rounded-md p-3 text-sm">
                 <div>{r.campaigns?.name || "Campaign"} — <span className="text-muted-foreground">{r.status}</span></div>
-                <div className="text-muted-foreground">£{r.amount}</div>
+                <div className="text-muted-foreground">{new Intl.NumberFormat(undefined, { style: "currency", currency: ((r as any).currency || "GBP").toUpperCase() }).format(r.amount)}</div>
               </div>
             ))}
           </div>
@@ -232,7 +232,7 @@ export default function AppBilling() {
                       <span className="font-medium">{p.product_kind.replace(/_/g, " ")}</span>
                       <Badge variant="outline">{p.status}</Badge>
                     </div>
-                    <div className="text-muted-foreground">£{(p.amount / 100).toFixed(2)} · {new Date(p.created_at).toLocaleDateString()}</div>
+                    <div className="text-muted-foreground">{new Intl.NumberFormat(undefined, { style: "currency", currency: ((p as any).currency || "GBP").toUpperCase() }).format(p.amount / 100)} · {new Date(p.created_at).toLocaleDateString()}</div>
                   </div>
                 ))}
               </div>
@@ -249,7 +249,7 @@ export default function AppBilling() {
             {topups.map((t) => (
               <div key={t.id} className="flex justify-between border-b border-border last:border-0 pb-2">
                 <span>+{t.credits} credits <span className="text-muted-foreground">({t.pack})</span></span>
-                <span className="text-muted-foreground">£{t.amount} · {new Date(t.created_at).toLocaleDateString()}</span>
+                <span className="text-muted-foreground">{new Intl.NumberFormat(undefined, { style: "currency", currency: ((t as any).currency || "GBP").toUpperCase() }).format(t.amount)} · {new Date(t.created_at).toLocaleDateString()}</span>
               </div>
             ))}
           </CardContent>
