@@ -36,3 +36,4 @@ export function CurrencySwitcher({ compact = false }: { compact?: boolean }) {
     </DropdownMenu>
   );
 }
+export default CurrencySwitcher;
