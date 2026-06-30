@@ -117,6 +117,8 @@ export interface SafetyInput {
   sendsUsedToday: number;
   sendsScheduledToday: number;
   sendCreditsRemaining: number;
+  /** Agency only: total sends today pooled across all child workspaces. */
+  agencyPooledSendsToday?: number;
 }
 
 export interface SafetyResult {
