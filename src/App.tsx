@@ -73,6 +73,7 @@ import AppEmailConnections from "./pages/app/AppEmailConnections.tsx";
 import AppDataVault from "./pages/app/AppDataVault.tsx";
 import AppDataVaultUpload from "./pages/app/AppDataVaultUpload.tsx";
 import AppDataVaultImport from "./pages/app/AppDataVaultImport.tsx";
+import AppActivation from "./pages/app/AppActivation.tsx";
 import DemoDataVault from "./pages/demo/DemoDataVault.tsx";
 import HostedCapture from "./pages/HostedCapture.tsx";
 
@@ -150,6 +151,7 @@ const AnimatedRoutes = () => {
           <Route path="campaigns/new" element={<AppCampaignNew />} />
           <Route path="campaigns/:id" element={<AppCampaignWorkspace />} />
           <Route path="leads" element={<AppLeads />} />
+          <Route path="activate" element={<AppActivation />} />
           <Route path="performance" element={<AppPerformance />} />
           <Route path="templates" element={<AppTemplates />} />
           <Route path="settings" element={<AppSettings />} />

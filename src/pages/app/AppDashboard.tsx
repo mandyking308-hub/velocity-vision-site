@@ -14,6 +14,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCredits } from "@/contexts/CreditsContext";
 import CreditMeter from "@/components/app/CreditMeter";
 import FollowUpReminders from "@/components/app/FollowUpReminders";
+import SendSafetyPanel from "@/components/app/SendSafetyPanel";
+import SenderStatusCard from "@/components/app/SenderStatusCard";
+import { computeSafety, DEFAULT_SENDER_STATE, type SenderState } from "@/lib/sendSafety";
+import type { PlanId } from "@/lib/credits";
 
 interface VaultStats {
   total_contacts: number;
@@ -62,6 +66,10 @@ export default function AppDashboard() {
   const [activeCampaigns, setActiveCampaigns] = useState(0);
   const [latestCampaignId, setLatestCampaignId] = useState<string | null>(null);
   const [campaignRows, setCampaignRows] = useState<CadenceRow[]>([]);
+  const [sender, setSender] = useState<SenderState>(DEFAULT_SENDER_STATE);
+  const [senderEmail, setSenderEmail] = useState<string | null>(null);
+  const [sendsUsedToday, setSendsUsedToday] = useState(0);
+  const [sendsScheduledToday, setSendsScheduledToday] = useState(0);
 
   const [vault, setVault] = useState<VaultStats>({
     total_contacts: 0, total_companies: 0, imports: 0, clean: 0,
@@ -154,8 +162,49 @@ export default function AppDashboard() {
     })();
   }, [user]);
 
-  const safeSendToday = Math.min(80, vault.safe_to_activate);
-  const recommendedSend = Math.min(50, vault.safe_to_activate);
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const [{ data: conns }, { data: sends }] = await Promise.all([
+        supabase.from("email_connections").select("*").eq("user_id", user.id).order("is_default", { ascending: false }),
+        supabase.from("email_sends").select("status, sent_at, scheduled_at"),
+      ]);
+      const def = (conns || [])[0];
+      const today = new Date(); today.setHours(0,0,0,0);
+      const used = (sends || []).filter((x: any) => x.sent_at && new Date(x.sent_at) >= today).length;
+      const sched = (sends || []).filter((x: any) => x.scheduled_at && new Date(x.scheduled_at) >= today && !x.sent_at).length;
+      setSendsUsedToday(used);
+      setSendsScheduledToday(sched);
+      if (def) {
+        setSenderEmail(def.from_email);
+        const lastSend = (sends || []).filter((x: any) => x.status === "sent").map((x: any) => x.sent_at).filter(Boolean).sort().pop() || null;
+        const totalSends = (sends || []).length || 1;
+        const bounces = (sends || []).filter((x: any) => x.status === "bounced" || x.status === "failed").length;
+        const newly = def.last_verified_at ? (Date.now() - new Date(def.last_verified_at).getTime()) < 7 * 86400000 : true;
+        setSender({
+          connected: def.status === "connected",
+          domain_authenticated: false,
+          reconnect_required: def.status === "reconnect_required",
+          newly_connected: newly,
+          last_send_at: lastSend,
+          bounce_rate: bounces / totalSends,
+          unsubscribe_rate: 0,
+        });
+      }
+    })();
+  }, [user]);
+
+  const plan = (planConfig.id as PlanId) || "starter";
+  const safety = computeSafety({
+    plan,
+    vault: { valid: vault.clean, needs_review: vault.needs_review, risky: vault.risky, blocked: vault.blocked, duplicates: vault.duplicates },
+    sender,
+    sendsUsedToday,
+    sendsScheduledToday,
+    sendCreditsRemaining: remaining,
+  });
+  const safeSendToday = safety.safeAllowance;
+  const recommendedSend = safety.recommendedToday;
 
   return (
     <div className="space-y-8 max-w-7xl">
@@ -177,7 +226,7 @@ export default function AppDashboard() {
           </div>
         </div>
         <div className="flex flex-wrap gap-2 mt-6">
-          <Button size="lg" onClick={() => navigate("/app/leads")}>
+        <Button size="lg" onClick={() => navigate("/app/activate")}>
             <Send className="h-4 w-4 mr-2" /> Activate a safe segment
           </Button>
           <Button size="lg" variant="outline" onClick={() => navigate("/app/data-vault/upload")}>
@@ -216,45 +265,24 @@ export default function AppDashboard() {
             <CardContent className="p-4 flex flex-col justify-between h-full">
               <div className="text-xs font-medium text-primary">Recommended</div>
               <div className="text-sm mt-1">Activate <b>{vault.safe_to_activate}</b> safe contacts now.</div>
-              <Button size="sm" className="mt-2" onClick={() => navigate("/app/leads")}>Activate <ArrowRight className="h-3.5 w-3.5 ml-1" /></Button>
+              <Button size="sm" className="mt-2" onClick={() => navigate("/app/activate")}>Activate <ArrowRight className="h-3.5 w-3.5 ml-1" /></Button>
             </CardContent>
           </Card>
         </div>
       </div>
 
-      {/* C. Activation Readiness */}
+      {/* C. Activation Readiness + Send Safety Engine */}
       <SectionHeader
         icon={ShieldCheck}
-        title="Activation Readiness"
-        desc="Safe outreach controls — only the right people, at the right pace."
-        cta={{ label: "Open send controls", to: "/app/settings" }}
+        title="Activation Readiness & Send Safety"
+        desc="Store generously. Activate carefully. We protect your sender reputation by default."
+        cta={{ label: "Open pre-flight", to: "/app/activate" }}
       />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Card className="lg:col-span-2">
-          <CardContent className="p-5 space-y-3">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <MiniStat label="Send credits" value={remaining} />
-              <MiniStat label="Safe send today" value={safeSendToday} />
-              <MiniStat label="Risky excluded" value={vault.risky} tone="warn" />
-              <MiniStat label="Blocked" value={vault.blocked} tone="danger" />
-            </div>
-            <div className="rounded-md bg-muted/50 p-3 text-sm space-y-1">
-              <div className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600" /><b>{vault.safe_to_activate}</b> contacts safe to activate</div>
-              <div className="flex items-center gap-2"><AlertTriangle className="h-4 w-4 text-amber-600" /><b>{vault.needs_review}</b> need review</div>
-              <div className="flex items-center gap-2"><AlertTriangle className="h-4 w-4 text-rose-600" /><b>{vault.risky}</b> risky records excluded</div>
-              <div className="flex items-center gap-2"><Zap className="h-4 w-4 text-primary" />Recommended send today: <b>{recommendedSend}</b> warm contacts</div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-base flex items-center gap-2"><Mail className="h-4 w-4" />Sender status</CardTitle></CardHeader>
-          <CardContent className="space-y-2 text-sm">
-            <div className="flex items-center justify-between"><span>Connected mailbox</span><Badge variant="outline">Check</Badge></div>
-            <div className="flex items-center justify-between"><span>Domain authentication</span><Badge variant="outline">SPF / DKIM</Badge></div>
-            <div className="flex items-center justify-between"><span>Scheduled sends today</span><b>0</b></div>
-            <Button size="sm" variant="outline" className="w-full" onClick={() => navigate("/app/settings")}>Open email connections</Button>
-          </CardContent>
-        </Card>
+        <div className="lg:col-span-2">
+          <SendSafetyPanel s={safety} used={sendsUsedToday} scheduled={sendsScheduledToday} />
+        </div>
+        <SenderStatusCard state={sender} health={safety.health} scheduledToday={sendsScheduledToday} fromEmail={senderEmail} />
       </div>
 
       {/* C2. Campaign cadence / upcoming activity */}
