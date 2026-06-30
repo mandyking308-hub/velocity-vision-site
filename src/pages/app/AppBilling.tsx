@@ -32,6 +32,7 @@ const PLAN_TO_PRICE: Record<PlanId, string> = {
 
 export default function AppBilling() {
   const { user } = useAuth();
+  const tc = useTranslation("common").t;
   const { plan, planConfig, periodEnd, starterExpired, refresh } = useCredits();
   const { currency, country } = useCurrency();
   const [topupOpen, setTopupOpen] = useState(false);
