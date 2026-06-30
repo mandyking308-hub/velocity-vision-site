@@ -48,7 +48,7 @@ interface Campaign {
 
 const copy = (text: string) => {
   navigator.clipboard.writeText(text);
-  toast.success("Copied");
+  toast.success(i18n.t("common:toasts.copied"));
 };
 
 export default function AppCampaignWorkspace() {
