@@ -32,7 +32,9 @@ const PLAN_TO_PRICE: Record<PlanId, string> = {
 export default function AppBilling() {
   const { user } = useAuth();
   const { plan, planConfig, periodEnd, starterExpired, refresh } = useCredits();
+  const { currency, country } = useCurrency();
   const [topupOpen, setTopupOpen] = useState(false);
+
   const [ledger, setLedger] = useState<any[]>([]);
   const [topups, setTopups] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
