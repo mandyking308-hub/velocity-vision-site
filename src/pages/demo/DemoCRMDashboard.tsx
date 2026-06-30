@@ -184,7 +184,36 @@ export default function DemoCRMDashboard() {
               <div className="h-2 bg-muted rounded-full overflow-hidden"><div className="h-full bg-accent" style={{ width: "78%" }} /></div>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Campaign cadence — your operating rhythm</CardTitle>
+              <p className="text-xs text-muted-foreground mt-1">Examples of how cadence drives recurring outreach. Pause, resume and refresh assets anytime.</p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                {[
+                  { name: "Q3 product launch", cadence: "One-off", state: "Scheduled", next: "Send sequence starts 12 Jul 09:00 BST", tone: "bg-blue-100 text-blue-700" },
+                  { name: "Monthly outreach refresh", cadence: "Monthly", state: "Active", next: "Next run: 1 Aug · regenerates social pack", tone: "bg-emerald-100 text-emerald-700" },
+                  { name: "Quarterly commercial check-in", cadence: "Quarterly", state: "Active", next: "Next run in 12 days · clones last cycle's emails", tone: "bg-emerald-100 text-emerald-700" },
+                  { name: "Year-end re-engagement", cadence: "Yearly", state: "Paused", next: "Resume to schedule December run", tone: "bg-amber-100 text-amber-700" },
+                ].map((r) => (
+                  <div key={r.name} className="p-3 rounded-md border border-border">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="font-medium">{r.name}</div>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${r.tone}`}>{r.state}</span>
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">{r.cadence} · {r.next}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-3 text-xs text-muted-foreground">
+                One-off campaigns, weekly follow-up sequences, monthly newsletters, quarterly check-ins and yearly re-engagement all run from the same workspace — with safe send limits, asset reuse and follow-up reminders built in.
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
+
 
         <TabsContent value="pack" className="space-y-3 mt-4">
           <Section title="Headline">{pack.landing.headline}</Section>
