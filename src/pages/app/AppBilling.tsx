@@ -157,7 +157,7 @@ export default function AppBilling() {
             <div className="text-sm text-muted-foreground">
               {planConfig.cadence === "monthly" ? "Renews" : "Access until"} {periodEnd?.toLocaleDateString() ?? "—"}
             </div>
-            <div className="text-sm">{planConfig.price} <span className="text-muted-foreground">{planConfig.unit}</span></div>
+            <div className="text-sm">{priceFor(PLAN_TO_SKU[plan], currency).formatted} <span className="text-muted-foreground">{planConfig.unit}</span></div>
             <Button variant="outline" size="sm" className="w-full" onClick={() => setTopupOpen(true)}>Buy credit top-up</Button>
           </CardContent>
         </Card>
