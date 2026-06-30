@@ -70,19 +70,19 @@ export default function FounderIntelligence() {
     })();
   }, []);
 
-  // Quality mix
+  // Quality mix (from contacts)
   const qualityMix = useMemo(() => {
     const c: Record<string, number> = {};
-    uploadRows.forEach((r) => {
+    contacts.forEach((r) => {
       const k = r.quality_status || "unknown";
       c[k] = (c[k] || 0) + 1;
     });
     return c;
-  }, [uploadRows]);
+  }, [contacts]);
 
-  const safeRecords = (qualityMix["safe"] || 0) + (qualityMix["clean"] || 0);
-  const riskyRecords = (qualityMix["risky"] || 0) + (qualityMix["review"] || 0);
-  const blockedRecords = (qualityMix["blocked"] || 0) + (qualityMix["suppressed"] || 0);
+  const safeRecords = (qualityMix["safe"] || 0) + (qualityMix["clean"] || 0) + (qualityMix["verified"] || 0);
+  const riskyRecords = (qualityMix["risky"] || 0) + (qualityMix["review"] || 0) + (qualityMix["unverified"] || 0);
+  const blockedRecords = contacts.filter((c) => c.blocked || c.suppressed).length;
 
   // Send intelligence
   const totalSends = sends.length;
