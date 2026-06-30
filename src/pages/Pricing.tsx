@@ -141,7 +141,8 @@ const Pricing = () => (
                   <span className="text-4xl font-display font-bold text-foreground">{p.price}</span>
                   <span className="text-muted-foreground text-sm ml-1">{p.unit}</span>
                 </p>
-                <p className="text-xs text-muted-foreground mb-5">Best for: {p.best}</p>
+                <p className="text-xs text-muted-foreground mb-2">Best for: {p.best}</p>
+                <p className="text-xs font-semibold text-accent mb-4">{p.credits}</p>
                 <ul className="space-y-2 mb-6 flex-1">
                   {p.features.map((f) => (
                     <li key={f} className="flex items-start gap-2 text-sm text-foreground">
