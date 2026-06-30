@@ -6,12 +6,27 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Check } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { useCurrency } from "@/hooks/useCurrency";
+import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
 
-const plans = [
+interface PlanDef {
+  sku: SkuId;
+  name: string;
+  tagline: string;
+  unit: string;
+  best: string;
+  credits: string;
+  features: string[];
+  cta: string;
+  highlight?: boolean;
+  addon?: boolean;
+}
+
+const plans: PlanDef[] = [
   {
+    sku: "vv_starter_oneoff",
     name: "Starter",
     tagline: "Self-Serve Campaign Launch",
-    price: "£149",
     unit: "one-off",
     best: "Your first guided campaign launch",
     credits: "Includes 25 Campaign Credits",
@@ -26,9 +41,9 @@ const plans = [
     cta: "Start Starter",
   },
   {
+    sku: "vv_growth_monthly",
     name: "Growth",
     tagline: "Monthly Campaign Engine",
-    price: "£249",
     unit: "per month",
     best: "Businesses running campaigns continuously",
     credits: "Includes 80 Campaign Credits / month",
@@ -44,9 +59,9 @@ const plans = [
     cta: "Start Growth",
   },
   {
+    sku: "vv_agency_monthly",
     name: "Agency Workspace",
     tagline: "Multi-client workspace",
-    price: "£499",
     unit: "per month",
     best: "Agencies, consultants, fractional teams",
     credits: "Includes 250 pooled Campaign Credits / month",
@@ -61,9 +76,9 @@ const plans = [
     cta: "Start Agency Workspace",
   },
   {
+    sku: "vv_human_review_oneoff",
     name: "Premium Human Review",
     tagline: "Optional add-on",
-    price: "£199",
     unit: "per review",
     best: "Optional only — never required",
     credits: "Adds expert review to one campaign",
@@ -77,6 +92,7 @@ const plans = [
   },
 ];
 
+
 const faqs = [
   { q: "What are Campaign Credits?", a: "Campaign Credits are your allowance for AI-heavy actions like generating a full campaign pack, social pack, press release, video pack or email sequence. Browsing, editing, moving leads, exporting and reading reports are always free." },
   { q: "What happens if I run out of credits?", a: "Your workspace stays fully usable — campaigns, leads, reports and assets remain accessible. Only new AI generations pause. You can buy a credit top-up or upgrade plan in seconds." },
@@ -86,8 +102,11 @@ const faqs = [
   { q: "Can agencies share credits across clients?", a: "Yes — Agency Workspace pools its monthly credits across all client workspaces." },
 ];
 
-const Pricing = () => (
+const Pricing = () => {
+  const { currency } = useCurrency();
+  return (
   <>
+
     <SEO
       title="Pricing — Velocity Vision self-serve marketing platform"
       description="Self-serve pricing for businesses and agencies. Starter, Growth and Agency Workspace plans plus an optional Premium Human Review add-on."
@@ -137,11 +156,13 @@ const Pricing = () => (
                 )}
                 <h3 className="font-display font-semibold text-xl text-foreground">{p.name}</h3>
                 <p className="text-muted-foreground text-sm mb-4">{p.tagline}</p>
-                <p className="mb-2">
-                  <span className="text-4xl font-display font-bold text-foreground">{p.price}</span>
+                <p className="mb-1">
+                  <span className="text-4xl font-display font-bold text-foreground">{priceFor(p.sku, currency).formatted}</span>
                   <span className="text-muted-foreground text-sm ml-1">{p.unit}</span>
                 </p>
+                <p className="text-[11px] text-muted-foreground mb-2">{taxNotice(currency)}</p>
                 <p className="text-xs text-muted-foreground mb-2">Best for: {p.best}</p>
+
                 <p className="text-xs font-semibold text-accent mb-4">{p.credits}</p>
                 <ul className="space-y-2 mb-6 flex-1">
                   {p.features.map((f) => (
@@ -172,7 +193,7 @@ const Pricing = () => (
           </div>
           <div>
             <h3 className="font-display font-semibold text-lg mb-2">Human review when you want it</h3>
-            <p className="text-muted-foreground text-sm">Optional Premium Human Review (£199) adds a senior strategist's eyes to any campaign — never required, available from inside the workspace.</p>
+            <p className="text-muted-foreground text-sm">Optional Premium Human Review ({priceFor("vv_human_review_oneoff", currency).formatted}) adds a senior strategist's eyes to any campaign — never required, available from inside the workspace.</p>
           </div>
         </div>
       </section>
@@ -193,6 +214,8 @@ const Pricing = () => (
     </main>
     <Footer />
   </>
-);
+  );
+};
 
 export default Pricing;
+

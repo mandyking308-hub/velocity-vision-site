@@ -13,17 +13,28 @@ import { Check, ArrowUpRight, CheckCircle2 } from "lucide-react";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { PRICE_IDS } from "@/lib/stripe";
 import { toast } from "sonner";
+import { useCurrency } from "@/hooks/useCurrency";
+import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
+import CurrencySwitcher from "@/components/CurrencySwitcher";
 
+const PLAN_TO_SKU: Record<PlanId, SkuId> = {
+  starter: "vv_starter_oneoff",
+  growth: "vv_growth_monthly",
+  agency: "vv_agency_monthly",
+};
 const PLAN_TO_PRICE: Record<PlanId, string> = {
   starter: PRICE_IDS.starter,
   growth: PRICE_IDS.growth,
   agency: PRICE_IDS.agency,
 };
 
+
 export default function AppBilling() {
   const { user } = useAuth();
   const { plan, planConfig, periodEnd, starterExpired, refresh } = useCredits();
+  const { currency, country } = useCurrency();
   const [topupOpen, setTopupOpen] = useState(false);
+
   const [ledger, setLedger] = useState<any[]>([]);
   const [topups, setTopups] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
@@ -87,10 +98,18 @@ export default function AppBilling() {
 
   return (
     <div className="space-y-8 max-w-6xl">
-      <div>
-        <h1 className="text-3xl font-bold">Billing</h1>
-        <p className="text-muted-foreground">Manage your plan, Campaign Credits and add-ons.</p>
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-3xl font-bold">Billing</h1>
+          <p className="text-muted-foreground">Manage your plan, Campaign Credits and add-ons.</p>
+        </div>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground border border-border rounded-md px-3 py-2">
+          <span>Billing in <strong className="text-foreground">{currency}</strong>{country && <> · {country}</>}</span>
+          <CurrencySwitcher compact />
+        </div>
       </div>
+      <p className="text-xs text-muted-foreground -mt-4">{taxNotice(currency)}</p>
+
 
       {stripeSub?.status === "past_due" && (
         <Card className="border-destructive">
@@ -138,7 +157,7 @@ export default function AppBilling() {
             <div className="text-sm text-muted-foreground">
               {planConfig.cadence === "monthly" ? "Renews" : "Access until"} {periodEnd?.toLocaleDateString() ?? "—"}
             </div>
-            <div className="text-sm">{planConfig.price} <span className="text-muted-foreground">{planConfig.unit}</span></div>
+            <div className="text-sm">{priceFor(PLAN_TO_SKU[plan], currency).formatted} <span className="text-muted-foreground">{planConfig.unit}</span></div>
             <Button variant="outline" size="sm" className="w-full" onClick={() => setTopupOpen(true)}>Buy credit top-up</Button>
           </CardContent>
         </Card>
@@ -160,7 +179,7 @@ export default function AppBilling() {
                   <CardDescription>{cfg.tagline}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <div><span className="text-2xl font-bold">{cfg.price}</span> <span className="text-sm text-muted-foreground">{cfg.unit}</span></div>
+                  <div><span className="text-2xl font-bold">{priceFor(PLAN_TO_SKU[id], currency).formatted}</span> <span className="text-sm text-muted-foreground">{cfg.unit}</span></div>
                   <div className="text-sm font-medium">{cfg.includedCredits} Campaign Credits {cfg.cadence === "monthly" ? "/ month" : "included"}</div>
                   <ul className="text-sm text-muted-foreground space-y-1">
                     {cfg.features.map((f) => (<li key={f} className="flex gap-2"><Check className="h-4 w-4 text-accent mt-0.5 shrink-0" />{f}</li>))}
@@ -180,7 +199,7 @@ export default function AppBilling() {
         <Card>
           <CardContent className="p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <div className="font-semibold">Optional add-on — £{HUMAN_REVIEW_PRICE} per review</div>
+              <div className="font-semibold">Optional add-on — {priceFor("vv_human_review_oneoff", currency).formatted} per review</div>
               <p className="text-sm text-muted-foreground">Senior strategist review of one campaign pack. Purchase from inside any campaign.</p>
             </div>
             <Button variant="outline" asChild><a href="/app/campaigns">Choose a campaign <ArrowUpRight className="h-4 w-4 ml-2" /></a></Button>
@@ -191,7 +210,7 @@ export default function AppBilling() {
             {reviews.map((r) => (
               <div key={r.id} className="flex justify-between border border-border rounded-md p-3 text-sm">
                 <div>{r.campaigns?.name || "Campaign"} — <span className="text-muted-foreground">{r.status}</span></div>
-                <div className="text-muted-foreground">£{r.amount}</div>
+                <div className="text-muted-foreground">{new Intl.NumberFormat(undefined, { style: "currency", currency: ((r as any).currency || "GBP").toUpperCase() }).format(r.amount)}</div>
               </div>
             ))}
           </div>
@@ -213,7 +232,7 @@ export default function AppBilling() {
                       <span className="font-medium">{p.product_kind.replace(/_/g, " ")}</span>
                       <Badge variant="outline">{p.status}</Badge>
                     </div>
-                    <div className="text-muted-foreground">£{(p.amount / 100).toFixed(2)} · {new Date(p.created_at).toLocaleDateString()}</div>
+                    <div className="text-muted-foreground">{new Intl.NumberFormat(undefined, { style: "currency", currency: ((p as any).currency || "GBP").toUpperCase() }).format(p.amount / 100)} · {new Date(p.created_at).toLocaleDateString()}</div>
                   </div>
                 ))}
               </div>
@@ -230,7 +249,7 @@ export default function AppBilling() {
             {topups.map((t) => (
               <div key={t.id} className="flex justify-between border-b border-border last:border-0 pb-2">
                 <span>+{t.credits} credits <span className="text-muted-foreground">({t.pack})</span></span>
-                <span className="text-muted-foreground">£{t.amount} · {new Date(t.created_at).toLocaleDateString()}</span>
+                <span className="text-muted-foreground">{new Intl.NumberFormat(undefined, { style: "currency", currency: ((t as any).currency || "GBP").toUpperCase() }).format(t.amount)} · {new Date(t.created_at).toLocaleDateString()}</span>
               </div>
             ))}
           </CardContent>
