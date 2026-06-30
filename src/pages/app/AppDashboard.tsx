@@ -14,6 +14,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCredits } from "@/contexts/CreditsContext";
 import CreditMeter from "@/components/app/CreditMeter";
 import FollowUpReminders from "@/components/app/FollowUpReminders";
+import SendSafetyPanel from "@/components/app/SendSafetyPanel";
+import SenderStatusCard from "@/components/app/SenderStatusCard";
+import { computeSafety, DEFAULT_SENDER_STATE, type SenderState } from "@/lib/sendSafety";
+import type { PlanId } from "@/lib/credits";
 
 interface VaultStats {
   total_contacts: number;
