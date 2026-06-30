@@ -87,6 +87,24 @@ export default function DemoCRMDashboard() {
               </motion.div>
             ))}
           </div>
+
+          <Card className="border-accent/40">
+            <CardHeader className="pb-2"><CardTitle className="text-base">Campaign Credits — demo</CardTitle></CardHeader>
+            <CardContent className="space-y-2">
+              <div className="flex items-baseline justify-between">
+                <div className="text-2xl font-bold">18 <span className="text-sm font-normal text-muted-foreground">/ 80 remaining</span></div>
+                <div className="text-xs text-muted-foreground">Growth plan • resets 28 Jul</div>
+              </div>
+              <div className="h-2 bg-muted rounded-full overflow-hidden"><div className="h-full bg-accent" style={{ width: "78%" }} /></div>
+              <div className="text-xs rounded-md border border-accent/40 bg-accent/10 px-3 py-2">You've used 78% of your credits this cycle. Buy a top-up or upgrade to keep generating.</div>
+              <div className="flex gap-2 pt-1">
+                <span className="text-xs px-2 py-1 rounded-md border border-border">Small +25 · £49</span>
+                <span className="text-xs px-2 py-1 rounded-md border border-border">Medium +75 · £119</span>
+                <span className="text-xs px-2 py-1 rounded-md border border-border">Large +200 · £279</span>
+                <span className="text-xs px-2 py-1 rounded-md border border-accent/40 bg-accent/5 ml-auto">+ Premium Human Review · £199</span>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="builder" className="space-y-4 mt-4">
