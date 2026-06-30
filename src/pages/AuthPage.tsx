@@ -32,7 +32,8 @@ const AuthPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Role-based redirect after login
+  // Role-based redirect after login. Default: customers land in /app.
+  // Only internal staff (founder/admin/sales/marketing) land in /crm.
   useEffect(() => {
     if (!user) return;
     const checkRoleAndRedirect = async () => {
@@ -40,13 +41,10 @@ const AuthPage = () => {
         .from("user_roles")
         .select("role")
         .eq("user_id", user.id);
-      const roleList = roles?.map((r) => r.role) ?? [];
-
-      if (roleList.includes("client")) {
-        navigate("/app", { replace: true });
-      } else {
-        navigate("/crm", { replace: true });
-      }
+      const roleList = (roles?.map((r) => r.role) ?? []) as string[];
+      const internalRoles = ["founder", "admin", "sales", "marketing"];
+      const isInternal = roleList.some((r) => internalRoles.includes(r));
+      navigate(isInternal ? "/crm" : "/app", { replace: true });
     };
     checkRoleAndRedirect();
   }, [user, navigate]);
