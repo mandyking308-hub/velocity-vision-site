@@ -17,6 +17,8 @@ interface Lead {
   campaign_id: string | null;
   last_action: string | null;
   follow_up_at: string | null;
+  last_email_sent_at: string | null;
+  last_email_subject: string | null;
 }
 
 export default function AppLeads() {
@@ -25,7 +27,7 @@ export default function AppLeads() {
 
   const load = async () => {
     const [{ data: l }, { data: c }] = await Promise.all([
-      supabase.from("leads").select("id, name, email, status, created_at, campaign_id, last_action, follow_up_at").order("created_at", { ascending: false }),
+      supabase.from("leads").select("id, name, email, status, created_at, campaign_id, last_action, follow_up_at, last_email_sent_at, last_email_subject").order("created_at", { ascending: false }),
       supabase.from("campaigns").select("id, name"),
     ]);
     setLeads((l || []) as any);
@@ -66,6 +68,9 @@ export default function AppLeads() {
                       </div>
                       <div className="text-xs text-muted-foreground">{new Date(l.created_at).toLocaleDateString()}</div>
                       {l.last_action && <div className="text-xs">{l.last_action}</div>}
+                      {l.last_email_sent_at && (
+                        <div className="text-xs text-muted-foreground">📧 {l.last_email_subject || "Sent"} · {new Date(l.last_email_sent_at).toLocaleDateString()}</div>
+                      )}
                       {l.follow_up_at && <div className="text-xs text-primary">Follow-up: {new Date(l.follow_up_at).toLocaleDateString()}</div>}
                       <div className="flex flex-wrap gap-1 pt-1">
                         {STAGES.filter((s) => s !== stage).map((s) => (
