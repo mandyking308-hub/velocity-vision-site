@@ -31,7 +31,7 @@ const Navbar = () => {
         </Link>
 
         {/* Desktop */}
-        <div className="hidden lg:flex items-center justify-between flex-1 ml-8">
+        <div className="hidden xl:flex items-center justify-between flex-1 ml-8">
           <div className="flex items-center gap-3">
             {navLinks.map((link) => (
               <Link
@@ -60,7 +60,7 @@ const Navbar = () => {
         {/* Mobile toggle */}
         <button
           type="button"
-          className="lg:hidden text-foreground"
+          className="xl:hidden text-foreground"
           onClick={() => setOpen(!open)}
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
@@ -71,7 +71,7 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {open && (
-        <div className="lg:hidden bg-card border-b border-border px-6 pb-6 animate-fade-in">
+        <div className="xl:hidden bg-card border-b border-border px-6 pb-6 animate-fade-in">
           <div className="flex flex-col gap-4 pt-2">
             {navLinks.map((link) => (
               <Link
