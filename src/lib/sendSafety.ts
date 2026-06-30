@@ -131,6 +131,10 @@ export interface SafetyResult {
   health: SenderHealth;
   excluded: { risky: number; blocked: number; review: number };
   reviewShare: number;          // share of audience flagged as review
+  /** Agency only: pooled sends today across the whole workspace. */
+  agencyPooledSendsToday?: number;
+  /** Agency only: pooled remaining capacity across the whole workspace. */
+  agencyPooledRemaining?: number;
 }
 
 export function computeSafety(input: SafetyInput): SafetyResult {
