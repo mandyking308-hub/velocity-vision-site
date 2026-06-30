@@ -7,6 +7,8 @@ import { useCredits } from "@/contexts/CreditsContext";
 import { PLANS, PlanId, HUMAN_REVIEW_PRICE, ACTION_LABELS, CreditAction } from "@/lib/credits";
 import CreditMeter from "@/components/app/CreditMeter";
 import TopUpModal from "@/components/app/TopUpModal";
+import LegalAcceptanceGate from "@/components/LegalAcceptanceGate";
+import { recordLegalAcceptance } from "@/lib/recordLegalAcceptance";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Check, ArrowUpRight, CheckCircle2 } from "lucide-react";
@@ -46,6 +48,7 @@ export default function AppBilling() {
   const { openCheckout, element } = useStripeCheckout();
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
+  const [pendingPlan, setPendingPlan] = useState<PlanId | null>(null);
 
   const load = async () => {
     if (!user) return;
@@ -88,7 +91,19 @@ export default function AppBilling() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const buyPlan = (id: PlanId) => {
+  const buyPlan = (id: PlanId) => setPendingPlan(id);
+
+  const confirmBuyPlan = async () => {
+    if (!pendingPlan) return;
+    if (user) {
+      await recordLegalAcceptance({
+        userId: user.id,
+        email: user.email ?? null,
+        source: "plan_checkout",
+      });
+    }
+    const id = pendingPlan;
+    setPendingPlan(null);
     openCheckout({
       priceId: PLAN_TO_PRICE[id],
       title: `Subscribe to ${PLANS[id].name}`,
