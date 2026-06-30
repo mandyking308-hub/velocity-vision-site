@@ -1,1 +1,16 @@
 project_id = "fdubhpzthtfzrzkjkalw"
+
+[functions.create-checkout]
+verify_jwt = false
+
+[functions.payments-webhook]
+verify_jwt = false
+
+[functions.create-portal-session]
+verify_jwt = false
+
+[functions.lead-submit]
+verify_jwt = false
+
+[functions.public-campaign]
+verify_jwt = false
