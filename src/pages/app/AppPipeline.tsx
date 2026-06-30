@@ -8,7 +8,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowRight, AlertTriangle, TrendingUp, Clock, CheckCircle2, XCircle } from "lucide-react";
+import { ArrowRight, AlertTriangle, TrendingUp, Clock, CheckCircle2, XCircle, MessageSquare, Send } from "lucide-react";
+import JourneyEmptyState from "@/components/app/JourneyEmptyState";
 
 const STAGES = ["discovery", "demo", "proposal", "negotiation", "won", "lost"] as const;
 type Stage = typeof STAGES[number];
