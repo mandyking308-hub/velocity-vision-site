@@ -160,6 +160,23 @@ const Pricing = () => (
         </div>
       </section>
 
+      <section className="section-padding bg-background border-t border-border">
+        <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
+          <div>
+            <h3 className="font-display font-semibold text-lg mb-2">Plans include Campaign Credits</h3>
+            <p className="text-muted-foreground text-sm">Every plan includes a generous allowance of credits for AI-heavy actions: full campaign packs, social, press, video and email sequences. Browsing, editing, pipeline and reports are always free.</p>
+          </div>
+          <div>
+            <h3 className="font-display font-semibold text-lg mb-2">Scale with top-ups, not surprises</h3>
+            <p className="text-muted-foreground text-sm">Need more in a busy month? Add a credit top-up in seconds — Small, Medium or Large. Top-ups never expire while your plan is active.</p>
+          </div>
+          <div>
+            <h3 className="font-display font-semibold text-lg mb-2">Human review when you want it</h3>
+            <p className="text-muted-foreground text-sm">Optional Premium Human Review (£199) adds a senior strategist's eyes to any campaign — never required, available from inside the workspace.</p>
+          </div>
+        </div>
+      </section>
+
       <section className="section-padding bg-secondary">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-8">Pricing FAQ</h2>
