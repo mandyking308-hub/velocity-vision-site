@@ -88,7 +88,7 @@ const AnimatedRoutes = () => {
         </Route>
 
         {/* CRM (protected - internal team) */}
-        <Route path="/crm" element={<ProtectedRoute><CRMLayout /></ProtectedRoute>}>
+        <Route path="/crm" element={<CRMProtectedRoute><CRMLayout /></CRMProtectedRoute>}>
           <Route index element={<CRMDashboard />} />
           <Route path="companies" element={<CompaniesPage />} />
           <Route path="contacts" element={<ContactsPage />} />
