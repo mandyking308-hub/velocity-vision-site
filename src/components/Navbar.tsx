@@ -5,13 +5,14 @@ import { Menu, X } from "lucide-react";
 
 const navLinks = [
   { label: "Home", path: "/" },
-  { label: "Services", path: "/services" },
+  { label: "How it works", path: "/how-it-works" },
+  { label: "Pricing", path: "/pricing" },
+  { label: "For Businesses", path: "/for-businesses" },
   { label: "For Agencies", path: "/for-agencies" },
-  { label: "Industries", path: "/industries" },
-  { label: "Work", path: "/work" },
-  { label: "Insights", path: "/insights" },
+  { label: "Features", path: "/features" },
+  { label: "Templates", path: "/templates" },
   { label: "About", path: "/about" },
-  { label: "Contact", path: "/contact" },
+  { label: "Help", path: "/help" },
 ];
 
 const Navbar = () => {
@@ -26,7 +27,7 @@ const Navbar = () => {
         </Link>
 
         {/* Desktop */}
-        <div className="hidden lg:flex items-center gap-8">
+        <div className="hidden lg:flex items-center gap-6">
           {navLinks.map((link) => (
             <Link
               key={link.path}
@@ -38,8 +39,11 @@ const Navbar = () => {
               {link.label}
             </Link>
           ))}
+          <Button variant="ghost" size="sm" asChild>
+            <Link to="/pricing">See pricing</Link>
+          </Button>
           <Button variant="cta" size="default" asChild>
-            <Link to="/book-demo">Book a Demo</Link>
+            <Link to="/auth">Start your first campaign</Link>
           </Button>
         </div>
 
@@ -71,8 +75,11 @@ const Navbar = () => {
                 {link.label}
               </Link>
             ))}
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/pricing" onClick={() => setOpen(false)}>See pricing</Link>
+            </Button>
             <Button variant="cta" size="default" asChild>
-              <Link to="/book-demo" onClick={() => setOpen(false)}>Book a Demo</Link>
+              <Link to="/auth" onClick={() => setOpen(false)}>Start your first campaign</Link>
             </Button>
           </div>
         </div>
