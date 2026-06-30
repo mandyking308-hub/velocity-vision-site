@@ -193,7 +193,7 @@ const Pricing = () => {
           </div>
           <div>
             <h3 className="font-display font-semibold text-lg mb-2">Human review when you want it</h3>
-            <p className="text-muted-foreground text-sm">Optional Premium Human Review (£199) adds a senior strategist's eyes to any campaign — never required, available from inside the workspace.</p>
+            <p className="text-muted-foreground text-sm">Optional Premium Human Review ({priceFor("vv_human_review_oneoff", currency).formatted}) adds a senior strategist's eyes to any campaign — never required, available from inside the workspace.</p>
           </div>
         </div>
       </section>
@@ -214,6 +214,8 @@ const Pricing = () => {
     </main>
     <Footer />
   </>
-);
+  );
+};
 
 export default Pricing;
+
