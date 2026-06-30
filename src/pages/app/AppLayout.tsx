@@ -69,11 +69,14 @@ function Shell() {
         </div>
       </aside>
       <div className="flex-1 flex flex-col">
-        <header className="h-14 border-b border-border bg-card flex items-center justify-between px-6">
+        <header className="h-14 border-b border-border bg-card flex items-center justify-between px-6 gap-3">
           <WorkspaceSwitcher />
-          <Button size="sm" onClick={() => navigate("/app/campaigns/new")}>
-            <Plus className="h-4 w-4 mr-1" /> New campaign
-          </Button>
+          <div className="flex items-center gap-3">
+            <CreditPill />
+            <Button size="sm" onClick={() => navigate("/app/campaigns/new")}>
+              <Plus className="h-4 w-4 mr-1" /> New campaign
+            </Button>
+          </div>
         </header>
         <main className="flex-1 overflow-auto p-6">
           <Outlet />
@@ -86,7 +89,9 @@ function Shell() {
 export default function AppLayout() {
   return (
     <WorkspaceProvider>
-      <Shell />
+      <CreditsProvider>
+        <Shell />
+      </CreditsProvider>
     </WorkspaceProvider>
   );
 }
