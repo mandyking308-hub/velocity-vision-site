@@ -350,7 +350,7 @@ export type Database = {
           brief: Json | null
           budget: number | null
           campaign_kind: string | null
-          company_id: string
+          company_id: string | null
           created_at: string
           created_by: string | null
           description: string | null
@@ -373,7 +373,7 @@ export type Database = {
           brief?: Json | null
           budget?: number | null
           campaign_kind?: string | null
-          company_id: string
+          company_id?: string | null
           created_at?: string
           created_by?: string | null
           description?: string | null
@@ -396,7 +396,7 @@ export type Database = {
           brief?: Json | null
           budget?: number | null
           campaign_kind?: string | null
-          company_id?: string
+          company_id?: string | null
           created_at?: string
           created_by?: string | null
           description?: string | null
