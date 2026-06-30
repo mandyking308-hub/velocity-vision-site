@@ -31,26 +31,30 @@ const Navbar = () => {
         </Link>
 
         {/* Desktop */}
-        <div className="hidden lg:flex items-center gap-6">
-          {navLinks.map((link) => (
-            <Link
-              key={link.path}
-              to={link.path}
-              className={`text-sm font-medium transition-colors hover:text-accent ${
-                location.pathname === link.path ? "text-accent" : "text-muted-foreground"
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
-          <LanguageSwitcher />
-          <CurrencySwitcher />
-          <Button variant="ghost" size="sm" asChild>
-            <Link to="/pricing">{t("nav.seePricing")}</Link>
-          </Button>
-          <Button variant="cta" size="default" asChild>
-            <Link to="/auth">{t("nav.startCampaign")}</Link>
-          </Button>
+        <div className="hidden lg:flex items-center justify-between flex-1 ml-8">
+          <div className="flex items-center gap-3">
+            {navLinks.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`text-sm font-medium transition-colors hover:text-accent ${
+                  location.pathname === link.path ? "text-accent" : "text-muted-foreground"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+          <div className="flex items-center gap-4">
+            <LanguageSwitcher />
+            <CurrencySwitcher />
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/pricing">{t("nav.seePricing")}</Link>
+            </Button>
+            <Button variant="cta" size="default" asChild>
+              <Link to="/auth">{t("nav.startWorkspace")}</Link>
+            </Button>
+          </div>
         </div>
 
         {/* Mobile toggle */}
@@ -89,7 +93,7 @@ const Navbar = () => {
               <Link to="/pricing" onClick={() => setOpen(false)}>{t("nav.seePricing")}</Link>
             </Button>
             <Button variant="cta" size="default" asChild>
-              <Link to="/auth" onClick={() => setOpen(false)}>{t("nav.startCampaign")}</Link>
+              <Link to="/auth" onClick={() => setOpen(false)}>{t("nav.startWorkspace")}</Link>
             </Button>
           </div>
         </div>
