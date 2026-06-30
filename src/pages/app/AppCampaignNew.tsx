@@ -12,7 +12,8 @@ import { CheckCircle2, ChevronLeft, ChevronRight, Sparkles } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
-import { CampaignBrief, CampaignGoal, CampaignKind, generatePack, makeSlug } from "@/lib/campaignPack";
+import { CampaignBrief, CampaignGoal, CampaignKind, CampaignLanguage, CAMPAIGN_LANGUAGES, generatePack, makeSlug } from "@/lib/campaignPack";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useCredits } from "@/contexts/CreditsContext";
 import { CREDIT_COSTS } from "@/lib/credits";
