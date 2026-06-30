@@ -199,7 +199,7 @@ export default function AppBilling() {
         <Card>
           <CardContent className="p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <div className="font-semibold">Optional add-on — £{HUMAN_REVIEW_PRICE} per review</div>
+              <div className="font-semibold">Optional add-on — {priceFor("vv_human_review_oneoff", currency).formatted} per review</div>
               <p className="text-sm text-muted-foreground">Senior strategist review of one campaign pack. Purchase from inside any campaign.</p>
             </div>
             <Button variant="outline" asChild><a href="/app/campaigns">Choose a campaign <ArrowUpRight className="h-4 w-4 ml-2" /></a></Button>
