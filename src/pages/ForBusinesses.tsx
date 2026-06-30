@@ -194,6 +194,3 @@ const ForBusinesses = () => (
 );
 
 export default ForBusinesses;
-
-
-export default ForBusinesses;
