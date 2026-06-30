@@ -43,7 +43,12 @@
     "updateFailed": "Update failed",
     "moved": "Moved to {{stage}}",
     "movedToPipeline": "Moved to pipeline",
-    "moveToPipelineFailed": "Couldn't move to pipeline"
+    "moveToPipelineFailed": "Couldn't move to pipeline",
+    "linkCopied": "Link copied",
+    "saveFailed": "Failed to save",
+    "paymentReceived": "Payment received — your account has been updated.",
+    "defaultSenderUpdated": "Default sender updated",
+    "disconnected": "Disconnected"
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",
