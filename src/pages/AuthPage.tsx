@@ -3,13 +3,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { useNavigate, Link } from "react-router-dom";
-import { CURRENT_LEGAL_VERSION } from "@/lib/legalVersions";
+import { useNavigate } from "react-router-dom";
+import LegalAcceptanceCheckbox from "@/components/LegalAcceptanceCheckbox";
+import { recordLegalAcceptance } from "@/lib/recordLegalAcceptance";
 
-const legalLinks = [
+const _legalLinks = [
   { label: "Platform Terms of Service", path: "/legal/terms-of-service" },
   { label: "Client Services Agreement", path: "/legal/client-services-agreement" },
   { label: "Privacy Policy", path: "/legal/privacy-policy" },
@@ -49,37 +49,6 @@ const AuthPage = () => {
     checkRoleAndRedirect();
   }, [user, navigate]);
 
-  const logLegalAcceptance = async (userId: string, userEmail: string) => {
-    try {
-      // Fetch IP address
-      let ipAddress = "unknown";
-      try {
-        const res = await fetch("https://api.ipify.org?format=json");
-        const data = await res.json();
-        ipAddress = data.ip;
-      } catch {
-        // IP fetch failed, continue with unknown
-      }
-
-      const documentVersions: Record<string, string> = {};
-      legalLinks.forEach((doc) => {
-        const slug = doc.path.split("/").pop() || "";
-        documentVersions[slug] = CURRENT_LEGAL_VERSION;
-      });
-
-      await supabase.from("legal_acceptances").insert({
-        user_id: userId,
-        email: userEmail,
-        account_type: "business",
-        legal_version: CURRENT_LEGAL_VERSION,
-        ip_address: ipAddress,
-        document_versions: documentVersions,
-      });
-    } catch (err) {
-      console.error("Failed to log legal acceptance:", err);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -110,7 +79,11 @@ const AuthPage = () => {
         toast.error(error.message);
       } else {
         if (data.user) {
-          await logLegalAcceptance(data.user.id, email);
+          await recordLegalAcceptance({
+            userId: data.user.id,
+            email,
+            source: "signup",
+          });
         }
         toast.success("Check your email to confirm your account.");
       }
