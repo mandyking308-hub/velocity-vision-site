@@ -1,0 +1,21 @@
+# Velocity Influence
+
+> Velocity Influence is a global marketing and PR platform plus full-service agency. We help businesses and agencies run multi-channel campaigns end-to-end — strategy, performance media, PR, AI intelligence, and creative — from a single workspace.
+
+Operated by Global Solutions Management LLC (Delaware, USA).
+
+## Pages
+
+- [Home](/): Marketing platform plus agency for businesses and agencies.
+- [Services](/services): Strategy, performance media, PR, AI intelligence, and creative production.
+- [Industries](/industries): Healthcare, technology, finance, AI, professional services, retail.
+- [Work](/work): Case studies and client outcomes.
+- [Insights](/insights): Articles and reports on marketing, AI, and growth.
+- [For Agencies](/for-agencies): Multi-workspace platform with white-label client portals.
+- [About](/about): Who we are and how we operate.
+- [Contact](/contact): Talk to the team.
+- [Book a Demo](/book-demo): See the platform live.
+
+## Optional
+
+- [Legal Centre](/legal): Terms, privacy, and compliance documents.
