@@ -28,6 +28,7 @@ export default function MoveToPipelineDialog({
   lead: MoveToPipelineLead | null;
   onDone?: () => void;
 }) {
+  const tc = useTranslation("common").t;
   const [stage, setStage] = useState<typeof STAGES[number]>("discovery");
   const [value, setValue] = useState("");
   const [close, setClose] = useState("");
