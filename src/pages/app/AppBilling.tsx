@@ -13,6 +13,7 @@ import { Check, ArrowUpRight, CheckCircle2 } from "lucide-react";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { PRICE_IDS } from "@/lib/stripe";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { useCurrency } from "@/hooks/useCurrency";
 import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
 import CurrencySwitcher from "@/components/CurrencySwitcher";
