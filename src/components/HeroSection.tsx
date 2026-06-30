@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Sparkles, LayoutDashboard, Mail, BarChart3 } from "lucide-react";
@@ -9,7 +10,9 @@ import heroAbstract from "@/assets/hero-abstract.jpg";
  *   "Your marketing department, in a login."
  */
 
-const HeroSection = () => (
+const HeroSection = () => {
+  const { t } = useTranslation("marketing");
+  return (
   <section className="relative bg-hero min-h-[90vh] flex items-center overflow-hidden">
     <div className="absolute inset-0">
       <img src={heroAbstract} alt="" width={1920} height={1080} className="w-full h-full object-cover opacity-25" loading="eager" fetchPriority="high" decoding="async" />
@@ -28,7 +31,7 @@ const HeroSection = () => (
           className="lg:col-span-7"
         >
           <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-6 inline-flex items-center gap-2">
-            <Sparkles size={14} /> Self-serve campaign launchpad
+            <Sparkles size={14} /> {t("hero.eyebrow")}
           </p>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-primary-foreground leading-[1.05] mb-6">
             Launch your next marketing campaign in a <span className="text-gradient">weekend</span> — not a quarter.
@@ -38,10 +41,10 @@ const HeroSection = () => (
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button variant="hero" size="lg" asChild>
-              <Link to="/auth">Start your first campaign <ArrowRight size={18} /></Link>
+              <Link to="/auth">{t("hero.ctaPrimary")} <ArrowRight size={18} /></Link>
             </Button>
             <Button variant="hero-outline" size="lg" asChild>
-              <Link to="/pricing">See pricing</Link>
+              <Link to="/pricing">{t("nav.seePricing")}</Link>
             </Button>
           </div>
           <p className="text-xs text-primary-foreground/75 mt-4">
@@ -101,6 +104,7 @@ const HeroSection = () => (
       </div>
     </div>
   </section>
-);
+  );
+};
 
 export default HeroSection;

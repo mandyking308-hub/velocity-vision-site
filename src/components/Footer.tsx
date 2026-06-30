@@ -45,7 +45,7 @@ const Footer = () => (
         </div>
       </div>
       <div className="border-t border-primary-foreground/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-        <p className="text-xs text-primary-foreground/70">© 2026 Global Solutions Management LLC, trading as Velocity Influence Agency. All rights reserved.</p>
+        <p className="text-xs text-primary-foreground/70">© 2026 Global Solutions Management LLC, trading as Velocity Influence Agency.</p>
         <div className="flex gap-6">
           <Link to="/legal/privacy-policy" className="text-xs text-primary-foreground/70 hover:text-accent transition-colors">Privacy Policy</Link>
           <Link to="/legal/terms-of-service" className="text-xs text-primary-foreground/70 hover:text-accent transition-colors">Terms of Service</Link>
