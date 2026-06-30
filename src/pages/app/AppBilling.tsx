@@ -98,10 +98,18 @@ export default function AppBilling() {
 
   return (
     <div className="space-y-8 max-w-6xl">
-      <div>
-        <h1 className="text-3xl font-bold">Billing</h1>
-        <p className="text-muted-foreground">Manage your plan, Campaign Credits and add-ons.</p>
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-3xl font-bold">Billing</h1>
+          <p className="text-muted-foreground">Manage your plan, Campaign Credits and add-ons.</p>
+        </div>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground border border-border rounded-md px-3 py-2">
+          <span>Billing in <strong className="text-foreground">{currency}</strong>{country && <> · {country}</>}</span>
+          <CurrencySwitcher compact />
+        </div>
       </div>
+      <p className="text-xs text-muted-foreground -mt-4">{taxNotice(currency)}</p>
+
 
       {stripeSub?.status === "past_due" && (
         <Card className="border-destructive">
