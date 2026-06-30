@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ShieldCheck, AlertTriangle, Send, ArrowLeft, Pause } from "lucide-react";
+import { ShieldCheck, AlertTriangle, Send, ArrowLeft, Pause, Upload, Mail, Wand2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -20,6 +20,7 @@ import {
 import type { PlanId } from "@/lib/credits";
 import SendSafetyPanel from "@/components/app/SendSafetyPanel";
 import SenderStatusCard from "@/components/app/SenderStatusCard";
+import JourneyEmptyState from "@/components/app/JourneyEmptyState";
 
 interface Counts { valid: number; needs_review: number; risky: number; blocked: number; suppressed: number; }
 
@@ -134,19 +135,60 @@ export default function AppActivation() {
     else navigate("/app/campaigns");
   }
 
+  const totalContacts = counts.valid + counts.needs_review + counts.risky + counts.blocked + counts.suppressed;
+  const noData = totalContacts === 0;
+  const noSender = !sender.connected;
+
   return (
     <div className="max-w-6xl space-y-6">
       <div className="flex items-center justify-between gap-3">
         <div>
           <Button variant="ghost" size="sm" onClick={() => navigate(-1)}><ArrowLeft className="h-4 w-4 mr-1" /> Back</Button>
-          <h1 className="text-3xl font-bold tracking-tight mt-2">Pre-flight: safe activation</h1>
-          <p className="text-muted-foreground mt-1">Final check before outreach goes out. We protect your sender reputation by default.</p>
+          <h1 className="text-3xl font-bold tracking-tight mt-2">Activate: turn safe data into outreach</h1>
+          <p className="text-muted-foreground mt-1">Storage is free. Activation is the governed action that moves contacts into your campaign.</p>
         </div>
         <Badge className={`border-0 ${SENDER_HEALTH_TONE[safety.health]}`}>
           Sender: {SENDER_HEALTH_LABEL[safety.health]}
         </Badge>
       </div>
 
+      {noData ? (
+        <JourneyEmptyState
+          icon={Upload}
+          flow="Step 1 of the journey — Upload → Review → Activate"
+          title="You haven't uploaded any contacts yet"
+          description="Activation runs on your safe segment. Upload contacts first, then return here to launch outreach."
+          why="Uploading is free and your data stays in your vault. We only consume credits when you choose to activate."
+          steps={[
+            { to: "/app/data-vault/upload", label: "Upload contacts", icon: Upload },
+            { to: "/app/data-vault", label: "View Data Vault" },
+          ]}
+        />
+      ) : noSender ? (
+        <JourneyEmptyState
+          icon={Mail}
+          flow={`Step 3 of the journey — you have ${counts.valid} safe contacts ready`}
+          title="Connect your sender to activate"
+          description="We need SPF/DKIM-verified email before we send on your behalf. This protects your domain reputation."
+          steps={[
+            { to: "/app/settings/email", label: "Connect sender", icon: Mail },
+            { to: "/app/data-vault", label: "Review data first" },
+          ]}
+        />
+      ) : counts.valid === 0 ? (
+        <JourneyEmptyState
+          icon={ShieldCheck}
+          flow={`Step 2 of the journey — ${totalContacts} contacts uploaded but none are safe yet`}
+          title="No safe contacts in your segment"
+          description="Your uploads have records flagged as needs-review, risky or blocked. Review them in the Data Vault to graduate contacts into the safe pool."
+          steps={[
+            { to: "/app/data-vault?quality=needs_review", label: "Review flagged contacts", icon: ShieldCheck },
+            { to: "/app/data-vault/upload", label: "Upload cleaner list", icon: Upload },
+            { to: "/app/campaigns/new", label: "Create assets meanwhile", icon: Wand2, variant: "ghost" },
+          ]}
+        />
+      ) : (
+      <>
       <SendSafetyPanel s={safety} used={usedToday} scheduled={scheduledToday} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -245,6 +287,8 @@ export default function AppActivation() {
           onVerified={(r) => setSender((s) => ({ ...s, domain_authenticated: !!r?.verified }))}
         />
       </div>
+      </>
+      )}
     </div>
   );
 }

@@ -7,7 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import LeadActionPanel, { type ActionLead } from "@/components/app/LeadActionPanel";
 import { bucketCounts, deriveFollowUpState, STATE_LABEL, STATE_TONE, type FollowUpState } from "@/lib/leadStates";
-import { MessageSquare, Mail, AlertTriangle, Zap, Flame, Snowflake, Filter, RefreshCw } from "lucide-react";
+import { MessageSquare, Mail, AlertTriangle, Zap, Flame, Snowflake, Filter, RefreshCw, Send, Upload } from "lucide-react";
+import JourneyEmptyState from "@/components/app/JourneyEmptyState";
 
 const PRIMARY_TABS: { id: "action" | FollowUpState; label: string; icon: any }[] = [
   { id: "action", label: "Needs action", icon: AlertTriangle },
@@ -57,6 +58,29 @@ export default function AppFollowUp() {
         return (l.name || "").toLowerCase().includes(s) || (l.email || "").toLowerCase().includes(s);
       });
   }, [tab, needsAction, leads, q, campaign]);
+
+  if (!loading && leads.length === 0) {
+    return (
+      <div className="space-y-5 max-w-7xl">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Replies & Follow-Up</h1>
+          <p className="text-muted-foreground">Who replied, who's overdue, what's warm. This is where you start your day.</p>
+        </div>
+        <JourneyEmptyState
+          icon={MessageSquare}
+          flow="Step 4 of the journey — Activate → Reply → Pipeline"
+          title="No leads in your follow-up queue yet"
+          description="Once you activate a campaign, replies and follow-ups land here automatically. Hot, warm and overdue contacts are surfaced in priority order."
+          why="Conversations are where outreach turns into revenue — this queue exists so nothing slips."
+          steps={[
+            { to: "/app/activate", label: "Activate a safe segment", icon: Send },
+            { to: "/app/data-vault/upload", label: "Upload contacts first", icon: Upload },
+            { to: "/app/campaigns", label: "View campaigns", variant: "ghost" },
+          ]}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-5 max-w-7xl">
