@@ -79,7 +79,7 @@ export default function AppCampaignWorkspace() {
     const pack = generatePack(c.brief);
     await supabase.from("campaigns").update({ pack: pack as any }).eq("id", c.id);
     setC({ ...c, pack });
-    toast.success("Pack regenerated");
+    toast.success(t("campaigns.toasts.packRegenerated"));
   };
 
   const exportMd = () => {
