@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Building2, Users, Target, TrendingUp,
-  CheckSquare, LogOut, ChevronLeft, ChevronRight, Globe, Megaphone, BarChart3, Crown, CreditCard, Shield, Scale, Book
+  CheckSquare, LogOut, ChevronLeft, ChevronRight, Globe, Megaphone, BarChart3, Crown, CreditCard, Shield, Scale, Book, Brain
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
@@ -117,6 +117,18 @@ const CRMSidebar = () => {
             >
               <CreditCard size={18} className="shrink-0" />
               {!collapsed && <span>Monetisation</span>}
+            </Link>
+            <Link
+              to="/crm/intelligence"
+              className={cn(
+                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors border border-accent/20",
+                location.pathname === "/crm/intelligence"
+                  ? "bg-accent text-accent-foreground"
+                  : "text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/5"
+              )}
+            >
+              <Brain size={18} className="shrink-0" />
+              {!collapsed && <span>Intelligence</span>}
             </Link>
           </>
         )}
