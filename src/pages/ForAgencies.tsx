@@ -56,7 +56,7 @@ const ForAgencies = () => (
                   <b.icon className="text-accent" size={20} />
                 </div>
                 <h3 className="font-display font-semibold text-foreground mb-2">{b.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{b.desc}</p>
+                <p className="text-foreground/80 text-sm leading-relaxed">{b.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -69,7 +69,7 @@ const ForAgencies = () => (
           <div className="max-w-2xl mb-10">
             <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">What agencies can do</p>
             <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">Run the whole client delivery cycle from one login</h2>
-            <p className="text-muted-foreground text-lg">
+            <p className="text-foreground/75 text-lg">
               Client data, activation, content, follow-up and pipeline — managed per account, visible across the book.
             </p>
           </div>
@@ -80,7 +80,7 @@ const ForAgencies = () => (
               { icon: Newspaper, title: "Press releases", desc: "Draft distribution-ready announcements for launches, wins and funding news." },
               { icon: Megaphone, title: "Safe segment activation", desc: "Verify the sender, cap daily sends and flag risky records before anything goes live." },
               { icon: Inbox, title: "Follow-up per client", desc: "Replies, snoozes and stuck-deal alerts stay in the right workspace — no crossed wires." },
-              { icon: GitBranch, title: "Pipeline tracking", desc: "Move warm contacts into opportunities and track value without buying separate CRM seats." },
+              { icon: GitBranch, title: "Pipeline tracking", desc: "Move warm contacts into opportunities and track value without adding another sales system seat." },
               { icon: RefreshCw, title: "Reusable templates", desc: "Save cadences, segments and asset packs. Onboard new clients faster." },
               { icon: Users, title: "Team clarity", desc: "Everyone works in the same system with clear client separation and shared templates." },
               { icon: BarChart3, title: "Cross-account visibility", desc: "See what's active, what's stuck and where the revenue is moving across the whole portfolio." },
@@ -90,7 +90,7 @@ const ForAgencies = () => (
                   <c.icon className="text-accent" size={20} />
                 </div>
                 <h3 className="font-display font-semibold text-foreground mb-2">{c.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{c.desc}</p>
+                <p className="text-foreground/80 text-sm leading-relaxed">{c.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -103,7 +103,7 @@ const ForAgencies = () => (
           <div className="max-w-2xl mb-10">
             <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Why agencies switch</p>
             <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">Stop stitching tools together across every client</h2>
-            <p className="text-muted-foreground text-lg">
+            <p className="text-foreground/75 text-lg">
               One workspace replaces the spreadsheet sprawl, the disconnected tool stack and the messy handoffs between team members.
             </p>
           </div>
@@ -121,7 +121,7 @@ const ForAgencies = () => (
                   <r.icon className="text-accent" size={20} />
                 </div>
                 <h3 className="font-display font-semibold text-foreground mb-2">{r.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{r.desc}</p>
+                <p className="text-foreground/80 text-sm leading-relaxed">{r.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -134,7 +134,7 @@ const ForAgencies = () => (
           <div className="max-w-2xl mb-10">
             <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Agency outcomes</p>
             <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">Deliver faster, scale cleaner, keep clients separate</h2>
-            <p className="text-muted-foreground text-lg">
+            <p className="text-foreground/75 text-lg">
               Less overhead per client, more repeatable delivery, and a clearer view of where the work is moving.
             </p>
           </div>
@@ -152,7 +152,7 @@ const ForAgencies = () => (
                   <o.icon className="text-accent" size={20} />
                 </div>
                 <h3 className="font-display font-semibold text-foreground mb-2">{o.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{o.desc}</p>
+                <p className="text-foreground/80 text-sm leading-relaxed">{o.desc}</p>
               </motion.div>
             ))}
           </div>
