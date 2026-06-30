@@ -6,6 +6,7 @@ import { Rocket, FolderOpen, Users, BarChart3, LayoutTemplate, Settings, Briefca
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import CreditMeter from "@/components/app/CreditMeter";
+import FollowUpReminders from "@/components/app/FollowUpReminders";
 
 export default function AppDashboard() {
   const { user } = useAuth();
@@ -66,6 +67,8 @@ export default function AppDashboard() {
         <StatCard label="Follow-ups due" value={stats.followups} />
         <StatCard label="Last performance" value="—" hint="Launch your first to see data" />
       </div>
+
+      <FollowUpReminders />
 
       <CreditMeter />
 
