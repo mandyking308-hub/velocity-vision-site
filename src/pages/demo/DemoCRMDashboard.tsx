@@ -245,7 +245,7 @@ export default function DemoCRMDashboard() {
               <CardContent className="text-sm text-muted-foreground space-y-2">
                 <p>{pack.emails.length} emails, ready to send.</p>
                 <div className="flex items-center gap-2">
-                  <Badge className="bg-green-600">Connected: demo@velocity-outreach.com</Badge>
+                  <Badge className="bg-green-600">Sender connected (demo mailbox)</Badge>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <Button size="sm" variant="outline" disabled onClick={() => {}}>Send (demo)</Button>
