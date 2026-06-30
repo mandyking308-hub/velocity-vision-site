@@ -51,7 +51,7 @@ const Navbar = () => {
             <Button variant="ghost" size="sm" asChild>
               <Link to="/pricing">{t("nav.seePricing")}</Link>
             </Button>
-            <Button variant="cta" size="default" asChild>
+            <Button variant="cta" size="sm" asChild>
               <Link to="/auth">{t("nav.startWorkspace")}</Link>
             </Button>
           </div>
@@ -92,7 +92,7 @@ const Navbar = () => {
             <Button variant="ghost" size="sm" asChild>
               <Link to="/pricing" onClick={() => setOpen(false)}>{t("nav.seePricing")}</Link>
             </Button>
-            <Button variant="cta" size="default" asChild>
+            <Button variant="cta" size="sm" asChild>
               <Link to="/auth" onClick={() => setOpen(false)}>{t("nav.startWorkspace")}</Link>
             </Button>
           </div>
