@@ -43,7 +43,12 @@
     "updateFailed": "Error al actualizar",
     "moved": "Movido a {{stage}}",
     "movedToPipeline": "Movido al pipeline",
-    "moveToPipelineFailed": "No se pudo mover al pipeline"
+    "moveToPipelineFailed": "No se pudo mover al pipeline",
+    "linkCopied": "Enlace copiado",
+    "saveFailed": "Error al guardar",
+    "paymentReceived": "Pago recibido — tu cuenta se ha actualizado.",
+    "defaultSenderUpdated": "Remitente predeterminado actualizado",
+    "disconnected": "Desconectado"
   },
   "errors": {
     "generic": "Algo salió mal. Inténtalo de nuevo.",

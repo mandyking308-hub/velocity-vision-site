@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Mail, Plug, AlertCircle, CheckCircle2, ArrowLeft, Trash2, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 interface Connection {
   id: string;
@@ -48,6 +49,7 @@ const PROVIDER_HELP: Record<string, { label: string; help: string; host: string;
 };
 
 export default function AppEmailConnections() {
+  const tc = useTranslation("common").t;
   const [connections, setConnections] = useState<Connection[]>([]);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Connection | null>(null);
@@ -67,14 +69,14 @@ export default function AppEmailConnections() {
     if (!user) return;
     await supabase.from("email_connections").update({ is_default: false }).eq("user_id", user.id);
     await supabase.from("email_connections").update({ is_default: true }).eq("id", id);
-    toast.success("Default sender updated");
+    toast.success(tc("toasts.defaultSenderUpdated"));
     load();
   };
 
   const remove = async (id: string) => {
     if (!confirm("Disconnect this email account?")) return;
     await supabase.from("email_connections").delete().eq("id", id);
-    toast.success("Disconnected");
+    toast.success(tc("toasts.disconnected"));
     load();
   };
 
@@ -159,6 +161,8 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 function ConnectionDialog({ editing, onDone }: { editing: Connection | null; onDone: () => void }) {
+  const { t } = useTranslation("app");
+  const tc = useTranslation("common").t;
   const [provider, setProvider] = useState<"gmail" | "outlook" | "smtp">(editing?.provider || "gmail");
   const [fromEmail, setFromEmail] = useState(editing?.from_email || "");
   const [fromName, setFromName] = useState(editing?.from_name || "");
@@ -173,7 +177,7 @@ function ConnectionDialog({ editing, onDone }: { editing: Connection | null; onD
 
   const submit = async () => {
     if (!fromEmail || !smtpUser || (!smtpPassword && !editing)) {
-      toast.error("Email, username and password are required");
+      toast.error(t("email.toasts.credentialsRequired"));
       return;
     }
     setSaving(true);
@@ -192,13 +196,13 @@ function ConnectionDialog({ editing, onDone }: { editing: Connection | null; onD
     });
     setSaving(false);
     if (error || (data as any)?.error) {
-      toast.error((data as any)?.error || error?.message || "Failed to save");
+      toast.error((data as any)?.error || error?.message || tc("toasts.saveFailed"));
       return;
     }
     if ((data as any).status === "error") {
-      toast.error(`Saved but couldn't connect: ${(data as any).last_error}`);
+      toast.error(t("email.toasts.savedConnectError", { error: (data as any).last_error }));
     } else {
-      toast.success("Inbox connected");
+      toast.success(t("email.toasts.inboxConnected"));
     }
     onDone();
   };

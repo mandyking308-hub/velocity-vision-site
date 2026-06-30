@@ -13,6 +13,7 @@ import { Check, ArrowUpRight, CheckCircle2 } from "lucide-react";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { PRICE_IDS } from "@/lib/stripe";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { useCurrency } from "@/hooks/useCurrency";
 import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
 import CurrencySwitcher from "@/components/CurrencySwitcher";
@@ -31,6 +32,7 @@ const PLAN_TO_PRICE: Record<PlanId, string> = {
 
 export default function AppBilling() {
   const { user } = useAuth();
+  const tc = useTranslation("common").t;
   const { plan, planConfig, periodEnd, starterExpired, refresh } = useCredits();
   const { currency, country } = useCurrency();
   const [topupOpen, setTopupOpen] = useState(false);
@@ -66,7 +68,7 @@ export default function AppBilling() {
     const flag = params.get("checkout");
     if (!flag) return;
     (async () => {
-      toast.success("Payment received — your account has been updated.");
+      toast.success(tc("toasts.paymentReceived"));
       // Webhook normally writes within 1-3s; refresh credits + tables a couple times
       for (let i = 0; i < 4; i++) {
         await new Promise((r) => setTimeout(r, 1200));

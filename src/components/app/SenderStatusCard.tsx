@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Mail, ShieldCheck, AlertTriangle, RefreshCw, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { SENDER_HEALTH_LABEL, SENDER_HEALTH_TONE, type SenderHealth, type SenderState } from "@/lib/sendSafety";
 
@@ -23,12 +24,13 @@ export default function SenderStatusCard({
   connectionId?: string | null;
   onVerified?: (result: any) => void;
 }) {
+  const { t } = useTranslation("app");
   const [verifying, setVerifying] = useState(false);
   const domain = fromEmail?.split("@")[1] ?? null;
 
   async function verifyNow() {
     if (!connectionId && !domain) {
-      toast.error("No sender domain to verify yet.");
+      toast.error(t("sender.toasts.noDomain"));
       return;
     }
     setVerifying(true);
@@ -38,15 +40,15 @@ export default function SenderStatusCard({
       });
       if (error) throw error;
       if (data?.verified) {
-        toast.success("Domain verified", { description: `SPF and DKIM look good for ${data.domain}.` });
+        toast.success(t("sender.toasts.verified"), { description: t("sender.toasts.verifiedDesc", { domain: data.domain }) });
       } else {
-        toast.warning("Domain not fully verified", {
-          description: `SPF: ${data?.spf_status || "?"} · DKIM: ${data?.dkim_status || "?"}. Safe send allowance stays reduced until verified.`,
+        toast.warning(t("sender.toasts.notVerified"), {
+          description: `SPF: ${data?.spf_status || "?"} · DKIM: ${data?.dkim_status || "?"}`,
         });
       }
       onVerified?.(data);
     } catch (e: any) {
-      toast.error("Verification failed", { description: e.message });
+      toast.error(t("sender.toasts.verifyFailed"), { description: e.message });
     } finally {
       setVerifying(false);
     }

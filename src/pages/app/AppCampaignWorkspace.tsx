@@ -8,6 +8,8 @@ import { Copy, Download, Sparkles, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { CampaignBrief, CampaignPack, generatePack } from "@/lib/campaignPack";
 import { toast } from "sonner";
+import i18n from "@/i18n";
+import { useTranslation } from "react-i18next";
 import { useCredits } from "@/contexts/CreditsContext";
 import { CREDIT_COSTS } from "@/lib/credits";
 import HumanReviewButton from "@/components/app/HumanReviewButton";
@@ -46,10 +48,11 @@ interface Campaign {
 
 const copy = (text: string) => {
   navigator.clipboard.writeText(text);
-  toast.success("Copied");
+  toast.success(i18n.t("common:toasts.copied"));
 };
 
 export default function AppCampaignWorkspace() {
+  const { t } = useTranslation("app");
   const { id } = useParams();
   const navigate = useNavigate();
   const [c, setC] = useState<Campaign | null>(null);
@@ -76,7 +79,7 @@ export default function AppCampaignWorkspace() {
     const pack = generatePack(c.brief);
     await supabase.from("campaigns").update({ pack: pack as any }).eq("id", c.id);
     setC({ ...c, pack });
-    toast.success("Pack regenerated");
+    toast.success(t("campaigns.toasts.packRegenerated"));
   };
 
   const exportMd = () => {
@@ -104,7 +107,7 @@ export default function AppCampaignWorkspace() {
   const toggleStatus = async (newStatus: "paused" | "active") => {
     await (supabase.from("campaigns") as any).update({ status: newStatus }).eq("id", c.id);
     setC({ ...c, status: newStatus });
-    toast.success(newStatus === "paused" ? "Campaign paused" : "Campaign resumed");
+    toast.success(t(newStatus === "paused" ? "campaigns.toasts.paused" : "campaigns.toasts.resumed"));
   };
 
   const advanceRun = async () => {
@@ -123,7 +126,7 @@ export default function AppCampaignWorkspace() {
       next_run_at: next ? next.toISOString() : null,
       status: next ? "active" : "completed",
     }).eq("id", c.id);
-    toast.success(next ? "Run logged · next run scheduled" : "Final run logged · campaign completed");
+    toast.success(t(next ? "campaigns.toasts.runLogged" : "campaigns.toasts.finalRunLogged"));
     setC({
       ...c, last_run_at: new Date().toISOString(),
       runs_completed: (c.runs_completed || 0) + 1,

@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 const STAGES = ["discovery", "demo", "proposal", "negotiation", "won", "lost"] as const;
 
@@ -27,6 +28,7 @@ export default function MoveToPipelineDialog({
   lead: MoveToPipelineLead | null;
   onDone?: () => void;
 }) {
+  const tc = useTranslation("common").t;
   const [stage, setStage] = useState<typeof STAGES[number]>("discovery");
   const [value, setValue] = useState("");
   const [close, setClose] = useState("");
@@ -77,11 +79,11 @@ export default function MoveToPipelineDialog({
         });
       }
 
-      toast.success("Moved to pipeline");
+      toast.success(tc("toasts.movedToPipeline"));
       onOpenChange(false);
       onDone?.();
     } catch (e: any) {
-      toast.error(e.message || "Failed to move to pipeline");
+      toast.error(e.message || tc("toasts.moveToPipelineFailed"));
     } finally {
       setBusy(false);
     }

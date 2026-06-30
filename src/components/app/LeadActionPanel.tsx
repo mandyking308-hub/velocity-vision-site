@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { deriveFollowUpState, deriveTemperature, STATE_LABEL, STATE_TONE, TEMP_TONE, type LeadLike } from "@/lib/leadStates";
 import MoveToPipelineDialog, { type MoveToPipelineLead } from "./MoveToPipelineDialog";
 
@@ -44,6 +45,7 @@ export default function LeadActionPanel({
   onChanged?: () => void;
   campaignName?: string | null;
 }) {
+  const tc = useTranslation("common").t;
   const [pipelineOpen, setPipelineOpen] = useState(false);
   const [snoozeOpen, setSnoozeOpen] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -56,10 +58,10 @@ export default function LeadActionPanel({
       const { error } = await supabase.from("leads").update(patch as any).eq("id", lead.id);
       if (error) throw error;
       await logAction(lead.id, action, details);
-      toast.success("Updated");
+      toast.success(tc("toasts.updated"));
       onChanged?.();
     } catch (e: any) {
-      toast.error(e.message || "Update failed");
+      toast.error(e.message || tc("toasts.updateFailed"));
     } finally { setBusy(false); }
   };
 

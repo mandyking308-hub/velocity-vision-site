@@ -66,7 +66,45 @@
     "new": "New campaign",
     "schedule": "Schedule",
     "cadence": "Cadence",
-    "language": "Campaign language"
+    "language": "Campaign language",
+    "toasts": {
+      "paused": "Campaign paused",
+      "resumed": "Campaign resumed",
+      "runLogged": "Run logged · next run scheduled",
+      "finalRunLogged": "Final run logged · campaign completed",
+      "packRegenerated": "Pack regenerated",
+      "draftSaved": "Campaign saved as draft",
+      "draftSavedDesc": "Top up credits to unlock the AI-generated pack.",
+      "packGenerated": "Campaign pack generated",
+      "generateFailed": "Failed to generate campaign"
+    }
+  },
+  "sender": {
+    "toasts": {
+      "noDomain": "No sender domain to verify yet.",
+      "verified": "Domain verified",
+      "verifiedDesc": "SPF and DKIM look good for {{domain}}.",
+      "notVerified": "Domain not fully verified",
+      "verifyFailed": "Verification failed"
+    }
+  },
+  "email": {
+    "toasts": {
+      "credentialsRequired": "Email, username and password are required",
+      "savedConnectError": "Saved but couldn't connect: {{error}}",
+      "inboxConnected": "Inbox connected",
+      "connectFirst": "Connect an email first",
+      "pickLead": "Pick at least one lead with an email",
+      "scheduled": "{{count}} scheduled",
+      "sent": "{{count}} sent",
+      "failed": "{{count}} failed"
+    }
+  },
+  "leadForm": {
+    "toasts": {
+      "saveFailed": "Couldn't save lead form",
+      "saved": "Lead form saved"
+    }
   },
   "followUp": {
     "title": "Replies & Follow-Up",

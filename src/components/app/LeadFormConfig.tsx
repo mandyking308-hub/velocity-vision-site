@@ -8,6 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Copy, ExternalLink, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 interface Field { id: string; label: string; type: string; required?: boolean }
 interface Config {
@@ -24,6 +25,8 @@ interface Props {
 }
 
 export default function LeadFormConfig({ campaignId, slug, initial, packDefaults, published }: Props) {
+  const { t } = useTranslation("app");
+  const tc = useTranslation("common").t;
   const [cfg, setCfg] = useState<Config>({
     headline: initial.headline || packDefaults.headline || "",
     subheadline: initial.subheadline || packDefaults.subheadline || "",
@@ -47,7 +50,7 @@ export default function LeadFormConfig({ campaignId, slug, initial, packDefaults
       lead_form_published: isPublished,
     }).eq("id", campaignId);
     setSaving(false);
-    if (error) toast.error("Couldn't save lead form"); else toast.success("Lead form saved");
+    if (error) toast.error(t("leadForm.toasts.saveFailed")); else toast.success(t("leadForm.toasts.saved"));
   };
 
   const updateField = (i: number, patch: Partial<Field>) => {
@@ -65,7 +68,7 @@ export default function LeadFormConfig({ campaignId, slug, initial, packDefaults
             <>
               <div className="flex items-center gap-2 flex-wrap">
                 <code className="text-sm bg-muted px-2 py-1 rounded flex-1 min-w-[200px] truncate">{url}</code>
-                <Button size="sm" variant="outline" onClick={() => { navigator.clipboard.writeText(url); toast.success("Link copied"); }}><Copy className="h-3 w-3 mr-1" />Copy</Button>
+                <Button size="sm" variant="outline" onClick={() => { navigator.clipboard.writeText(url); toast.success(tc("toasts.linkCopied")); }}><Copy className="h-3 w-3 mr-1" />Copy</Button>
                 <Button size="sm" variant="outline" asChild><a href={url} target="_blank" rel="noreferrer"><ExternalLink className="h-3 w-3 mr-1" />Open</a></Button>
               </div>
               <div className="flex items-center gap-2 text-sm">

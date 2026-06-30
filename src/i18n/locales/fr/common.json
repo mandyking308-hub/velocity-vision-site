@@ -43,7 +43,12 @@
     "updateFailed": "Échec de la mise à jour",
     "moved": "Déplacé vers {{stage}}",
     "movedToPipeline": "Déplacé dans le pipeline",
-    "moveToPipelineFailed": "Impossible de déplacer dans le pipeline"
+    "moveToPipelineFailed": "Impossible de déplacer dans le pipeline",
+    "linkCopied": "Lien copié",
+    "saveFailed": "Échec de l'enregistrement",
+    "paymentReceived": "Paiement reçu — votre compte a été mis à jour.",
+    "defaultSenderUpdated": "Expéditeur par défaut mis à jour",
+    "disconnected": "Déconnecté"
   },
   "errors": {
     "generic": "Une erreur est survenue. Veuillez réessayer.",

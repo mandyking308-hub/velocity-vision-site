@@ -11,6 +11,8 @@ import { Send, Calendar, Copy, Download, AlertCircle, Mail } from "lucide-react"
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
+import i18n from "@/i18n";
 
 interface SequenceEmail {
   subject: string;
@@ -102,7 +104,7 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
                 {e.preview && <p className="text-xs text-muted-foreground">Preview: {e.preview}</p>}
               </div>
               <div className="flex gap-2">
-                <Button variant="ghost" size="sm" onClick={() => { navigator.clipboard.writeText(`${e.subject}\n\n${e.body}`); toast.success("Copied"); }}>
+                <Button variant="ghost" size="sm" onClick={() => { navigator.clipboard.writeText(`${e.subject}\n\n${e.body}`); toast.success(i18n.t("common:toasts.copied")); }}>
                   <Copy className="h-4 w-4" />
                 </Button>
                 <Button size="sm" disabled={noConnection || leads.length === 0} onClick={() => setOpenIdx(i)}>
@@ -155,6 +157,7 @@ function SendStatusBadge({ status }: { status: string }) {
 
 function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspaceId, onClose }:
   { email: SequenceEmail; stepIndex: number; leads: Lead[]; connectionId?: string; campaignId: string; workspaceId?: string | null; onClose: () => void; }) {
+  const { t } = useTranslation("app");
   const [subject, setSubject] = useState(email.subject);
   const [body, setBody] = useState(email.body);
   const [mode, setMode] = useState<"now" | "schedule">("now");
@@ -168,9 +171,9 @@ function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspa
   const toggle = (id: string) => { const s = new Set(selected); s.has(id) ? s.delete(id) : s.add(id); setSelected(s); };
 
   const submit = async () => {
-    if (!connectionId) { toast.error("Connect an email first"); return; }
+    if (!connectionId) { toast.error(t("email.toasts.connectFirst")); return; }
     const targets = leads.filter(l => selected.has(l.id) && l.email);
-    if (targets.length === 0) { toast.error("Pick at least one lead with an email"); return; }
+    if (targets.length === 0) { toast.error(t("email.toasts.pickLead")); return; }
     setSending(true);
     let ok = 0, fail = 0;
     for (const lead of targets) {
@@ -185,8 +188,8 @@ function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspa
       if (error || (data as any)?.error) fail++; else ok++;
     }
     setSending(false);
-    if (ok) toast.success(`${ok} ${mode === "schedule" ? "scheduled" : "sent"}`);
-    if (fail) toast.error(`${fail} failed`);
+    if (ok) toast.success(mode === "schedule" ? t("email.toasts.scheduled", { count: ok }) : t("email.toasts.sent", { count: ok }));
+    if (fail) toast.error(t("email.toasts.failed", { count: fail }));
     onClose();
   };
 

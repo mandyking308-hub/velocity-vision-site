@@ -58,7 +58,7 @@ export default function AppCampaignNew() {
   const { currentId: workspaceId } = useWorkspace();
   const { remaining, consume, starterExpired } = useCredits();
   const [params] = useSearchParams();
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation("app");
   const defaultLang: CampaignLanguage = (i18n.language?.startsWith("es") ? "es" : "en");
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
@@ -130,13 +130,13 @@ export default function AppCampaignNew() {
       if (error) throw error;
       const ok = await consume("full_campaign_pack", data.id, brief.name);
       if (!ok) {
-        toast.message("Campaign saved as draft", { description: "Top up credits to unlock the AI-generated pack." });
+        toast.message(t("campaigns.toasts.draftSaved"), { description: t("campaigns.toasts.draftSavedDesc") });
       } else {
-        toast.success("Campaign pack generated");
+        toast.success(t("campaigns.toasts.packGenerated"));
       }
       navigate(`/app/campaigns/${data.id}`);
     } catch (e: any) {
-      toast.error(e.message || "Failed to generate campaign");
+      toast.error(e.message || t("campaigns.toasts.generateFailed"));
     } finally {
       setSaving(false);
     }
