@@ -253,7 +253,10 @@ export default function AppDashboard() {
               Open latest campaign <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           )}
+        </div>
       </div>
+
+
 
       {/* A2. First-time onboarding checklist (auto-hides once complete) */}
       <OnboardingChecklist
