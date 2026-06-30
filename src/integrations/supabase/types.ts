@@ -1307,6 +1307,54 @@ export type Database = {
           },
         ]
       }
+      lead_audit_log: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json
+          id: string
+          lead_id: string | null
+          opportunity_id: string | null
+          user_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json
+          id?: string
+          lead_id?: string | null
+          opportunity_id?: string | null
+          user_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json
+          id?: string
+          lead_id?: string | null
+          opportunity_id?: string | null
+          user_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_audit_log_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_audit_log_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           campaign_id: string | null
@@ -1316,17 +1364,22 @@ export type Database = {
           created_by: string | null
           email: string | null
           follow_up_at: string | null
+          follow_up_state: Database["public"]["Enums"]["lead_follow_state"]
           id: string
           last_action: string | null
           last_email_sent_at: string | null
           last_email_subject: string | null
           marketing_interest: string | null
           name: string | null
+          opportunity_id: string | null
           owner_id: string | null
           phone: string | null
+          replied_at: string | null
+          snoozed_until: string | null
           source: string
           status: Database["public"]["Enums"]["lead_status"]
           updated_at: string
+          workspace_id: string | null
         }
         Insert: {
           campaign_id?: string | null
@@ -1336,17 +1389,22 @@ export type Database = {
           created_by?: string | null
           email?: string | null
           follow_up_at?: string | null
+          follow_up_state?: Database["public"]["Enums"]["lead_follow_state"]
           id?: string
           last_action?: string | null
           last_email_sent_at?: string | null
           last_email_subject?: string | null
           marketing_interest?: string | null
           name?: string | null
+          opportunity_id?: string | null
           owner_id?: string | null
           phone?: string | null
+          replied_at?: string | null
+          snoozed_until?: string | null
           source?: string
           status?: Database["public"]["Enums"]["lead_status"]
           updated_at?: string
+          workspace_id?: string | null
         }
         Update: {
           campaign_id?: string | null
@@ -1356,17 +1414,22 @@ export type Database = {
           created_by?: string | null
           email?: string | null
           follow_up_at?: string | null
+          follow_up_state?: Database["public"]["Enums"]["lead_follow_state"]
           id?: string
           last_action?: string | null
           last_email_sent_at?: string | null
           last_email_subject?: string | null
           marketing_interest?: string | null
           name?: string | null
+          opportunity_id?: string | null
           owner_id?: string | null
           phone?: string | null
+          replied_at?: string | null
+          snoozed_until?: string | null
           source?: string
           status?: Database["public"]["Enums"]["lead_status"]
           updated_at?: string
+          workspace_id?: string | null
         }
         Relationships: [
           {
@@ -1538,10 +1601,19 @@ export type Database = {
           estimated_value: number | null
           expected_close_date: string | null
           id: string
+          last_interaction_at: string | null
+          next_action_at: string | null
+          notes: string | null
+          owner_id: string | null
           probability: number | null
+          reason_lost: string | null
           service: string | null
+          source_campaign_id: string | null
+          source_lead_id: string | null
           stage: Database["public"]["Enums"]["opportunity_stage"]
+          stage_changed_at: string | null
           updated_at: string
+          workspace_id: string | null
         }
         Insert: {
           company_id?: string | null
@@ -1551,10 +1623,19 @@ export type Database = {
           estimated_value?: number | null
           expected_close_date?: string | null
           id?: string
+          last_interaction_at?: string | null
+          next_action_at?: string | null
+          notes?: string | null
+          owner_id?: string | null
           probability?: number | null
+          reason_lost?: string | null
           service?: string | null
+          source_campaign_id?: string | null
+          source_lead_id?: string | null
           stage?: Database["public"]["Enums"]["opportunity_stage"]
+          stage_changed_at?: string | null
           updated_at?: string
+          workspace_id?: string | null
         }
         Update: {
           company_id?: string | null
@@ -1564,10 +1645,19 @@ export type Database = {
           estimated_value?: number | null
           expected_close_date?: string | null
           id?: string
+          last_interaction_at?: string | null
+          next_action_at?: string | null
+          notes?: string | null
+          owner_id?: string | null
           probability?: number | null
+          reason_lost?: string | null
           service?: string | null
+          source_campaign_id?: string | null
+          source_lead_id?: string | null
           stage?: Database["public"]["Enums"]["opportunity_stage"]
+          stage_changed_at?: string | null
           updated_at?: string
+          workspace_id?: string | null
         }
         Relationships: [
           {
@@ -2070,6 +2160,19 @@ export type Database = {
         | "newsletter"
       company_status: "prospect" | "active_client" | "past_client"
       invoice_status: "draft" | "sent" | "paid" | "overdue"
+      lead_follow_state:
+        | "none"
+        | "due"
+        | "overdue"
+        | "replied"
+        | "warm"
+        | "dormant"
+        | "bounced"
+        | "suppressed"
+        | "snoozed"
+        | "in_pipeline"
+        | "won"
+        | "lost"
       lead_status:
         | "new"
         | "contacted"
@@ -2240,6 +2343,20 @@ export const Constants = {
       ],
       company_status: ["prospect", "active_client", "past_client"],
       invoice_status: ["draft", "sent", "paid", "overdue"],
+      lead_follow_state: [
+        "none",
+        "due",
+        "overdue",
+        "replied",
+        "warm",
+        "dormant",
+        "bounced",
+        "suppressed",
+        "snoozed",
+        "in_pipeline",
+        "won",
+        "lost",
+      ],
       lead_status: [
         "new",
         "contacted",
