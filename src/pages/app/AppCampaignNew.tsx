@@ -58,6 +58,8 @@ export default function AppCampaignNew() {
   const { currentId: workspaceId } = useWorkspace();
   const { remaining, consume, starterExpired } = useCredits();
   const [params] = useSearchParams();
+  const { i18n } = useTranslation();
+  const defaultLang: CampaignLanguage = (i18n.language?.startsWith("es") ? "es" : "en");
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
   const [brief, setBrief] = useState<CampaignBrief>({
@@ -75,6 +77,7 @@ export default function AppCampaignNew() {
     deadline: "",
     notes: "",
     outputs: ["full"],
+    language: defaultLang,
   });
   const [cadence, setCadence] = useState<CadenceConfig>(defaultCadence());
   const updateCadence = <K extends keyof CadenceConfig>(k: K, v: CadenceConfig[K]) =>
