@@ -1,0 +1,284 @@
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Copy, Download, Sparkles, ArrowLeft } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { CampaignBrief, CampaignPack, generatePack } from "@/lib/campaignPack";
+import { toast } from "sonner";
+
+interface Campaign {
+  id: string;
+  name: string;
+  status: string;
+  goal: string | null;
+  campaign_kind: string | null;
+  brief: CampaignBrief | null;
+  pack: CampaignPack | null;
+  slug: string | null;
+}
+
+const copy = (text: string) => {
+  navigator.clipboard.writeText(text);
+  toast.success("Copied");
+};
+
+export default function AppCampaignWorkspace() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [c, setC] = useState<Campaign | null>(null);
+  const [leads, setLeads] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!id) return;
+    (async () => {
+      const [{ data: camp }, { data: ld }] = await Promise.all([
+        supabase.from("campaigns").select("id, name, status, goal, campaign_kind, brief, pack, slug").eq("id", id).maybeSingle(),
+        supabase.from("leads").select("id, name, email, status, created_at, last_action").eq("campaign_id", id).order("created_at", { ascending: false }),
+      ]);
+      setC(camp as any);
+      setLeads(ld || []);
+    })();
+  }, [id]);
+
+  const regenerate = async () => {
+    if (!c?.brief) return;
+    const pack = generatePack(c.brief);
+    await supabase.from("campaigns").update({ pack: pack as any }).eq("id", c.id);
+    setC({ ...c, pack });
+    toast.success("Pack regenerated");
+  };
+
+  const exportMd = () => {
+    if (!c?.pack) return;
+    const md = JSON.stringify(c.pack, null, 2);
+    const blob = new Blob([md], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${c.slug || c.id}.json`;
+    a.click();
+  };
+
+  if (!c) return <p className="text-muted-foreground">Loading…</p>;
+  const pack = c.pack;
+  const brief = c.brief;
+
+  return (
+    <div className="space-y-4 max-w-6xl">
+      <button onClick={() => navigate("/app/campaigns")} className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
+        <ArrowLeft className="h-3 w-3" /> All campaigns
+      </button>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold">{c.name}</h1>
+          <div className="flex items-center gap-2 mt-2">
+            <Badge>{c.status}</Badge>
+            {c.goal && <Badge variant="outline">{c.goal}</Badge>}
+            {c.campaign_kind && <Badge variant="outline">{c.campaign_kind.replace("_", " ")}</Badge>}
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={regenerate}><Sparkles className="h-4 w-4 mr-1" />Regenerate</Button>
+          <Button variant="outline" size="sm" onClick={exportMd}><Download className="h-4 w-4 mr-1" />Export</Button>
+        </div>
+      </div>
+
+      {!pack ? (
+        <Card><CardContent className="p-8 text-center">No pack generated yet.</CardContent></Card>
+      ) : (
+        <Tabs defaultValue="overview" className="w-full">
+          <TabsList className="flex flex-wrap h-auto">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="strategy">Strategy</TabsTrigger>
+            <TabsTrigger value="landing">Landing</TabsTrigger>
+            <TabsTrigger value="offer">Offer</TabsTrigger>
+            <TabsTrigger value="emails">Emails</TabsTrigger>
+            <TabsTrigger value="social">Social</TabsTrigger>
+            <TabsTrigger value="press">Press</TabsTrigger>
+            <TabsTrigger value="video">Video</TabsTrigger>
+            <TabsTrigger value="capture">Lead capture</TabsTrigger>
+            <TabsTrigger value="pipeline">Pipeline</TabsTrigger>
+            <TabsTrigger value="performance">Performance</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="space-y-4 mt-4">
+            <Section title="Campaign summary">
+              <p><strong>Offer:</strong> {brief?.offer}</p>
+              <p><strong>Audience:</strong> {brief?.audience}</p>
+              <p><strong>Goal:</strong> {brief?.goal}</p>
+              <p><strong>Deadline:</strong> {brief?.deadline || "—"}</p>
+              <p><strong>Channels:</strong> {brief?.channels.join(", ")}</p>
+            </Section>
+          </TabsContent>
+
+          <TabsContent value="strategy" className="space-y-4 mt-4">
+            <Section title="Positioning"><p>{pack.strategy.positioning}</p></Section>
+            <Section title="Big idea"><p>{pack.strategy.bigIdea}</p></Section>
+            <Section title="Messaging pillars"><ul className="list-disc pl-5">{pack.strategy.messagingPillars.map((p, i) => <li key={i}>{p}</li>)}</ul></Section>
+            <Section title="Success metric"><p>{pack.strategy.successMetric}</p></Section>
+          </TabsContent>
+
+          <TabsContent value="landing" className="space-y-4 mt-4">
+            <Section title="Headline" copyText={pack.landing.headline}><p className="text-xl font-semibold">{pack.landing.headline}</p></Section>
+            <Section title="Subheadline" copyText={pack.landing.subheadline}><p>{pack.landing.subheadline}</p></Section>
+            {pack.landing.sections.map((s, i) => (
+              <Section key={i} title={s.title} copyText={s.body}><p>{s.body}</p></Section>
+            ))}
+            <Section title="CTA"><Badge>{pack.landing.cta}</Badge></Section>
+          </TabsContent>
+
+          <TabsContent value="offer" className="space-y-4 mt-4">
+            <Section title="Framing" copyText={pack.offer.framing}><p>{pack.offer.framing}</p></Section>
+            <Section title="Benefits"><ul className="list-disc pl-5">{pack.offer.benefits.map((b, i) => <li key={i}>{b}</li>)}</ul></Section>
+            <Section title="Objection handling"><div className="space-y-2">{pack.offer.objections.map((o, i) => (
+              <div key={i} className="border-l-2 border-primary pl-3"><p className="font-medium">{o.objection}</p><p className="text-muted-foreground">{o.response}</p></div>
+            ))}</div></Section>
+          </TabsContent>
+
+          <TabsContent value="emails" className="space-y-3 mt-4">
+            {pack.emails.map((e, i) => (
+              <Section key={i} title={`Email ${i + 1}: ${e.subject}`} copyText={`${e.subject}\n\n${e.body}`}>
+                <p className="text-xs text-muted-foreground mb-2">Preview: {e.preview}</p>
+                <pre className="whitespace-pre-wrap font-sans text-sm">{e.body}</pre>
+              </Section>
+            ))}
+          </TabsContent>
+
+          <TabsContent value="social" className="space-y-4 mt-4">
+            <Section title="Launch posts">
+              <div className="grid md:grid-cols-2 gap-3">
+                {pack.social.launchPosts.map((p, i) => <PostCard key={i} p={p} />)}
+              </div>
+            </Section>
+            <Section title="Follow-up posts">
+              <div className="grid md:grid-cols-2 gap-3">
+                {pack.social.followUps.map((p, i) => <PostCard key={i} p={p} />)}
+              </div>
+            </Section>
+            <Section title="Hook variations"><ul className="list-disc pl-5">{pack.social.hooks.map((h, i) => <li key={i}>{h}</li>)}</ul></Section>
+            <Section title="CTA variations"><ul className="list-disc pl-5">{pack.social.ctas.map((c, i) => <li key={i}>{c}</li>)}</ul></Section>
+            <Section title="Launch week sequence">
+              <div className="space-y-2">{pack.social.launchWeek.map((d, i) => (
+                <div key={i} className="flex gap-3 p-2 border border-border rounded-md">
+                  <Badge variant="outline" className="h-6">{d.day}</Badge>
+                  <div><p className="font-medium text-sm">{d.theme}</p><p className="text-sm text-muted-foreground">{d.post}</p></div>
+                </div>
+              ))}</div>
+            </Section>
+            <Section title="Repost / remix ideas"><ul className="list-disc pl-5">{pack.social.repostIdeas.map((r, i) => <li key={i}>{r}</li>)}</ul></Section>
+          </TabsContent>
+
+          <TabsContent value="press" className="space-y-4 mt-4">
+            <Section title="Headline" copyText={pack.press.headline}><p className="text-xl font-semibold">{pack.press.headline}</p></Section>
+            <Section title="Subheadline"><p>{pack.press.subheadline}</p></Section>
+            <Section title="Opening paragraph" copyText={pack.press.opening}><p>{pack.press.opening}</p></Section>
+            <Section title="Body" copyText={pack.press.body.join("\n\n")}>{pack.press.body.map((b, i) => <p key={i} className="mb-2">{b}</p>)}</Section>
+            <Section title="Quote" copyText={pack.press.quote}><p className="italic">{pack.press.quote}</p></Section>
+            <Section title="Boilerplate" copyText={pack.press.boilerplate}><p>{pack.press.boilerplate}</p></Section>
+            <Section title="Contact"><p>{pack.press.contactLine}</p></Section>
+          </TabsContent>
+
+          <TabsContent value="video" className="space-y-4 mt-4">
+            <Section title="3 video hooks"><ol className="list-decimal pl-5 space-y-1">{pack.video.hooks.map((h, i) => <li key={i}>{h}</li>)}</ol></Section>
+            <Section title="30-second script" copyText={pack.video.script30}><pre className="whitespace-pre-wrap font-sans text-sm">{pack.video.script30}</pre></Section>
+            <Section title="60-second script" copyText={pack.video.script60}><pre className="whitespace-pre-wrap font-sans text-sm">{pack.video.script60}</pre></Section>
+            <Section title="Talking-head version"><p>{pack.video.talkingHead}</p></Section>
+            <Section title="B-roll version"><p>{pack.video.bRoll}</p></Section>
+            <Section title="Shot list"><ul className="list-disc pl-5">{pack.video.shotList.map((s, i) => <li key={i}>{s}</li>)}</ul></Section>
+            <Section title="Storyboard outline"><ul className="list-disc pl-5">{pack.video.storyboard.map((s, i) => <li key={i}>{s}</li>)}</ul></Section>
+            <Section title="On-screen text"><ul className="list-disc pl-5">{pack.video.onScreenText.map((s, i) => <li key={i}>{s}</li>)}</ul></Section>
+            <Section title="Caption / subtitle" copyText={pack.video.captionText}><p>{pack.video.captionText}</p></Section>
+            <Section title="CTA endings"><ul className="list-disc pl-5">{pack.video.ctaEndings.map((s, i) => <li key={i}>{s}</li>)}</ul></Section>
+          </TabsContent>
+
+          <TabsContent value="capture" className="space-y-4 mt-4">
+            <Section title="Form title"><p className="font-semibold">{pack.leadCapture.formTitle}</p></Section>
+            <Section title="Fields">
+              <div className="space-y-2">{pack.leadCapture.fields.map((f, i) => (
+                <div key={i} className="flex justify-between p-2 border border-border rounded-md text-sm">
+                  <span>{f.label}{f.required && <span className="text-destructive"> *</span>}</span>
+                  <span className="text-muted-foreground">{f.type}</span>
+                </div>
+              ))}</div>
+            </Section>
+            <Section title="CTA label"><Badge>{pack.leadCapture.ctaLabel}</Badge></Section>
+            <Section title="Thank-you message"><p>{pack.leadCapture.thankYou}</p></Section>
+            <Section title="Hosted capture URL">
+              <code className="text-sm bg-muted px-2 py-1 rounded">{`${window.location.origin}/c/${c.slug}`}</code>
+              <p className="text-xs text-muted-foreground mt-2">Share this link to capture leads. Hosted page coming in the next sprint.</p>
+            </Section>
+          </TabsContent>
+
+          <TabsContent value="pipeline" className="mt-4">
+            <Section title={`Leads from this campaign (${leads.length})`}>
+              {leads.length === 0 ? (
+                <p className="text-muted-foreground text-sm">No leads yet. Share your capture URL or launch the social pack.</p>
+              ) : (
+                <div className="space-y-2">{leads.map((l) => (
+                  <div key={l.id} className="flex justify-between items-center p-2 border border-border rounded-md text-sm">
+                    <div><div className="font-medium">{l.name || l.email || "Anonymous"}</div><div className="text-xs text-muted-foreground">{new Date(l.created_at).toLocaleString()}</div></div>
+                    <Badge>{l.status}</Badge>
+                  </div>
+                ))}</div>
+              )}
+            </Section>
+          </TabsContent>
+
+          <TabsContent value="performance" className="space-y-4 mt-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <Stat label="Leads" value={leads.length} />
+              <Stat label="Qualified" value={leads.filter((l) => l.status === "qualified").length} />
+              <Stat label="Won" value={leads.filter((l) => l.status === "won").length} />
+              <Stat label="Conversion" value={leads.length ? `${Math.round((leads.filter((l) => l.status === "won").length / leads.length) * 100)}%` : "—"} />
+            </div>
+            <Section title="What's working">
+              <p className="text-sm">{leads.length === 0 ? "Launch the campaign first — we'll surface insights here as soon as leads come in." : "Your top-converting channel and post will appear here once attribution kicks in."}</p>
+            </Section>
+            <Section title="Next step">
+              <p className="text-sm mb-3">{leads.length > 0 ? "Clone this campaign and tweak the offer for a new audience." : "Share your social pack to start filling the pipeline."}</p>
+              <Button size="sm" onClick={() => navigate(`/app/campaigns/new?goal=${c.goal}&kind=${c.campaign_kind}`)}>Clone this campaign</Button>
+            </Section>
+          </TabsContent>
+        </Tabs>
+      )}
+    </div>
+  );
+}
+
+function Section({ title, children, copyText }: { title: string; children: React.ReactNode; copyText?: string }) {
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between pb-3">
+        <CardTitle className="text-base">{title}</CardTitle>
+        {copyText && <Button variant="ghost" size="sm" onClick={() => copy(copyText)}><Copy className="h-3 w-3" /></Button>}
+      </CardHeader>
+      <CardContent className="pt-0">{children}</CardContent>
+    </Card>
+  );
+}
+
+function PostCard({ p }: { p: any }) {
+  return (
+    <div className="p-3 border border-border rounded-md space-y-2">
+      <div className="flex justify-between items-center">
+        <Badge variant="outline">{p.platform}</Badge>
+        <Button variant="ghost" size="sm" onClick={() => copy(p.long)}><Copy className="h-3 w-3" /></Button>
+      </div>
+      <p className="text-sm font-medium">{p.hook}</p>
+      <p className="text-xs text-muted-foreground whitespace-pre-wrap">{p.short}</p>
+      <p className="text-xs"><span className="font-semibold">CTA:</span> {p.cta}</p>
+    </div>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string | number }) {
+  return (
+    <Card><CardContent className="p-4">
+      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="text-2xl font-bold">{value}</div>
+    </CardContent></Card>
+  );
+}
