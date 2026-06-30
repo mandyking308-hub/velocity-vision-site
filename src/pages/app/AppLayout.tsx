@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Rocket, Users, BarChart3, LayoutTemplate, Settings, Briefcase, LogOut, Plus, CreditCard } from "lucide-react";
+import { LayoutDashboard, Rocket, Users, BarChart3, LayoutTemplate, Settings, Briefcase, LogOut, Plus, CreditCard, Database } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useWorkspace, WorkspaceProvider } from "@/contexts/WorkspaceContext";
@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 const nav = [
   { to: "/app", label: "Launch", icon: LayoutDashboard, end: true },
+  { to: "/app/data-vault", label: "Data Vault", icon: Database },
   { to: "/app/campaigns", label: "Campaigns", icon: Rocket },
   { to: "/app/leads", label: "Pipeline", icon: Users },
   { to: "/app/performance", label: "Performance", icon: BarChart3 },
