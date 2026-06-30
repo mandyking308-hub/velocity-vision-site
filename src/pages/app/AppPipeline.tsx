@@ -88,7 +88,7 @@ export default function AppPipeline() {
         details: { stage },
       });
     }
-    toast.success(`Moved to ${stage}`);
+    toast.success(tc("toasts.moved", { stage: t(`pipeline.stages.${stage}`, { defaultValue: stage }) }));
     load();
   };
 
@@ -96,15 +96,14 @@ export default function AppPipeline() {
     return (
       <div className="space-y-5 max-w-7xl">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Pipeline</h1>
-          <p className="text-muted-foreground">Active opportunities and where revenue is moving — or getting stuck.</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t("pipeline.title")}</h1>
+          <p className="text-muted-foreground">{t("pipeline.subtitle")}</p>
         </div>
         <JourneyEmptyState
           icon={TrendingUp}
           flow="Step 5 of the journey — Reply → Opportunity → Revenue"
-          title="No opportunities in your pipeline yet"
-          description="Opportunities are created when you promote a replied or warm lead from the Follow-Up queue. They live here so you can track value, stage and stuck deals."
-          why="The pipeline is how outreach becomes measured revenue, not just activity."
+          title={t("pipeline.empty.title")}
+          description={t("pipeline.empty.description")}
           steps={[
             { to: "/app/follow-up?tab=replied", label: "Work replies", icon: MessageSquare },
             { to: "/app/activate", label: "Activate a segment", icon: Send },
@@ -118,18 +117,18 @@ export default function AppPipeline() {
   return (
     <div className="space-y-5 max-w-7xl">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Pipeline</h1>
-        <p className="text-muted-foreground">Active opportunities and where revenue is moving — or getting stuck.</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t("pipeline.title")}</h1>
+        <p className="text-muted-foreground">{t("pipeline.subtitle")}</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-7 gap-2">
-        <Stat label="Opportunities" value={stats.total} />
-        <Stat label="Active" value={stats.active} />
-        <Stat label="Pipeline value" value={`£${stats.value.toLocaleString()}`} tone="good" />
-        <Stat label="Stuck 14d+" value={stats.stuck} tone="warn" />
-        <Stat label="Overdue action" value={stats.overdue} tone="danger" />
-        <Stat label="Won" value={stats.won} tone="good" />
-        <Stat label="Lost" value={stats.lost} />
+        <Stat label={t("pipeline.stats.opportunities")} value={stats.total} />
+        <Stat label={t("pipeline.stats.active")} value={stats.active} />
+        <Stat label={t("pipeline.stats.value")} value={`£${stats.value.toLocaleString()}`} tone="good" />
+        <Stat label={t("pipeline.stats.stuck")} value={stats.stuck} tone="warn" />
+        <Stat label={t("pipeline.stats.overdue")} value={stats.overdue} tone="danger" />
+        <Stat label={t("pipeline.stats.won")} value={stats.won} tone="good" />
+        <Stat label={t("pipeline.stats.lost")} value={stats.lost} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
