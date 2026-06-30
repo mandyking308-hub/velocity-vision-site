@@ -153,9 +153,9 @@ const PortalDocuments = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <a href={doc.file_url} target="_blank" rel="noopener noreferrer">
-                <Button variant="ghost" size="sm"><Download size={16} /></Button>
-              </a>
+              <Button variant="ghost" size="sm" onClick={() => handleDownload(doc)}>
+                <Download size={16} />
+              </Button>
               <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(doc.id)}>
                 <Trash2 size={16} className="text-destructive" />
               </Button>
