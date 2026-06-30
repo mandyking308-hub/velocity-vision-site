@@ -96,9 +96,10 @@ async function logError(message: string, detail?: string) {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
     );
     await supabase.from('error_logs').insert({
-      source: 'notify-contact',
+      category: 'notify-contact',
       message,
-      detail: detail ?? null,
+      details: detail ?? null,
+      severity: 'error',
     });
   } catch {
     // swallow
