@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { PLANS, PlanId, CREDIT_COSTS, CreditAction, TOPUP_PACKS, HUMAN_REVIEW_PRICE } from "@/lib/credits";
+import { PLANS, PlanId, CREDIT_COSTS, CreditAction, HUMAN_REVIEW_PRICE } from "@/lib/credits";
 import { toast } from "sonner";
 
 interface UserPlan {
