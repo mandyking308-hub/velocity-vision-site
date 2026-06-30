@@ -107,7 +107,7 @@ const Pricing = () => (
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button variant="hero" size="lg" asChild>
-                <Link to="/auth">Start your first campaign <ArrowRight size={18} /></Link>
+                <Link to="/app/billing">Start your first campaign <ArrowRight size={18} /></Link>
               </Button>
               <Button variant="hero-outline" size="lg" asChild>
                 <Link to="/contact">Talk to us</Link>
@@ -152,7 +152,7 @@ const Pricing = () => (
                   ))}
                 </ul>
                 <Button variant={p.highlight ? "cta" : "outline"} asChild>
-                  <Link to="/auth">{p.cta}</Link>
+                  <Link to="/app/billing">{p.cta}</Link>
                 </Button>
               </motion.div>
             ))}
