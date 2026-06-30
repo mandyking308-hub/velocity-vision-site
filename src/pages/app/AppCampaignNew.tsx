@@ -126,8 +126,13 @@ export default function AppCampaignNew() {
         <h1 className="text-3xl font-bold">New campaign</h1>
         <p className="text-muted-foreground">A short brief. We generate the full pack.</p>
       </div>
+      {blocked && (
+        <div className="rounded-md border border-accent/40 bg-accent/10 px-4 py-3 text-sm">
+          <strong>{starterExpired ? "Starter access has ended." : "You don't have enough Campaign Credits."}</strong> Generating a full campaign pack costs {CREDIT_COSTS.full_campaign_pack} credits. <a href="/app/billing" className="underline">Top up or upgrade</a> to keep launching.
+        </div>
+      )}
       <Progress value={(step / totalSteps) * 100} />
-      <div className="text-sm text-muted-foreground">Step {step} of {totalSteps}</div>
+      <div className="text-sm text-muted-foreground">Step {step} of {totalSteps} · This generation will use {CREDIT_COSTS.full_campaign_pack} Campaign Credits</div>
 
       {step === 1 && (
         <Card>
