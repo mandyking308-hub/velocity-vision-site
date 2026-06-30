@@ -1,14 +1,15 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Upload, ShieldCheck, Mail, Send, Inbox, GitBranch } from "lucide-react";
 
 const steps = [
-  { n: "01", title: "Upload your data", desc: "CSV or paste rows. Map your fields once. Companies and contacts land in the Data Vault." },
-  { n: "02", title: "Review & build a safe segment", desc: "Quality flags surface duplicates and risky records. Pick who's safe to activate." },
-  { n: "03", title: "Create outreach assets", desc: "Email sequence, social pack, press release and video pack — generated from your brief." },
-  { n: "04", title: "Activate with cadence", desc: "Verify sender, set timing, schedule recurring runs. Daily caps and safety checks enforced." },
-  { n: "05", title: "Work replies & move pipeline", desc: "Action queue for inbound, follow-up states, and warm contacts promoted into opportunities." },
+  { n: "01", icon: Upload, title: "Upload your data", desc: "CSV or paste rows. Map your fields once. Companies and contacts land safely in the Data Vault." },
+  { n: "02", icon: ShieldCheck, title: "Review & build a safe segment", desc: "Quality flags surface duplicates, risky records and missing fields. Pick exactly who is safe to contact." },
+  { n: "03", icon: Mail, title: "Generate outreach assets", desc: "Email sequences, social media posts, press release and video pack — generated from one brief in your language." },
+  { n: "04", icon: Send, title: "Verify sender & activate", desc: "Connect your sender, set cadence and schedule. Governed daily caps and risky-record limits enforced before anything goes out." },
+  { n: "05", icon: Inbox, title: "Work replies & follow-up", desc: "Action queue for inbound replies, snooze, follow-up states and stuck-deal alerts — nothing falls through." },
+  { n: "06", icon: GitBranch, title: "Move leads into pipeline", desc: "Promote warm contacts into opportunities, track value and watch deals progress — no separate CRM." },
 ];
 
 const HowItWorksPreview = () => (
@@ -22,22 +23,30 @@ const HowItWorksPreview = () => (
         className="max-w-2xl mb-14"
       >
         <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">How it works</p>
-        <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">
-          From upload to pipeline movement — in one continuous flow
+        <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">
+          From upload to pipeline — one continuous workflow
         </h2>
+        <p className="text-muted-foreground text-lg">
+          The same flow that creates your outreach also captures the replies and moves the revenue. No exports, no handoffs.
+        </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5 mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
         {steps.map((s, i) => (
           <motion.div
             key={s.n}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: i * 0.08 }}
-            className="bg-card border border-border/50 rounded-xl p-6 shadow-card"
+            transition={{ duration: 0.4, delay: i * 0.06 }}
+            className="bg-card border border-border/50 rounded-xl p-6 shadow-card hover:border-accent/40 transition-colors"
           >
-            <p className="text-accent font-display font-bold text-2xl mb-3">{s.n}</p>
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                <s.icon className="text-accent" size={20} />
+              </div>
+              <p className="text-accent font-display font-bold text-lg">{s.n}</p>
+            </div>
             <h3 className="font-display font-semibold text-foreground mb-2">{s.title}</h3>
             <p className="text-muted-foreground text-sm leading-relaxed">{s.desc}</p>
           </motion.div>
@@ -45,7 +54,7 @@ const HowItWorksPreview = () => (
       </div>
 
       <Button variant="cta" size="lg" asChild>
-        <Link to="/how-it-works">See the workflow <ArrowRight size={18} /></Link>
+        <Link to="/how-it-works">See the full workflow <ArrowRight size={18} /></Link>
       </Button>
     </div>
   </section>

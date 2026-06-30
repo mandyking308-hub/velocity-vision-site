@@ -22,13 +22,13 @@ const HeroSection = () => (
           className="lg:col-span-7"
         >
           <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-6 inline-flex items-center gap-2">
-            <Sparkles size={14} /> Commercial operating workspace
+            <Sparkles size={14} /> Marketing outreach, follow-up and pipeline — in one workspace
           </p>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-primary-foreground leading-[1.05] mb-6">
-            From messy data to live pipeline — in <span className="text-gradient">one workspace</span>.
+            Turn messy data into outreach, replies and <span className="text-gradient">live pipeline</span>.
           </h1>
           <p className="text-lg md:text-xl text-primary-foreground/75 max-w-xl mb-10 leading-relaxed">
-            Upload your commercial data, review what's usable, activate the right contacts safely, create outreach assets, work the replies and move opportunities into pipeline — without bolting six tools together.
+            Upload your contacts, see who is safe to contact, generate marketing outreach assets — email sequences, social media content and press releases — then work the replies and move leads into pipeline. All from one workspace, instead of five disconnected tools.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button variant="hero" size="lg" asChild>
@@ -39,7 +39,7 @@ const HeroSection = () => (
             </Button>
           </div>
           <p className="text-xs text-primary-foreground/75 mt-4">
-            Self-serve. Governed sending built in. Cancel, pause or upgrade anytime.
+            <Link to="/how-it-works" className="underline-offset-4 hover:underline">See how it works →</Link> · Self-serve · Governed sending · Cancel anytime
           </p>
         </motion.div>
 
@@ -56,7 +56,7 @@ const HeroSection = () => (
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Database className="text-accent" size={18} />
-                  <span className="text-sm font-semibold text-foreground">Commercial workspace</span>
+                  <span className="text-sm font-semibold text-foreground">Your workspace</span>
                 </div>
                 <span className="text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-accent/10 text-accent font-semibold">Live</span>
               </div>
@@ -77,8 +77,8 @@ const HeroSection = () => (
               <div className="space-y-2">
                 {[
                   { i: Database, label: "Data Vault — quality reviewed", val: "92% clean" },
-                  { i: ShieldCheck, label: "Sender verified & cadence set", val: "Active" },
-                  { i: GitBranch, label: "Replies → pipeline movement", val: "8 warm" },
+                  { i: ShieldCheck, label: "Email sequence + social pack live", val: "Sending" },
+                  { i: GitBranch, label: "Replies worked → pipeline", val: "8 warm" },
                 ].map((row) => (
                   <div key={row.label} className="flex items-center justify-between bg-secondary/40 rounded-md px-3 py-2">
                     <span className="flex items-center gap-2 text-xs text-foreground">

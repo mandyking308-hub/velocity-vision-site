@@ -5,11 +5,13 @@ import { ArrowRight } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const faqs = [
-  { q: "Is this self-serve or done-for-you?", a: "Self-serve. You upload data, review quality, activate safely and run outreach from your own workspace. Optional Premium Human Review is available if you want expert eyes on a specific campaign." },
-  { q: "What does activation actually mean?", a: "Activation is the governed step where you connect and verify your sender, pick a safe segment from your Data Vault, set cadence, and only then begin sending. Daily caps and risky-record limits are enforced by the platform." },
-  { q: "Do I still need a CRM or email tool?", a: "Not for the core flow. The workspace covers data, sending, replies, follow-up states and pipeline movement in one place. You can export at any time." },
-  { q: "Can agencies run multiple clients?", a: "Yes. Agency Workspace provides isolated workspaces per client, pooled credits and pooled sending governance across the account." },
-  { q: "What happens when credits run out?", a: "Your workspace stays accessible — data, pipeline, replies and reporting remain live. Only new AI-heavy generations pause until you top up or upgrade." },
+  { q: "What does Velocity Vision actually replace?", a: "For most teams it replaces a stitched-together stack: a spreadsheet for contacts, a separate tool for email sequences, another for social, doc templates for press releases, an inbox-as-CRM for replies and a half-built pipeline tracker. All of that lives in one workspace here." },
+  { q: "Is this self-serve or done-for-you?", a: "Self-serve. You upload your data, review quality, generate outreach assets, activate safely and work the replies from your own workspace. Optional Premium Human Review is available if you want expert eyes on a specific campaign." },
+  { q: "What outputs does it actually generate?", a: "From a single brief you get: email sequences, social media posts and hooks, a press release, and a short-form video pack (scripts, hooks, shot list, captions). All editable, all ready to plug into governed sending." },
+  { q: "What does activation actually mean?", a: "Activation is the governed step where you connect and verify your sender, pick a safe segment from your Data Vault, set cadence and only then begin sending. Daily caps and risky-record limits are enforced by the platform — not by you remembering." },
+  { q: "Do I still need a CRM or email tool?", a: "Not for the core flow. Outreach, replies, follow-up states and pipeline movement all live in the workspace. You can export at any time, and connect your own sender domain." },
+  { q: "Is this for businesses or agencies?", a: "Both. Businesses use one workspace to run outreach and pipeline. Agencies use one account with isolated workspaces per client, pooled credits and pooled sending governance." },
+  { q: "What happens when credits run out?", a: "Your workspace stays accessible — data, pipeline, replies and reporting remain live. Only new AI-heavy generations pause until you top up or upgrade. You never lose state." },
   { q: "Does it work outside the UK?", a: "Yes. Multilingual outreach (English and Spanish today, French in rollout), multi-currency pricing and localised checkout for international teams." },
 ];
 

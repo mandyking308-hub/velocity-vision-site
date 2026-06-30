@@ -29,10 +29,10 @@ const CampaignCapabilities = () => (
       >
         <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">What's inside the workspace</p>
         <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">
-          A full commercial operating system, not just a content generator
+          Everything you need to run outreach, follow-up and pipeline
         </h2>
         <p className="text-muted-foreground text-lg">
-          Data, activation, outreach, replies and pipeline — connected end to end so the same workflow keeps producing revenue.
+          Data Vault, quality review, email sequences, social pack, press releases, video pack, replies inbox, pipeline movement — all in one workspace, all connected.
         </p>
       </motion.div>
 
