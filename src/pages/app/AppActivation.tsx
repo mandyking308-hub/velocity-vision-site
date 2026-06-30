@@ -236,7 +236,14 @@ export default function AppActivation() {
           </CardContent>
         </Card>
 
-        <SenderStatusCard state={sender} health={safety.health} scheduledToday={scheduledToday} fromEmail={fromEmail} />
+        <SenderStatusCard
+          state={sender}
+          health={safety.health}
+          scheduledToday={scheduledToday}
+          fromEmail={fromEmail}
+          connectionId={connectionId}
+          onVerified={(r) => setSender((s) => ({ ...s, domain_authenticated: !!r?.verified }))}
+        />
       </div>
     </div>
   );
