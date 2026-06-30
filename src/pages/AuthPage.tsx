@@ -141,28 +141,12 @@ const AuthPage = () => {
               minLength={6}
             />
 
-            {/* Legal acceptance checkbox — signup only */}
+            {/* Legal acceptance — mandatory on signup, unticked by default */}
             {!isLogin && (
-              <div className="space-y-2">
-                <div className="flex items-start gap-2">
-                  <Checkbox
-                    id="legal-accept"
-                    checked={legalAccepted}
-                    onCheckedChange={(checked) => setLegalAccepted(checked === true)}
-                    className="mt-1"
-                  />
-                  <label htmlFor="legal-accept" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
-                    I confirm that I have read and agree to the{" "}
-                    <Link to="/legal/terms-of-service" target="_blank" className="text-accent hover:underline">Platform Terms of Service</Link>
-                    {" "}and{" "}
-                    <Link to="/legal/client-services-agreement" target="_blank" className="text-accent hover:underline">Client Services Agreement</Link>
-                    , and acknowledge the{" "}
-                    <Link to="/legal/privacy-policy" target="_blank" className="text-accent hover:underline">Privacy Policy</Link>
-                    {" "}and other applicable{" "}
-                    <Link to="/legal" target="_blank" className="text-accent hover:underline">legal policies</Link>.
-                  </label>
-                </div>
-              </div>
+              <LegalAcceptanceCheckbox
+                checked={legalAccepted}
+                onCheckedChange={setLegalAccepted}
+              />
             )}
 
             <Button type="submit" variant="cta" className="w-full" disabled={loading || (!isLogin && !legalAccepted)}>
