@@ -75,8 +75,11 @@ export default function AppCampaignNew() {
     notes: "",
     outputs: ["full"],
   });
+  const [cadence, setCadence] = useState<CadenceConfig>(defaultCadence());
+  const updateCadence = <K extends keyof CadenceConfig>(k: K, v: CadenceConfig[K]) =>
+    setCadence((c) => ({ ...c, [k]: v }));
 
-  const totalSteps = 5;
+  const totalSteps = 6;
   const next = () => setStep((s) => Math.min(s + 1, totalSteps));
   const back = () => setStep((s) => Math.max(s - 1, 1));
   const update = <K extends keyof CampaignBrief>(k: K, v: CampaignBrief[K]) => setBrief((b) => ({ ...b, [k]: v }));
@@ -87,12 +90,14 @@ export default function AppCampaignNew() {
     try {
       const pack = generatePack(brief);
       const slug = makeSlug(brief.name || "campaign");
+      const nextRun = computeNextRun(cadence);
+      const startIsFuture = cadence.start_at && new Date(cadence.start_at) > new Date();
       const insertRow: any = {
         name: brief.name,
         description: brief.offer,
         goal: brief.goal,
         campaign_kind: brief.kind,
-        status: "active",
+        status: startIsFuture ? "scheduled" : "active",
         type: "marketing",
         owner_id: user.id,
         created_by: user.id,
@@ -103,6 +108,15 @@ export default function AppCampaignNew() {
         slug,
         objective: `${brief.goal} — ${brief.cta}`,
         target_audience_description: brief.audience,
+        cadence_type: cadence.cadence_type,
+        cadence_interval: cadence.cadence_interval,
+        cadence_unit: cadence.cadence_unit,
+        start_at: cadence.start_at,
+        timezone: cadence.timezone,
+        cadence_end_at: cadence.cadence_end_at,
+        cadence_max_runs: cadence.cadence_max_runs,
+        next_run_at: nextRun ? nextRun.toISOString() : cadence.start_at,
+        refresh_strategy: cadence.refresh_strategy,
       };
       const { data, error } = await (supabase.from("campaigns") as any)
         .insert(insertRow)
@@ -111,7 +125,6 @@ export default function AppCampaignNew() {
       if (error) throw error;
       const ok = await consume("full_campaign_pack", data.id, brief.name);
       if (!ok) {
-        // Campaign saved as draft but no credits charged
         toast.message("Campaign saved as draft", { description: "Top up credits to unlock the AI-generated pack." });
       } else {
         toast.success("Campaign pack generated");
@@ -123,6 +136,7 @@ export default function AppCampaignNew() {
       setSaving(false);
     }
   };
+
 
   const blocked = remaining < CREDIT_COSTS.full_campaign_pack || starterExpired;
 
