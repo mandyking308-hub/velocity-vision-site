@@ -9,7 +9,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 
 const PLATFORM = "Velocity Vision";
 const ENTITY = "Global Solutions Management LLC, a company incorporated in the State of Delaware, United States, and operator of Velocity Vision";
-const CONTACT_EMAIL = "support@velocity-outreach.com";
+const CONTACT_CTA = "Use the Contact page and select the route that matches your request.";
 
 type LegalSection = {
   heading: string;
