@@ -108,6 +108,7 @@ export default function AppCampaignNew() {
         workspace_id: workspaceId,
         company_id: null,
         brief,
+        language: brief.language || "en",
         pack,
         slug,
         objective: `${brief.goal} — ${brief.cta}`,
