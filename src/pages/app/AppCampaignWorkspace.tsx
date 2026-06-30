@@ -107,7 +107,7 @@ export default function AppCampaignWorkspace() {
   const toggleStatus = async (newStatus: "paused" | "active") => {
     await (supabase.from("campaigns") as any).update({ status: newStatus }).eq("id", c.id);
     setC({ ...c, status: newStatus });
-    toast.success(newStatus === "paused" ? "Campaign paused" : "Campaign resumed");
+    toast.success(t(newStatus === "paused" ? "campaigns.toasts.paused" : "campaigns.toasts.resumed"));
   };
 
   const advanceRun = async () => {
