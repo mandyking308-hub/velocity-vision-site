@@ -91,7 +91,7 @@ export default function AppDashboard() {
         { data: sends },
       ] = await Promise.all([
         supabase.from("profiles").select("first_name").eq("user_id", user.id).maybeSingle(),
-        supabase.from("campaigns").select("id, status, created_at").order("created_at", { ascending: false }),
+        supabase.from("campaigns").select("id, name, status, created_at, cadence_type, start_at, cadence_end_at, next_run_at, timezone, runs_completed").order("created_at", { ascending: false }),
         supabase.from("leads").select("id, status, follow_up_at, last_contacted_at"),
         supabase.from("contacts").select("*", { count: "exact", head: true }).not("source_upload_id", "is", null),
         supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "valid").not("source_upload_id", "is", null),
