@@ -102,8 +102,11 @@ const faqs = [
   { q: "Can agencies share credits across clients?", a: "Yes — Agency Workspace pools its monthly credits across all client workspaces." },
 ];
 
-const Pricing = () => (
+const Pricing = () => {
+  const { currency } = useCurrency();
+  return (
   <>
+
     <SEO
       title="Pricing — Velocity Vision self-serve marketing platform"
       description="Self-serve pricing for businesses and agencies. Starter, Growth and Agency Workspace plans plus an optional Premium Human Review add-on."
