@@ -47,8 +47,10 @@ const Footer = () => (
             <Link to="/legal/platform-security-policy" className="text-sm text-primary-foreground/70 hover:text-accent transition-colors">Security</Link>
             <Link to="/legal/cookie-policy" className="text-sm text-primary-foreground/70 hover:text-accent transition-colors">Cookie Policy</Link>
           </div>
-          <div className="mt-6">
-            <p className="text-sm text-primary-foreground/70 mb-2">support@velocity-outreach.com</p>
+          <div className="mt-6 flex flex-col gap-2">
+            <Link to="/contact" className="text-sm text-primary-foreground/70 hover:text-accent transition-colors">
+              Contact us →
+            </Link>
             <Link to="/auth" className="text-sm font-semibold text-accent hover:text-accent-warm transition-colors">
               Start your workspace →
             </Link>
