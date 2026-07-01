@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 import LeadActionPanel, { type ActionLead } from "@/components/app/LeadActionPanel";
 import { bucketCounts, deriveFollowUpState, STATE_LABEL, STATE_TONE, type FollowUpState } from "@/lib/leadStates";
 import { MessageSquare, Mail, AlertTriangle, Zap, Flame, Snowflake, Filter, RefreshCw, Send, Upload } from "lucide-react";
@@ -25,6 +26,7 @@ const TAB_KEYS: { id: "action" | FollowUpState; labelKey: string; icon: any }[] 
 export default function AppFollowUp() {
   const { t } = useTranslation("app");
   const tc = useTranslation("common").t;
+  const { currentId } = useWorkspace();
   const [leads, setLeads] = useState<ActionLead[]>([]);
   const [campaigns, setCampaigns] = useState<Record<string, string>>({});
   const [tab, setTab] = useState<"action" | FollowUpState>("action");
@@ -34,16 +36,18 @@ export default function AppFollowUp() {
 
   const load = async () => {
     setLoading(true);
+    const leadsQ = supabase.from("leads").select("id, name, email, phone, status, follow_up_at, follow_up_state, replied_at, snoozed_until, last_email_sent_at, last_email_subject, last_contacted_at, last_interaction_at, opportunity_id, owner_id, campaign_id, company_id, contact_id, last_action, created_at").order("created_at", { ascending: false });
+    const campsQ = supabase.from("campaigns").select("id, name");
     const [{ data: l }, { data: c }] = await Promise.all([
-      supabase.from("leads").select("id, name, email, phone, status, follow_up_at, follow_up_state, replied_at, snoozed_until, last_email_sent_at, last_email_subject, last_contacted_at, last_interaction_at, opportunity_id, owner_id, campaign_id, company_id, contact_id, last_action, created_at").order("created_at", { ascending: false }),
-      supabase.from("campaigns").select("id, name"),
+      currentId ? leadsQ.eq("workspace_id", currentId) : leadsQ,
+      currentId ? campsQ.eq("workspace_id", currentId) : campsQ,
     ]);
     setLeads((l || []) as any);
     setCampaigns(Object.fromEntries((c || []).map((x: any) => [x.id, x.name])));
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [currentId]);
 
   const counts = useMemo(() => bucketCounts(leads), [leads]);
   const needsAction = useMemo(
