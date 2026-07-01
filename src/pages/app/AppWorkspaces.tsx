@@ -23,6 +23,8 @@ export default function AppWorkspaces() {
   const [industry, setIndustry] = useState("");
   const [website, setWebsite] = useState("");
   const [busy, setBusy] = useState(false);
+  const legal = useLegalStatus();
+  const [legalGateOpen, setLegalGateOpen] = useState(false);
 
   const isAgency = plan === "agency";
   const limit = planConfig.workspaceLimit; // null = unlimited
