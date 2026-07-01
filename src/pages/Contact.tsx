@@ -33,48 +33,18 @@ const Contact = () => {
 
     setLoading(true);
     try {
-      const nameParts = form.name.trim().split(" ");
-      const firstName = nameParts[0];
-      const lastName = nameParts.slice(1).join(" ") || "";
-
-      let companyId: string | null = null;
-      if (form.company.trim()) {
-        const { data: companyData } = await supabase.from("companies").insert({
-          name: form.company, status: "prospect" as const,
-        }).select("id").single();
-        companyId = companyData?.id || null;
-      }
-
-      const { data: contactData } = await supabase.from("contacts").insert({
-        first_name: firstName, last_name: lastName, email: form.email,
-        company_id: companyId,
-      }).select("id").single();
-
-      const { data: leadData } = await supabase.from("leads").insert({
-        source: "website_contact",
-        contact_id: contactData?.id || null,
-        company_id: companyId,
-        marketing_interest: form.message,
-        status: "new" as const,
-      }).select("id").single();
-
-      try {
-        await supabase.functions.invoke("notify-contact", {
-          body: {
-            name: form.name,
-            email: form.email,
-            company: form.company,
-            message: form.message,
-            route: "website_contact",
-            lead_id: leadData?.id ?? null,
-            contact_id: contactData?.id ?? null,
-            company_id: companyId,
-          },
-        });
-      } catch {
-        // notification failure must not block the user
-      }
-
+      // All writes happen server-side in the notify-contact edge function
+      // (service role), so the public form doesn't need anon RLS on
+      // companies/contacts/leads.
+      await supabase.functions.invoke("notify-contact", {
+        body: {
+          name: form.name,
+          email: form.email,
+          company: form.company,
+          message: form.message,
+          route: "website_contact",
+        },
+      });
       toast.success("Message sent. We'll respond within one business day.");
       setForm({ name: "", email: "", company: "", message: "" });
     } catch {

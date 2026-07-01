@@ -52,33 +52,25 @@ const BookDemo = () => {
     }
     setLoading(true);
     try {
-      const { data: companyData } = await supabase.from("companies").insert({
-        name: form.company, industry: form.industry || null, status: "prospect" as const,
-        website: form.website || null, account_type: form.accountType,
-      } as any).select("id").single();
-
-      const nameParts = form.name.trim().split(" ");
-      const { data: contactData } = await supabase.from("contacts").insert({
-        first_name: nameParts[0], last_name: nameParts.slice(1).join(" ") || "",
-        email: form.email, phone: form.phone || null,
-        company_id: companyData?.id || null,
-      }).select("id").single();
-
-      await supabase.from("leads").insert({
-        source: "demo_booking", contact_id: contactData?.id || null,
-        company_id: companyData?.id || null,
-        marketing_interest: form.goals || "Demo request",
-        status: "demo_scheduled" as const,
+      // Route through the notify-contact edge function (service role) so the
+      // public form doesn't need anon RLS on companies/contacts/leads.
+      await supabase.functions.invoke("notify-contact", {
+        body: {
+          name: form.name,
+          email: form.email,
+          company: form.company,
+          message: [
+            form.goals || "Demo request",
+            selectedSlot ? `Preferred slot: ${selectedSlot}` : null,
+            form.budget ? `Budget: ${form.budget}` : null,
+            form.industry ? `Industry: ${form.industry}` : null,
+            form.website ? `Website: ${form.website}` : null,
+            form.phone ? `Phone: ${form.phone}` : null,
+            `Account type: ${form.accountType}`,
+          ].filter(Boolean).join("\n"),
+          route: "demo_booking",
+        },
       });
-
-      // Log activity
-      if (contactData?.id) {
-        await supabase.from("activities").insert({
-          contact_id: contactData.id, type: "meeting" as const,
-          description: `Demo booked${selectedSlot ? ` for ${selectedSlot}` : ""}. Budget: ${form.budget || "Not specified"}. Goals: ${form.goals || "Not specified"}.`,
-        });
-      }
-
       setSubmitted(true);
     } catch {
       setSubmitted(true);
