@@ -14,6 +14,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { CampaignBrief, CampaignGoal, CampaignKind, CampaignLanguage, CampaignPack, CAMPAIGN_LANGUAGES, generatePack, makeSlug } from "@/lib/campaignPack";
 import { checkPackQuality } from "@/lib/campaignQuality";
+import { formatQualityFailure } from "@/lib/campaignQualityToast";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useCredits } from "@/contexts/CreditsContext";
@@ -140,10 +141,8 @@ export default function AppCampaignNew() {
       // 2) Quality guard. If it fails, DO NOT save and DO NOT deduct credits.
       const quality = checkPackQuality(pack, brief);
       if (!quality.ok) {
-        console.warn("Campaign quality guard failed", quality.issues);
-        toast.error("Campaign quality check failed", {
-          description: `We didn't save this pack and no credits were used. Please try again. (${quality.issues.slice(0, 2).map((i) => i.code).join(", ")})`,
-        });
+        const { title, description } = formatQualityFailure(quality);
+        toast.error(title, { description });
         setSaving(false);
         return;
       }

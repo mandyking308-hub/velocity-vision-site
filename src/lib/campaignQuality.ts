@@ -46,12 +46,26 @@ const BANNED_PHRASES = [
   "qa-seed://",
 ];
 
-const BROKEN_PATTERNS: RegExp[] = [
-  /\bif you're a\s+[a-z]+\.\s/i, // "If you're a activity."
-  /\bif you are a\s+[a-z]+\.\s/i,
-  /\b(a|an)\s+(activity|goal|offer|audience)\b\.?/i,
-  /\{\{\s*[a-z_]+\s*\}\}\s+[.,!?]/i, // stray unresolved token before punctuation
-  /\s{3,}/,
+// Allowed personalization tokens permitted in email bodies/subjects/previews.
+// These get neutralised before grammar/broken-pattern checks so normal punctuation
+// like "Hi {{first_name}}," does not trip the broken-phrase regex.
+const ALLOWED_TOKENS: Record<string, string> = {
+  first_name: "Alex",
+  sender: "Sam",
+  company: "Acme",
+};
+
+// Disallowed brief-field tokens — must never leak into rendered output.
+const DISALLOWED_TOKEN_RE = /\{\{\s*(offer|audience|industry|geography|goal|cta)\s*\}\}/i;
+
+// Any unresolved token that isn't in the allow-list is treated as a leak.
+const UNKNOWN_TOKEN_RE = /\{\{\s*([a-z_][a-z0-9_]*)\s*\}\}/gi;
+
+const BROKEN_PATTERNS: { rx: RegExp; label: string }[] = [
+  { rx: /\bif you're a\s+(activity|goal|offer|audience|industry|geography)\b/i, label: "if-you-are-a-<brief-token>" },
+  { rx: /\bif you are a\s+(activity|goal|offer|audience|industry|geography)\b/i, label: "if-you-are-a-<brief-token>" },
+  { rx: /\b(a|an)\s+(activity|goal|offer|audience)\b\.?/i, label: "a-<brief-token>" },
+  { rx: /\s{4,}/, label: "excess-whitespace" },
 ];
 
 const INVENTED_CTAS = [
@@ -67,6 +81,13 @@ const INVENTED_CTAS = [
 
 const norm = (s: string) => (s || "").toLowerCase();
 
+function neutraliseAllowedTokens(text: string): string {
+  return text.replace(/\{\{\s*([a-z_][a-z0-9_]*)\s*\}\}/gi, (m, name) => {
+    const key = String(name).toLowerCase();
+    return ALLOWED_TOKENS[key] ?? m;
+  });
+}
+
 function collectAllText(pack: CampaignPack): { key: string; text: string }[] {
   const out: { key: string; text: string }[] = [];
   const push = (k: string, v: unknown) => {
@@ -78,12 +99,21 @@ function collectAllText(pack: CampaignPack): { key: string; text: string }[] {
   return out;
 }
 
+function snippet(text: string, rx: RegExp, radius = 40): string | undefined {
+  const m = text.match(rx);
+  if (!m || m.index === undefined) return undefined;
+  const start = Math.max(0, m.index - radius);
+  const end = Math.min(text.length, m.index + m[0].length + radius);
+  return text.slice(start, end).replace(/\s+/g, " ").trim();
+}
+
 export function checkPackQuality(pack: CampaignPack, brief: CampaignBrief): QualityResult {
   const issues: QualityIssue[] = [];
   const chosenCta = norm(brief.cta).trim();
 
   const all = collectAllText(pack);
-  const joined = all.map((a) => a.text).join(" \n ");
+  // Use a single-space join so field boundaries don't create phantom "excess whitespace".
+  const joined = all.map((a) => a.text).join(" ");
   const nJoined = norm(joined);
 
   // 1) Banned phrases
@@ -93,14 +123,37 @@ export function checkPackQuality(pack: CampaignPack, brief: CampaignBrief): Qual
     }
   }
 
-  // 2) Broken patterns
-  for (const rx of BROKEN_PATTERNS) {
-    if (rx.test(joined)) issues.push({ code: "broken_phrase", message: `Broken grammar pattern matched: ${rx}` });
+  // 2) Broken patterns — run on grammar-normalised text where allowed tokens are neutralised
+  const grammarText = neutraliseAllowedTokens(joined);
+  for (const { rx, label } of BROKEN_PATTERNS) {
+    // Locate the specific field so we can point at it, not just the joined blob.
+    const hit = all.find((a) => rx.test(neutraliseAllowedTokens(a.text)));
+    if (hit) {
+      const snip = snippet(neutraliseAllowedTokens(hit.text), rx);
+      issues.push({
+        code: "broken_phrase",
+        message: `Broken grammar (${label})${snip ? `: "${snip}"` : ""}`,
+        where: hit.key,
+      });
+    } else if (rx.test(grammarText)) {
+      issues.push({ code: "broken_phrase", message: `Broken grammar (${label})` });
+    }
   }
 
-  // 3) Placeholder leaks
-  if (/\{\{\s*(offer|audience|industry|geography|goal|cta)\s*\}\}/i.test(joined)) {
-    issues.push({ code: "placeholder_leak", message: "Unrendered brief token in output" });
+  // 3) Placeholder leaks — disallowed brief tokens
+  if (DISALLOWED_TOKEN_RE.test(joined)) {
+    const snip = snippet(joined, DISALLOWED_TOKEN_RE);
+    issues.push({ code: "placeholder_leak", message: `Unrendered brief token in output${snip ? `: "${snip}"` : ""}` });
+  }
+  // Any other unresolved token that isn't in the allow-list is also a leak.
+  const seenUnknown = new Set<string>();
+  for (const m of joined.matchAll(UNKNOWN_TOKEN_RE)) {
+    const name = m[1].toLowerCase();
+    if (ALLOWED_TOKENS[name]) continue;
+    if (/^(offer|audience|industry|geography|goal|cta)$/.test(name)) continue; // handled above
+    if (seenUnknown.has(name)) continue;
+    seenUnknown.add(name);
+    issues.push({ code: "placeholder_leak", message: `Unknown unresolved token: {{${name}}}` });
   }
 
   // 4) Blanks in key fields
