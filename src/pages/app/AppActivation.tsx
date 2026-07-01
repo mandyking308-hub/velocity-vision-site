@@ -345,7 +345,7 @@ export default function AppActivation() {
       <LegalComplianceGate
         open={legalGateOpen}
         onOpenChange={setLegalGateOpen}
-        source="workspace_create"
+        source="activation"
         workspaceId={currentId}
         title="Accept current terms before activation"
         description="Sending on your behalf requires up-to-date acceptance of our platform legal stack."
