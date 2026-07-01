@@ -240,7 +240,7 @@ export default function AppDashboard() {
               Welcome back{firstName ? `, ${firstName}` : ""}
             </h1>
             <p className="text-muted-foreground mt-1">
-              Your commercial workspace. Activate your data, create outreach assets, and move deals forward.
+              Your AI-powered commercial workspace. AI drafts outreach and reviews quality — you approve, activate and move deals forward.
             </p>
           </div>
           <div className="grid grid-cols-3 gap-3 lg:gap-4 min-w-[320px]">
@@ -287,8 +287,8 @@ export default function AppDashboard() {
       {/* B. Database Health */}
       <SectionHeader
         icon={Database}
-        title="Database Health"
-        desc="What data you have, what is usable, and what needs attention."
+        title="Database Health (AI quality review)"
+        desc="AI flags what's clean, risky, duplicated or blocked. You decide what's safe to activate."
         cta={{ label: "Review data", to: "/app/data-vault" }}
       />
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -296,7 +296,7 @@ export default function AppDashboard() {
         <BigStat label="Companies" value={vault.total_companies} icon={Briefcase} tone="default" />
         <BigStat label="Imports" value={vault.imports} icon={Upload} tone="default" />
         <BigStat label="Clean" value={vault.clean} icon={CheckCircle2} tone="good" />
-        <BigStat label="Safe to activate" value={vault.safe_to_activate} icon={ShieldCheck} tone="good" />
+        <BigStat label="AI-ready segment" value={vault.safe_to_activate} icon={ShieldCheck} tone="good" />
         <BigStat label="Needs review" value={vault.needs_review} icon={AlertTriangle} tone="warn" />
         <BigStat label="Risky" value={vault.risky} icon={AlertTriangle} tone="warn" />
         <BigStat label="Blocked / suppressed" value={vault.blocked} icon={AlertTriangle} tone="danger" />
@@ -315,8 +315,8 @@ export default function AppDashboard() {
       {/* C. Activation Readiness + Send Safety Engine */}
       <SectionHeader
         icon={ShieldCheck}
-        title="Activation Readiness & Send Safety"
-        desc="Store generously. Activate carefully. We protect your sender reputation by default."
+        title="Activation Readiness & Send Safety (governed AI activation)"
+        desc="Store generously. Activate carefully. Sender verification and daily caps gate every send — you approve activation."
         cta={{ label: "Open pre-flight", to: "/app/activate" }}
       />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -340,8 +340,8 @@ export default function AppDashboard() {
       {/* D. Create outreach assets */}
       <SectionHeader
         icon={Sparkles}
-        title="Create outreach assets"
-        desc="Turn your data into ready-to-use outreach in minutes."
+        title="Create AI-assisted outreach assets"
+        desc="AI drafts your outreach from your data and brief. You review, edit and approve before anything is sent."
         cta={{ label: "Create assets from my data", to: "/app/campaigns/new" }}
       />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -356,8 +356,8 @@ export default function AppDashboard() {
       {/* E. Replies and follow-up */}
       <SectionHeader
         icon={MessageSquare}
-        title="Replies and follow-up"
-        desc="Who replied, who's overdue, what's warm. This is where you start your day."
+        title="Replies and follow-up (AI follow-up suggestions)"
+        desc="Who replied, who's overdue, what's warm. AI drafts next-step follow-ups — you approve every send."
         cta={{ label: "Open follow-up queue", to: "/app/follow-up" }}
       />
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">

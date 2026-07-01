@@ -22,13 +22,13 @@ const HeroSection = () => (
           className="lg:col-span-7"
         >
           <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-6 inline-flex items-center gap-2">
-            <Sparkles size={14} /> Marketing outreach, follow-up and pipeline — in one workspace
+            <Sparkles size={14} /> AI-powered outreach · Human-controlled activation
           </p>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-primary-foreground leading-[1.05] mb-6">
             Turn messy data into outreach, replies and <span className="text-gradient">live pipeline</span>.
           </h1>
           <p className="text-lg md:text-xl text-primary-foreground/75 max-w-xl mb-10 leading-relaxed">
-            Upload your contacts, see who is safe to contact, generate marketing outreach assets — email sequences, social media content and press releases — then work the replies and move leads into pipeline. All from one workspace, instead of five disconnected tools.
+            The AI-powered commercial workspace for turning messy contact data into governed outreach, replies and pipeline. AI drafts the assets and quality-reviews your data — you review, edit and control what gets activated.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button variant="hero" size="lg" asChild>

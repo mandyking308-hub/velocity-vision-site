@@ -101,6 +101,7 @@ const docs: Record<string, LegalDoc> = {
           "You must review, edit and approve outputs before use. You are responsible for ensuring that generated materials are accurate, lawful, non-deceptive, non-infringing, suitable for your audience and compliant with your policies and applicable law.",
         ],
         bullets: [
+          "AI outputs are drafts and should be reviewed before use. Velocity Vision does not guarantee replies, sales, deliverability, revenue or legal compliance.",
           "Generated outputs may be incomplete, inaccurate, repetitive or unsuitable for a particular recipient or jurisdiction.",
           "Do not rely on generated outputs as a substitute for professional review where legal, compliance, financial, regulated or sensitive content is involved.",
           "We may use aggregated, de-identified usage signals to improve product quality, safety and reliability, subject to our Privacy Policy and Data Processing Agreement.",
