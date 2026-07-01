@@ -194,14 +194,23 @@ function ConnectionRow({
   onDefault: () => void; onReconnect: () => void; onRemove: () => void; onVerified: () => void;
 }) {
   const [checking, setChecking] = useState(false);
+  const [selectorInput, setSelectorInput] = useState(c.dkim_selector || "");
   const ver = VER_LABEL[c.verification_status || "unknown"] || VER_LABEL.unknown;
   const domain = c.domain || c.from_email?.split("@")[1] || "";
+  const providerKnown = KNOWN_DKIM_HOSTS.has(c.smtp_host);
+  const hasConfiguredSelector = !!(c.dkim_selector || (c.dkim_selectors && c.dkim_selectors.length > 0));
+  const dkimSelectorRequired = !providerKnown && !hasConfiguredSelector;
 
-  async function verifyDns() {
+  async function verifyDns(persistSelector?: string) {
     setChecking(true);
     try {
       const { data, error } = await supabase.functions.invoke("verify-sender-domain", {
-        body: { connection_id: c.id, domain, workspace_id: workspaceId },
+        body: {
+          connection_id: c.id,
+          domain,
+          workspace_id: workspaceId,
+          persist_selector: persistSelector || undefined,
+        },
       });
       if (error) throw error;
       if (data?.verified) toast.success("Domain verified", { description: domain });
@@ -234,7 +243,7 @@ function ConnectionRow({
             {c.last_error && <p className="text-xs text-destructive mt-1">{c.last_error}</p>}
           </div>
           <div className="flex gap-2 flex-wrap">
-            <Button variant="outline" size="sm" onClick={verifyDns} disabled={checking || !domain}>
+            <Button variant="outline" size="sm" onClick={() => verifyDns()} disabled={checking || !domain}>
               {checking ? "Checking DNS…" : "Check DNS verification"}
             </Button>
             {!c.is_default && <Button variant="outline" size="sm" onClick={onDefault}>Make default</Button>}
@@ -251,6 +260,44 @@ function ConnectionRow({
             <span className="text-[10px] text-muted-foreground ml-auto">Last checked {new Date(c.dns_checked_at).toLocaleString()}</span>
           )}
         </div>
+
+        {(dkimSelectorRequired || c.dkim_status === "unknown") && (
+          <div className="rounded-md border border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-900 p-3 text-xs space-y-2">
+            <p className="text-amber-900 dark:text-amber-200 font-medium">
+              DKIM selector required — enter the selector supplied by your email provider.
+            </p>
+            <p className="text-amber-800/80 dark:text-amber-200/80">
+              We won't guess. Any DKIM record we find at a random selector could belong to another provider, so sending stays disabled until you confirm the correct one (for example <code>s1</code>, <code>mail</code>, or a provider-specific string).
+            </p>
+            <div className="flex gap-2 items-end pt-1">
+              <div className="flex-1">
+                <Label className="text-[11px]">DKIM selector</Label>
+                <Input
+                  value={selectorInput}
+                  onChange={(e) => setSelectorInput(e.target.value)}
+                  placeholder="e.g. s1"
+                  className="h-8 text-xs"
+                  data-testid={`dkim-selector-input-${c.id}`}
+                />
+              </div>
+              <Button
+                size="sm"
+                onClick={() => verifyDns(selectorInput.trim())}
+                disabled={!selectorInput.trim() || checking}
+                data-testid={`dkim-selector-save-${c.id}`}
+              >
+                Save & re-check
+              </Button>
+            </div>
+            {c.dkim_selector && (
+              <p className="text-[11px] text-muted-foreground">Configured selector: <code>{c.dkim_selector}</code></p>
+            )}
+          </div>
+        )}
+
+        {c.dkim_status === "valid" && c.dkim_selector && (
+          <p className="text-[11px] text-muted-foreground">DKIM confirmed at selector <code>{c.dkim_selector}</code>.</p>
+        )}
       </CardContent>
     </Card>
   );
