@@ -225,6 +225,26 @@ Return the JSON object only.`;
           pack.social.repostIdeas = [];
         }
       }
+
+      // Defensive: reorder any email body that ends with "sign-off … sender … CTA"
+      // so the CTA sits BEFORE the sign-off. Uses the user's chosen CTA verbatim.
+      const chosenCta = (brief.cta || "").trim();
+      if (chosenCta && Array.isArray(pack.emails)) {
+        const signoffRe = /\n\s*(Best|Thanks|Cheers|Kind regards|Regards|Warmly|Speak soon|Sincerely)\s*,?\s*\n[\s\S]*$/i;
+        const ctaTrailingRe = new RegExp(`([\\s\\S]*?)(\\n\\s*(?:Best|Thanks|Cheers|Kind regards|Regards|Warmly|Speak soon|Sincerely)[\\s\\S]*?)(\\n[^\\n]*${chosenCta.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\$&")}[^\\n]*)\\s*$`, "i");
+        pack.emails = pack.emails.map((e: any) => {
+          if (!e || typeof e.body !== "string") return e;
+          let body: string = e.body;
+          const m = body.match(ctaTrailingRe);
+          if (m) {
+            const before = m[1].trimEnd();
+            const signoffBlock = m[2].replace(/^\n+/, "");
+            const ctaLine = m[3].trim();
+            body = `${before}\n\n${ctaLine}\n\n${signoffBlock}`.replace(/\n{3,}/g, "\n\n").trimEnd();
+          }
+          return { ...e, body };
+        });
+      }
     }
 
     return json({ pack, language, generatedAs: language, selectedChannels: normalisedChannels });
