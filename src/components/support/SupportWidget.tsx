@@ -176,11 +176,14 @@ export default function SupportWidget() {
     }
 
     try {
+      const trimmedHistory = next
+        .filter((m) => m.role === "user" || m.role === "assistant")
+        .slice(-10)
+        .map((m) => ({ role: m.role, content: String(m.content).slice(0, 4000) }));
+      bumpAiCount();
       const { data, error } = await supabase.functions.invoke("support-chat", {
         body: {
-          messages: next
-            .filter((m) => m.role === "user" || m.role === "assistant")
-            .map((m) => ({ role: m.role, content: m.content })),
+          messages: trimmedHistory,
           context: {
             route: location.pathname,
             source,
@@ -192,16 +195,19 @@ export default function SupportWidget() {
       });
 
       if (error || !data || (data as any).error) {
-        // Fall back gracefully; disable AI for the rest of the session on non-transient errors.
         const errCode = (data as any)?.error;
-        if (errCode === "ai_not_configured" || errCode === "credits_exhausted" || errCode === "upstream_error") {
+        if (
+          errCode === "ai_not_configured" ||
+          errCode === "credits_exhausted" ||
+          errCode === "upstream_error" ||
+          errCode === "rate_limited"
+        ) {
           setAiDisabled(true);
         }
         const ans = fallbackAnswer(q, location.pathname, inApp);
         setMessages([...next, ans]);
       } else {
         const answer = String((data as any).answer ?? "").trim() || fallbackAnswer(q, location.pathname, inApp).content;
-        // Attach top-hit links so the customer has a clickable next step.
         const links = grounding.flatMap((g) => g.links ?? []).slice(0, 3);
         setMessages([...next, { role: "assistant", content: answer, links }]);
       }
