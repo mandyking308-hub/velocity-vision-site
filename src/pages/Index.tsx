@@ -9,6 +9,7 @@ import WorkflowSavings from "@/components/WorkflowSavings";
 import PricingTeaser from "@/components/PricingTeaser";
 import AudienceSplit from "@/components/AudienceSplit";
 import SecurityTrust from "@/components/SecurityTrust";
+import GlobalStrip from "@/components/GlobalStrip";
 import HomeFAQ from "@/components/HomeFAQ";
 import FinalCTA from "@/components/FinalCTA";
 
