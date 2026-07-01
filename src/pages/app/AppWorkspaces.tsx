@@ -100,7 +100,7 @@ export default function AppWorkspaces() {
         <div>
           <h1 className="text-3xl font-bold">Client workspaces</h1>
           <p className="text-muted-foreground">
-            Switch between accounts. Each workspace has its own campaigns, pipeline and reporting.
+            Open a workspace to manage its contacts, campaigns, replies, billing and early pipeline.
           </p>
         </div>
         {workspaces.length > 0 && CreateDialog}
