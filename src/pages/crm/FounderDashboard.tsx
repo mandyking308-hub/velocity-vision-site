@@ -85,6 +85,9 @@ const FounderDashboard = () => {
     enabled: !!user,
   });
 
+  const { signOut } = useAuth();
+  const handleSignOut = async () => { await signOut(); navigate("/", { replace: true }); };
+
   // Access check
   const hasAccess = roles?.some((r) => r === "founder" || r === "admin") ?? false;
   if (rolesLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
@@ -92,7 +95,12 @@ const FounderDashboard = () => {
     <div className="p-8 text-center">
       <AlertTriangle size={48} className="text-destructive mx-auto mb-4" />
       <h1 className="text-2xl font-display font-bold text-foreground mb-2">Access Denied</h1>
-      <p className="text-muted-foreground">This dashboard is restricted to founders and administrators.</p>
+      <p className="text-muted-foreground mb-6">This dashboard is restricted to founders and administrators.</p>
+      <div className="flex gap-3 justify-center">
+        <Button variant="outline" onClick={() => navigate("/app")}>Go to app</Button>
+        <Button variant="outline" onClick={() => navigate("/")}>Public site</Button>
+        <Button onClick={handleSignOut}>Sign out</Button>
+      </div>
     </div>
   );
 
