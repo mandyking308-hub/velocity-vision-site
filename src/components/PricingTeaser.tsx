@@ -65,10 +65,10 @@ const PricingTeaser = () => (
               <span className="text-3xl font-display font-bold text-foreground">{p.price}</span>
               <span className="text-muted-foreground text-sm ml-1">{p.unit}</span>
             </p>
-            <p className="text-muted-foreground text-sm mb-4">{p.desc}</p>
+            <p className="text-muted-foreground text-sm md:text-base mb-4">{p.desc}</p>
             <ul className="space-y-2 mb-6 flex-1">
               {p.bullets.map((b) => (
-                <li key={b} className="flex items-start gap-2 text-sm text-foreground/90">
+                <li key={b} className="flex items-start gap-2 text-sm text-foreground/90 leading-relaxed">
                   <Check size={14} className="text-accent mt-1 shrink-0" />
                   <span>{b}</span>
                 </li>
