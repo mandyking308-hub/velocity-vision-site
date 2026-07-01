@@ -307,7 +307,18 @@ export default function AppActivation() {
           scheduledToday={scheduledToday}
           fromEmail={fromEmail}
           connectionId={connectionId}
-          onVerified={(r) => setSender((s) => ({ ...s, domain_authenticated: !!r?.verified }))}
+          detail={senderDetail}
+          onVerified={(r) => {
+            setSenderDetail((d: any) => ({
+              ...(d || {}),
+              verification_status: r?.verification_status,
+              mx_status: r?.mx_status, spf_status: r?.spf_status,
+              dkim_status: r?.dkim_status, dmarc_status: r?.dmarc_status,
+              sending_enabled: !!r?.sending_enabled,
+              dns_checked_at: new Date().toISOString(),
+            }));
+            setSender((s) => ({ ...s, domain_authenticated: !!r?.verified }));
+          }}
         />
       </div>
       </>
