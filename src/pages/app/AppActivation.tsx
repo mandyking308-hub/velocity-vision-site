@@ -46,6 +46,7 @@ export default function AppActivation() {
   const [usedToday, setUsedToday] = useState(0);
   const [scheduledToday, setScheduledToday] = useState(0);
   const [agencyPooled, setAgencyPooled] = useState<number>(0);
+  const [senderDetail, setSenderDetail] = useState<any>(null);
 
   useEffect(() => {
     if (!user) return;
