@@ -10,6 +10,7 @@ import { useCurrency } from "@/hooks/useCurrency";
 import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
 import PricingCurrencySelector from "@/components/PricingCurrencySelector";
 import TrustStrip from "@/components/TrustStrip";
+import GlobalStrip from "@/components/GlobalStrip";
 
 interface PlanDef {
   sku: SkuId;
