@@ -3,14 +3,18 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 
 export default function AppPerformance() {
+  const { currentId } = useWorkspace();
   const [rows, setRows] = useState<any[]>([]);
 
   useEffect(() => {
     (async () => {
-      const { data: campaigns } = await supabase.from("campaigns").select("id, name, status, created_at").order("created_at", { ascending: false });
-      const { data: leads } = await supabase.from("leads").select("campaign_id, status");
+      const campsQ = supabase.from("campaigns").select("id, name, status, created_at").order("created_at", { ascending: false });
+      const leadsQ = supabase.from("leads").select("campaign_id, status");
+      const { data: campaigns } = await (currentId ? campsQ.eq("workspace_id", currentId) : campsQ);
+      const { data: leads } = await (currentId ? leadsQ.eq("workspace_id", currentId) : leadsQ);
       const grouped = (campaigns || []).map((c: any) => {
         const cl = (leads || []).filter((l: any) => l.campaign_id === c.id);
         return {
@@ -22,7 +26,7 @@ export default function AppPerformance() {
       });
       setRows(grouped);
     })();
-  }, []);
+  }, [currentId]);
 
   const totalLeads = rows.reduce((s, r) => s + r.leads, 0);
   const totalWon = rows.reduce((s, r) => s + r.won, 0);
