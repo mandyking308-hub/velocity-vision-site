@@ -5,19 +5,26 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 
 export default function DataVaultDashboardWidget() {
   const { user } = useAuth();
+  const { currentId } = useWorkspace();
   const { data } = useQuery({
-    queryKey: ["vault-widget", user?.id],
+    queryKey: ["vault-widget", user?.id, currentId],
     queryFn: async () => {
       if (!user) return null;
-      const [{ count: total }, { count: valid }, { count: needs }, { data: latest }] = await Promise.all([
-        supabase.from("contacts").select("*", { count: "exact", head: true }).not("source_upload_id", "is", null),
-        supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "valid").not("source_upload_id", "is", null),
-        supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "needs_review").not("source_upload_id", "is", null),
-        supabase.from("data_uploads").select("id, file_name, created_at, summary").order("created_at", { ascending: false }).limit(1).maybeSingle(),
+      const totalQ = supabase.from("contacts").select("*", { count: "exact", head: true });
+      const validQ = supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "valid");
+      const needsQ = supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "needs_review");
+      const latestQ = supabase.from("data_uploads").select("id, file_name, created_at, summary").order("created_at", { ascending: false }).limit(1);
+      const [{ count: total }, { count: valid }, { count: needs }, latestRes] = await Promise.all([
+        currentId ? totalQ.eq("workspace_id", currentId) : totalQ.not("source_upload_id", "is", null),
+        currentId ? validQ.eq("workspace_id", currentId) : validQ.not("source_upload_id", "is", null),
+        currentId ? needsQ.eq("workspace_id", currentId) : needsQ.not("source_upload_id", "is", null),
+        currentId ? latestQ.eq("workspace_id", currentId).maybeSingle() : latestQ.maybeSingle(),
       ]);
+      const latest = latestRes.data;
       return {
         total: total ?? 0,
         valid: valid ?? 0,
