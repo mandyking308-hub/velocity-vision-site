@@ -55,18 +55,26 @@ export default function HumanReviewButton({ campaignId }: Props) {
           </ul>
           <DialogFooter className="mt-4 flex items-center justify-between">
             <span className="text-lg font-semibold">£{HUMAN_REVIEW_PRICE}</span>
-            <Button onClick={() => {
-              setOpen(false);
-              openCheckout({
-                priceId: PRICE_IDS.human_review,
-                refId: campaignId,
-                title: "Buy Premium Human Review",
-                returnPath: `/app/campaigns/${campaignId}?checkout=review`,
-              });
-            }}>Purchase review</Button>
+            <Button onClick={() => { setOpen(false); setLegalOpen(true); }}>Purchase review</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <LegalComplianceGate
+        open={legalOpen}
+        onOpenChange={setLegalOpen}
+        source="human_review_checkout"
+        title="Confirm current terms before checkout"
+        description="Please accept the current versions of our platform legal stack to continue to checkout."
+        confirmLabel="Accept and continue"
+        onConfirm={() => {
+          openCheckout({
+            priceId: PRICE_IDS.human_review,
+            refId: campaignId,
+            title: "Buy Premium Human Review",
+            returnPath: `/app/campaigns/${campaignId}?checkout=review`,
+          });
+        }}
+      />
       {element}
     </>
   );
