@@ -182,7 +182,16 @@ export default function AppCampaignNew() {
         <Card>
           <CardHeader><CardTitle>Tell us about the business</CardTitle></CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Field label="Campaign name" v={brief.name} on={(v) => update("name", v)} />
+            <Field
+              label="Campaign name"
+              v={brief.name}
+              on={(v) => update("name", v)}
+              id="campaign-name"
+              name="campaign_name"
+              placeholder="e.g. July outreach campaign"
+              required
+              testId="campaign-name-input"
+            />
             <Field label="Key CTA" v={brief.cta} on={(v) => update("cta", v)} />
             <Field label="Offer / product / service" v={brief.offer} on={(v) => update("offer", v)} full />
             <Field label="Target audience" v={brief.audience} on={(v) => update("audience", v)} />
