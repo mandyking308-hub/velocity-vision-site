@@ -134,6 +134,7 @@ export default function AppDataVaultUpload() {
         .from("data_uploads")
         .insert({
           owner_id: user.id,
+          workspace_id: workspaceId,
           file_name: fileName,
           file_type: fileType,
           row_count: rows.length,
