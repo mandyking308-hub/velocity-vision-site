@@ -140,9 +140,20 @@ export function checkPackQuality(pack: CampaignPack, brief: CampaignBrief): Qual
     }
   }
 
-  // 3) Placeholder leaks
-  if (/\{\{\s*(offer|audience|industry|geography|goal|cta)\s*\}\}/i.test(joined)) {
-    issues.push({ code: "placeholder_leak", message: "Unrendered brief token in output" });
+  // 3) Placeholder leaks — disallowed brief tokens
+  if (DISALLOWED_TOKEN_RE.test(joined)) {
+    const snip = snippet(joined, DISALLOWED_TOKEN_RE);
+    issues.push({ code: "placeholder_leak", message: `Unrendered brief token in output${snip ? `: "${snip}"` : ""}` });
+  }
+  // Any other unresolved token that isn't in the allow-list is also a leak.
+  const seenUnknown = new Set<string>();
+  for (const m of joined.matchAll(UNKNOWN_TOKEN_RE)) {
+    const name = m[1].toLowerCase();
+    if (ALLOWED_TOKENS[name]) continue;
+    if (/^(offer|audience|industry|geography|goal|cta)$/.test(name)) continue; // handled above
+    if (seenUnknown.has(name)) continue;
+    seenUnknown.add(name);
+    issues.push({ code: "placeholder_leak", message: `Unknown unresolved token: {{${name}}}` });
   }
 
   // 4) Blanks in key fields
