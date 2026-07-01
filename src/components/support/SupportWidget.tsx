@@ -128,8 +128,19 @@ export default function SupportWidget() {
     try { return localStorage.getItem("vv.currentWorkspaceId"); } catch { return null; }
   };
 
+  const bumpAiCount = () => {
+    try {
+      const n = Number(sessionStorage.getItem(AI_COUNT_KEY) ?? "0") + 1;
+      sessionStorage.setItem(AI_COUNT_KEY, String(n));
+      return n;
+    } catch { return 0; }
+  };
+  const getAiCount = () => {
+    try { return Number(sessionStorage.getItem(AI_COUNT_KEY) ?? "0"); } catch { return 0; }
+  };
+
   const sendChat = async () => {
-    const q = input.trim();
+    const q = input.trim().slice(0, MAX_INPUT_CHARS);
     if (!q || thinking) return;
     const next: Msg[] = [...messages, { role: "user", content: q }];
     setMessages(next);
@@ -145,9 +156,20 @@ export default function SupportWidget() {
       .slice(0, 6)
       .map((k) => ({ question: k.question, answer: k.answer, links: k.links }));
 
-    // If AI already errored earlier this session, skip straight to fallback.
-    if (aiDisabled) {
+    // Session-level AI cap (cost control).
+    const cap = user ? SIGNED_AI_CAP : ANON_AI_CAP;
+    const usedAi = getAiCount();
+    const overCap = usedAi >= cap;
+
+    // If AI already errored earlier this session, or cap hit, skip to fallback.
+    if (aiDisabled || overCap) {
       const ans = fallbackAnswer(q, location.pathname, inApp);
+      if (overCap) {
+        ans.content += user
+          ? "\n\n(You've reached this session's AI limit — switching to offline mode. Open the Help Centre or raise a ticket for more.)"
+          : "\n\n(You've reached this session's AI limit — switching to offline mode. See /pricing, /contact, or raise a ticket.)";
+        setAiDisabled(true);
+      }
       setMessages([...next, ans]);
       setThinking(false);
       return;
