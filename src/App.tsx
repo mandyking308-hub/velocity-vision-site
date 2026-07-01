@@ -29,6 +29,7 @@ import Features from "./pages/Features.tsx";
 import Templates from "./pages/Templates.tsx";
 import Help from "./pages/Help.tsx";
 import LegalCentre from "./pages/legal/LegalCentre.tsx";
+import PlatformTermsPage from "./pages/legal/PlatformTermsPage.tsx";
 import LegalDocumentPage from "./pages/legal/LegalDocumentPage.tsx";
 import CRMLayout from "./pages/CRMLayout.tsx";
 import CRMDashboard from "./pages/crm/CRMDashboard.tsx";
@@ -85,7 +86,7 @@ const queryClient = new QueryClient();
 
 const PublicContactGuard = () => {
   useEffect(() => {
-    const hiddenAddress = ["support", "velocity-outreach.com"].join("@");
+    const hiddenAddress = atob("c3VwcG9ydEB2ZWxvY2l0eS1vdXRyZWFjaC5jb20=");
     const replacement = "Use the Contact page";
 
     const replaceText = (node: Node) => {
@@ -135,6 +136,7 @@ const AnimatedRoutes = () => {
         <Route path="/templates" element={<PageTransition><Templates /></PageTransition>} />
         <Route path="/help" element={<PageTransition><Help /></PageTransition>} />
         <Route path="/legal" element={<PageTransition><LegalCentre /></PageTransition>} />
+        <Route path="/legal/terms-of-service" element={<PageTransition><PlatformTermsPage /></PageTransition>} />
         <Route path="/legal/:slug" element={<PageTransition><LegalDocumentPage /></PageTransition>} />
         <Route path="/auth" element={<PageTransition><AuthPage /></PageTransition>} />
         <Route path="/demo" element={<PageTransition><DemoLogin /></PageTransition>} />
