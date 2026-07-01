@@ -1,4 +1,4 @@
-import type { CampaignBrief, CampaignPack } from "./campaignPack";
+import { getCampaignChannelConfig, normaliseCampaignChannel, type CampaignBrief, type CampaignPack } from "./campaignPack";
 
 const clean = (v: any): string => {
   if (v === null || v === undefined) return "";
@@ -43,22 +43,6 @@ export function formatCampaignPackMarkdown(campaign: { name: string; slug?: stri
   });
 }
 
-const SOCIAL_PLATFORMS = ["LinkedIn", "Instagram", "X", "Facebook", "TikTok"];
-
-function normaliseChannel(c: string): string {
-  const s = (c || "").toLowerCase().trim();
-  if (s === "linkedin") return "LinkedIn";
-  if (s === "instagram" || s === "ig") return "Instagram";
-  if (s === "x" || s === "twitter") return "X";
-  if (s === "facebook" || s === "fb") return "Facebook";
-  if (s === "tiktok") return "TikTok";
-  if (s === "email") return "Email";
-  if (s === "pr" || s === "press") return "PR";
-  if (s === "paid ads" || s === "paid" || s === "ads") return "Paid ads";
-  if (s === "video") return "Video";
-  return c;
-}
-
 export function buildCampaignMarkdown(opts: {
   name: string;
   brief: CampaignBrief | null;
@@ -66,13 +50,13 @@ export function buildCampaignMarkdown(opts: {
   cadenceSummary?: string;
 }): string {
   const { name, brief, pack, cadenceSummary } = opts;
-  const channels = (brief?.channels || []).map(normaliseChannel);
-  const hasSelection = channels.length > 0;
-  const selectedSocial = SOCIAL_PLATFORMS.filter((p) => channels.includes(p));
-  const includeEmail = !hasSelection || channels.includes("Email");
-  const includePress = !hasSelection || channels.includes("PR");
-  const includeVideo = !hasSelection || channels.includes("Video");
-  const includeSocial = !hasSelection || selectedSocial.length > 0;
+  const cfg = getCampaignChannelConfig(brief);
+  const hasSelection = cfg.hasSelection;
+  const selectedSocial = cfg.selectedSocial;
+  const includeEmail = cfg.includeEmail;
+  const includePress = cfg.includePress;
+  const includeVideo = cfg.includeVideo;
+  const includeSocial = cfg.includeSocial;
   let md = "";
 
 
@@ -147,7 +131,7 @@ export function buildCampaignMarkdown(opts: {
   // Social — respect selected channels
   if (includeSocial && pack.social) {
     const filterPosts = (arr: any[] | undefined) =>
-      (arr || []).filter((p) => !hasSelection || selectedSocial.includes(normaliseChannel(p?.platform || "")));
+      (arr || []).filter((p) => !hasSelection || selectedSocial.includes(normaliseCampaignChannel(p?.platform || "")));
     const launch = filterPosts(pack.social.launchPosts);
     const follow = filterPosts(pack.social.followUps);
     if (launch.length || follow.length || pack.social.launchWeek?.length) {
