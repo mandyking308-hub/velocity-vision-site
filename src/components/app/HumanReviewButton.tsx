@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { HUMAN_REVIEW_PRICE } from "@/lib/credits";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { PRICE_IDS } from "@/lib/stripe";
+import LegalComplianceGate from "@/components/LegalComplianceGate";
 
 interface Props { campaignId: string }
 
