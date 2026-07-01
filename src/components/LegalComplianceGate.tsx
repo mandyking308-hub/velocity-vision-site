@@ -39,12 +39,14 @@ export default function LegalComplianceGate({
   const [accepted, setAccepted] = useState(false);
   const [busy, setBusy] = useState(false);
   const [proceeded, setProceeded] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open || !user) return;
     setLoading(true);
     setAccepted(false);
     setProceeded(false);
+    setErrorMsg(null);
     fetchLegalStatus(user.id).then(async (s) => {
       if (s.isCompliant) {
         // Already compliant → skip UI and proceed.
@@ -61,6 +63,7 @@ export default function LegalComplianceGate({
   const handle = async () => {
     if (!accepted || !user) return;
     setBusy(true);
+    setErrorMsg(null);
     try {
       await recordLegalAcceptance({
         userId: user.id,
@@ -68,11 +71,19 @@ export default function LegalComplianceGate({
         source,
         workspaceId: workspaceId ?? null,
       });
+      // Only proceed if the acceptance row was written.
       await onConfirm();
       onOpenChange(false);
+      setAccepted(false);
+    } catch (err: any) {
+      // Fail-closed: keep gate open, untick, surface error, do not proceed.
+      setAccepted(false);
+      setErrorMsg(
+        err?.message ??
+          "We could not record your legal acceptance. Please try again.",
+      );
     } finally {
       setBusy(false);
-      setAccepted(false);
     }
   };
 
