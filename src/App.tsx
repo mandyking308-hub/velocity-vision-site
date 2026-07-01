@@ -48,16 +48,8 @@ import LegalCompliancePage from "./pages/crm/LegalCompliancePage.tsx";
 import FounderManual from "./pages/crm/FounderManual.tsx";
 import FounderMonetisation from "./pages/crm/FounderMonetisation.tsx";
 import FounderIntelligence from "./pages/crm/FounderIntelligence.tsx";
-import PortalLayout from "./pages/PortalLayout.tsx";
-import PortalCampaigns from "./pages/portal/PortalCampaigns.tsx";
-import PortalDocuments from "./pages/portal/PortalDocuments.tsx";
-import PortalMessages from "./pages/portal/PortalMessages.tsx";
-import PortalBilling from "./pages/portal/PortalBilling.tsx";
-import PortalCampaignRequest from "./pages/portal/PortalCampaignRequest.tsx";
-import PortalNotifications from "./pages/portal/PortalNotifications.tsx";
-import PortalOnboarding from "./pages/portal/PortalOnboarding.tsx";
-import PortalWorkspaces from "./pages/portal/PortalWorkspaces.tsx";
-import PortalLegal from "./pages/portal/PortalLegal.tsx";
+// Legacy portal components intentionally not imported — /portal/* now redirects to /app/*.
+// Files retained under src/pages/portal/ and src/pages/PortalLayout.tsx for reference only.
 import DemoLogin from "./pages/DemoLogin.tsx";
 import DemoCRMLayout from "./pages/demo/DemoCRMLayout.tsx";
 import DemoCRMDashboard from "./pages/demo/DemoCRMDashboard.tsx";
