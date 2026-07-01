@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCredits } from "@/contexts/CreditsContext";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 import {
   computeSafety, DEFAULT_SENDER_STATE, maxRiskyOverride, SENDER_HEALTH_LABEL,
   SENDER_HEALTH_TONE, type SenderState,
