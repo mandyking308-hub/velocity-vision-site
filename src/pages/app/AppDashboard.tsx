@@ -287,8 +287,8 @@ export default function AppDashboard() {
       {/* B. Database Health */}
       <SectionHeader
         icon={Database}
-        title="Database Health"
-        desc="What data you have, what is usable, and what needs attention."
+        title="Database Health (AI quality review)"
+        desc="AI flags what's clean, risky, duplicated or blocked. You decide what's safe to activate."
         cta={{ label: "Review data", to: "/app/data-vault" }}
       />
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
