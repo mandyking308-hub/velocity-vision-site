@@ -231,7 +231,18 @@ export default function AppCampaignWorkspace() {
             <Button variant="outline" size="sm" onClick={advanceRun}><Repeat className="h-4 w-4 mr-1" />Mark run complete</Button>
           )}
           <Button variant="outline" size="sm" onClick={regenerate}><Sparkles className="h-4 w-4 mr-1" />Regenerate ({CREDIT_COSTS.full_campaign_pack} credits)</Button>
-          <Button variant="outline" size="sm" onClick={exportMd}><Download className="h-4 w-4 mr-1" />Export</Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm"><Download className="h-4 w-4 mr-1" />Export</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={exportMarkdown}>Download Markdown (.md)</DropdownMenuItem>
+              <DropdownMenuItem onClick={copyFullPack}>Copy full pack</DropdownMenuItem>
+              {showJsonExport && (
+                <DropdownMenuItem onClick={exportJsonDebug}>Export JSON (debug)</DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
           
         </div>
       </div>
