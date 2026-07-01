@@ -13,6 +13,7 @@ import {
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { format, subDays, startOfMonth, startOfWeek } from "date-fns";
+import QAWorkspaceControl from "@/components/crm/QAWorkspaceControl";
 
 const COLORS = [
   "hsl(12, 90%, 58%)", "hsl(220, 60%, 50%)", "hsl(160, 50%, 50%)",
