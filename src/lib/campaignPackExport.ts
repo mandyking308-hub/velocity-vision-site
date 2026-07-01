@@ -43,6 +43,22 @@ export function formatCampaignPackMarkdown(campaign: { name: string; slug?: stri
   });
 }
 
+const SOCIAL_PLATFORMS = ["LinkedIn", "Instagram", "X", "Facebook", "TikTok"];
+
+function normaliseChannel(c: string): string {
+  const s = (c || "").toLowerCase().trim();
+  if (s === "linkedin") return "LinkedIn";
+  if (s === "instagram" || s === "ig") return "Instagram";
+  if (s === "x" || s === "twitter") return "X";
+  if (s === "facebook" || s === "fb") return "Facebook";
+  if (s === "tiktok") return "TikTok";
+  if (s === "email") return "Email";
+  if (s === "pr" || s === "press") return "PR";
+  if (s === "paid ads" || s === "paid" || s === "ads") return "Paid ads";
+  if (s === "video") return "Video";
+  return c;
+}
+
 export function buildCampaignMarkdown(opts: {
   name: string;
   brief: CampaignBrief | null;
@@ -50,7 +66,15 @@ export function buildCampaignMarkdown(opts: {
   cadenceSummary?: string;
 }): string {
   const { name, brief, pack, cadenceSummary } = opts;
+  const channels = (brief?.channels || []).map(normaliseChannel);
+  const hasSelection = channels.length > 0;
+  const selectedSocial = SOCIAL_PLATFORMS.filter((p) => channels.includes(p));
+  const includeEmail = !hasSelection || channels.includes("Email");
+  const includePress = !hasSelection || channels.includes("PR");
+  const includeVideo = !hasSelection || channels.includes("Video");
+  const includeSocial = !hasSelection || selectedSocial.length > 0;
   let md = "";
+
 
   md += heading(1, `Campaign Pack: ${clean(name) || "Untitled"}`);
   md += `_Generated ${new Date().toLocaleString()}_\n\n---\n\n`;
@@ -109,7 +133,7 @@ export function buildCampaignMarkdown(opts: {
   }
 
   // Emails
-  if (pack.emails?.length) {
+  if (includeEmail && pack.emails?.length) {
     md += heading(2, "Email Sequence");
     pack.emails.forEach((e, i) => {
       md += `### Email ${i + 1}\n\n`;
@@ -120,32 +144,58 @@ export function buildCampaignMarkdown(opts: {
     });
   }
 
-  // Social
-  if (pack.social) {
-    md += heading(2, "Social Media Pack");
-    const posts = [...(pack.social.launchPosts || []), ...(pack.social.followUps || [])];
-    posts.forEach((p, i) => {
-      md += `### ${clean(p.platform) || "Post"} — ${i < (pack.social.launchPosts?.length || 0) ? "Launch" : "Follow-up"}\n\n`;
-      md += line("Platform", p.platform);
-      md += line("Hook", p.hook);
-      md += line("Short post", p.short);
-      md += line("Long post", p.long);
-      md += line("CTA", p.cta);
-      md += line("Visual prompt", p.visualPrompt);
-      md += "\n";
-    });
-    if (pack.social.launchWeek?.length) {
-      md += `**Launch week sequence**\n\n`;
-      pack.social.launchWeek.forEach((d) => {
-        const day = clean(d.day), theme = clean(d.theme), post = clean(d.post);
-        if (day || theme || post) md += `- **${day} — ${theme}:** ${post}\n`;
+  // Social — respect selected channels
+  if (includeSocial && pack.social) {
+    const filterPosts = (arr: any[] | undefined) =>
+      (arr || []).filter((p) => !hasSelection || selectedSocial.includes(normaliseChannel(p?.platform || "")));
+    const launch = filterPosts(pack.social.launchPosts);
+    const follow = filterPosts(pack.social.followUps);
+    if (launch.length || follow.length || pack.social.launchWeek?.length) {
+      md += heading(2, "Social Media Pack");
+      if (hasSelection) md += `_Selected platforms: ${selectedSocial.join(", ") || "none"}_\n\n`;
+      [...launch, ...follow].forEach((p, i) => {
+        md += `### ${clean(p.platform) || "Post"} — ${i < launch.length ? "Launch" : "Follow-up"}\n\n`;
+        md += line("Platform", p.platform);
+        md += line("Hook", p.hook);
+        md += line("Short post", p.short);
+        md += line("Long post", p.long);
+        md += line("CTA", p.cta);
+        md += line("Visual prompt", p.visualPrompt);
+        md += "\n";
       });
-      md += "\n";
+      if (pack.social.launchWeek?.length) {
+        md += `**Launch week sequence**\n\n`;
+        pack.social.launchWeek.forEach((d) => {
+          const day = clean(d.day), theme = clean(d.theme), post = clean(d.post);
+          if (day || theme || post) md += `- **${day} — ${theme}:** ${post}\n`;
+        });
+        md += "\n";
+      }
+    }
+
+    // Optional additional channels (kept clearly separate)
+    const extra: any = (pack.social as any).optionalAdditional;
+    const extraLaunch = extra?.launchPosts || [];
+    const extraFollow = extra?.followUps || [];
+    if (hasSelection && (extraLaunch.length || extraFollow.length)) {
+      md += heading(2, "Optional Additional Channels");
+      md += `_Not part of your selected pack — included only as extras you can choose to use._\n\n`;
+      [...extraLaunch, ...extraFollow].forEach((p: any, i: number) => {
+        md += `### ${clean(p.platform) || "Post"} — ${i < extraLaunch.length ? "Launch" : "Follow-up"}\n\n`;
+        md += line("Platform", p.platform);
+        md += line("Hook", p.hook);
+        md += line("Short post", p.short);
+        md += line("Long post", p.long);
+        md += line("CTA", p.cta);
+        md += line("Visual prompt", p.visualPrompt);
+        md += "\n";
+      });
     }
   }
 
+
   // Press
-  if (pack.press) {
+  if (includePress && pack.press) {
     md += heading(2, "Press / PR Pack");
     md += line("Headline", pack.press.headline);
     md += line("Subheadline", pack.press.subheadline);
@@ -163,7 +213,7 @@ export function buildCampaignMarkdown(opts: {
   }
 
   // Video
-  if (pack.video) {
+  if (includeVideo && pack.video) {
     md += heading(2, "Video Pack");
     if (pack.video.hooks?.length) {
       md += `**Hooks**\n\n${bullets(pack.video.hooks)}`;

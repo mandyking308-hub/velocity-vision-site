@@ -267,8 +267,22 @@ export function generatePack(brief: CampaignBrief): CampaignPack {
     };
   };
 
-  const launchPosts = PLATFORMS.map((p, i) => makePost(p, hooks[i % hooks.length]));
-  const followUps = PLATFORMS.flatMap((p) => [0, 1].map((i) => makePost(p, hooks[(i + 2) % hooks.length]))).slice(0, 10);
+  const selectedSocial: string[] = (brief.channels || [])
+    .map((c): string | null => {
+      const s = (c || "").toLowerCase().trim();
+      if (s === "linkedin") return "LinkedIn";
+      if (s === "instagram") return "Instagram";
+      if (s === "x" || s === "twitter") return "X";
+      if (s === "facebook") return "Facebook";
+      if (s === "tiktok") return "TikTok";
+      return null;
+    })
+    .filter((p): p is string => p !== null);
+
+  const activePlatforms = selectedSocial.length ? selectedSocial : PLATFORMS;
+  const launchPosts = activePlatforms.map((p, i) => makePost(p, hooks[i % hooks.length]));
+  const followUps = activePlatforms.flatMap((p) => [0, 1].map((i) => makePost(p, hooks[(i + 2) % hooks.length]))).slice(0, 10);
+
 
   return {
     language: requested,
