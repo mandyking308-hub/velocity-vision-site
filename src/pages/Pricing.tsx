@@ -91,7 +91,7 @@ const faqs = [
 ];
 
 const Pricing = () => {
-  const { currency } = useCurrency();
+  const { currency, setCurrency } = useCurrency();
   return (
   <>
 
@@ -128,7 +128,7 @@ const Pricing = () => {
       <section className="relative z-10 bg-background px-6 md:px-12 lg:px-20 -mt-16 md:-mt-20 lg:-mt-28 pt-0 pb-16 md:pb-20 lg:pb-24">
         <div className="max-w-7xl mx-auto">
           <div className="mb-6 md:mb-8">
-            <PricingCurrencySelector align="right" />
+            <PricingCurrencySelector align="right" currency={currency} onCurrencyChange={setCurrency} />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {plans.map((p, i) => (
