@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import CurrencySwitcher from "@/components/CurrencySwitcher";
+import { GTranslateSlot } from "@/components/GTranslate";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -45,6 +46,7 @@ const Navbar = () => {
             ))}
           </div>
           <div className="flex items-center gap-4">
+            <GTranslateSlot />
             <CurrencySwitcher />
             <Button variant="ghost" size="sm" asChild>
               <Link to="/pricing">{t("nav.seePricing")}</Link>
@@ -55,16 +57,19 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile toggle */}
-        <button
-          type="button"
-          className="xl:hidden text-foreground"
-          onClick={() => setOpen(!open)}
-          aria-label={open ? "Close menu" : "Open menu"}
-          aria-expanded={open}
-        >
-          {open ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        {/* Mobile: translate + toggle */}
+        <div className="flex items-center gap-2 xl:hidden">
+          <GTranslateSlot />
+          <button
+            type="button"
+            className="text-foreground"
+            onClick={() => setOpen(!open)}
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+          >
+            {open ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile menu */}
