@@ -7,7 +7,7 @@ import { PRICE_IDS } from "@/lib/stripe";
 import { Sparkles } from "lucide-react";
 import { useCurrency } from "@/hooks/useCurrency";
 import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
-import LegalAcceptanceGate from "@/components/LegalAcceptanceGate";
+import LegalComplianceGate from "@/components/LegalComplianceGate";
 import { useAuth } from "@/contexts/AuthContext";
 import { recordLegalAcceptance } from "@/lib/recordLegalAcceptance";
 import BillingTermsSummary from "@/components/BillingTermsSummary";
