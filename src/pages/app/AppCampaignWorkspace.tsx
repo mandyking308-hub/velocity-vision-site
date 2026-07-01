@@ -20,6 +20,11 @@ import {
   computeNextRun, deriveLifecycle, nextActionLabel, plainEnglish,
 } from "@/lib/cadence";
 import { Pause, Play, Clock, Repeat } from "lucide-react";
+import { buildCampaignMarkdown, slugify } from "@/lib/campaignPackExport";
+import { checkPackQuality } from "@/lib/campaignQuality";
+import {
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 
 interface Campaign {
   id: string;
@@ -82,16 +87,60 @@ export default function AppCampaignWorkspace() {
     toast.success(t("campaigns.toasts.packRegenerated"));
   };
 
-  const exportMd = () => {
-    if (!c?.pack) return;
-    const md = JSON.stringify(c.pack, null, 2);
-    const blob = new Blob([md], { type: "text/markdown" });
+  const withQualityCheck = (action: () => void) => {
+    if (!c?.pack || !c?.brief) return;
+    const q = checkPackQuality(c.pack as any, c.brief as any);
+    if (!q.ok) {
+      toast.error("Pack quality check failed. Regenerate before exporting.", {
+        description: q.issues.slice(0, 2).map((i) => i.message).join(" • "),
+      });
+      return;
+    }
+    action();
+  };
+
+  const buildMd = () => {
+    if (!c?.pack) return "";
+    return buildCampaignMarkdown({
+      name: c.name,
+      brief: c.brief,
+      pack: c.pack,
+      cadenceSummary: c.start_at ? plainEnglish(cadenceFull as any) : undefined,
+    });
+  };
+
+  const exportMarkdown = () => withQualityCheck(() => {
+    const md = buildMd();
+    const blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${c.slug || c.id}.json`;
+    a.download = `campaign-pack-${slugify(c!.slug || c!.name)}.md`;
+    document.body.appendChild(a);
     a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast.success("Campaign pack downloaded");
+  });
+
+  const copyFullPack = () => withQualityCheck(async () => {
+    await navigator.clipboard.writeText(buildMd());
+    toast.success("Full campaign pack copied");
+  });
+
+  const exportJsonDebug = () => {
+    if (!c?.pack) return;
+    const blob = new Blob([JSON.stringify(c.pack, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `campaign-pack-${slugify(c.slug || c.name)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
+
+  const showJsonExport = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("debug");
+
 
   if (!c) return <p className="text-muted-foreground">Loading…</p>;
   const pack = c.pack;
@@ -182,7 +231,18 @@ export default function AppCampaignWorkspace() {
             <Button variant="outline" size="sm" onClick={advanceRun}><Repeat className="h-4 w-4 mr-1" />Mark run complete</Button>
           )}
           <Button variant="outline" size="sm" onClick={regenerate}><Sparkles className="h-4 w-4 mr-1" />Regenerate ({CREDIT_COSTS.full_campaign_pack} credits)</Button>
-          <Button variant="outline" size="sm" onClick={exportMd}><Download className="h-4 w-4 mr-1" />Export</Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm"><Download className="h-4 w-4 mr-1" />Export</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={exportMarkdown}>Download Markdown (.md)</DropdownMenuItem>
+              <DropdownMenuItem onClick={copyFullPack}>Copy full pack</DropdownMenuItem>
+              {showJsonExport && (
+                <DropdownMenuItem onClick={exportJsonDebug}>Export JSON (debug)</DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
           
         </div>
       </div>
