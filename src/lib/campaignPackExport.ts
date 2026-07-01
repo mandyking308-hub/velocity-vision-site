@@ -2,7 +2,12 @@ import type { CampaignBrief, CampaignPack } from "./campaignPack";
 
 const clean = (v: any): string => {
   if (v === null || v === undefined) return "";
-  const s = String(v).trim();
+  const s = String(v)
+    .replace(/\{\{\s*first_name\s*\}\}/gi, "[First name]")
+    .replace(/\{\{\s*sender\s*\}\}/gi, "[Sender]")
+    .replace(/\{\{\s*company\s*\}\}/gi, "[Company]")
+    .replace(/\{\{\s*([^}]+)\s*\}\}/g, (_m, token) => `[${String(token).trim().replace(/_/g, " ")}]`)
+    .trim();
   if (!s) return "";
   if (/^(undefined|null|qa-seed:\/\/)/i.test(s)) return "";
   return s;
@@ -26,6 +31,15 @@ export function slugify(s: string): string {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "")
     .slice(0, 60) || "campaign";
+}
+
+export function formatCampaignPackMarkdown(campaign: { name: string; slug?: string | null; cadenceSummary?: string }, brief: CampaignBrief | null, pack: CampaignPack): string {
+  return buildCampaignMarkdown({
+    name: campaign.name,
+    brief,
+    pack,
+    cadenceSummary: campaign.cadenceSummary,
+  });
 }
 
 export function buildCampaignMarkdown(opts: {
@@ -79,8 +93,7 @@ export function buildCampaignMarkdown(opts: {
   // Offer
   if (pack.offer) {
     md += heading(2, "Offer Framing");
-    const framing = clean(pack.offer.framing);
-    if (framing) md += `${framing}\n\n`;
+    md += line("Framing", pack.offer.framing);
     if (pack.offer.benefits?.length) {
       md += `**Benefits**\n\n${bullets(pack.offer.benefits)}`;
     }
@@ -102,7 +115,7 @@ export function buildCampaignMarkdown(opts: {
       md += line("Subject", e.subject);
       md += line("Preview", e.preview);
       const body = clean(e.body);
-      if (body) md += `\n${body}\n\n`;
+      if (body) md += `\n**Body**\n\n${body}\n\n`;
     });
   }
 
@@ -112,6 +125,7 @@ export function buildCampaignMarkdown(opts: {
     const posts = [...(pack.social.launchPosts || []), ...(pack.social.followUps || [])];
     posts.forEach((p, i) => {
       md += `### ${clean(p.platform) || "Post"} — ${i < (pack.social.launchPosts?.length || 0) ? "Launch" : "Follow-up"}\n\n`;
+      md += line("Platform", p.platform);
       md += line("Hook", p.hook);
       md += line("Short post", p.short);
       md += line("Long post", p.long);
