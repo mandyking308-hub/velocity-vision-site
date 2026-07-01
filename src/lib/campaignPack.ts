@@ -85,6 +85,66 @@ export function getCampaignChannelConfig(brief: Pick<CampaignBrief, "channels" |
   };
 }
 
+const SIGNOFF_LINE_RE = /^(Best regards|Best|Thanks|Thank you|Cheers|Kind regards|Regards|Warmly|Speak soon|Sincerely),?$/i;
+const SIGNOFF_INLINE_RE = /^(Best regards|Best|Thanks|Thank you|Cheers|Kind regards|Regards|Warmly|Speak soon|Sincerely),?\s+\S.+$/i;
+const SENDER_ONLY_RE = /^[-—]?\s*(\{\{\s*sender\s*\}\}|\[sender\])\s*$/i;
+
+const meaningfulText = (value: unknown, minLength: number) =>
+  typeof value === "string" &&
+  value
+    .replace(/\u00a0/g, " ")
+    .replace(/[\u200B-\u200D\uFEFF]/g, "")
+    .trim().length >= minLength;
+
+function completeObjections(
+  fallback: CampaignPack["offer"]["objections"],
+  generated: unknown,
+): CampaignPack["offer"]["objections"] {
+  const raw = Array.isArray(generated) ? generated : [];
+  const count = Math.max(3, raw.length, fallback.length);
+  return Array.from({ length: count }, (_, i) => {
+    const item = raw[i] || {};
+    const fallbackItem = fallback[i % fallback.length];
+    return {
+      objection: meaningfulText((item as any).objection, 4) ? String((item as any).objection).trim() : fallbackItem.objection,
+      response: meaningfulText((item as any).response, 8) ? String((item as any).response).trim() : fallbackItem.response,
+    };
+  });
+}
+
+export function ensureEmailCtaBeforeSignoff(body: string, chosenCta: string): string {
+  const cta = (chosenCta || "").trim();
+  if (!body || !cta) return body || "";
+
+  const lines = body.replace(/\r\n/g, "\n").split("\n").map((line) => line.trim());
+  const nonEmpty = lines.filter(Boolean);
+  const normCta = cta.toLowerCase();
+  const ctaLines = nonEmpty.filter((line) => line.toLowerCase().includes(normCta));
+  const ctaLine = ctaLines[0] || cta;
+  const withoutCta = nonEmpty.filter((line) => !line.toLowerCase().includes(normCta));
+
+  let signoffIndex = withoutCta.findIndex((line) => SIGNOFF_LINE_RE.test(line) || SIGNOFF_INLINE_RE.test(line) || SENDER_ONLY_RE.test(line));
+  let bodyLines: string[];
+  let signoffLines: string[];
+
+  if (signoffIndex >= 0) {
+    bodyLines = withoutCta.slice(0, signoffIndex);
+    signoffLines = withoutCta.slice(signoffIndex);
+  } else {
+    bodyLines = withoutCta;
+    signoffLines = ["Best,", "{{sender}}"];
+  }
+
+  if (signoffLines.length === 1 && SIGNOFF_LINE_RE.test(signoffLines[0])) {
+    signoffLines.push("{{sender}}");
+  }
+
+  return [...bodyLines, "", ctaLine, "", ...signoffLines]
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 export function enforceCampaignChannels(pack: CampaignPack, brief: CampaignBrief): CampaignPack {
   const cfg = getCampaignChannelConfig(brief);
   const filterPosts = (arr: SocialPost[] | undefined) =>
@@ -110,15 +170,24 @@ export function enforceCampaignChannels(pack: CampaignPack, brief: CampaignBrief
 export function mergeGeneratedPack(brief: CampaignBrief, aiPack: Partial<CampaignPack> | any, generatedAs?: string): CampaignPack {
   const base = generatePack(brief);
   const cfg = getCampaignChannelConfig(brief);
+  const rawEmails = cfg.includeEmail
+    ? (Array.isArray(aiPack?.emails) && aiPack.emails.length ? aiPack.emails : base.emails)
+    : [];
   const merged = {
     language: (brief.language || "en") as CampaignLanguage,
     generatedAs: (generatedAs || brief.language || "en") as CampaignLanguage,
     strategy: { ...base.strategy, ...(aiPack?.strategy || {}) },
     landing: { ...base.landing, ...(aiPack?.landing || {}), cta: brief.cta },
-    offer: { ...base.offer, ...(aiPack?.offer || {}), cta: brief.cta },
-    emails: cfg.includeEmail
-      ? (Array.isArray(aiPack?.emails) && aiPack.emails.length ? aiPack.emails : base.emails)
-      : [],
+    offer: {
+      ...base.offer,
+      ...(aiPack?.offer || {}),
+      objections: completeObjections(base.offer.objections, aiPack?.offer?.objections),
+      cta: brief.cta,
+    },
+    emails: rawEmails.map((email: any) => ({
+      ...email,
+      body: ensureEmailCtaBeforeSignoff(String(email?.body || ""), brief.cta),
+    })),
     social: { ...base.social, ...(aiPack?.social || {}) },
     press: cfg.includePress
       ? (aiPack?.press === null ? null : { ...(base.press || {}), ...(aiPack?.press || {}) })

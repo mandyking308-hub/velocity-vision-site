@@ -82,6 +82,7 @@ const INVENTED_CTAS = [
 ];
 
 const norm = (s: string) => (s || "").toLowerCase();
+const stripInvisible = (s: unknown) => String(s ?? "").replace(/\u00a0/g, " ").replace(/[\u200B-\u200D\uFEFF]/g, "");
 
 function neutraliseAllowedTokens(text: string): string {
   return text.replace(/\{\{\s*([a-z_][a-z0-9_]*)\s*\}\}/gi, (m, name) => {
@@ -198,8 +199,8 @@ export function checkPackQuality(pack: CampaignPack, brief: CampaignBrief): Qual
   const objections = pack.offer?.objections;
   if (Array.isArray(objections)) {
     objections.forEach((o, i) => {
-      const q = (o?.objection || "").trim();
-      const a = (o?.response || "").trim();
+      const q = stripInvisible(o?.objection).trim();
+      const a = stripInvisible(o?.response).trim();
       if (!q || q.length < 4) {
         issues.push({
           code: "blank_field",
@@ -225,6 +226,19 @@ export function checkPackQuality(pack: CampaignPack, brief: CampaignBrief): Qual
     (pack.emails || []).forEach((e, i) => {
       if (!e?.subject || e.subject.length > 90) {
         issues.push({ code: "subject_too_long", message: `Email #${i + 1} subject too long (${e?.subject?.length ?? 0} chars)`, where: `emails[${i}].subject`, matchedSnippet: e?.subject, source: "quality_guard_logic" });
+      }
+      const body = stripInvisible(e?.body);
+      const chosen = stripInvisible(brief.cta).trim().toLowerCase();
+      if (chosen && body) {
+        const lowerBody = body.toLowerCase();
+        const ctaIndex = lowerBody.indexOf(chosen);
+        const signoffMatch = lowerBody.match(/\n\s*(best regards|best|thanks|thank you|cheers|kind regards|regards|warmly|speak soon|sincerely)\s*,?\s*(\n|$)|\n\s*[-—]?\s*(\{\{\s*sender\s*\}\}|\[sender\])\s*$/i);
+        const signoffIndex = signoffMatch?.index ?? -1;
+        if (ctaIndex < 0) {
+          issues.push({ code: "blank_field", message: `Email #${i + 1} body is missing the chosen CTA`, where: `emails[${i}].body`, source: "quality_guard_logic" });
+        } else if (signoffIndex >= 0 && ctaIndex > signoffIndex) {
+          issues.push({ code: "cta_mismatch", message: `Email #${i + 1} CTA appears after the sign-off`, where: `emails[${i}].body`, matchedSnippet: brief.cta, source: "quality_guard_logic" });
+        }
       }
     });
   }

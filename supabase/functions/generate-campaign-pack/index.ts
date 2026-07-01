@@ -32,6 +32,66 @@ const json = (b: unknown, s = 200) =>
   });
 
 const SOCIAL_PLATFORMS = ["LinkedIn", "Instagram", "X", "Facebook", "TikTok"];
+const SIGNOFF_LINE_RE = /^(Best regards|Best|Thanks|Thank you|Cheers|Kind regards|Regards|Warmly|Speak soon|Sincerely),?$/i;
+const SIGNOFF_INLINE_RE = /^(Best regards|Best|Thanks|Thank you|Cheers|Kind regards|Regards|Warmly|Speak soon|Sincerely),?\s+\S.+$/i;
+const SENDER_ONLY_RE = /^[-—]?\s*(\{\{\s*sender\s*\}\}|\[sender\])\s*$/i;
+
+function stripInvisible(value: unknown): string {
+  return String(value ?? "").replace(/\u00a0/g, " ").replace(/[\u200B-\u200D\uFEFF]/g, "");
+}
+
+function hasMeaningfulText(value: unknown, minLength: number): boolean {
+  return stripInvisible(value).trim().length >= minLength;
+}
+
+function defaultObjectionResponse(objection: string, brief: Brief): string {
+  const clean = stripInvisible(objection).trim();
+  if (/time|learn|tool/i.test(clean)) {
+    return "The workspace is designed to keep setup focused, with reviewable drafts and controls before anything goes live.";
+  }
+  if (/agency|tried|before/i.test(clean)) {
+    return "This is a customer-managed workspace, so your team keeps control of the campaign, data and approvals.";
+  }
+  if (/sound|voice|brand/i.test(clean)) {
+    return "The campaign uses the tone and context from your brief, and every asset can be reviewed before launch.";
+  }
+  return `${brief.name || "The campaign"} keeps the work reviewable and customer-controlled, so the team can decide what to use before launch.`;
+}
+
+function normaliseObjections(pack: any, brief: Brief) {
+  const fallback = [
+    { objection: "We do not have time to learn a new tool.", response: "The workspace is designed to keep setup focused, with reviewable drafts and controls before anything goes live." },
+    { objection: "We have tried outsourced marketing before.", response: "This is a customer-managed workspace, so your team keeps control of the campaign, data and approvals." },
+    { objection: "Will it sound like our business?", response: "The campaign uses the tone and context from your brief, and every asset can be reviewed before launch." },
+  ];
+  const raw = Array.isArray(pack?.offer?.objections) ? pack.offer.objections : [];
+  const count = Math.max(3, raw.length, fallback.length);
+  pack.offer = pack.offer && typeof pack.offer === "object" ? pack.offer : {};
+  pack.offer.objections = Array.from({ length: count }, (_, i) => {
+    const current = raw[i] || {};
+    const base = fallback[i % fallback.length];
+    const objection = hasMeaningfulText(current.objection, 4) ? stripInvisible(current.objection).trim() : base.objection;
+    const response = hasMeaningfulText(current.response, 8)
+      ? stripInvisible(current.response).trim()
+      : defaultObjectionResponse(objection, brief);
+    return { objection, response };
+  });
+}
+
+function ensureEmailCtaBeforeSignoff(body: string, chosenCta: string): string {
+  const cta = stripInvisible(chosenCta).trim();
+  if (!body || !cta) return body || "";
+  const lines = body.replace(/\r\n/g, "\n").split("\n").map((line) => line.trim());
+  const nonEmpty = lines.filter(Boolean);
+  const ctaNeedle = cta.toLowerCase();
+  const ctaLine = nonEmpty.find((line) => line.toLowerCase().includes(ctaNeedle)) || cta;
+  const withoutCta = nonEmpty.filter((line) => !line.toLowerCase().includes(ctaNeedle));
+  const signoffIndex = withoutCta.findIndex((line) => SIGNOFF_LINE_RE.test(line) || SIGNOFF_INLINE_RE.test(line) || SENDER_ONLY_RE.test(line));
+  const bodyLines = signoffIndex >= 0 ? withoutCta.slice(0, signoffIndex) : withoutCta;
+  const signoffLines = signoffIndex >= 0 ? withoutCta.slice(signoffIndex) : ["Best,", "{{sender}}"];
+  if (signoffLines.length === 1 && SIGNOFF_LINE_RE.test(signoffLines[0])) signoffLines.push("{{sender}}");
+  return [...bodyLines, "", ctaLine, "", ...signoffLines].join("\n").replace(/\n{3,}/g, "\n\n").trim();
+}
 
 function normaliseChannel(c: string): string {
   const s = (c || "").toLowerCase().trim();
@@ -76,8 +136,8 @@ STRICT RULES (breaking any of these makes the output unusable):
 8. Every sentence must be grammatical. Never produce broken fragments.
 9. Press release must read like a genuine business announcement — no hype, no unverifiable claims, no fabricated quotes attributed to specific people. Use "a company spokesperson" if a quote is included.
 10. RESPECT SELECTED CHANNELS. Only produce assets for the channels the user selected. Do NOT invent Facebook, Instagram, TikTok, Paid Ads, Email, PR or Video content if the user did not select it.
-11. EVERY objection object in offer.objections MUST include BOTH a non-empty "objection" (>= 4 chars) AND a non-empty "response" (>= 8 chars, ideally a full sentence). Never emit an objection with a blank, missing, or placeholder response.
-12. EMAIL BODY STRUCTURE. Each email body MUST end in this exact order: (a) 1–2 short paragraphs of body copy, then (b) a single CTA sentence using the user's chosen CTA verbatim, then (c) the sign-off line ("Best," / "Thanks," etc.) followed by "{{sender}}". The CTA MUST appear BEFORE the sign-off. Never place the CTA after the signature. Never append the CTA as a trailing fragment after the sender name.
+11. EVERY objection object in offer.objections MUST include BOTH a complete non-empty "objection" (>= 4 chars) AND a complete non-empty "response" (>= 8 chars, ideally a full sentence). Do not emit empty strings, whitespace, dashes, placeholders, nulls, or missing values for objection responses.
+12. EMAIL BODY STRUCTURE. Each email body MUST use this exact order: greeting, then 1–2 short paragraphs of body copy, then one CTA sentence using the user's chosen CTA verbatim, then the sign-off line ("Best," / "Thanks," etc.) followed by "{{sender}}". The CTA MUST appear BEFORE the sign-off. Never place the CTA after "Best regards", "Best", "Thanks", "Regards", "{{sender}}", or the signature block. Never append the CTA as a trailing fragment after the sender name.
 13. Return ONLY the JSON object described below. No prose, no markdown fences, no commentary.
 
 Channel-specific rules for THIS brief:
@@ -226,6 +286,10 @@ Return the JSON object only.`;
         }
       }
 
+      // Defensive: never return blank objection responses; the client quality
+      // guard still blocks any invalid pack before save/credit deduction.
+      normaliseObjections(pack, brief);
+
       // Defensive: reorder any email body that ends with "sign-off … sender … CTA"
       // so the CTA sits BEFORE the sign-off. Uses the user's chosen CTA verbatim.
       const chosenCta = (brief.cta || "").trim();
@@ -242,7 +306,7 @@ Return the JSON object only.`;
             const ctaLine = m[3].trim();
             body = `${before}\n\n${ctaLine}\n\n${signoffBlock}`.replace(/\n{3,}/g, "\n\n").trimEnd();
           }
-          return { ...e, body };
+          return { ...e, body: ensureEmailCtaBeforeSignoff(body, chosenCta) };
         });
       }
     }
