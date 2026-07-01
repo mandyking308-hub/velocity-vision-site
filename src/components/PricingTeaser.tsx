@@ -40,10 +40,10 @@ const PricingTeaser = () => (
       >
         <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Pricing</p>
         <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">
-          One workspace. Far less than the tools you'd replace.
+          One workspace for marketing-led growth and early pipeline
         </h2>
-        <p className="text-muted-foreground text-lg">
-          Outreach, follow-up and pipeline together — for less than most teams spend on disconnected tools, freelancers and lost replies.
+        <p className="text-muted-foreground text-lg leading-relaxed">
+          Outreach, follow-up and early pipeline together — for less than most teams spend on disconnected tools and lost replies.
         </p>
       </motion.div>
 
