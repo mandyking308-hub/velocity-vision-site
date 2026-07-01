@@ -401,11 +401,15 @@ export default function AppCampaignNew() {
           <ChevronLeft className="h-4 w-4 mr-1" /> Back
         </Button>
         {step < totalSteps ? (
-          <Button onClick={next} disabled={step === 2 && (!brief.name || !brief.offer || !brief.audience)}>
+          <Button
+            data-testid="campaign-next-button"
+            onClick={next}
+            disabled={step === 2 && (!brief.name || !brief.offer || !brief.audience)}
+          >
             Continue <ChevronRight className="h-4 w-4 ml-1" />
           </Button>
         ) : (
-          <Button onClick={generate} disabled={saving}>
+          <Button data-testid="campaign-create-button" onClick={generate} disabled={saving}>
             <Sparkles className="h-4 w-4 mr-2" /> {saving ? "Generating…" : "Generate campaign pack"}
           </Button>
         )}
@@ -414,11 +418,35 @@ export default function AppCampaignNew() {
   );
 }
 
-function Field({ label, v, on, full }: { label: string; v: string; on: (v: string) => void; full?: boolean }) {
+function Field({
+  label, v, on, full, id, name, placeholder, required, testId,
+}: {
+  label: string;
+  v: string;
+  on: (v: string) => void;
+  full?: boolean;
+  id?: string;
+  name?: string;
+  placeholder?: string;
+  required?: boolean;
+  testId?: string;
+}) {
+  const autoId = id || `field-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
   return (
     <div className={full ? "md:col-span-2" : ""}>
-      <Label>{label}</Label>
-      <Input value={v} onChange={(e) => on(e.target.value)} />
+      <Label htmlFor={autoId}>
+        {label}{required && <span className="text-destructive ml-0.5">*</span>}
+      </Label>
+      <Input
+        id={autoId}
+        name={name}
+        placeholder={placeholder}
+        aria-label={label}
+        aria-required={required || undefined}
+        data-testid={testId}
+        value={v}
+        onChange={(e) => on(e.target.value)}
+      />
     </div>
   );
 }
