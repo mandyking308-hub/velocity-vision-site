@@ -122,6 +122,8 @@ export default function AppCampaignWorkspace() {
         usedFallback = true;
       }
 
+      if (!pack) throw new Error("Could not generate campaign pack");
+
       const quality = checkPackQuality(pack, c.brief);
       if (!quality.ok) {
         toast.error("Campaign quality check failed", {
