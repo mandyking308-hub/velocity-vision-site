@@ -7,6 +7,7 @@ const clean = (v: any): string => {
     .replace(/\{\{\s*sender\s*\}\}/gi, "[Sender]")
     .replace(/\{\{\s*company\s*\}\}/gi, "[Company]")
     .replace(/\{\{\s*([^}]+)\s*\}\}/g, (_m, token) => `[${String(token).trim().replace(/_/g, " ")}]`)
+    .replace(/[{}]/g, "")
     .trim();
   if (!s) return "";
   if (/^(undefined|null|qa-seed:\/\/)/i.test(s)) return "";
@@ -85,7 +86,7 @@ export function buildCampaignMarkdown(opts: {
       md += `\n**Sections**\n\n`;
       pack.landing.sections.forEach((s) => {
         const t = clean(s.title), b = clean(s.body);
-        if (t || b) md += `### ${t}\n\n${b}\n\n`;
+        if (t || b) md += `### ${t || "Section"}\n\n${b}\n\n`;
       });
     }
   }
@@ -157,7 +158,7 @@ export function buildCampaignMarkdown(opts: {
     const quote = clean(pack.press.quote);
     if (quote) md += `**Quote**\n\n> ${quote}\n\n`;
     md += line("Boilerplate", pack.press.boilerplate);
-    md += line("Contact", pack.press.contactLine);
+    md += line("Contact line", pack.press.contactLine);
     md += "\n";
   }
 
