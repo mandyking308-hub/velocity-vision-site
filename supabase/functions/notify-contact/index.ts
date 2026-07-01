@@ -5,6 +5,32 @@ const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 const CONTACT_NOTIFY_TO = Deno.env.get('CONTACT_NOTIFY_TO');
 const EMAIL_FROM = Deno.env.get('EMAIL_FROM') ?? 'Velocity Vision <notifications@velocity-outreach.com>';
 
+// Human-readable labels for each supported contact route.
+const ROUTE_LABELS: Record<string, string> = {
+  general_support: 'General support',
+  billing: 'Billing & account',
+  privacy_data_request: 'Privacy / data request',
+  security_report: 'Security report',
+  abuse_acceptable_use: 'Abuse / acceptable use',
+  marketing_compliance_complaint: 'Marketing compliance complaint',
+  cookie_tracking: 'Cookie / tracking question',
+  legal_notice: 'Legal notice',
+  subprocessor_question: 'Subprocessor question',
+  partnerships: 'Partnerships & integrations',
+  enterprise_volume: 'Enterprise / agency volume',
+  other: 'Other',
+  demo_booking: 'Demo booking',
+  website_contact: 'Website enquiry',
+};
+
+// Optional per-route internal recipient override via env vars.
+// Names are uppercased and prefixed with CONTACT_NOTIFY_TO_.
+// Falls back to CONTACT_NOTIFY_TO if no override is configured.
+function recipientFor(route: string): string | undefined {
+  const key = `CONTACT_NOTIFY_TO_${route.toUpperCase()}`;
+  return Deno.env.get(key) || CONTACT_NOTIFY_TO || undefined;
+}
+
 const esc = (s: string) =>
   String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string));
 
@@ -25,7 +51,9 @@ Deno.serve(async (req) => {
   const email = String(payload.email ?? '').trim();
   const company = String(payload.company ?? '').trim();
   const message = String(payload.message ?? '').trim();
-  const route = String(payload.route ?? 'website_contact').slice(0, 64);
+  const rawRoute = String(payload.route ?? 'general_support').slice(0, 64);
+  const route = ROUTE_LABELS[rawRoute] ? rawRoute : 'other';
+  const routeLabel = ROUTE_LABELS[route] ?? 'Other';
   const source = route === 'demo_booking' ? 'demo_booking' : 'website_contact';
 
   if (!name || !email) {
@@ -82,17 +110,18 @@ Deno.serve(async (req) => {
 
   const timestamp = new Date().toISOString();
 
-  if (!CONTACT_NOTIFY_TO || !RESEND_API_KEY) {
+  const notifyTo = recipientFor(route);
+  if (!notifyTo || !RESEND_API_KEY) {
     await logError('notify-contact: missing config');
     return json({ ok: true, lead_id: leadId, contact_id: contactId, company_id: companyId, notified: false });
   }
 
-  const subject = `New website enquiry — ${name || 'Unknown'}${route ? ` (${route})` : ''}`;
+  const subject = `[${routeLabel}] Website enquiry — ${name || 'Unknown'}`;
   const html = `
     <div style="font-family:Arial,sans-serif;color:#111;line-height:1.5">
-      <h2 style="margin:0 0 12px">New website enquiry</h2>
+      <h2 style="margin:0 0 12px">New website enquiry — ${esc(routeLabel)}</h2>
       <table style="border-collapse:collapse">
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Route</td><td>${esc(route)}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#666">Route</td><td><strong>${esc(routeLabel)}</strong> <span style="color:#888">(${esc(route)})</span></td></tr>
         <tr><td style="padding:4px 12px 4px 0;color:#666">Name</td><td>${esc(name)}</td></tr>
         <tr><td style="padding:4px 12px 4px 0;color:#666">Email</td><td>${esc(email)}</td></tr>
         <tr><td style="padding:4px 12px 4px 0;color:#666">Company</td><td>${esc(company)}</td></tr>
