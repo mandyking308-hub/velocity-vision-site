@@ -11,6 +11,8 @@ import { useCredits } from "@/contexts/CreditsContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Briefcase, Check, Plus, Sparkles, Info } from "lucide-react";
 import { toast } from "sonner";
+import LegalComplianceGate from "@/components/LegalComplianceGate";
+import { useLegalStatus } from "@/lib/legalCompliance";
 
 export default function AppWorkspaces() {
   const { workspaces, currentId, setCurrentId, loading } = useWorkspace();
