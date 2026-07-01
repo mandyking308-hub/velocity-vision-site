@@ -30,6 +30,7 @@ export default function AppActivation() {
   const { t } = useTranslation("app");
   const { user } = useAuth();
   const { remaining, planConfig } = useCredits();
+  const { currentId } = useWorkspace();
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const campaignId = params.get("campaign") || null;
