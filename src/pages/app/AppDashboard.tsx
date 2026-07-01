@@ -356,8 +356,8 @@ export default function AppDashboard() {
       {/* E. Replies and follow-up */}
       <SectionHeader
         icon={MessageSquare}
-        title="Replies and follow-up"
-        desc="Who replied, who's overdue, what's warm. This is where you start your day."
+        title="Replies and follow-up (AI follow-up suggestions)"
+        desc="Who replied, who's overdue, what's warm. AI drafts next-step follow-ups — you approve every send."
         cta={{ label: "Open follow-up queue", to: "/app/follow-up" }}
       />
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
