@@ -46,9 +46,9 @@ const HowItWorks = () => (
         <div className="max-w-5xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
             <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">How it works</p>
-            <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">From data upload to pipeline movement</h1>
+            <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">AI-powered outreach. Human-controlled activation.</h1>
             <p className="text-primary-foreground/75 text-lg mb-8 max-w-2xl">
-              One continuous flow inside one workspace. Activation is governed, replies are owned, pipeline is tracked — and the same loop keeps repeating.
+              One continuous flow inside one workspace. AI drafts the assets and quality-reviews your data; activation is governed and only happens when you approve it.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button variant="hero" size="lg" asChild>
