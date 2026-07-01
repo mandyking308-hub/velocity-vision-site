@@ -31,40 +31,79 @@ const json = (b: unknown, s = 200) =>
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 
-const SYSTEM = `You are a senior direct-response copywriter for Velocity Vision.
+const SOCIAL_PLATFORMS = ["LinkedIn", "Instagram", "X", "Facebook", "TikTok"];
+
+function normaliseChannel(c: string): string {
+  const s = (c || "").toLowerCase().trim();
+  if (s === "linkedin") return "LinkedIn";
+  if (s === "instagram" || s === "ig") return "Instagram";
+  if (s === "x" || s === "twitter") return "X";
+  if (s === "facebook" || s === "fb") return "Facebook";
+  if (s === "tiktok") return "TikTok";
+  if (s === "email") return "Email";
+  if (s === "pr" || s === "press") return "PR";
+  if (s === "paid ads" || s === "paid" || s === "ads") return "Paid ads";
+  if (s === "video") return "Video";
+  return c;
+}
+
+function buildSystemPrompt(selectedSocial: string[], includeEmail: boolean, includePress: boolean, includeVideo: boolean): string {
+  const socialLines = selectedSocial.length
+    ? `- Generate ONE launch post AND ONE follow-up post for EACH of these platforms ONLY: ${selectedSocial.join(", ")}. Do NOT generate posts for any other platform.`
+    : `- The user did not select any social channels. Return "social": { "launchPosts": [], "followUps": [], "hooks": [], "ctas": [], "launchWeek": [], "repostIdeas": [] }.`;
+
+  const emailLine = includeEmail
+    ? `- Generate 5 sequenced emails.`
+    : `- The user did not select Email. Return "emails": [].`;
+  const pressLine = includePress
+    ? `- Generate a full press release pack.`
+    : `- The user did not select PR. Return "press": null.`;
+  const videoLine = includeVideo
+    ? `- Generate a full video pack.`
+    : `- The user did not select Video. Return "video": null.`;
+
+  return `You are a senior direct-response copywriter for Velocity Vision.
 You are producing a commercial-grade multi-asset campaign pack from a short brief.
 
 STRICT RULES (breaking any of these makes the output unusable):
 1. REWRITE the brief into clean, natural sales copy. NEVER paste raw brief fields verbatim into headlines, hooks, emails or scripts.
 2. Do NOT repeat long phrases across assets. Each asset must read as fresh copy.
 3. Headlines must be under 12 words. Email subject lines must be under 70 characters. Social hooks must be under 20 words.
-4. USE ONLY the customer's chosen CTA (provided as "cta"). Do not invent alternative CTAs like "Book a call", "Start your trial", "Get the free guide", "Reply YES", or "Book a 15-min call" unless that exact CTA is what the user chose.
-5. Do NOT invent: free guides, trials, discounts, case studies, customer results, specific timeframes ("in 14 days", "in 7 days"), guarantees, or closing deadlines the user did not provide.
+4. USE ONLY the customer's chosen CTA (provided as "cta"). Do not invent alternative CTAs unless that exact CTA is what the user chose.
+5. Do NOT invent: free guides, trials, discounts, case studies, customer results, specific timeframes, guarantees, or closing deadlines the user did not provide.
 6. Do NOT promise: sales, replies, revenue, deliverability, inbox placement, media coverage, or legal compliance.
-7. Do NOT use words like "fastest", "guaranteed", "proven", "hit their goal", "faster than ever", "launch in days not quarters", "the offer changes".
-8. Every sentence must be grammatical. Never produce broken fragments like "If you're a activity." or "you're a {audience_word}".
+7. Do NOT use words like "fastest", "guaranteed", "proven", "hit their goal", "faster than ever", "launch in days not quarters".
+8. Every sentence must be grammatical. Never produce broken fragments.
 9. Press release must read like a genuine business announcement — no hype, no unverifiable claims, no fabricated quotes attributed to specific people. Use "a company spokesperson" if a quote is included.
-10. Return ONLY the JSON object described below. No prose, no markdown fences, no commentary.
+10. RESPECT SELECTED CHANNELS. Only produce assets for the channels the user selected. Do NOT invent Facebook, Instagram, TikTok, Paid Ads, Email, PR or Video content if the user did not select it.
+11. Return ONLY the JSON object described below. No prose, no markdown fences, no commentary.
 
-Output JSON schema (all fields required unless marked optional):
+Channel-specific rules for THIS brief:
+${socialLines}
+${emailLine}
+${pressLine}
+${videoLine}
+
+Output JSON schema:
 {
-  "strategy": { "positioning": string, "bigIdea": string, "messagingPillars": [string, string, string, string], "successMetric": string },
-  "landing": { "headline": string, "subheadline": string, "sections": [{"title": string, "body": string}] (5 items), "cta": string },
-  "offer":   { "framing": string, "benefits": [string x5], "objections": [{"objection": string, "response": string}] (3 items), "cta": string },
-  "emails":  [ { "subject": string (<=70 chars), "preview": string, "body": string } ] (5 items, use {{first_name}} / {{sender}} tokens),
-  "social":  {
-    "launchPosts": [ { "platform": one of "LinkedIn"|"Instagram"|"X"|"Facebook"|"TikTok", "hook": string, "short": string, "long": string, "cta": string, "visualPrompt": string } ] (5 items, one per platform),
-    "followUps":   [ same shape ] (5 items, different hooks from launchPosts),
-    "hooks":       [string x6],
-    "ctas":        [string x3, ALL variations of the user CTA only],
-    "launchWeek":  [ {"day": string, "theme": string, "post": string } ] (7 items, Mon..Sun),
-    "repostIdeas": [string x4]
+  "strategy": { "positioning": string, "bigIdea": string, "messagingPillars": [string x4], "successMetric": string },
+  "landing":  { "headline": string, "subheadline": string, "sections": [{"title": string, "body": string}] (5 items), "cta": string },
+  "offer":    { "framing": string, "benefits": [string x5], "objections": [{"objection": string, "response": string}] (3 items), "cta": string },
+  "emails":   [ { "subject": string (<=70 chars), "preview": string, "body": string } ] (5 items OR empty per rule above; use {{first_name}} / {{sender}} tokens),
+  "social":   {
+    "launchPosts": [ { "platform": string, "hook": string, "short": string, "long": string, "cta": string, "visualPrompt": string } ] (one per selected social platform, or empty),
+    "followUps":   [ same shape ] (one per selected social platform, different hooks),
+    "hooks":       [string x6] (or empty if no social selected),
+    "ctas":        [string x3] (variations of the user CTA only, or empty if no social selected),
+    "launchWeek":  [ {"day": string, "theme": string, "post": string } ] (7 items Mon..Sun, or empty),
+    "repostIdeas": [string x4] (or empty)
   },
-  "press": { "headline": string, "subheadline": string, "opening": string, "body": [string x3], "quote": string, "boilerplate": string, "contactLine": string },
-  "video": { "hooks": [string x3], "script30": string, "script60": string, "talkingHead": string, "bRoll": string, "shotList": [string x5], "storyboard": [string x5], "onScreenText": [string x4], "captionText": string, "ctaEndings": [string x3] },
+  "press":       { "headline": string, "subheadline": string, "opening": string, "body": [string x3], "quote": string, "boilerplate": string, "contactLine": string } OR null,
+  "video":       { "hooks": [string x3], "script30": string, "script60": string, "talkingHead": string, "bRoll": string, "shotList": [string x5], "storyboard": [string x5], "onScreenText": [string x4], "captionText": string, "ctaEndings": [string x3] } OR null,
   "leadCapture": { "formTitle": string, "fields": [ {"label": string, "type": "text"|"email"|"textarea", "required": boolean } ] (4 items), "ctaLabel": string, "thankYou": string }
 }
 The "cta" field on landing/offer and the "ctaLabel" on leadCapture MUST equal the user's chosen CTA verbatim.`;
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -76,7 +115,15 @@ Deno.serve(async (req) => {
   const brief = payload?.brief;
   if (!brief || typeof brief !== "object") return json({ error: "brief required" }, 400);
 
+  const normalisedChannels = (brief.channels || []).map(normaliseChannel);
+  const selectedSocial = SOCIAL_PLATFORMS.filter((p) => normalisedChannels.includes(p));
+  const includeEmail = normalisedChannels.includes("Email");
+  const includePress = normalisedChannels.includes("PR");
+  const includeVideo = normalisedChannels.includes("Video") || (brief.outputs || []).includes("video");
+
   const language = brief.language || "en";
+  const SYSTEM = buildSystemPrompt(selectedSocial, includeEmail, includePress, includeVideo);
+
   const userMsg = `Generate the campaign pack.
 
 Brief:
@@ -90,7 +137,11 @@ Brief:
 - Price point: ${brief.pricePoint || "(not provided — do not invent one)"}
 - Tone of voice: ${brief.tone}
 - CHOSEN CTA (use this exact wording): "${brief.cta}"
-- Preferred channels: ${(brief.channels || []).join(", ") || "unspecified"}
+- Selected channels (respect strictly): ${normalisedChannels.join(", ") || "unspecified"}
+- Selected social platforms: ${selectedSocial.join(", ") || "none"}
+- Email selected: ${includeEmail ? "YES" : "NO"}
+- PR selected: ${includePress ? "YES" : "NO"}
+- Video selected: ${includeVideo ? "YES" : "NO"}
 - Deadline / timing: ${brief.deadline || "(not provided — do not invent one)"}
 - Extra notes: ${brief.notes || "(none)"}
 
@@ -124,18 +175,57 @@ Return the JSON object only.`;
     }
     const data = await upstream.json();
     const raw: string = data?.choices?.[0]?.message?.content ?? "";
-    let pack: unknown;
+    let pack: any;
     try {
       pack = JSON.parse(raw);
     } catch {
-      // Try to strip fences if the model wrapped it
       const m = raw.match(/\{[\s\S]*\}/);
       if (!m) return json({ error: "invalid_ai_output", detail: raw.slice(0, 400) }, 502);
       try { pack = JSON.parse(m[0]); } catch (e) {
         return json({ error: "invalid_ai_output", detail: String(e).slice(0, 400) }, 502);
       }
     }
-    return json({ pack, language, generatedAs: language });
+
+    // Server-side enforcement — strip any unselected channels, split any extras to "optional"
+    if (pack && typeof pack === "object") {
+      if (!includeEmail) pack.emails = [];
+      if (!includePress) pack.press = null;
+      if (!includeVideo) pack.video = null;
+
+      if (pack.social && typeof pack.social === "object") {
+        const filterBy = (arr: any[]) =>
+          Array.isArray(arr)
+            ? arr.filter((p) => selectedSocial.includes(normaliseChannel(p?.platform || "")))
+            : [];
+        const extraBy = (arr: any[]) =>
+          Array.isArray(arr)
+            ? arr.filter((p) => !selectedSocial.includes(normaliseChannel(p?.platform || "")))
+            : [];
+
+        const launchExtras = extraBy(pack.social.launchPosts);
+        const followExtras = extraBy(pack.social.followUps);
+
+        pack.social.launchPosts = filterBy(pack.social.launchPosts);
+        pack.social.followUps = filterBy(pack.social.followUps);
+
+        if (launchExtras.length || followExtras.length) {
+          pack.social.optionalAdditional = {
+            note: "Optional additional channels — not part of the selected pack.",
+            launchPosts: launchExtras,
+            followUps: followExtras,
+          };
+        }
+
+        if (selectedSocial.length === 0) {
+          pack.social.hooks = [];
+          pack.social.ctas = [];
+          pack.social.launchWeek = [];
+          pack.social.repostIdeas = [];
+        }
+      }
+    }
+
+    return json({ pack, language, generatedAs: language, selectedChannels: normalisedChannels });
   } catch (e) {
     return json({ error: "exception", detail: String(e).slice(0, 400) }, 500);
   }
