@@ -140,7 +140,7 @@ export default function AppActivation() {
   const riskyClamped = Math.min(riskyOverride, riskyMax, counts.risky);
   const totalSelected = safeSelected + reviewSelected + riskyClamped;
   const sendNow = Math.min(totalSelected, safety.remainingToday);
-  const blocked = safety.pauseReasons.length > 0;
+  const blocked = safety.pauseReasons.length > 0 || !legal.isCompliant;
   const wantsRisky = riskyClamped > 0;
   const canActivate = sendNow > 0 && !blocked && (!wantsRisky || riskAck);
 
@@ -152,14 +152,19 @@ export default function AppActivation() {
     } catch { /* table is optional/best-effort */ }
   }
 
-  async function handleActivate() {
-    if (!canActivate) return;
+  async function runActivation() {
     await audit("activation_started", {
       batch: sendNow, includeReview, riskyOverride: riskyClamped, plan, safeAllowance: safety.safeAllowance,
     });
     toast.success(t("activate.toasts.prepared", { count: sendNow }));
     if (campaignId) navigate(`/app/campaigns/${campaignId}`);
     else navigate("/app/campaigns");
+  }
+
+  async function handleActivate() {
+    if (sendNow <= 0 || safety.pauseReasons.length > 0 || (wantsRisky && !riskAck)) return;
+    if (!legal.isCompliant) { setLegalGateOpen(true); return; }
+    await runActivation();
   }
 
   const totalContacts = counts.valid + counts.needs_review + counts.risky + counts.blocked + counts.suppressed;
