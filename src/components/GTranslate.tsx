@@ -122,13 +122,27 @@ export function GTranslateSlot({ className = "" }: { className?: string }) {
 
   useEffect(() => {
     ensureWidgetLoaded();
-    const widget = getWidgetElement();
-    const host = hostRef.current;
-    if (!host) return;
-    host.appendChild(widget);
+
+    const isVisible = (el: HTMLElement) =>
+      el.offsetParent !== null || getComputedStyle(el).position === "fixed";
+
+    const claim = () => {
+      const host = hostRef.current;
+      if (!host || !isVisible(host)) return;
+      const widget = getWidgetElement();
+      if (widget.parentElement !== host) host.appendChild(widget);
+    };
+
+    claim();
+    window.addEventListener("resize", claim);
     return () => {
+      window.removeEventListener("resize", claim);
+      const widget = document.querySelector<HTMLDivElement>("." + WRAPPER_CLASS);
+      const host = hostRef.current;
       const holder = document.getElementById(HOLDER_ID);
-      if (holder && widget.parentElement === host) holder.appendChild(widget);
+      if (widget && host && widget.parentElement === host && holder) {
+        holder.appendChild(widget);
+      }
     };
   }, []);
 
