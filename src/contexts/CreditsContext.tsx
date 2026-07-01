@@ -84,7 +84,10 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
       if (row.reason === "plan_grant" && t >= startMs) inc += row.delta;
       else if (row.reason.startsWith("spend_") && t >= startMs) usedC += -row.delta;
       else if (row.reason === "topup") topup += row.delta;
-      // topup spend already counted in spend_*
+      // Admin / QA / manual grants — counted as positive balance so credits
+      // are usable, but meta.source / meta.not_stripe let paid reporting
+      // distinguish them from real Stripe top-ups.
+      else if (row.reason === "qa_manual_grant" || row.reason === "manual_grant") topup += row.delta;
     }
     const remain = inc - usedC + topup;
     return { included: inc, used: usedC, topupBalance: topup, remaining: Math.max(remain, 0) };
