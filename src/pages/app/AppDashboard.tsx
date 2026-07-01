@@ -361,7 +361,7 @@ export default function AppDashboard() {
       <SectionHeader
         icon={Database}
         title="Database Health (AI quality review)"
-        desc="AI flags what's clean, risky, duplicated or blocked. You decide what's safe to activate."
+        desc="AI flags what's clean, risky, duplicated or blocked. You decide what's safe to activate. Contacts and companies are shown for the active workspace via its imports."
         cta={{ label: "Review data", to: "/app/data-vault" }}
       />
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
