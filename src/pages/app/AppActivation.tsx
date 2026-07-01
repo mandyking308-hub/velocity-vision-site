@@ -77,20 +77,32 @@ export default function AppActivation() {
       if (def) {
         setConnectionId(def.id);
         setFromEmail(def.from_email);
+        setSenderDetail({
+          verification_status: def.verification_status,
+          mx_status: def.mx_status,
+          spf_status: def.spf_status,
+          dkim_status: def.dkim_status,
+          dmarc_status: def.dmarc_status,
+          sending_enabled: def.sending_enabled,
+          dns_checked_at: def.dns_checked_at,
+        });
         const last = (sends.data || []).filter((x: any) => x.status === "sent").map((x: any) => x.sent_at).filter(Boolean).sort().pop() || null;
         const newly = def.last_verified_at ? (Date.now() - new Date(def.last_verified_at).getTime()) < 7 * 86400000 : true;
         const totalSends = (sends.data || []).length || 1;
         const bounces = (sends.data || []).filter((x: any) => x.status === "bounced" || x.status === "failed").length;
-        const verified = def.spf_status === "valid" && def.dkim_status === "valid" && !!def.domain_verified_at;
+        // Truthful: only mark authenticated when the DB says sending_enabled AND verified.
+        const verified = def.verification_status === "verified" && def.sending_enabled === true;
         setSender({
           connected: def.status === "connected",
           domain_authenticated: verified,
-          reconnect_required: def.status === "reconnect_required",
+          reconnect_required: def.status === "reconnect_required" || def.verification_status === "reconnect_required",
           newly_connected: newly,
           last_send_at: last,
           bounce_rate: bounces / totalSends,
           unsubscribe_rate: 0,
         });
+      } else {
+        setSenderDetail(null);
       }
 
       const today = new Date(); today.setHours(0,0,0,0);
