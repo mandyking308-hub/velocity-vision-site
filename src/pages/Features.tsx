@@ -94,9 +94,9 @@ const Features = () => (
         <div className="max-w-5xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
             <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Features</p>
-            <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">The full commercial workspace, pillar by pillar</h1>
+            <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">AI-powered workspace, pillar by pillar</h1>
             <p className="text-primary-foreground/75 text-lg mb-8 max-w-2xl">
-              Every feature exists to take you from messy data to live pipeline — safely, repeatably and without bolting on another tool.
+              Every feature exists to take you from messy data to live pipeline. AI drafts and reviews; you approve, activate and send.
             </p>
             <Button variant="hero" size="lg" asChild>
               <Link to="/auth">Start your workspace <ArrowRight size={18} /></Link>
