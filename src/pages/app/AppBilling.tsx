@@ -18,7 +18,7 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useCurrency } from "@/hooks/useCurrency";
 import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
-import CurrencySwitcher from "@/components/CurrencySwitcher";
+import PricingCurrencySelector from "@/components/PricingCurrencySelector";
 
 const PLAN_TO_SKU: Record<PlanId, SkuId> = {
   starter: "vv_starter_oneoff",
@@ -118,12 +118,12 @@ export default function AppBilling() {
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-3xl font-bold">Billing</h1>
-          <p className="text-muted-foreground">Manage your plan, Campaign Credits and add-ons.</p>
+          <p className="text-muted-foreground">
+            Manage your plan, Campaign Credits and add-ons.
+            {country && <> · Detected region <strong className="text-foreground">{country}</strong></>}
+          </p>
         </div>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground border border-border rounded-md px-3 py-2">
-          <span>Billing in <strong className="text-foreground">{currency}</strong>{country && <> · {country}</>}</span>
-          <CurrencySwitcher compact />
-        </div>
+        <PricingCurrencySelector align="right" className="md:max-w-md" />
       </div>
       <p className="text-xs text-muted-foreground -mt-4">{taxNotice(currency)}</p>
 
@@ -274,8 +274,12 @@ export default function AppBilling() {
         open={pendingPlan !== null}
         onOpenChange={(v) => { if (!v) setPendingPlan(null); }}
         title={pendingPlan ? `Confirm before subscribing to ${PLANS[pendingPlan].name}` : "Confirm"}
-        description="You must accept the legal stack before activating a paid plan."
-        confirmLabel="Continue to checkout"
+        description={
+          pendingPlan
+            ? `You'll be charged ${priceFor(PLAN_TO_SKU[pendingPlan], currency).formatted} ${PLANS[pendingPlan].unit} in ${currency}. Stripe checkout opens in the same currency. You must accept the legal stack before activating a paid plan.`
+            : "You must accept the legal stack before activating a paid plan."
+        }
+        confirmLabel={pendingPlan ? `Continue to checkout in ${currency}` : "Continue to checkout"}
         onConfirm={confirmBuyPlan}
       />
     </div>
