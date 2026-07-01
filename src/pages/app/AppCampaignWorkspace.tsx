@@ -135,13 +135,15 @@ export default function AppCampaignWorkspace() {
       const { error } = await supabase.from("campaigns").update({ pack: pack as any }).eq("id", c.id);
       if (error) throw error;
 
+      if (usedFallback) {
+        toast.warning("AI was unavailable, so a safe fallback pack was used and quality-checked.");
+      }
+
       const charged = await consume("full_campaign_pack", c.id, `${c.name} regeneration`);
       if (!charged) {
         toast.error("Campaign regenerated, but credit usage was not recorded", {
           description: "Please avoid regenerating again and contact support so we can reconcile your credits.",
         });
-      } else if (usedFallback) {
-        toast.warning("AI was unavailable, so a safe fallback pack was used and quality-checked.");
       } else {
         toast.success(t("campaigns.toasts.packRegenerated"));
       }
