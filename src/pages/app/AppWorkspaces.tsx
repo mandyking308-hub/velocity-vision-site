@@ -45,12 +45,7 @@ export default function AppWorkspaces() {
     navigate("/app");
   };
 
-  const create = async () => {
-    if (!name.trim()) return;
-    if (!canCreate) {
-      toast.error("Your plan allows only 1 workspace. Upgrade to Agency for multiple client workspaces.");
-      return;
-    }
+  const doCreate = async () => {
     setBusy(true);
     try {
       const { data, error } = await supabase.rpc("provision_first_workspace", {
@@ -76,6 +71,20 @@ export default function AppWorkspaces() {
       setBusy(false);
     }
   };
+
+  const create = async () => {
+    if (!name.trim()) return;
+    if (!canCreate) {
+      toast.error("Your plan allows only 1 workspace. Upgrade to Agency for multiple client workspaces.");
+      return;
+    }
+    if (!legal.isCompliant) {
+      setLegalGateOpen(true);
+      return;
+    }
+    await doCreate();
+  };
+
 
   const CreateDialog = (
     <Dialog open={open} onOpenChange={setOpen}>
