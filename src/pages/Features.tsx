@@ -123,6 +123,36 @@ const Features = () => (
         </div>
       </section>
 
+      {/* AI where it helps. Governance where it matters. */}
+      <section className="section-padding bg-background border-t border-border">
+        <div className="max-w-7xl mx-auto">
+          <div className="max-w-3xl mb-10">
+            <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">AI, safely applied</p>
+            <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">
+              AI where it helps. Governance where it matters.
+            </h2>
+            <p className="text-muted-foreground text-lg leading-relaxed">
+              Velocity Vision uses AI to turn messy contact data into ready-to-review outreach — email sequences, social packs, press releases, video scripts, follow-up drafts and summaries. Every AI output is a draft you review, edit and control. Activation, sending and pipeline movement stay in your hands, with sender verification and daily caps enforced by the platform.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {[
+              { title: "AI-assisted outreach assets", value: "Email sequences, social posts, press releases and video packs drafted from one brief — fully editable before you use them." },
+              { title: "AI quality review", value: "Duplicates, risky records and missing fields surfaced automatically. You decide what stays in the segment." },
+              { title: "AI-generated templates", value: "Start from AI-drafted templates for launch, nurture, promo and re-engagement workflows — adapt to your tone and offer." },
+              { title: "AI-supported follow-up", value: "Suggested next-step drafts for replies and stuck conversations. You approve every send." },
+              { title: "Governed AI activation", value: "Sender verification, tiered daily caps and risky-record limits gate every activation — no autonomous sending." },
+              { title: "Human-controlled by design", value: "AI drafts; you review, edit, approve, activate. Velocity Vision does not guarantee replies, sales, deliverability or legal compliance." },
+            ].map((f) => (
+              <div key={f.title} className="bg-card border border-border/50 rounded-xl p-6 shadow-card">
+                <h3 className="font-display font-semibold text-foreground mb-2">{f.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">{f.value}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Commercial control & agency scale strip */}
       <section className="section-padding bg-secondary/40">
         <div className="max-w-7xl mx-auto">
