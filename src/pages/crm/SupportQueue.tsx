@@ -30,6 +30,11 @@ interface Ticket {
   source: string;
   resolution_notes: string | null;
   assigned_to: string | null;
+  contact_name: string | null;
+  contact_phone: string | null;
+  company_name: string | null;
+  account_reference: string | null;
+  preferred_contact_method: string | null;
 }
 
 export default function SupportQueue() {
@@ -169,14 +174,44 @@ export default function SupportQueue() {
                   <Badge variant="outline" className="text-[10px]">{selected.severity ?? "normal"}</Badge>
                 </CardTitle>
                 <div className="text-xs text-muted-foreground">
-                  {selected.email ?? "anon"} · {selected.route ?? "—"} · ws: {selected.workspace_id ?? "—"}
+                  {selected.route ?? "—"} · source: {selected.source} · ws: {selected.workspace_id ?? "—"}
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
+                <div className="border rounded p-3 bg-muted/20 text-sm space-y-1">
+                  <div className="text-xs font-medium mb-1 text-muted-foreground">Contact details</div>
+                  <div><span className="text-muted-foreground">Name:</span> {selected.contact_name ?? "—"}</div>
+                  <div><span className="text-muted-foreground">Email:</span> {selected.email ?? "—"}</div>
+                  <div><span className="text-muted-foreground">Phone:</span> {selected.contact_phone ?? "—"}</div>
+                  <div><span className="text-muted-foreground">Company:</span> {selected.company_name ?? "—"}</div>
+                  <div><span className="text-muted-foreground">Preferred:</span> {selected.preferred_contact_method ?? "—"}</div>
+                  <div><span className="text-muted-foreground">Account / workspace ref:</span> {selected.account_reference ?? "—"}</div>
+                  <div><span className="text-muted-foreground">Urgency:</span> {(selected.diagnostics as any)?.urgency ?? "normal"}</div>
+                  <div><span className="text-muted-foreground">User ID:</span> {selected.user_id ?? "anon"}</div>
+                </div>
                 <div>
                   <div className="text-xs font-medium mb-1">Message</div>
                   <div className="text-sm whitespace-pre-wrap border rounded p-2 bg-muted/30">{selected.message}</div>
                 </div>
+                {(selected.diagnostics as any)?.assistant_question && (
+                  <div>
+                    <div className="text-xs font-medium mb-1">Assistant Q&amp;A</div>
+                    <div className="text-xs border rounded p-2 bg-muted/30 space-y-1">
+                      <div><strong>Q:</strong> <span className="whitespace-pre-wrap">{(selected.diagnostics as any).assistant_question}</span></div>
+                      <div><strong>A:</strong> <span className="whitespace-pre-wrap">{(selected.diagnostics as any).assistant_answer}</span></div>
+                    </div>
+                  </div>
+                )}
+                {Array.isArray((selected.diagnostics as any)?.chat_transcript) && (selected.diagnostics as any).chat_transcript.length > 0 && (
+                  <div>
+                    <div className="text-xs font-medium mb-1">Chat transcript</div>
+                    <div className="text-xs border rounded p-2 bg-muted/30 max-h-[200px] overflow-auto space-y-1">
+                      {((selected.diagnostics as any).chat_transcript as any[]).map((m, i) => (
+                        <div key={i}><strong className="text-muted-foreground">{m.role}:</strong> <span className="whitespace-pre-wrap">{m.content}</span></div>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <div>
                   <div className="text-xs font-medium mb-1">Diagnostics</div>
                   <pre className="text-[11px] border rounded p-2 bg-muted/30 overflow-auto max-h-[200px]">

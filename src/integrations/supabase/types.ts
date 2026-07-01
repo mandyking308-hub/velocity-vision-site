@@ -2156,15 +2156,20 @@ export type Database = {
       }
       support_tickets: {
         Row: {
+          account_reference: string | null
           assigned_to: string | null
           assistant_answer: string | null
           browser_info: string | null
           category: string | null
+          company_name: string | null
+          contact_name: string | null
+          contact_phone: string | null
           created_at: string
           diagnostics: Json
           email: string | null
           id: string
           message: string
+          preferred_contact_method: string | null
           resolution_notes: string | null
           route: string | null
           severity: string | null
@@ -2176,15 +2181,20 @@ export type Database = {
           workspace_id: string | null
         }
         Insert: {
+          account_reference?: string | null
           assigned_to?: string | null
           assistant_answer?: string | null
           browser_info?: string | null
           category?: string | null
+          company_name?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
           created_at?: string
           diagnostics?: Json
           email?: string | null
           id?: string
           message: string
+          preferred_contact_method?: string | null
           resolution_notes?: string | null
           route?: string | null
           severity?: string | null
@@ -2196,15 +2206,20 @@ export type Database = {
           workspace_id?: string | null
         }
         Update: {
+          account_reference?: string | null
           assigned_to?: string | null
           assistant_answer?: string | null
           browser_info?: string | null
           category?: string | null
+          company_name?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
           created_at?: string
           diagnostics?: Json
           email?: string | null
           id?: string
           message?: string
+          preferred_contact_method?: string | null
           resolution_notes?: string | null
           route?: string | null
           severity?: string | null
