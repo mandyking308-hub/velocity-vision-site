@@ -30,23 +30,25 @@ const Navbar = () => {
           Velocity<span className="text-accent">.</span>
         </Link>
 
-        {/* Desktop */}
-        <div className="hidden xl:flex items-center justify-between flex-1 ml-8">
-          <div className="flex items-center gap-3">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`text-sm font-medium transition-colors hover:text-accent ${
-                  location.pathname === link.path ? "text-accent" : "text-muted-foreground"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-          <div className="flex items-center gap-3">
-            <GTranslateSlot />
+        {/* Desktop links */}
+        <div className="hidden xl:flex items-center gap-3 flex-1 ml-8">
+          {navLinks.map((link) => (
+            <Link
+              key={link.path}
+              to={link.path}
+              className={`text-sm font-medium transition-colors hover:text-accent ${
+                location.pathname === link.path ? "text-accent" : "text-muted-foreground"
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+
+        {/* Shared right-side actions: one visible translation selector only */}
+        <div className="flex items-center gap-2 xl:gap-3">
+          <GTranslateSlot />
+          <div className="hidden xl:flex items-center gap-3">
             <Button variant="ghost" size="sm" asChild>
               <Link to="/pricing">{t("nav.seePricing")}</Link>
             </Button>
@@ -54,14 +56,9 @@ const Navbar = () => {
               <Link to="/auth">{t("nav.startWorkspace")}</Link>
             </Button>
           </div>
-        </div>
-
-        {/* Mobile toggle */}
-        <div className="flex items-center gap-2 xl:hidden">
-          <GTranslateSlot />
           <button
             type="button"
-            className="text-foreground"
+            className="text-foreground xl:hidden"
             onClick={() => setOpen(!open)}
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
