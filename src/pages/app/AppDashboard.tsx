@@ -185,9 +185,11 @@ export default function AppDashboard() {
   useEffect(() => {
     if (!user) return;
     (async () => {
+      const connQ = supabase.from("email_connections").select("*").eq("user_id", user.id).order("is_default", { ascending: false });
+      const sendsQ = supabase.from("email_sends").select("status, sent_at, scheduled_at");
       const [{ data: conns }, { data: sends }] = await Promise.all([
-        supabase.from("email_connections").select("*").eq("user_id", user.id).order("is_default", { ascending: false }),
-        supabase.from("email_sends").select("status, sent_at, scheduled_at"),
+        currentId ? connQ.eq("workspace_id", currentId) : connQ,
+        currentId ? sendsQ.eq("workspace_id", currentId) : sendsQ,
       ]);
       const def = (conns || [])[0];
       const today = new Date(); today.setHours(0,0,0,0);
@@ -210,9 +212,12 @@ export default function AppDashboard() {
           bounce_rate: bounces / totalSends,
           unsubscribe_rate: 0,
         });
+      } else {
+        setSenderEmail(null);
+        setSender(DEFAULT_SENDER_STATE);
       }
     })();
-  }, [user]);
+  }, [user, currentId]);
 
   const plan = (planConfig.id as PlanId) || "starter";
   const safety = computeSafety({
