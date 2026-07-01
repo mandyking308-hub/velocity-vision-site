@@ -21,7 +21,7 @@ import {
 } from "@/lib/cadence";
 import { Pause, Play, Clock, Repeat } from "lucide-react";
 import { buildCampaignMarkdown, slugify } from "@/lib/campaignPackExport";
-import { runQualityGuard } from "@/lib/campaignQuality";
+import { checkPackQuality } from "@/lib/campaignQuality";
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
