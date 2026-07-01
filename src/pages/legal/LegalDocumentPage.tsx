@@ -5120,7 +5120,7 @@ const LegalDocumentPage = () => {
               <p className="text-sm text-muted-foreground"><span className="font-medium text-foreground/70">Version:</span> {doc.version}</p>
             </div>
             <p className="text-xs text-muted-foreground mt-2">Global Solutions Management LLC — Delaware, United States — operator of Velocity Vision</p>
-            <p className="text-xs text-muted-foreground mt-2 max-w-3xl">These online terms are designed for product clarity and operational protection. They should be reviewed by qualified counsel before high-volume paid rollout or enterprise contracting.</p>
+            <p className="text-xs text-muted-foreground mt-2 max-w-3xl">These terms govern access to and use of Velocity Vision from their stated effective date.</p>
             <p className="text-xs text-muted-foreground mt-2 max-w-3xl italic">
               This document may be displayed in your browser's preferred language using an automated
               machine-translation layer (GTranslate / Google Translate). Translations are provided for
