@@ -102,7 +102,7 @@ export default function AppCampaignNew() {
         goal: brief.goal,
         campaign_kind: brief.kind,
         status: startIsFuture ? "scheduled" : "active",
-        type: "marketing",
+        type: "email",
         owner_id: user.id,
         created_by: user.id,
         workspace_id: workspaceId,
