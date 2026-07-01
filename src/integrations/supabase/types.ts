@@ -2236,6 +2236,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      provision_qa_workspace: { Args: never; Returns: string }
       provision_starter_plan: {
         Args: never
         Returns: {
@@ -2257,6 +2258,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      reset_qa_workspace: { Args: never; Returns: boolean }
     }
     Enums: {
       activity_type:
