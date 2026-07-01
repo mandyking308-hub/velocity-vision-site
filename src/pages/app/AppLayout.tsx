@@ -8,6 +8,7 @@ import { CreditsProvider } from "@/contexts/CreditsContext";
 import { CreditPill } from "@/components/app/CreditMeter";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useLanguageSync } from "@/hooks/useLanguageSync";
+import { GTranslateSlot } from "@/components/GTranslate";
 
 const navConfig: { to: string; key: string; icon: typeof LayoutDashboard; end?: boolean }[] = [
   { to: "/app", key: "dashboard", icon: LayoutDashboard, end: true },
