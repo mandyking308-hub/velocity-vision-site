@@ -65,19 +65,15 @@ const HowItWorks = () => (
       <section className="section-padding bg-background">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
-            {steps.map((s, i) => (
-              <motion.div
+            {steps.map((s) => (
+              <div
                 key={s.n}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.05 }}
                 className="bg-card border border-border/50 rounded-xl p-6 shadow-card"
               >
                 <p className="text-accent font-display font-bold text-2xl mb-3">{s.n}</p>
                 <h3 className="font-display font-semibold text-foreground mb-2">{s.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">{s.desc}</p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
