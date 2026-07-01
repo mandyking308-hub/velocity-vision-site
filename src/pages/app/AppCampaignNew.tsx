@@ -104,7 +104,51 @@ export default function AppCampaignNew() {
     }
     setSaving(true);
     try {
-      const pack = generatePack(brief);
+      // 1) Try AI generation first (customer-facing quality path).
+      let pack: CampaignPack | null = null;
+      let usedFallback = false;
+      try {
+        const { data: aiData, error: aiErr } = await supabase.functions.invoke("generate-campaign-pack", {
+          body: { brief },
+        });
+        if (aiErr) throw aiErr;
+        if (aiData?.pack) {
+          // Merge AI JSON into the strict CampaignPack shape. Missing pieces
+          // are backfilled from the deterministic fallback so nothing breaks.
+          const base = generatePack(brief);
+          pack = {
+            language: (brief.language || "en") as CampaignLanguage,
+            generatedAs: (aiData.generatedAs || brief.language || "en") as CampaignLanguage,
+            strategy: { ...base.strategy, ...(aiData.pack.strategy || {}) },
+            landing: { ...base.landing, ...(aiData.pack.landing || {}), cta: brief.cta },
+            offer: { ...base.offer, ...(aiData.pack.offer || {}), cta: brief.cta },
+            emails: Array.isArray(aiData.pack.emails) && aiData.pack.emails.length ? aiData.pack.emails : base.emails,
+            social: { ...base.social, ...(aiData.pack.social || {}) },
+            press: { ...base.press, ...(aiData.pack.press || {}) },
+            video: { ...base.video, ...(aiData.pack.video || {}) },
+            leadCapture: { ...base.leadCapture, ...(aiData.pack.leadCapture || {}), ctaLabel: brief.cta },
+          } as CampaignPack;
+        }
+      } catch (aiErr) {
+        console.warn("AI generation failed, using deterministic fallback", aiErr);
+      }
+      if (!pack) {
+        pack = generatePack(brief);
+        usedFallback = true;
+      }
+
+      // 2) Quality guard. If it fails, DO NOT save and DO NOT deduct credits.
+      const quality = checkPackQuality(pack, brief);
+      if (!quality.ok) {
+        console.warn("Campaign quality guard failed", quality.issues);
+        toast.error("Campaign quality check failed", {
+          description: `We didn't save this pack and no credits were used. Please try again. (${quality.issues.slice(0, 2).map((i) => i.code).join(", ")})`,
+        });
+        setSaving(false);
+        return;
+      }
+
+      // 3) Persist and deduct credits atomically-ish (consume runs after insert).
       const slug = makeSlug(brief.name || "campaign");
       const nextRun = computeNextRun(cadence);
       const startIsFuture = cadence.start_at && new Date(cadence.start_at) > new Date();
@@ -143,6 +187,8 @@ export default function AppCampaignNew() {
       const ok = await consume("full_campaign_pack", data.id, brief.name);
       if (!ok) {
         toast.message(t("campaigns.toasts.draftSaved"), { description: t("campaigns.toasts.draftSavedDesc") });
+      } else if (usedFallback) {
+        toast.success("Campaign pack ready (fallback template used)");
       } else {
         toast.success(t("campaigns.toasts.packGenerated"));
       }
