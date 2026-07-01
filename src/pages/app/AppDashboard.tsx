@@ -240,7 +240,7 @@ export default function AppDashboard() {
               Welcome back{firstName ? `, ${firstName}` : ""}
             </h1>
             <p className="text-muted-foreground mt-1">
-              Your commercial workspace. Activate your data, create outreach assets, and move deals forward.
+              Your AI-powered commercial workspace. AI drafts outreach and reviews quality — you approve, activate and move deals forward.
             </p>
           </div>
           <div className="grid grid-cols-3 gap-3 lg:gap-4 min-w-[320px]">
