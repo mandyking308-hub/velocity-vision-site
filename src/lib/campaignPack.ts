@@ -48,12 +48,88 @@ export interface CampaignPack {
   offer: { framing: string; benefits: string[]; objections: { objection: string; response: string }[]; cta: string };
   emails: { subject: string; preview: string; body: string }[];
   social: { launchPosts: SocialPost[]; followUps: SocialPost[]; hooks: string[]; ctas: string[]; launchWeek: { day: string; theme: string; post: string }[]; repostIdeas: string[]; };
-  press: { headline: string; subheadline: string; opening: string; body: string[]; quote: string; boilerplate: string; contactLine: string; };
-  video: { hooks: string[]; script30: string; script60: string; talkingHead: string; bRoll: string; shotList: string[]; storyboard: string[]; onScreenText: string[]; captionText: string; ctaEndings: string[]; };
+  press: { headline: string; subheadline: string; opening: string; body: string[]; quote: string; boilerplate: string; contactLine: string; } | null;
+  video: { hooks: string[]; script30: string; script60: string; talkingHead: string; bRoll: string; shotList: string[]; storyboard: string[]; onScreenText: string[]; captionText: string; ctaEndings: string[]; } | null;
   leadCapture: { formTitle: string; fields: { label: string; type: string; required: boolean }[]; ctaLabel: string; thankYou: string; };
 }
 
 const PLATFORMS = ["LinkedIn", "Instagram", "X", "Facebook", "TikTok"];
+
+export function normaliseCampaignChannel(c: string): string {
+  const s = (c || "").toLowerCase().trim();
+  if (s === "linkedin") return "LinkedIn";
+  if (s === "instagram" || s === "ig") return "Instagram";
+  if (s === "x" || s === "twitter") return "X";
+  if (s === "facebook" || s === "fb") return "Facebook";
+  if (s === "tiktok") return "TikTok";
+  if (s === "email") return "Email";
+  if (s === "pr" || s === "press") return "PR";
+  if (s === "paid ads" || s === "paid" || s === "ads") return "Paid ads";
+  if (s === "video") return "Video";
+  return c;
+}
+
+export function getCampaignChannelConfig(brief: Pick<CampaignBrief, "channels" | "outputs"> | null | undefined) {
+  const channels = (brief?.channels || []).map(normaliseCampaignChannel);
+  const outputs = (brief?.outputs || []).map((o) => (o || "").toLowerCase().trim());
+  const hasSelection = channels.length > 0;
+  const selectedSocial = PLATFORMS.filter((p) => channels.includes(p));
+  return {
+    channels,
+    hasSelection,
+    selectedSocial,
+    includeSocial: !hasSelection || selectedSocial.length > 0 || outputs.includes("social"),
+    includeEmail: (!hasSelection && !outputs.length) || channels.includes("Email") || outputs.includes("email"),
+    includePress: (!hasSelection && !outputs.length) || channels.includes("PR") || outputs.includes("press"),
+    includeVideo: channels.includes("Video") || outputs.includes("video"),
+  };
+}
+
+export function enforceCampaignChannels(pack: CampaignPack, brief: CampaignBrief): CampaignPack {
+  const cfg = getCampaignChannelConfig(brief);
+  const filterPosts = (arr: SocialPost[] | undefined) =>
+    (arr || []).filter((p) => !cfg.hasSelection || cfg.selectedSocial.includes(normaliseCampaignChannel(p?.platform || "")));
+
+  return {
+    ...pack,
+    emails: cfg.includeEmail ? (pack.emails || []) : [],
+    social: cfg.includeSocial ? {
+      ...pack.social,
+      launchPosts: filterPosts(pack.social?.launchPosts),
+      followUps: filterPosts(pack.social?.followUps),
+      hooks: cfg.selectedSocial.length || !cfg.hasSelection ? (pack.social?.hooks || []) : [],
+      ctas: cfg.selectedSocial.length || !cfg.hasSelection ? (pack.social?.ctas || []) : [],
+      launchWeek: cfg.selectedSocial.length || !cfg.hasSelection ? (pack.social?.launchWeek || []) : [],
+      repostIdeas: cfg.selectedSocial.length || !cfg.hasSelection ? (pack.social?.repostIdeas || []) : [],
+    } : { launchPosts: [], followUps: [], hooks: [], ctas: [], launchWeek: [], repostIdeas: [] },
+    press: cfg.includePress ? pack.press : null,
+    video: cfg.includeVideo ? pack.video : null,
+  };
+}
+
+export function mergeGeneratedPack(brief: CampaignBrief, aiPack: Partial<CampaignPack> | any, generatedAs?: string): CampaignPack {
+  const base = generatePack(brief);
+  const cfg = getCampaignChannelConfig(brief);
+  const merged = {
+    language: (brief.language || "en") as CampaignLanguage,
+    generatedAs: (generatedAs || brief.language || "en") as CampaignLanguage,
+    strategy: { ...base.strategy, ...(aiPack?.strategy || {}) },
+    landing: { ...base.landing, ...(aiPack?.landing || {}), cta: brief.cta },
+    offer: { ...base.offer, ...(aiPack?.offer || {}), cta: brief.cta },
+    emails: cfg.includeEmail
+      ? (Array.isArray(aiPack?.emails) && aiPack.emails.length ? aiPack.emails : base.emails)
+      : [],
+    social: { ...base.social, ...(aiPack?.social || {}) },
+    press: cfg.includePress
+      ? (aiPack?.press === null ? null : { ...(base.press || {}), ...(aiPack?.press || {}) })
+      : null,
+    video: cfg.includeVideo
+      ? (aiPack?.video === null ? null : { ...(base.video || {}), ...(aiPack?.video || {}) })
+      : null,
+    leadCapture: { ...base.leadCapture, ...(aiPack?.leadCapture || {}), ctaLabel: brief.cta },
+  } as CampaignPack;
+  return enforceCampaignChannels(merged, brief);
+}
 
 // ---------- Per-language string packs ----------
 type Strings = {
@@ -267,19 +343,10 @@ export function generatePack(brief: CampaignBrief): CampaignPack {
     };
   };
 
-  const selectedSocial: string[] = (brief.channels || [])
-    .map((c): string | null => {
-      const s = (c || "").toLowerCase().trim();
-      if (s === "linkedin") return "LinkedIn";
-      if (s === "instagram") return "Instagram";
-      if (s === "x" || s === "twitter") return "X";
-      if (s === "facebook") return "Facebook";
-      if (s === "tiktok") return "TikTok";
-      return null;
-    })
-    .filter((p): p is string => p !== null);
+  const channelCfg = getCampaignChannelConfig(brief);
+  const selectedSocial = channelCfg.selectedSocial;
 
-  const activePlatforms = selectedSocial.length ? selectedSocial : PLATFORMS;
+  const activePlatforms = selectedSocial.length ? selectedSocial : (channelCfg.hasSelection ? [] : PLATFORMS);
   const launchPosts = activePlatforms.map((p, i) => makePost(p, hooks[i % hooks.length]));
   const followUps = activePlatforms.flatMap((p) => [0, 1].map((i) => makePost(p, hooks[(i + 2) % hooks.length]))).slice(0, 10);
 
@@ -305,17 +372,19 @@ export function generatePack(brief: CampaignBrief): CampaignPack {
       objections: strings.offerObjections(brief),
       cta: brief.cta,
     },
-    emails: strings.emails(brief),
+    emails: channelCfg.includeEmail ? strings.emails(brief) : [],
     social: {
-      launchPosts, followUps, hooks, ctas,
-      launchWeek: strings.weekDays.map((day, i) => ({
+      launchPosts, followUps,
+      hooks: channelCfg.includeSocial ? hooks : [],
+      ctas: channelCfg.includeSocial ? ctas : [],
+      launchWeek: channelCfg.includeSocial ? strings.weekDays.map((day, i) => ({
         day,
         theme: strings.weekThemes[i],
         post: i === 0 ? hooks[0] : i === 1 ? `${brief.offer} — ${strings === ES ? "en vivo hoy" : "live today"}. ${brief.cta}` : i === 4 ? `${brief.cta}. ${strings === ES ? "Cierra" : "Closes"} ${brief.deadline}.` : hooks[i % hooks.length],
-      })),
-      repostIdeas: strings.repostIdeas(brief),
+      })) : [],
+      repostIdeas: channelCfg.includeSocial ? strings.repostIdeas(brief) : [],
     },
-    press: {
+    press: channelCfg.includePress ? {
       headline: `${brief.name}: ${strings === ES ? "una nueva forma para que" : "a new way for"} ${brief.audience} ${strings === ES ? "puedan" : "to"} ${brief.cta.toLowerCase()}`,
       subheadline: `${brief.offer}, ${strings === ES ? "hecho para" : "built for"} ${brief.industry} ${strings === ES ? "en" : "in"} ${brief.geography}.`,
       opening: strings.pressOpening(brief),
@@ -323,8 +392,8 @@ export function generatePack(brief: CampaignBrief): CampaignPack {
       quote: strings.pressQuote(brief),
       boilerplate: strings.pressBoilerplate(brief),
       contactLine: strings.pressContact,
-    },
-    video: {
+    } : null,
+    video: channelCfg.includeVideo ? {
       hooks: strings.videoHooks(brief, hooks),
       script30: strings.script30(brief, hooks),
       script60: strings.script60(brief, hooks),
@@ -335,7 +404,7 @@ export function generatePack(brief: CampaignBrief): CampaignPack {
       onScreenText: [brief.offer, `${strings === ES ? "Hecho para" : "Built for"} ${brief.audience}`, `${strings === ES ? "Desde" : "From"} ${brief.pricePoint}`, brief.cta],
       captionText: `${brief.offer} — ${strings === ES ? "hecho para" : "built for"} ${brief.audience}. ${brief.cta}.`,
       ctaEndings: strings.ctaEndings(brief),
-    },
+    } : null,
     leadCapture: strings.leadForm(brief),
   };
 }
