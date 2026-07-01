@@ -131,7 +131,7 @@ export default function AppCampaignNew() {
         console.warn("AI generation failed, using deterministic fallback", aiErr);
       }
       if (!pack) {
-        pack = generatePack(brief);
+        pack = mergeGeneratedPack(brief, null);
         usedFallback = true;
       }
 

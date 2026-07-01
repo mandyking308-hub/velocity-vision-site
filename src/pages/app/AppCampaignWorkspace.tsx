@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Copy, Download, Sparkles, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { CampaignBrief, CampaignLanguage, CampaignPack, generatePack } from "@/lib/campaignPack";
+import { CampaignBrief, CampaignPack, getCampaignChannelConfig, mergeGeneratedPack } from "@/lib/campaignPack";
 import { toast } from "sonner";
 import i18n from "@/i18n";
 import { useTranslation } from "react-i18next";
@@ -64,6 +64,7 @@ export default function AppCampaignWorkspace() {
   const [c, setC] = useState<Campaign | null>(null);
   const [leads, setLeads] = useState<any[]>([]);
   const [regenerating, setRegenerating] = useState(false);
+  const [qualityDebug, setQualityDebug] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -76,6 +77,19 @@ export default function AppCampaignWorkspace() {
       setLeads(ld || []);
     })();
   }, [id]);
+
+  useEffect(() => {
+    (async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      const uid = userData.user?.id;
+      if (!uid) return;
+      const { data } = await (supabase.from("user_roles") as any)
+        .select("role")
+        .eq("user_id", uid)
+        .in("role", ["admin", "founder"]);
+      setQualityDebug(!!data?.length);
+    })();
+  }, []);
 
   const { consume, remaining, starterExpired } = useCredits();
 
@@ -104,22 +118,10 @@ export default function AppCampaignWorkspace() {
         if (aiErr) throw aiErr;
         if (!aiData?.pack) throw new Error("AI generation returned no pack");
 
-        const base = generatePack(c.brief);
-        pack = {
-          language: (c.brief.language || "en") as CampaignLanguage,
-          generatedAs: (aiData.generatedAs || c.brief.language || "en") as CampaignLanguage,
-          strategy: { ...base.strategy, ...(aiData.pack.strategy || {}) },
-          landing: { ...base.landing, ...(aiData.pack.landing || {}), cta: c.brief.cta },
-          offer: { ...base.offer, ...(aiData.pack.offer || {}), cta: c.brief.cta },
-          emails: Array.isArray(aiData.pack.emails) && aiData.pack.emails.length ? aiData.pack.emails : base.emails,
-          social: { ...base.social, ...(aiData.pack.social || {}) },
-          press: { ...base.press, ...(aiData.pack.press || {}) },
-          video: { ...base.video, ...(aiData.pack.video || {}) },
-          leadCapture: { ...base.leadCapture, ...(aiData.pack.leadCapture || {}), ctaLabel: c.brief.cta },
-        } as CampaignPack;
+        pack = mergeGeneratedPack(c.brief, aiData.pack, aiData.generatedAs) as CampaignPack;
       } catch (aiErr) {
         console.warn("AI regeneration failed, checking deterministic fallback", aiErr);
-        pack = generatePack(c.brief);
+        pack = mergeGeneratedPack(c.brief, null);
         usedFallback = true;
       }
 
@@ -127,7 +129,7 @@ export default function AppCampaignWorkspace() {
 
       const quality = checkPackQuality(pack, c.brief);
       if (!quality.ok) {
-        const { title, description } = formatQualityFailure(quality);
+        const { title, description } = formatQualityFailure(quality, qualityDebug);
         toast.error(title, { description });
         return;
       }
