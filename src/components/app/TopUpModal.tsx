@@ -36,13 +36,6 @@ export default function TopUpModal({ open, onOpenChange }: { open: boolean; onOp
 
   const confirmBuy = async () => {
     if (!pendingPack) return;
-    if (user) {
-      await recordLegalAcceptance({
-        userId: user.id,
-        email: user.email ?? null,
-        source: "topup_checkout",
-      });
-    }
     const id = pendingPack;
     setPendingPack(null);
     openCheckout({
