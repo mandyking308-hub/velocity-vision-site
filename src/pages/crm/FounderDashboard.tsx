@@ -220,6 +220,8 @@ const FounderDashboard = () => {
           <Button variant="outline" size="sm" onClick={() => navigate("/crm/campaigns")} className="gap-1.5"><Megaphone size={14} /> Campaigns</Button>
           <Button variant="outline" size="sm" onClick={() => navigate("/crm/companies")} className="gap-1.5"><Building2 size={14} /> Clients</Button>
           <Button variant="outline" size="sm" onClick={() => navigate("/crm/manual")} className="gap-1.5"><Book size={14} /> Ops Manual</Button>
+          <Button variant="outline" size="sm" onClick={() => navigate("/app")} className="gap-1.5">Go to app</Button>
+          <Button variant="destructive" size="sm" onClick={handleSignOut}>Sign out</Button>
         </div>
       </div>
 
