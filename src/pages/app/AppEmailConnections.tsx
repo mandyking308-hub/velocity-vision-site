@@ -26,6 +26,14 @@ interface Connection {
   status: "pending" | "connected" | "error" | "reconnect_required";
   last_error: string | null;
   last_verified_at: string | null;
+  domain: string | null;
+  verification_status: string | null;
+  mx_status: string | null;
+  spf_status: string | null;
+  dkim_status: string | null;
+  dmarc_status: string | null;
+  sending_enabled: boolean | null;
+  dns_checked_at: string | null;
 }
 
 const PROVIDER_HELP: Record<string, { label: string; help: string; host: string; port: number }> = {
