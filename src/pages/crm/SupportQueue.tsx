@@ -30,6 +30,11 @@ interface Ticket {
   source: string;
   resolution_notes: string | null;
   assigned_to: string | null;
+  contact_name: string | null;
+  contact_phone: string | null;
+  company_name: string | null;
+  account_reference: string | null;
+  preferred_contact_method: string | null;
 }
 
 export default function SupportQueue() {
