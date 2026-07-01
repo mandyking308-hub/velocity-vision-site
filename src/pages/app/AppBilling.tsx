@@ -7,8 +7,7 @@ import { useCredits } from "@/contexts/CreditsContext";
 import { PLANS, PlanId, HUMAN_REVIEW_PRICE, ACTION_LABELS, CreditAction } from "@/lib/credits";
 import CreditMeter from "@/components/app/CreditMeter";
 import TopUpModal from "@/components/app/TopUpModal";
-import LegalAcceptanceGate from "@/components/LegalAcceptanceGate";
-import { recordLegalAcceptance } from "@/lib/recordLegalAcceptance";
+import LegalComplianceGate from "@/components/LegalComplianceGate";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Check, ArrowUpRight, CheckCircle2 } from "lucide-react";
@@ -96,13 +95,6 @@ export default function AppBilling() {
 
   const confirmBuyPlan = async () => {
     if (!pendingPlan) return;
-    if (user) {
-      await recordLegalAcceptance({
-        userId: user.id,
-        email: user.email ?? null,
-        source: "plan_checkout",
-      });
-    }
     const id = pendingPlan;
     setPendingPlan(null);
     openCheckout({
@@ -277,16 +269,17 @@ export default function AppBilling() {
 
       <TopUpModal open={topupOpen} onOpenChange={setTopupOpen} />
       {element}
-      <LegalAcceptanceGate
+      <LegalComplianceGate
         open={pendingPlan !== null}
         onOpenChange={(v) => { if (!v) setPendingPlan(null); }}
-        title={pendingPlan ? `Confirm before subscribing to ${PLANS[pendingPlan].name}` : "Confirm"}
+        source="plan_checkout"
+        title={pendingPlan ? `Confirm current terms before subscribing to ${PLANS[pendingPlan].name}` : "Confirm current terms"}
         description={
           pendingPlan
-            ? `You'll be charged ${priceFor(PLAN_TO_SKU[pendingPlan], currency).formatted} ${PLANS[pendingPlan].unit} in ${currency}. Stripe checkout opens in the same currency. You must accept the legal stack before activating a paid plan.`
-            : "You must accept the legal stack before activating a paid plan."
+            ? `You'll be charged ${priceFor(PLAN_TO_SKU[pendingPlan], currency).formatted} ${PLANS[pendingPlan].unit} in ${currency}. Please accept the current versions of our platform legal stack to continue to checkout.`
+            : "Please accept the current versions of our platform legal stack to continue to checkout."
         }
-        confirmLabel={pendingPlan ? `Continue to checkout in ${currency}` : "Continue to checkout"}
+        confirmLabel={pendingPlan ? `Accept and continue in ${currency}` : "Accept and continue"}
         onConfirm={confirmBuyPlan}
       />
     </div>

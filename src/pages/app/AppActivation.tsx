@@ -23,6 +23,8 @@ import type { PlanId } from "@/lib/credits";
 import SendSafetyPanel from "@/components/app/SendSafetyPanel";
 import SenderStatusCard from "@/components/app/SenderStatusCard";
 import JourneyEmptyState from "@/components/app/JourneyEmptyState";
+import LegalComplianceGate from "@/components/LegalComplianceGate";
+import { useLegalStatus } from "@/lib/legalCompliance";
 
 interface Counts { valid: number; needs_review: number; risky: number; blocked: number; suppressed: number; }
 
@@ -47,6 +49,8 @@ export default function AppActivation() {
   const [scheduledToday, setScheduledToday] = useState(0);
   const [agencyPooled, setAgencyPooled] = useState<number>(0);
   const [senderDetail, setSenderDetail] = useState<any>(null);
+  const legal = useLegalStatus();
+  const [legalGateOpen, setLegalGateOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -136,7 +140,7 @@ export default function AppActivation() {
   const riskyClamped = Math.min(riskyOverride, riskyMax, counts.risky);
   const totalSelected = safeSelected + reviewSelected + riskyClamped;
   const sendNow = Math.min(totalSelected, safety.remainingToday);
-  const blocked = safety.pauseReasons.length > 0;
+  const blocked = safety.pauseReasons.length > 0 || !legal.isCompliant;
   const wantsRisky = riskyClamped > 0;
   const canActivate = sendNow > 0 && !blocked && (!wantsRisky || riskAck);
 
@@ -148,14 +152,19 @@ export default function AppActivation() {
     } catch { /* table is optional/best-effort */ }
   }
 
-  async function handleActivate() {
-    if (!canActivate) return;
+  async function runActivation() {
     await audit("activation_started", {
       batch: sendNow, includeReview, riskyOverride: riskyClamped, plan, safeAllowance: safety.safeAllowance,
     });
     toast.success(t("activate.toasts.prepared", { count: sendNow }));
     if (campaignId) navigate(`/app/campaigns/${campaignId}`);
     else navigate("/app/campaigns");
+  }
+
+  async function handleActivate() {
+    if (sendNow <= 0 || safety.pauseReasons.length > 0 || (wantsRisky && !riskAck)) return;
+    if (!legal.isCompliant) { setLegalGateOpen(true); return; }
+    await runActivation();
   }
 
   const totalContacts = counts.valid + counts.needs_review + counts.risky + counts.blocked + counts.suppressed;
@@ -212,6 +221,16 @@ export default function AppActivation() {
         />
       ) : (
       <>
+      {!legal.loading && !legal.isCompliant && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Legal terms need to be re-accepted before activation</AlertTitle>
+          <AlertDescription>
+            {legal.missing.length} document{legal.missing.length === 1 ? "" : "s"} updated since your last acceptance.
+            You'll be prompted to review and accept when you confirm activation.
+          </AlertDescription>
+        </Alert>
+      )}
       <SendSafetyPanel s={safety} used={usedToday} scheduled={scheduledToday} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -323,6 +342,16 @@ export default function AppActivation() {
       </div>
       </>
       )}
+      <LegalComplianceGate
+        open={legalGateOpen}
+        onOpenChange={setLegalGateOpen}
+        source="activation"
+        workspaceId={currentId}
+        title="Accept current terms before activation"
+        description="Sending on your behalf requires up-to-date acceptance of our platform legal stack."
+        confirmLabel="Accept and activate"
+        onConfirm={async () => { await legal.refresh(); await runActivation(); }}
+      />
     </div>
   );
 }

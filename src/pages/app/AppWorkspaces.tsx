@@ -11,6 +11,8 @@ import { useCredits } from "@/contexts/CreditsContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Briefcase, Check, Plus, Sparkles, Info } from "lucide-react";
 import { toast } from "sonner";
+import LegalComplianceGate from "@/components/LegalComplianceGate";
+import { useLegalStatus } from "@/lib/legalCompliance";
 
 export default function AppWorkspaces() {
   const { workspaces, currentId, setCurrentId, loading } = useWorkspace();
@@ -21,6 +23,8 @@ export default function AppWorkspaces() {
   const [industry, setIndustry] = useState("");
   const [website, setWebsite] = useState("");
   const [busy, setBusy] = useState(false);
+  const legal = useLegalStatus();
+  const [legalGateOpen, setLegalGateOpen] = useState(false);
 
   const isAgency = plan === "agency";
   const limit = planConfig.workspaceLimit; // null = unlimited
@@ -41,12 +45,7 @@ export default function AppWorkspaces() {
     navigate("/app");
   };
 
-  const create = async () => {
-    if (!name.trim()) return;
-    if (!canCreate) {
-      toast.error("Your plan allows only 1 workspace. Upgrade to Agency for multiple client workspaces.");
-      return;
-    }
+  const doCreate = async () => {
     setBusy(true);
     try {
       const { data, error } = await supabase.rpc("provision_first_workspace", {
@@ -72,6 +71,20 @@ export default function AppWorkspaces() {
       setBusy(false);
     }
   };
+
+  const create = async () => {
+    if (!name.trim()) return;
+    if (!canCreate) {
+      toast.error("Your plan allows only 1 workspace. Upgrade to Agency for multiple client workspaces.");
+      return;
+    }
+    if (!legal.isCompliant) {
+      setLegalGateOpen(true);
+      return;
+    }
+    await doCreate();
+  };
+
 
   const CreateDialog = (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -188,6 +201,16 @@ export default function AppWorkspaces() {
           ))}
         </div>
       )}
+      <LegalComplianceGate
+        open={legalGateOpen}
+        onOpenChange={setLegalGateOpen}
+        source="workspace_create"
+        title="Accept current terms before creating a workspace"
+        description="Creating a workspace requires up-to-date acceptance of our platform legal stack."
+        confirmLabel="Accept and create"
+        onConfirm={async () => { await legal.refresh(); await doCreate(); }}
+      />
     </div>
   );
 }
+

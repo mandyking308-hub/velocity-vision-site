@@ -7,9 +7,7 @@ import { PRICE_IDS } from "@/lib/stripe";
 import { Sparkles } from "lucide-react";
 import { useCurrency } from "@/hooks/useCurrency";
 import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
-import LegalAcceptanceGate from "@/components/LegalAcceptanceGate";
-import { useAuth } from "@/contexts/AuthContext";
-import { recordLegalAcceptance } from "@/lib/recordLegalAcceptance";
+import LegalComplianceGate from "@/components/LegalComplianceGate";
 import BillingTermsSummary from "@/components/BillingTermsSummary";
 
 const PACK_TO_PRICE: Record<string, string> = {
@@ -26,7 +24,7 @@ const PACK_TO_SKU: Record<string, SkuId> = {
 export default function TopUpModal({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
   const { openCheckout, element } = useStripeCheckout();
   const { currency } = useCurrency();
-  const { user } = useAuth();
+  
   const [pendingPack, setPendingPack] = useState<string | null>(null);
 
   const handle = (packId: string) => {
@@ -36,13 +34,6 @@ export default function TopUpModal({ open, onOpenChange }: { open: boolean; onOp
 
   const confirmBuy = async () => {
     if (!pendingPack) return;
-    if (user) {
-      await recordLegalAcceptance({
-        userId: user.id,
-        email: user.email ?? null,
-        source: "topup_checkout",
-      });
-    }
     const id = pendingPack;
     setPendingPack(null);
     openCheckout({
@@ -75,12 +66,13 @@ export default function TopUpModal({ open, onOpenChange }: { open: boolean; onOp
           <BillingTermsSummary className="mt-4" compact />
         </DialogContent>
       </Dialog>
-      <LegalAcceptanceGate
+      <LegalComplianceGate
         open={pendingPack !== null}
         onOpenChange={(v) => { if (!v) setPendingPack(null); }}
-        title="Confirm before buying credits"
-        description="You must accept the legal stack before completing checkout."
-        confirmLabel="Continue to checkout"
+        source="topup_checkout"
+        title="Confirm current terms before buying credits"
+        description="Please accept the current versions of our platform legal stack to continue to checkout."
+        confirmLabel="Accept and continue to checkout"
         onConfirm={confirmBuy}
       />
       {element}
