@@ -180,7 +180,7 @@ export default function AppDashboard() {
         next_action_due: nextActionDue,
       });
     })();
-  }, [user]);
+  }, [user, currentId]);
 
   useEffect(() => {
     if (!user) return;
