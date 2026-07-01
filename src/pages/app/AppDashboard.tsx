@@ -296,7 +296,7 @@ export default function AppDashboard() {
         <BigStat label="Companies" value={vault.total_companies} icon={Briefcase} tone="default" />
         <BigStat label="Imports" value={vault.imports} icon={Upload} tone="default" />
         <BigStat label="Clean" value={vault.clean} icon={CheckCircle2} tone="good" />
-        <BigStat label="Safe to activate" value={vault.safe_to_activate} icon={ShieldCheck} tone="good" />
+        <BigStat label="AI-ready segment" value={vault.safe_to_activate} icon={ShieldCheck} tone="good" />
         <BigStat label="Needs review" value={vault.needs_review} icon={AlertTriangle} tone="warn" />
         <BigStat label="Risky" value={vault.risky} icon={AlertTriangle} tone="warn" />
         <BigStat label="Blocked / suppressed" value={vault.blocked} icon={AlertTriangle} tone="danger" />
