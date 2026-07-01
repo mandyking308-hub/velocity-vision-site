@@ -76,7 +76,9 @@ STRICT RULES (breaking any of these makes the output unusable):
 8. Every sentence must be grammatical. Never produce broken fragments.
 9. Press release must read like a genuine business announcement — no hype, no unverifiable claims, no fabricated quotes attributed to specific people. Use "a company spokesperson" if a quote is included.
 10. RESPECT SELECTED CHANNELS. Only produce assets for the channels the user selected. Do NOT invent Facebook, Instagram, TikTok, Paid Ads, Email, PR or Video content if the user did not select it.
-11. Return ONLY the JSON object described below. No prose, no markdown fences, no commentary.
+11. EVERY objection object in offer.objections MUST include BOTH a non-empty "objection" (>= 4 chars) AND a non-empty "response" (>= 8 chars, ideally a full sentence). Never emit an objection with a blank, missing, or placeholder response.
+12. EMAIL BODY STRUCTURE. Each email body MUST end in this exact order: (a) 1–2 short paragraphs of body copy, then (b) a single CTA sentence using the user's chosen CTA verbatim, then (c) the sign-off line ("Best," / "Thanks," etc.) followed by "{{sender}}". The CTA MUST appear BEFORE the sign-off. Never place the CTA after the signature. Never append the CTA as a trailing fragment after the sender name.
+13. Return ONLY the JSON object described below. No prose, no markdown fences, no commentary.
 
 Channel-specific rules for THIS brief:
 ${socialLines}
@@ -222,6 +224,26 @@ Return the JSON object only.`;
           pack.social.launchWeek = [];
           pack.social.repostIdeas = [];
         }
+      }
+
+      // Defensive: reorder any email body that ends with "sign-off … sender … CTA"
+      // so the CTA sits BEFORE the sign-off. Uses the user's chosen CTA verbatim.
+      const chosenCta = (brief.cta || "").trim();
+      if (chosenCta && Array.isArray(pack.emails)) {
+        const signoffRe = /\n\s*(Best|Thanks|Cheers|Kind regards|Regards|Warmly|Speak soon|Sincerely)\s*,?\s*\n[\s\S]*$/i;
+        const ctaTrailingRe = new RegExp(`([\\s\\S]*?)(\\n\\s*(?:Best|Thanks|Cheers|Kind regards|Regards|Warmly|Speak soon|Sincerely)[\\s\\S]*?)(\\n[^\\n]*${chosenCta.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\$&")}[^\\n]*)\\s*$`, "i");
+        pack.emails = pack.emails.map((e: any) => {
+          if (!e || typeof e.body !== "string") return e;
+          let body: string = e.body;
+          const m = body.match(ctaTrailingRe);
+          if (m) {
+            const before = m[1].trimEnd();
+            const signoffBlock = m[2].replace(/^\n+/, "");
+            const ctaLine = m[3].trim();
+            body = `${before}\n\n${ctaLine}\n\n${signoffBlock}`.replace(/\n{3,}/g, "\n\n").trimEnd();
+          }
+          return { ...e, body };
+        });
       }
     }
 
