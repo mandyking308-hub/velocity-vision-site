@@ -128,21 +128,30 @@ export default function AppWorkspaces() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {workspaces.map((w) => (
-            <Card key={w.id}>
+            <Card
+              key={w.id}
+              data-testid={`workspace-card-${w.id}`}
+              className="cursor-pointer transition-colors hover:border-primary/50"
+              onClick={() => openWorkspace(w.id)}
+            >
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Briefcase className="h-4 w-4 text-primary" /> {w.name}
                 </CardTitle>
                 {w.id === currentId && <Badge><Check className="h-3 w-3 mr-1" />Active</Badge>}
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-3">
+                <p className="text-sm text-muted-foreground">Click to open this workspace</p>
                 <Button
                   variant={w.id === currentId ? "outline" : "default"}
                   size="sm"
-                  onClick={() => setCurrentId(w.id)}
-                  disabled={w.id === currentId}
+                  data-testid={`workspace-open-${w.id}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openWorkspace(w.id);
+                  }}
                 >
-                  {w.id === currentId ? "Current" : "Switch to this workspace"}
+                  Open workspace
                 </Button>
               </CardContent>
             </Card>
