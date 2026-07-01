@@ -149,6 +149,15 @@ export default function LegalComplianceGate({
               (they are never overwritten).
             </p>
 
+            {errorMsg && (
+              <div
+                role="alert"
+                className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive"
+              >
+                {errorMsg}
+              </div>
+            )}
+
             <DialogFooter>
               <Button variant="outline" onClick={() => onOpenChange(false)} disabled={busy}>Cancel</Button>
               <Button onClick={handle} disabled={!accepted || busy}>
