@@ -12,6 +12,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCredits } from "@/contexts/CreditsContext";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 import CreditMeter from "@/components/app/CreditMeter";
 import FollowUpReminders from "@/components/app/FollowUpReminders";
 import SendSafetyPanel from "@/components/app/SendSafetyPanel";
@@ -21,6 +22,7 @@ import PriorityStrip from "@/components/app/PriorityStrip";
 import { computeSafety, DEFAULT_SENDER_STATE, type SenderState } from "@/lib/sendSafety";
 import type { PlanId } from "@/lib/credits";
 import { deriveFollowUpState } from "@/lib/leadStates";
+import { Card as UICard, CardContent as UICardContent } from "@/components/ui/card";
 
 interface VaultStats {
   total_contacts: number;
@@ -67,6 +69,7 @@ export default function AppDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { remaining, planConfig } = useCredits();
+  const { workspaces, loading: wsLoading } = useWorkspace();
   const [firstName, setFirstName] = useState("");
   const [activeCampaigns, setActiveCampaigns] = useState(0);
   const [latestCampaignId, setLatestCampaignId] = useState<string | null>(null);
@@ -219,6 +222,29 @@ export default function AppDashboard() {
   });
   const safeSendToday = safety.safeAllowance;
   const recommendedSend = safety.recommendedToday;
+
+  // Gate: no workspace → send to a clean create-first-workspace prompt.
+  if (!wsLoading && workspaces.length === 0) {
+    return (
+      <div className="max-w-2xl mx-auto py-12">
+        <UICard className="border-primary/30 bg-gradient-to-br from-primary/5 to-accent/5">
+          <UICardContent className="p-10 text-center space-y-4">
+            <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+              <Sparkles className="h-7 w-7 text-primary" />
+            </div>
+            <h1 className="text-2xl font-bold">Create your first workspace</h1>
+            <p className="text-sm text-muted-foreground">
+              Your workspace keeps contacts, campaigns, assets, replies, billing and pipeline
+              organised. Create one for your business, or one per client if you run agency work.
+            </p>
+            <Button size="lg" onClick={() => navigate("/app/workspaces")}>
+              <Briefcase className="h-4 w-4 mr-2" /> Create workspace
+            </Button>
+          </UICardContent>
+        </UICard>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 max-w-7xl">
