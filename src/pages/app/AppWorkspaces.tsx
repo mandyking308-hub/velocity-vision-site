@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,11 +13,18 @@ import { toast } from "sonner";
 
 export default function AppWorkspaces() {
   const { workspaces, currentId, setCurrentId, loading } = useWorkspace();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [industry, setIndustry] = useState("");
   const [website, setWebsite] = useState("");
   const [busy, setBusy] = useState(false);
+
+  const openWorkspace = (id: string) => {
+    setCurrentId(id);
+    toast.success("Workspace opened");
+    navigate("/app");
+  };
 
   const create = async () => {
     if (!name.trim()) return;
@@ -92,7 +100,7 @@ export default function AppWorkspaces() {
         <div>
           <h1 className="text-3xl font-bold">Client workspaces</h1>
           <p className="text-muted-foreground">
-            Switch between accounts. Each workspace has its own campaigns, pipeline and reporting.
+            Open a workspace to manage its contacts, campaigns, replies, billing and early pipeline.
           </p>
         </div>
         {workspaces.length > 0 && CreateDialog}
@@ -120,21 +128,30 @@ export default function AppWorkspaces() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {workspaces.map((w) => (
-            <Card key={w.id}>
+            <Card
+              key={w.id}
+              data-testid={`workspace-card-${w.id}`}
+              className="cursor-pointer transition-colors hover:border-primary/50"
+              onClick={() => openWorkspace(w.id)}
+            >
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Briefcase className="h-4 w-4 text-primary" /> {w.name}
                 </CardTitle>
                 {w.id === currentId && <Badge><Check className="h-3 w-3 mr-1" />Active</Badge>}
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-3">
+                <p className="text-sm text-muted-foreground">Click to open this workspace</p>
                 <Button
                   variant={w.id === currentId ? "outline" : "default"}
                   size="sm"
-                  onClick={() => setCurrentId(w.id)}
-                  disabled={w.id === currentId}
+                  data-testid={`workspace-open-${w.id}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openWorkspace(w.id);
+                  }}
                 >
-                  {w.id === currentId ? "Current" : "Switch to this workspace"}
+                  Open workspace
                 </Button>
               </CardContent>
             </Card>
