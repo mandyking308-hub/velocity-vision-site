@@ -12,6 +12,7 @@ import PageTransition from "@/components/PageTransition";
 import CRMProtectedRoute from "@/components/CRMProtectedRoute";
 import GTranslate from "@/components/GTranslate";
 import CookieBanner from "@/components/CookieBanner";
+import SupportWidget from "@/components/support/SupportWidget";
 import Index from "./pages/Index.tsx";
 import Services from "./pages/Services.tsx";
 import Industries from "./pages/Industries.tsx";
@@ -48,6 +49,7 @@ import LegalCompliancePage from "./pages/crm/LegalCompliancePage.tsx";
 import FounderManual from "./pages/crm/FounderManual.tsx";
 import FounderMonetisation from "./pages/crm/FounderMonetisation.tsx";
 import FounderIntelligence from "./pages/crm/FounderIntelligence.tsx";
+import SupportQueue from "./pages/crm/SupportQueue.tsx";
 // Legacy portal components intentionally not imported — /portal/* now redirects to /app/*.
 // Files retained under src/pages/portal/ and src/pages/PortalLayout.tsx for reference only.
 import DemoLogin from "./pages/DemoLogin.tsx";
@@ -161,6 +163,7 @@ const AnimatedRoutes = () => {
           <Route path="manual" element={<FounderManual />} />
           <Route path="monetisation" element={<FounderMonetisation />} />
           <Route path="intelligence" element={<FounderIntelligence />} />
+          <Route path="support" element={<SupportQueue />} />
         </Route>
 
         {/* Self-serve customer app (protected) */}
@@ -221,6 +224,7 @@ const App = () => (
             <ScrollToTop />
             <GTranslate />
             <AnimatedRoutes />
+            <SupportWidget />
             <CookieBanner />
           </BrowserRouter>
         </TooltipProvider>
