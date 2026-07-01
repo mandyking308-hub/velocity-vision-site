@@ -342,6 +342,16 @@ export default function AppActivation() {
       </div>
       </>
       )}
+      <LegalComplianceGate
+        open={legalGateOpen}
+        onOpenChange={setLegalGateOpen}
+        source="workspace_create"
+        workspaceId={currentId}
+        title="Accept current terms before activation"
+        description="Sending on your behalf requires up-to-date acceptance of our platform legal stack."
+        confirmLabel="Accept and activate"
+        onConfirm={async () => { await legal.refresh(); await runActivation(); }}
+      />
     </div>
   );
 }
