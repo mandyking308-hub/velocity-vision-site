@@ -457,15 +457,17 @@ export default function SupportWidget() {
                   </div>
                   <span>{inApp ? location.pathname : ""}</span>
                 </div>
-                <p className="text-[10px] text-muted-foreground leading-snug">
-                  AI outputs are drafts. Activation still depends on sender verification, legal acceptance, credits and safe contacts. If something looks wrong, raise a ticket.
+                <p className="text-[10px] text-muted-foreground leading-snug border-t pt-2">
+                  <strong>AI can make mistakes.</strong> Check important information in the{" "}
+                  <Link to="/help" onClick={() => setOpen(false)} className="underline">Help Centre</Link>
+                  {" "}or your dashboard. AI outputs are drafts. Activation still depends on sender verification, legal acceptance, credits and safe contacts.
                 </p>
               </div>
             </>
           )}
 
           {mode === "ticket" && (
-            <div className="p-4 space-y-3">
+            <div className="p-4 space-y-3 max-h-[70vh] overflow-y-auto">
               <div className="text-xs text-muted-foreground">
                 We won't send emails, change your plan, or bypass any platform checks — we'll respond via ticket.
               </div>
@@ -477,17 +479,53 @@ export default function SupportWidget() {
                   ))}
                 </SelectContent>
               </Select>
+
               {!user && (
-                <Input placeholder="Your email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <>
+                  <Input placeholder="Your name *" value={contactName} onChange={(e) => setContactName(e.target.value.slice(0, 200))} />
+                  <Input placeholder="Your email *" type="email" value={email} onChange={(e) => setEmail(e.target.value.slice(0, 320))} />
+                </>
               )}
+              {user && (
+                <div className="text-[11px] text-muted-foreground">
+                  Replying as <span className="font-medium">{user.email}</span>. Add extra contact details below if you'd like a call.
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-2">
+                <Input placeholder="Phone (optional)" value={contactPhone} onChange={(e) => setContactPhone(e.target.value.slice(0, 60))} />
+                <Input placeholder="Company (optional)" value={companyName} onChange={(e) => setCompanyName(e.target.value.slice(0, 200))} />
+              </div>
+              <Input placeholder="Account / workspace reference (optional)" value={accountRef} onChange={(e) => setAccountRef(e.target.value.slice(0, 200))} />
+
+              <div className="grid grid-cols-2 gap-2">
+                <Select value={preferredMethod} onValueChange={setPreferredMethod}>
+                  <SelectTrigger><SelectValue placeholder="Preferred contact" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="email">Email</SelectItem>
+                    <SelectItem value="phone">Phone</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={urgency} onValueChange={setUrgency}>
+                  <SelectTrigger><SelectValue placeholder="Urgency" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="normal">Normal</SelectItem>
+                    <SelectItem value="urgent">Urgent / blocking</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               <Textarea
-                placeholder="Describe what happened, and what you expected."
+                placeholder="Describe what happened, and what you expected. *"
                 rows={4}
                 value={ticketMessage}
                 onChange={(e) => setTicketMessage(e.target.value)}
               />
               <div className="text-[11px] text-muted-foreground">
                 We'll include your current page ({location.pathname}), the chat transcript, and browser details so we can help faster.
+              </div>
+              <div className="text-[11px] text-muted-foreground bg-muted/50 border rounded p-2 leading-snug">
+                <strong>Do not include passwords, card details, API keys or secret tokens.</strong> We'll use the details you provide to respond to this support request.
               </div>
               <div className="flex gap-2">
                 <Button size="sm" onClick={submitTicket} disabled={submitting}>
@@ -503,9 +541,13 @@ export default function SupportWidget() {
             <div className="p-6 text-center space-y-2">
               <CheckCircle2 className="h-8 w-8 text-green-600 mx-auto" />
               <div className="font-medium text-sm">Ticket received</div>
-              {ticketRef && <div className="text-xs text-muted-foreground">Ref: {ticketRef.slice(0, 8)}</div>}
+              {ticketRef && (
+                <div className="text-xs text-muted-foreground">
+                  Your ticket reference is: <span className="font-mono font-medium">{ticketRef.slice(0, 8)}</span>
+                </div>
+              )}
               <p className="text-xs text-muted-foreground">
-                Our team has been notified by email. Platform gates (legal, sender, activation, billing) remain in place — nothing is bypassed.
+                We've notified the team. If you provided contact details, we'll use them to follow up. Platform gates (legal, sender, activation, billing) remain in place — nothing is bypassed.
               </p>
               <Button size="sm" variant="outline" onClick={resetChat}>Back to chat</Button>
             </div>
