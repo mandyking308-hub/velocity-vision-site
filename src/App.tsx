@@ -222,6 +222,7 @@ const App = () => (
             <ScrollToTop />
             <GTranslate />
             <AnimatedRoutes />
+            <CookieBanner />
           </BrowserRouter>
         </TooltipProvider>
       </DemoProvider>
