@@ -269,16 +269,17 @@ export default function AppBilling() {
 
       <TopUpModal open={topupOpen} onOpenChange={setTopupOpen} />
       {element}
-      <LegalAcceptanceGate
+      <LegalComplianceGate
         open={pendingPlan !== null}
         onOpenChange={(v) => { if (!v) setPendingPlan(null); }}
-        title={pendingPlan ? `Confirm before subscribing to ${PLANS[pendingPlan].name}` : "Confirm"}
+        source="plan_checkout"
+        title={pendingPlan ? `Confirm current terms before subscribing to ${PLANS[pendingPlan].name}` : "Confirm current terms"}
         description={
           pendingPlan
-            ? `You'll be charged ${priceFor(PLAN_TO_SKU[pendingPlan], currency).formatted} ${PLANS[pendingPlan].unit} in ${currency}. Stripe checkout opens in the same currency. You must accept the legal stack before activating a paid plan.`
-            : "You must accept the legal stack before activating a paid plan."
+            ? `You'll be charged ${priceFor(PLAN_TO_SKU[pendingPlan], currency).formatted} ${PLANS[pendingPlan].unit} in ${currency}. Please accept the current versions of our platform legal stack to continue to checkout.`
+            : "Please accept the current versions of our platform legal stack to continue to checkout."
         }
-        confirmLabel={pendingPlan ? `Continue to checkout in ${currency}` : "Continue to checkout"}
+        confirmLabel={pendingPlan ? `Accept and continue in ${currency}` : "Accept and continue"}
         onConfirm={confirmBuyPlan}
       />
     </div>
