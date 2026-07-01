@@ -19,6 +19,10 @@ const NUDGE_ROUTES = new Set<string>([
   "/app/billing", "/app/settings/email",
 ]);
 const NUDGE_SESSION_KEY = "vv.support.nudgeDismissed";
+const AI_COUNT_KEY = "vv.support.aiCount";
+const MAX_INPUT_CHARS = 1000;
+const ANON_AI_CAP = 8;
+const SIGNED_AI_CAP = 20;
 
 type Mode = "chat" | "ticket" | "success";
 type Msg = { role: "user" | "assistant" | "system"; content: string; links?: { label: string; to: string }[] };
