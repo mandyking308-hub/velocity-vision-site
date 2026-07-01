@@ -35,7 +35,9 @@ const LegalCentre = () => (
             <p><strong className="text-foreground">Operating entity:</strong> Global Solutions Management LLC — incorporated in the State of Delaware, United States — operator of the Velocity Vision platform.</p>
             <p><strong className="text-foreground">Document stack:</strong> The Platform Terms govern general use. The Customer Agreement governs paid plans, credits and subscriptions. The Data Processing Agreement governs customer-uploaded personal data. Product policies apply to all customers and workspaces.</p>
             <p><strong className="text-foreground">Legal status:</strong> These documents govern access to and use of the Velocity Vision software platform from their stated effective dates. They form part of the Velocity Vision legal document stack and apply according to their stated scope, incorporated terms and applicable plan or workspace use.</p>
+            <p><strong className="text-foreground">Multilingual access:</strong> This Legal Centre may be viewed in multiple languages using automated translation. Automated translations are provided for convenience only. The English version controls if there is any conflict, ambiguity, inconsistency, error or difference between versions.</p>
           </div>
+
         </motion.div>
 
         <div className="mt-12 space-y-4">
