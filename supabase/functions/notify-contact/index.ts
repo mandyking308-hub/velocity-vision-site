@@ -8,28 +8,83 @@ const EMAIL_FROM = Deno.env.get('EMAIL_FROM') ?? 'Velocity Vision <notifications
 const esc = (s: string) =>
   String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string));
 
+const admin = () =>
+  createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
-  let payload: Record<string, unknown> = {};
+  let payload: Record<string, any> = {};
   try {
     payload = await req.json();
   } catch {
-    return new Response(JSON.stringify({ ok: false, error: 'invalid_json' }), {
-      status: 400,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return json({ ok: false, error: 'invalid_json' }, 400);
   }
 
-  const { name, email, company, message, route, lead_id, contact_id, company_id } = payload as Record<string, string | null | undefined>;
+  const name = String(payload.name ?? '').trim();
+  const email = String(payload.email ?? '').trim();
+  const company = String(payload.company ?? '').trim();
+  const message = String(payload.message ?? '').trim();
+  const route = String(payload.route ?? 'website_contact').slice(0, 64);
+  const source = route === 'demo_booking' ? 'demo_booking' : 'website_contact';
+
+  if (!name || !email) {
+    return json({ ok: false, error: 'missing_fields' }, 400);
+  }
+  if (name.length > 200 || email.length > 320 || company.length > 200 || message.length > 5000) {
+    return json({ ok: false, error: 'field_too_long' }, 400);
+  }
+
+  const supabase = admin();
+  let companyId: string | null = null;
+  let contactId: string | null = null;
+  let leadId: string | null = null;
+
+  try {
+    if (company) {
+      const { data: c } = await supabase
+        .from('companies')
+        .insert({ name: company, status: 'prospect' as const })
+        .select('id')
+        .single();
+      companyId = c?.id ?? null;
+    }
+
+    const parts = name.split(/\s+/);
+    const { data: ct } = await supabase
+      .from('contacts')
+      .insert({
+        first_name: parts[0] ?? name,
+        last_name: parts.slice(1).join(' ') || '',
+        email,
+        company_id: companyId,
+      })
+      .select('id')
+      .single();
+    contactId = ct?.id ?? null;
+
+    const { data: ld } = await supabase
+      .from('leads')
+      .insert({
+        source,
+        contact_id: contactId,
+        company_id: companyId,
+        marketing_interest: message || null,
+        status: 'new' as const,
+      })
+      .select('id')
+      .single();
+    leadId = ld?.id ?? null;
+  } catch (e) {
+    await logError('notify-contact: db insert failed', String(e).slice(0, 500));
+    // continue — we still try to send the notification email
+  }
+
   const timestamp = new Date().toISOString();
 
   if (!CONTACT_NOTIFY_TO || !RESEND_API_KEY) {
     await logError('notify-contact: missing config');
-    return new Response(JSON.stringify({ ok: false, error: 'notify_unavailable' }), {
-      status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return json({ ok: true, lead_id: leadId, contact_id: contactId, company_id: companyId, notified: false });
   }
 
   const subject = `New website enquiry — ${name || 'Unknown'}${route ? ` (${route})` : ''}`;
@@ -37,65 +92,48 @@ Deno.serve(async (req) => {
     <div style="font-family:Arial,sans-serif;color:#111;line-height:1.5">
       <h2 style="margin:0 0 12px">New website enquiry</h2>
       <table style="border-collapse:collapse">
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Route</td><td>${esc(route || 'website_contact')}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Name</td><td>${esc(name || '')}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Email</td><td>${esc(email || '')}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Company</td><td>${esc(company || '')}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#666">Route</td><td>${esc(route)}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#666">Name</td><td>${esc(name)}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#666">Email</td><td>${esc(email)}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#666">Company</td><td>${esc(company)}</td></tr>
         <tr><td style="padding:4px 12px 4px 0;color:#666">Timestamp</td><td>${esc(timestamp)}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Lead ID</td><td>${esc(lead_id || '')}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Contact ID</td><td>${esc(contact_id || '')}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Company ID</td><td>${esc(company_id || '')}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#666">Lead ID</td><td>${esc(leadId || '')}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#666">Contact ID</td><td>${esc(contactId || '')}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#666">Company ID</td><td>${esc(companyId || '')}</td></tr>
       </table>
       <h3 style="margin:20px 0 6px">Message</h3>
-      <div style="white-space:pre-wrap;background:#f7f7f7;padding:12px;border-radius:6px">${esc(message || '')}</div>
+      <div style="white-space:pre-wrap;background:#f7f7f7;padding:12px;border-radius:6px">${esc(message)}</div>
     </div>
   `;
 
   try {
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${RESEND_API_KEY}`,
-      },
-      body: JSON.stringify({
-        from: EMAIL_FROM,
-        to: [CONTACT_NOTIFY_TO],
-        reply_to: email || undefined,
-        subject,
-        html,
-      }),
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${RESEND_API_KEY}` },
+      body: JSON.stringify({ from: EMAIL_FROM, to: [CONTACT_NOTIFY_TO], reply_to: email || undefined, subject, html }),
     });
-
     if (!res.ok) {
       const detail = await res.text();
       await logError(`notify-contact: resend ${res.status}`, detail.slice(0, 500));
-      return new Response(JSON.stringify({ ok: false, error: 'send_failed' }), {
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return json({ ok: true, lead_id: leadId, contact_id: contactId, company_id: companyId, notified: false });
     }
-
-    return new Response(JSON.stringify({ ok: true }), {
-      status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return json({ ok: true, lead_id: leadId, contact_id: contactId, company_id: companyId, notified: true });
   } catch (e) {
     await logError('notify-contact: exception', String(e).slice(0, 500));
-    return new Response(JSON.stringify({ ok: false, error: 'send_failed' }), {
-      status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return json({ ok: true, lead_id: leadId, contact_id: contactId, company_id: companyId, notified: false });
   }
 });
 
+function json(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  });
+}
+
 async function logError(message: string, detail?: string) {
   try {
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
-    );
-    await supabase.from('error_logs').insert({
+    await admin().from('error_logs').insert({
       category: 'notify-contact',
       message,
       details: detail ?? null,
