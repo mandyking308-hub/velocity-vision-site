@@ -43,15 +43,19 @@ const sections = [
     ],
   },
   {
-    title: "Templates & outreach assets",
+    title: "AI, templates & outreach assets",
     items: [
       {
+        q: "Are outputs AI-generated?",
+        a: "Yes. Velocity Vision uses AI to help draft and structure outreach assets, quality checks and follow-up suggestions. You review and control what is activated or sent. AI outputs are drafts and should be reviewed before use. Velocity Vision does not guarantee replies, sales, deliverability, revenue or legal compliance.",
+      },
+      {
         q: "What is inside a template?",
-        a: "A template is a reusable commercial workflow. It can produce outreach emails, follow-up steps, social copy, hooks, press copy, landing page copy and lead capture copy, depending on the use case. Templates connect back to the chosen segment, cadence and pipeline path.",
+        a: "A template is a reusable, AI-assisted commercial workflow. It can produce outreach emails, follow-up steps, social copy, hooks, press copy, landing page copy and lead capture copy, depending on the use case. Templates connect back to the chosen segment, cadence and pipeline path.",
       },
       {
         q: "Can I edit the outputs?",
-        a: "Yes. Outputs are drafts until you approve them. You can edit tone, subject lines, calls to action, body copy, sequence steps and supporting assets before anything is scheduled or sent.",
+        a: "Yes. AI outputs are drafts until you approve them. You can edit tone, subject lines, calls to action, body copy, sequence steps and supporting assets before anything is scheduled or sent.",
       },
       {
         q: "Can I regenerate part of an output pack?",
