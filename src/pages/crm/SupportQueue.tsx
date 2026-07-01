@@ -29,6 +29,7 @@ interface Ticket {
   browser_info: string | null;
   source: string;
   resolution_notes: string | null;
+  assigned_to: string | null;
 }
 
 export default function SupportQueue() {
@@ -187,7 +188,7 @@ export default function SupportQueue() {
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>{STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
                   </Select>
-                  <Input placeholder="Assign to (name/email)" defaultValue={selected.diagnostics?.assigned_to as string ?? ""} onBlur={(e) => updateTicket({ assigned_to: e.target.value || null })} />
+                  <Input key={selected.id} placeholder="Assign to (name/email)" defaultValue={selected.assigned_to ?? ""} onBlur={(e) => updateTicket({ assigned_to: e.target.value || null })} />
                 </div>
                 <div>
                   <div className="text-xs font-medium mb-1">Resolution notes</div>
