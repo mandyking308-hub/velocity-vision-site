@@ -34,7 +34,15 @@ interface Connection {
   dmarc_status: string | null;
   sending_enabled: boolean | null;
   dns_checked_at: string | null;
+  dkim_selector: string | null;
+  dkim_selectors: string[] | null;
 }
+
+// Providers we consider "known" for DKIM selectors on the client. Kept in sync
+// with the edge function so the UI only prompts for a selector when we truly
+// don't know it. If you extend PROVIDER_SELECTORS server-side, mirror the host
+// here.
+const KNOWN_DKIM_HOSTS = new Set(["smtp.gmail.com", "smtp.office365.com"]);
 
 const PROVIDER_HELP: Record<string, { label: string; help: string; host: string; port: number }> = {
   gmail: {
