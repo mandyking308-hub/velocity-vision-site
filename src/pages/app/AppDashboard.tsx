@@ -407,7 +407,7 @@ export default function AppDashboard() {
         <div className="lg:col-span-2">
           <SendSafetyPanel s={safety} used={sendsUsedToday} scheduled={sendsScheduledToday} />
         </div>
-        <SenderStatusCard state={sender} health={safety.health} scheduledToday={sendsScheduledToday} fromEmail={senderEmail} />
+        <SenderStatusCard state={sender} health={safety.health} scheduledToday={sendsScheduledToday} fromEmail={senderEmail} connectionId={senderConnectionId} detail={senderDetail} />
       </div>
 
       {/* C2. Campaign cadence / upcoming activity */}
