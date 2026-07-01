@@ -2207,6 +2207,35 @@ export type Database = {
         }
         Returns: boolean
       }
+      provision_first_workspace: {
+        Args: {
+          _country?: string
+          _industry?: string
+          _name: string
+          _website?: string
+        }
+        Returns: {
+          agency_company_id: string
+          contact_email: string | null
+          contact_name: string | null
+          created_at: string
+          default_country: string | null
+          default_language: string
+          default_locale: string | null
+          default_timezone: string | null
+          id: string
+          industry: string | null
+          name: string
+          updated_at: string
+          website: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "client_workspaces"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       provision_starter_plan: {
         Args: never
         Returns: {

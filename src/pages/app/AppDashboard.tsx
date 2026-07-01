@@ -12,6 +12,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCredits } from "@/contexts/CreditsContext";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 import CreditMeter from "@/components/app/CreditMeter";
 import FollowUpReminders from "@/components/app/FollowUpReminders";
 import SendSafetyPanel from "@/components/app/SendSafetyPanel";
@@ -21,6 +22,7 @@ import PriorityStrip from "@/components/app/PriorityStrip";
 import { computeSafety, DEFAULT_SENDER_STATE, type SenderState } from "@/lib/sendSafety";
 import type { PlanId } from "@/lib/credits";
 import { deriveFollowUpState } from "@/lib/leadStates";
+import { Card as UICard, CardContent as UICardContent } from "@/components/ui/card";
 
 interface VaultStats {
   total_contacts: number;
@@ -67,6 +69,7 @@ export default function AppDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { remaining, planConfig } = useCredits();
+  const { workspaces, loading: wsLoading } = useWorkspace();
   const [firstName, setFirstName] = useState("");
   const [activeCampaigns, setActiveCampaigns] = useState(0);
   const [latestCampaignId, setLatestCampaignId] = useState<string | null>(null);
@@ -220,6 +223,29 @@ export default function AppDashboard() {
   const safeSendToday = safety.safeAllowance;
   const recommendedSend = safety.recommendedToday;
 
+  // Gate: no workspace → send to a clean create-first-workspace prompt.
+  if (!wsLoading && workspaces.length === 0) {
+    return (
+      <div className="max-w-2xl mx-auto py-12">
+        <UICard className="border-primary/30 bg-gradient-to-br from-primary/5 to-accent/5">
+          <UICardContent className="p-10 text-center space-y-4">
+            <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+              <Sparkles className="h-7 w-7 text-primary" />
+            </div>
+            <h1 className="text-2xl font-bold">Create your first workspace</h1>
+            <p className="text-sm text-muted-foreground">
+              Your workspace keeps contacts, campaigns, assets, replies, billing and pipeline
+              organised. Create one for your business, or one per client if you run agency work.
+            </p>
+            <Button size="lg" onClick={() => navigate("/app/workspaces")}>
+              <Briefcase className="h-4 w-4 mr-2" /> Create workspace
+            </Button>
+          </UICardContent>
+        </UICard>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8 max-w-7xl">
       {/* A0. Priority strip — most urgent commercial actions, always on top */}
@@ -369,11 +395,11 @@ export default function AppDashboard() {
       </div>
       <FollowUpReminders />
 
-      {/* F. Pipeline and sales */}
+      {/* F. Leads & early pipeline */}
       <SectionHeader
         icon={TrendingUp}
-        title="Pipeline and sales"
-        desc="From activated data to closed revenue."
+        title="Leads & early pipeline"
+        desc="Track replies, warm contacts and early opportunities before sales handoff. Pipeline visibility, not CRM bloat."
         cta={{ label: "Open pipeline", to: "/app/pipeline" }}
       />
       <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
@@ -526,18 +552,19 @@ function AssetCard({ icon: Icon, title, desc, onClick }: { icon: any; title: str
 
 function buildNextActions(v: VaultStats, i: InteractionStats, p: PipelineStats, credits: number) {
   const acts: Array<{ title: string; desc: string; icon: any; to: string; toneClass: string }> = [];
+  // Credit truthfulness: differentiate no-plan / exhausted / low.
+  if (credits <= 0) acts.push({ title: "No campaign credits available", desc: "Choose a plan or buy a top-up to keep generating.", icon: Zap, to: "/app/billing", toneClass: "bg-rose-100 text-rose-700" });
+  else if (credits < 20) acts.push({ title: "Credits running low", desc: "Top up so activation isn't interrupted.", icon: Zap, to: "/app/billing", toneClass: "bg-amber-100 text-amber-700" });
+  if (v.total_contacts === 0) acts.push({ title: "Upload your first contact list", desc: "Get data into the vault to unlock activation.", icon: Upload, to: "/app/data-vault/upload", toneClass: "bg-primary/10 text-primary" });
+  if (v.total_contacts > 0 && v.clean + v.needs_review + v.risky + v.blocked === 0) acts.push({ title: "Review data quality", desc: "AI flags what's safe to activate.", icon: ShieldCheck, to: "/app/data-vault", toneClass: "bg-primary/10 text-primary" });
   if (i.replies_due > 0) acts.push({ title: `${i.replies_due} replies need action`, desc: "Respond to warm replies before they cool.", icon: MessageSquare, to: "/app/follow-up?tab=replied", toneClass: "bg-emerald-100 text-emerald-700" });
   if (i.followups_today > 0) acts.push({ title: `${i.followups_today} follow-ups due / overdue`, desc: "Catch up your outreach queue.", icon: Mail, to: "/app/follow-up?tab=overdue", toneClass: "bg-amber-100 text-amber-700" });
   if (i.warm > 0) acts.push({ title: `${i.warm} warm contacts ready for pipeline`, desc: "Move qualified leads into opportunities.", icon: TrendingUp, to: "/app/follow-up?tab=warm", toneClass: "bg-primary/10 text-primary" });
   if (p.stuck > 0) acts.push({ title: `${p.stuck} deals stuck 14+ days`, desc: "Unblock or update next-action dates.", icon: AlertTriangle, to: "/app/pipeline", toneClass: "bg-amber-100 text-amber-700" });
   if (p.next_action_due > 0) acts.push({ title: `${p.next_action_due} opportunity actions overdue`, desc: "Chase proposals and negotiations.", icon: Clock, to: "/app/pipeline", toneClass: "bg-rose-100 text-rose-700" });
-  if (i.dormant > 0) acts.push({ title: `${i.dormant} dormant contacts to revisit`, desc: "Re-engage cold lists with a fresh angle.", icon: AlertTriangle, to: "/app/follow-up?tab=dormant", toneClass: "bg-slate-100 text-slate-700" });
   if (v.risky > 0) acts.push({ title: `Review ${v.risky} risky contacts`, desc: "Decide what's safe to activate.", icon: AlertTriangle, to: "/app/data-vault", toneClass: "bg-amber-100 text-amber-700" });
   if (v.safe_to_activate > 0) acts.push({ title: `Send to ${Math.min(50, v.safe_to_activate)} safe contacts`, desc: "Activate a warm segment today.", icon: Send, to: "/app/activate", toneClass: "bg-emerald-100 text-emerald-700" });
-  if (p.leads > 0 && p.opportunities === 0) acts.push({ title: `Move ${Math.min(4, p.leads)} contacts into pipeline`, desc: "Promote qualified leads to opportunities.", icon: TrendingUp, to: "/app/follow-up", toneClass: "bg-primary/10 text-primary" });
-  if (credits < 20) acts.push({ title: "Top up credits", desc: "You're running low — keep sending without interruption.", icon: Zap, to: "/app/billing", toneClass: "bg-rose-100 text-rose-700" });
-  acts.push({ title: "Authenticate sender domain", desc: "Improve deliverability with SPF / DKIM.", icon: ShieldCheck, to: "/app/settings", toneClass: "bg-primary/10 text-primary" });
-  if (v.total_contacts === 0) acts.unshift({ title: "Upload your first contact list", desc: "Get data into the vault to unlock activation.", icon: Upload, to: "/app/data-vault/upload", toneClass: "bg-primary/10 text-primary" });
+  if (acts.length === 0) acts.push({ title: "Authenticate sender domain", desc: "Improve deliverability with SPF / DKIM.", icon: ShieldCheck, to: "/app/settings/email", toneClass: "bg-primary/10 text-primary" });
   return acts.slice(0, 9);
 }
 
