@@ -127,9 +127,8 @@ export default function AppCampaignWorkspace() {
 
       const quality = checkPackQuality(pack, c.brief);
       if (!quality.ok) {
-        toast.error("Campaign quality check failed", {
-          description: `We didn't save this pack and no credits were used. Please try again. (${quality.issues.slice(0, 2).map((i) => i.code).join(", ")})`,
-        });
+        const { title, description } = formatQualityFailure(quality);
+        toast.error(title, { description });
         return;
       }
 
