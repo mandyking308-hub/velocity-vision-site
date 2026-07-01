@@ -18,7 +18,7 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useCurrency } from "@/hooks/useCurrency";
 import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
-import CurrencySwitcher from "@/components/CurrencySwitcher";
+import PricingCurrencySelector from "@/components/PricingCurrencySelector";
 
 const PLAN_TO_SKU: Record<PlanId, SkuId> = {
   starter: "vv_starter_oneoff",
