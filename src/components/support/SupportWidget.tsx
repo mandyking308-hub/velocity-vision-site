@@ -233,7 +233,10 @@ export default function SupportWidget() {
 
   const submitTicket = async () => {
     if (!ticketMessage.trim()) { toast.error("Please describe the issue"); return; }
-    if (!user && !email.trim()) { toast.error("Please add your email so we can reply"); return; }
+    if (!user) {
+      if (!contactName.trim()) { toast.error("Please add your name so we can reply"); return; }
+      if (!email.trim()) { toast.error("Please add your email so we can reply"); return; }
+    }
     setSubmitting(true);
     try {
       const cat = PROBLEM_CATEGORIES.find((c) => c.id === problem);
@@ -244,6 +247,8 @@ export default function SupportWidget() {
         search: location.search,
         workspace_id: wsId,
         problem_key: problem || null,
+        urgency,
+        preferred_contact_method: preferredMethod,
         assistant_question: question || null,
         assistant_answer: answer || null,
         chat_transcript: messages
@@ -253,15 +258,22 @@ export default function SupportWidget() {
         ai_disabled: aiDisabled,
         timestamp: new Date().toISOString(),
       };
+      const isUrgent = urgency === "urgent";
+      const derivedSeverity = isUrgent || problem === "broken" || problem === "billing" ? "high" : "normal";
       const payload = {
         user_id: user?.id ?? null,
-        email: user?.email ?? email.trim() ?? null,
+        email: user?.email ?? (email.trim() || null),
         workspace_id: wsId,
         route: location.pathname,
         category: cat?.category ?? "other",
-        severity: problem === "broken" || problem === "billing" ? "high" : "normal",
+        severity: derivedSeverity,
         subject: cat?.label ?? "Support request",
         message: ticketMessage.trim(),
+        contact_name: contactName.trim() || null,
+        contact_phone: contactPhone.trim() || null,
+        company_name: companyName.trim() || null,
+        account_reference: accountRef.trim() || null,
+        preferred_contact_method: preferredMethod || null,
         diagnostics,
         browser_info: typeof navigator !== "undefined" ? navigator.userAgent.slice(0, 500) : null,
         source,
