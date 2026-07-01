@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Upload, ShieldCheck, Mail, Send, Inbox, GitBranch } from "lucide-react";
 
 const steps = [
-  { n: "01", icon: Upload, title: "Upload your data", desc: "CSV or paste rows. Map your fields once. Companies and contacts land safely in the Data Vault." },
-  { n: "02", icon: ShieldCheck, title: "Review & build a safe segment", desc: "Quality flags surface duplicates, risky records and missing fields. Pick exactly who is safe to contact." },
-  { n: "03", icon: Mail, title: "Generate outreach assets", desc: "Email sequences, social media posts, press release and video pack — generated from one brief in your language." },
-  { n: "04", icon: Send, title: "Verify sender & activate", desc: "Connect your sender, set cadence and schedule. Governed daily caps and risky-record limits enforced before anything goes out." },
-  { n: "05", icon: Inbox, title: "Work replies & follow-up", desc: "Action queue for inbound replies, snooze, follow-up states and stuck-deal alerts — nothing falls through." },
-  { n: "06", icon: GitBranch, title: "Move leads into pipeline", desc: "Promote warm contacts into opportunities, track value and watch deals progress — no separate CRM." },
+  { n: "01", icon: Upload, title: "Upload your messy data", desc: "CSV or paste rows. Map your fields once. Companies and contacts land safely in the Data Vault." },
+  { n: "02", icon: ShieldCheck, title: "AI reviews quality & readiness", desc: "AI quality review surfaces duplicates, risky records and missing fields. You pick who is safe to contact." },
+  { n: "03", icon: Mail, title: "Generate AI-assisted outreach assets", desc: "Email sequences, social posts, press release and video pack — drafted by AI from one brief, fully editable before use." },
+  { n: "04", icon: Send, title: "Verify sender & activate safely", desc: "Governed AI activation: verify sender, set cadence, and let daily caps and risky-record limits gate what goes out." },
+  { n: "05", icon: Inbox, title: "Track replies with AI follow-up", desc: "Action queue for inbound replies with AI-supported follow-up suggestions and snooze — you approve every send." },
+  { n: "06", icon: GitBranch, title: "Move warm contacts into pipeline", desc: "Promote replies into opportunities, track value and watch deals progress — no separate CRM." },
 ];
 
 const HowItWorksPreview = () => (
