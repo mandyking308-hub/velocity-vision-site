@@ -201,6 +201,16 @@ export default function AppWorkspaces() {
           ))}
         </div>
       )}
+      <LegalComplianceGate
+        open={legalGateOpen}
+        onOpenChange={setLegalGateOpen}
+        source="workspace_create"
+        title="Accept current terms before creating a workspace"
+        description="Creating a workspace requires up-to-date acceptance of our platform legal stack."
+        confirmLabel="Accept and create"
+        onConfirm={async () => { await legal.refresh(); await doCreate(); }}
+      />
     </div>
   );
 }
+
