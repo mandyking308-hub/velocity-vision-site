@@ -176,6 +176,11 @@ export default function AppBilling() {
               {planConfig.cadence === "monthly" ? "Renews" : "Access until"} {periodEnd?.toLocaleDateString() ?? "—"}
             </div>
             <div className="text-sm">{priceFor(PLAN_TO_SKU[plan], currency).formatted} <span className="text-muted-foreground">{planConfig.unit}</span></div>
+            <div className="text-xs text-muted-foreground">
+              {planConfig.pooledCredits
+                ? "Agency credits are pooled across all client workspaces."
+                : "Credits apply to this workspace."}
+            </div>
             <Button variant="outline" size="sm" className="w-full" onClick={() => setTopupOpen(true)}>Buy credit top-up</Button>
           </CardContent>
         </Card>

@@ -7,18 +7,33 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
+import { useCredits } from "@/contexts/CreditsContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Briefcase, Check, Plus, Sparkles } from "lucide-react";
+import { Briefcase, Check, Plus, Sparkles, Info } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AppWorkspaces() {
   const { workspaces, currentId, setCurrentId, loading } = useWorkspace();
+  const { plan, planConfig } = useCredits();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [industry, setIndustry] = useState("");
   const [website, setWebsite] = useState("");
   const [busy, setBusy] = useState(false);
+
+  const isAgency = plan === "agency";
+  const limit = planConfig.workspaceLimit; // null = unlimited
+  const atLimit = limit !== null && workspaces.length >= limit;
+  const canCreate = !atLimit;
+
+  const heading = isAgency ? "Client workspaces" : "My workspace";
+  const subCopy = isAgency
+    ? "Open a client workspace to manage its contacts, campaigns, replies, billing and early pipeline."
+    : "Open your workspace to manage contacts, campaigns, replies, billing and early pipeline.";
+  const creditNote = isAgency
+    ? "Agency credits are pooled across all client workspaces."
+    : "Credits apply to this workspace.";
 
   const openWorkspace = (id: string) => {
     setCurrentId(id);
@@ -28,6 +43,10 @@ export default function AppWorkspaces() {
 
   const create = async () => {
     if (!name.trim()) return;
+    if (!canCreate) {
+      toast.error("Your plan allows only 1 workspace. Upgrade to Agency for multiple client workspaces.");
+      return;
+    }
     setBusy(true);
     try {
       const { data, error } = await supabase.rpc("provision_first_workspace", {
@@ -43,7 +62,6 @@ export default function AppWorkspaces() {
         toast.success("Workspace created");
         setOpen(false);
         setName(""); setIndustry(""); setWebsite("");
-        // Refresh so the new workspace shows up in the switcher.
         setTimeout(() => window.location.reload(), 300);
       } else {
         toast.error("Workspace was not returned");
@@ -58,22 +76,23 @@ export default function AppWorkspaces() {
   const CreateDialog = (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button disabled={!canCreate}>
           <Plus className="h-4 w-4 mr-2" /> Create workspace
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Create your workspace</DialogTitle>
+          <DialogTitle>{isAgency ? "Create a client workspace" : "Create your workspace"}</DialogTitle>
           <DialogDescription>
-            One workspace keeps contacts, campaigns, assets, replies, billing and pipeline
-            organised. Create one for your business, or one per client if you run agency work.
+            {isAgency
+              ? "Each client workspace has its own contacts, campaigns, assets, replies and pipeline. Credits are pooled across all client workspaces."
+              : "Your workspace keeps contacts, campaigns, assets, replies, billing and pipeline organised."}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
           <div>
             <Label htmlFor="ws-name">Workspace name *</Label>
-            <Input id="ws-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Acme Ltd" />
+            <Input id="ws-name" value={name} onChange={(e) => setName(e.target.value)} placeholder={isAgency ? "e.g. Acme Ltd (client)" : "e.g. Acme Ltd"} />
           </div>
           <div>
             <Label htmlFor="ws-industry">Industry (optional)</Label>
@@ -86,7 +105,7 @@ export default function AppWorkspaces() {
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)} disabled={busy}>Cancel</Button>
-          <Button onClick={create} disabled={busy || !name.trim()}>
+          <Button onClick={create} disabled={busy || !name.trim() || !canCreate}>
             {busy ? "Creating…" : "Create workspace"}
           </Button>
         </DialogFooter>
@@ -94,17 +113,29 @@ export default function AppWorkspaces() {
     </Dialog>
   );
 
+  const showCreate = canCreate && (isAgency || workspaces.length === 0);
+
   return (
     <div className="space-y-6 max-w-4xl">
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
-          <h1 className="text-3xl font-bold">Client workspaces</h1>
-          <p className="text-muted-foreground">
-            Open a workspace to manage its contacts, campaigns, replies, billing and early pipeline.
-          </p>
+          <h1 className="text-3xl font-bold">{heading}</h1>
+          <p className="text-muted-foreground">{subCopy}</p>
         </div>
-        {workspaces.length > 0 && CreateDialog}
+        {workspaces.length > 0 && showCreate && CreateDialog}
       </div>
+
+      <Card className="bg-muted/40 border-dashed">
+        <CardContent className="p-3 flex items-start gap-2 text-sm text-muted-foreground">
+          <Info className="h-4 w-4 mt-0.5 shrink-0" />
+          <span>
+            <strong className="text-foreground">{planConfig.name} plan.</strong> {creditNote}
+            {atLimit && !isAgency && (
+              <> · Need separate client workspaces? <a href="/app/billing" className="text-primary underline underline-offset-2">Upgrade to Agency</a>.</>
+            )}
+          </span>
+        </CardContent>
+      </Card>
 
       {loading ? (
         <p className="text-muted-foreground">Loading…</p>
@@ -117,9 +148,7 @@ export default function AppWorkspaces() {
             <div>
               <h2 className="text-xl font-semibold">Create your first workspace</h2>
               <p className="text-sm text-muted-foreground max-w-md mx-auto mt-1">
-                Your workspace keeps contacts, campaigns, assets, replies, billing and pipeline
-                organised. Create one workspace for your business, or one per client if you run
-                agency work.
+                Your workspace keeps contacts, campaigns, assets, replies, billing and pipeline organised.
               </p>
             </div>
             {CreateDialog}
@@ -141,11 +170,12 @@ export default function AppWorkspaces() {
                 {w.id === currentId && <Badge><Check className="h-3 w-3 mr-1" />Active</Badge>}
               </CardHeader>
               <CardContent className="space-y-3">
-                <p className="text-sm text-muted-foreground">Click to open this workspace</p>
+                <p className="text-sm text-muted-foreground">
+                  {isAgency ? "Client workspace" : "Your workspace"} · click to open
+                </p>
                 <Button
                   variant={w.id === currentId ? "outline" : "default"}
-                  size="sm"
-                  data-testid={`workspace-open-${w.id}`}
+                  className="w-full"
                   onClick={(e) => {
                     e.stopPropagation();
                     openWorkspace(w.id);
