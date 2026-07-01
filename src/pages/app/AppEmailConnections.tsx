@@ -128,26 +128,15 @@ export default function AppEmailConnections() {
       ) : (
         <div className="grid gap-3">
           {connections.map((c) => (
-            <Card key={c.id}>
-              <CardContent className="p-4 flex items-center gap-4 flex-wrap">
-                <div className="flex-1 min-w-[200px]">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-semibold">{c.from_name ? `${c.from_name} <${c.from_email}>` : c.from_email}</span>
-                    {c.is_default && <Badge variant="default"><Star className="h-3 w-3 mr-1" /> Default</Badge>}
-                    <StatusBadge status={c.status} />
-                  </div>
-                  <p className="text-xs text-muted-foreground">{PROVIDER_HELP[c.provider]?.label} · {c.smtp_host}:{c.smtp_port}</p>
-                  {c.last_error && <p className="text-xs text-destructive mt-1">{c.last_error}</p>}
-                </div>
-                <div className="flex gap-2">
-                  {!c.is_default && (
-                    <Button variant="outline" size="sm" onClick={() => setDefault(c.id)}>Make default</Button>
-                  )}
-                  <Button variant="outline" size="sm" onClick={() => reverify(c)}>Reconnect</Button>
-                  <Button variant="ghost" size="sm" onClick={() => remove(c.id)}><Trash2 className="h-4 w-4" /></Button>
-                </div>
-              </CardContent>
-            </Card>
+            <ConnectionRow
+              key={c.id}
+              c={c}
+              workspaceId={currentId}
+              onDefault={() => setDefault(c.id)}
+              onReconnect={() => reverify(c)}
+              onRemove={() => remove(c.id)}
+              onVerified={load}
+            />
           ))}
         </div>
       )}
