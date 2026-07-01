@@ -8,6 +8,7 @@ import { ArrowRight, Check } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useCurrency } from "@/hooks/useCurrency";
 import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
+import PricingCurrencySelector from "@/components/PricingCurrencySelector";
 
 interface PlanDef {
   sku: SkuId;
