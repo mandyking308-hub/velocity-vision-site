@@ -1,6 +1,9 @@
-// Deterministic campaign pack generator. No network calls.
-// Now language-aware: EN + ES generate native output. Other languages
-// store metadata and fall back to EN per founder decision.
+// Deterministic campaign pack generator — EMERGENCY FALLBACK ONLY.
+// The customer-facing generation path is the AI edge function
+// `generate-campaign-pack`. This fallback exists so a gateway outage does not
+// leave the user stranded, but its output is intentionally shorter and safer
+// (no invented CTAs, no unsupported claims, no time-to-result promises).
+// It always honours the user's chosen CTA verbatim.
 
 export type CampaignGoal = "leads" | "sales" | "signups" | "bookings" | "awareness";
 export type CampaignKind = "lead_gen" | "launch" | "promo" | "nurture" | "re_engagement" | "pr_push";
