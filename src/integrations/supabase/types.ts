@@ -658,6 +658,7 @@ export type Database = {
           status: Database["public"]["Enums"]["company_status"]
           updated_at: string
           website: string | null
+          workspace_id: string | null
         }
         Insert: {
           account_type?: string
@@ -674,6 +675,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["company_status"]
           updated_at?: string
           website?: string | null
+          workspace_id?: string | null
         }
         Update: {
           account_type?: string
@@ -690,6 +692,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["company_status"]
           updated_at?: string
           website?: string | null
+          workspace_id?: string | null
         }
         Relationships: [
           {
@@ -697,6 +700,13 @@ export type Database = {
             columns: ["source_upload_id"]
             isOneToOne: false
             referencedRelation: "data_uploads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "companies_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "client_workspaces"
             referencedColumns: ["id"]
           },
         ]
@@ -726,6 +736,7 @@ export type Database = {
           suppressed: boolean
           timezone: string | null
           updated_at: string
+          workspace_id: string | null
         }
         Insert: {
           blocked?: boolean
@@ -751,6 +762,7 @@ export type Database = {
           suppressed?: boolean
           timezone?: string | null
           updated_at?: string
+          workspace_id?: string | null
         }
         Update: {
           blocked?: boolean
@@ -776,6 +788,7 @@ export type Database = {
           suppressed?: boolean
           timezone?: string | null
           updated_at?: string
+          workspace_id?: string | null
         }
         Relationships: [
           {
@@ -790,6 +803,13 @@ export type Database = {
             columns: ["source_upload_id"]
             isOneToOne: false
             referencedRelation: "data_uploads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contacts_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "client_workspaces"
             referencedColumns: ["id"]
           },
         ]
