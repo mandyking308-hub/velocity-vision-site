@@ -68,7 +68,7 @@ const WorkflowSavings = () => {
           <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">
             Estimate the spend hidden in your current outreach process
           </h2>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-muted-foreground text-lg leading-relaxed">
             Most teams underestimate what they spend each month cleaning data, building assets and stitching tools together. Plug in your numbers — these are estimates, not promises.
           </p>
         </motion.div>
@@ -132,30 +132,30 @@ const WorkflowSavings = () => {
                 <TrendingDown size={20} className="text-accent" /> Estimated monthly savings
               </h3>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="p-4 rounded-lg bg-primary-foreground/5 border border-primary-foreground/10">
-                  <p className="text-[10px] uppercase tracking-wider text-primary-foreground/60 mb-1">Hours saved / month</p>
+                  <p className="text-xs uppercase tracking-wider text-primary-foreground/60 mb-1">Hours saved / month</p>
                   <p className="text-2xl font-display font-bold">{hoursSaved.toFixed(0)}h</p>
                 </div>
                 <div className="p-4 rounded-lg bg-primary-foreground/5 border border-primary-foreground/10">
-                  <p className="text-[10px] uppercase tracking-wider text-primary-foreground/60 mb-1">Time value reclaimed</p>
+                  <p className="text-xs uppercase tracking-wider text-primary-foreground/60 mb-1">Time value reclaimed</p>
                   <p className="text-2xl font-display font-bold">{fmt(timeSavingsValue)}</p>
                 </div>
               </div>
 
               <div className="p-4 rounded-lg bg-primary-foreground/5 border border-primary-foreground/10">
-                <p className="text-[10px] uppercase tracking-wider text-primary-foreground/60 mb-1">Tool & freelancer spend reduced</p>
+                <p className="text-xs uppercase tracking-wider text-primary-foreground/60 mb-1">Tool & freelancer spend reduced</p>
                 <p className="text-2xl font-display font-bold">{fmt(toolSavings)}</p>
               </div>
 
               <div className="p-5 rounded-lg bg-primary-foreground/5 border border-primary-foreground/10">
-                <p className="text-[10px] uppercase tracking-wider text-primary-foreground/60 mb-1">Total estimated monthly savings</p>
+                <p className="text-xs uppercase tracking-wider text-primary-foreground/60 mb-1">Total estimated monthly savings</p>
                 <p className="text-3xl md:text-4xl font-display font-bold text-gradient">{fmt(totalMonthly)}</p>
                 <p className="text-xs text-primary-foreground/60 mt-1">{fmt(totalAnnual)} per year</p>
               </div>
 
               <div className={`p-4 rounded-lg border ${positive ? "bg-accent/15 border-accent/30" : "bg-primary-foreground/5 border-primary-foreground/10"}`}>
-                <p className="text-[10px] uppercase tracking-wider text-primary-foreground/70 mb-1">Net vs Velocity Vision Growth ({fmt(VELOCITY_COST_MONTHLY)}/mo)</p>
+                <p className="text-xs uppercase tracking-wider text-primary-foreground/70 mb-1">Net vs Velocity Vision Growth ({fmt(VELOCITY_COST_MONTHLY)}/mo)</p>
                 <p className="text-xl font-display font-bold">{positive ? "+" : ""}{fmt(netVsVelocity)}</p>
               </div>
 

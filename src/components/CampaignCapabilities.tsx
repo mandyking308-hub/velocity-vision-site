@@ -12,7 +12,7 @@ const cards = [
   { icon: Newspaper, title: "Press release", desc: "Distribution-ready announcement for launches and milestones — generated from the same brief." },
   { icon: Video, title: "Video pack", desc: "Scripts, hooks, shot list, storyboard outline and captions for short-form video." },
   { icon: Inbox, title: "Replies & follow-up", desc: "Action queue for inbound replies with snooze, follow-up states and stuck-deal alerts." },
-  { icon: GitBranch, title: "Pipeline movement", desc: "Move warm contacts into opportunities, track value and watch deals progress — no separate CRM." },
+  { icon: GitBranch, title: "Pipeline movement", desc: "Move warm contacts into early pipeline, track value and prepare for sales handoff — pipeline visibility, not CRM bloat." },
   { icon: BarChart3, title: "Performance review", desc: "Reply rates, pipeline value and activation health summarised every cycle." },
   { icon: Users, title: "Agency workspaces", desc: "One account, multiple isolated client workspaces with pooled governance and credits." },
 ];
@@ -29,10 +29,10 @@ const CampaignCapabilities = () => (
       >
         <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">What's inside the workspace</p>
         <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">
-          Everything you need to run outreach, follow-up and pipeline
+          Everything you need for marketing-led growth, outreach and early pipeline
         </h2>
-        <p className="text-muted-foreground text-lg">
-          Data Vault, quality review, email sequences, social pack, press releases, video pack, replies inbox, pipeline movement — all in one workspace, all connected.
+        <p className="text-muted-foreground text-lg leading-relaxed">
+          Data Vault, quality review, email sequences, social pack, press releases, video pack, replies inbox, early pipeline movement — all in one workspace for founders, agencies and lean growth teams.
         </p>
       </motion.div>
 
@@ -50,7 +50,7 @@ const CampaignCapabilities = () => (
               <c.icon className="text-accent" size={20} />
             </div>
             <h3 className="font-display font-semibold text-foreground mb-2">{c.title}</h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">{c.desc}</p>
+            <p className="text-muted-foreground text-sm md:text-base leading-relaxed">{c.desc}</p>
           </motion.div>
         ))}
       </div>

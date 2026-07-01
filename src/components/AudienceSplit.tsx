@@ -8,7 +8,7 @@ const cards = [
     icon: Briefcase,
     label: "For Businesses",
     title: "A commercial workspace for lean teams",
-    desc: "Founders and operators who need structure, safe activation and a pipeline that keeps moving — not another agency.",
+    desc: "Founders, agencies and lean growth teams need structure, safe activation and early pipeline — not another agency.",
     cta: "See it for lean teams",
     href: "/for-businesses",
   },
@@ -40,7 +40,7 @@ const AudienceSplit = () => (
             </div>
             <p className="text-accent font-semibold text-xs uppercase tracking-widest mb-2">{c.label}</p>
             <h3 className="text-2xl font-display font-semibold text-foreground mb-3">{c.title}</h3>
-            <p className="text-muted-foreground mb-6 flex-1">{c.desc}</p>
+            <p className="text-muted-foreground text-sm md:text-base leading-relaxed mb-6 flex-1">{c.desc}</p>
             <Button variant="cta" asChild className="self-start">
               <Link to={c.href}>{c.cta} <ArrowRight size={16} /></Link>
             </Button>

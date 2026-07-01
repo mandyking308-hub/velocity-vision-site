@@ -14,10 +14,10 @@ const FinalCTA = () => (
         transition={{ duration: 0.6 }}
       >
         <h2 className="text-3xl md:text-5xl font-display font-bold text-primary-foreground mb-6">
-          Stop running commercial work across six tools
+          Stop running outreach, follow-up and pipeline across six tools
         </h2>
         <p className="text-primary-foreground/75 text-lg mb-10 max-w-xl mx-auto">
-          Not another retainer. Not another stack of disconnected tools. Not a blank AI generator. Upload your data, activate safely and move opportunities into pipeline — from one login.
+          Bring data, assets, activation, replies and early pipeline into one governed workspace.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button variant="hero" size="lg" asChild>

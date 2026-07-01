@@ -26,10 +26,10 @@ const ProblemProof = () => (
       >
         <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">The problem</p>
         <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">
-          Marketing outreach, follow-up and pipeline are scattered across too many tools
+          Marketing-led outreach, follow-up and early pipeline are scattered across too many tools
         </h2>
-        <p className="text-muted-foreground text-lg">
-          Founders, marketers, consultants and agencies all hit the same wall: data in one place, outreach assets in another, replies in inboxes, pipeline in someone's head. Commercial work breaks at the joins.
+        <p className="text-muted-foreground text-lg leading-relaxed">
+          Founders, agencies and lean growth teams hit the same wall: data in one place, outreach assets in another, replies in inboxes, early pipeline in someone's head. Marketing-led growth breaks at the joins.
         </p>
       </motion.div>
 
@@ -47,7 +47,7 @@ const ProblemProof = () => (
               <p.icon className="text-accent" size={20} />
             </div>
             <h3 className="font-display font-semibold text-foreground mb-2">{p.title}</h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">{p.desc}</p>
+            <p className="text-muted-foreground text-sm md:text-base leading-relaxed">{p.desc}</p>
           </motion.div>
         ))}
       </div>
@@ -63,7 +63,7 @@ const ProblemProof = () => (
             className="bg-secondary/60 border border-border/50 rounded-xl p-7"
           >
             <p className="text-4xl md:text-5xl font-display font-bold text-accent mb-2">{s.stat}</p>
-            <p className="text-muted-foreground leading-relaxed text-sm">{s.desc}</p>
+            <p className="text-muted-foreground text-sm md:text-base leading-relaxed">{s.desc}</p>
           </motion.div>
         ))}
       </div>
@@ -76,10 +76,10 @@ const ProblemProof = () => (
         className="max-w-3xl"
       >
         <p className="text-xl md:text-2xl font-display font-semibold text-foreground mb-3">
-          Velocity Vision pulls all of that into one workspace.
+          Velocity Vision pulls marketing-led outreach into one workspace.
         </p>
-        <p className="text-muted-foreground text-lg">
-          Data in. Quality reviewed. Outreach assets generated — email sequences, social media, press releases. Sending governed. Replies worked. Pipeline moved. Without juggling six apps.
+        <p className="text-muted-foreground text-lg leading-relaxed">
+          Data in. Quality reviewed. Outreach assets generated — email sequences, social media, press releases. Sending governed. Replies worked. Early pipeline moved. Without juggling six apps.
         </p>
       </motion.div>
     </div>

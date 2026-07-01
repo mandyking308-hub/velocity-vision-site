@@ -9,7 +9,7 @@ const steps = [
   { n: "03", icon: Mail, title: "Generate AI-assisted outreach assets", desc: "Email sequences, social posts, press release and video pack — drafted by AI from one brief, fully editable before use." },
   { n: "04", icon: Send, title: "Verify sender & activate safely", desc: "Governed AI activation: verify sender, set cadence, and let daily caps and risky-record limits gate what goes out." },
   { n: "05", icon: Inbox, title: "Track replies with AI follow-up", desc: "Action queue for inbound replies with AI-supported follow-up suggestions and snooze — you approve every send." },
-  { n: "06", icon: GitBranch, title: "Move warm contacts into pipeline", desc: "Promote replies into opportunities, track value and watch deals progress — no separate CRM." },
+  { n: "06", icon: GitBranch, title: "Move warm contacts into early pipeline", desc: "Promote replies into early pipeline, track value and prepare for sales handoff — pipeline visibility, not CRM bloat." },
 ];
 
 const HowItWorksPreview = () => (
@@ -24,10 +24,10 @@ const HowItWorksPreview = () => (
       >
         <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">How it works</p>
         <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">
-          From upload to pipeline — one continuous workflow
+          From upload to early pipeline — one marketing-led workflow
         </h2>
-        <p className="text-muted-foreground text-lg">
-          The same flow that creates your outreach also captures the replies and moves the revenue. No exports, no handoffs.
+        <p className="text-muted-foreground text-lg leading-relaxed">
+          The same flow that creates your outreach also captures replies and moves early pipeline. No exports, no handoffs.
         </p>
       </motion.div>
 
@@ -48,7 +48,7 @@ const HowItWorksPreview = () => (
               <p className="text-accent font-display font-bold text-lg">{s.n}</p>
             </div>
             <h3 className="font-display font-semibold text-foreground mb-2">{s.title}</h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">{s.desc}</p>
+            <p className="text-muted-foreground text-sm md:text-base leading-relaxed">{s.desc}</p>
           </motion.div>
         ))}
       </div>
