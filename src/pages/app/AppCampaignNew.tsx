@@ -90,6 +90,17 @@ export default function AppCampaignNew() {
 
   const generate = async () => {
     if (!user) return;
+    // Hard credit gate — never insert a campaign if the user cannot pay for it.
+    if (remaining < CREDIT_COSTS.full_campaign_pack) {
+      toast.error("You don't have enough Campaign Credits", {
+        description: `Generating a full campaign pack costs ${CREDIT_COSTS.full_campaign_pack} credits. Top up or upgrade to continue.`,
+      });
+      return;
+    }
+    if (starterExpired) {
+      toast.error("Starter access has ended", { description: "Upgrade or buy another Starter to keep generating." });
+      return;
+    }
     setSaving(true);
     try {
       const pack = generatePack(brief);
