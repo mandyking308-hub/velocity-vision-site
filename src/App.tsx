@@ -48,16 +48,8 @@ import LegalCompliancePage from "./pages/crm/LegalCompliancePage.tsx";
 import FounderManual from "./pages/crm/FounderManual.tsx";
 import FounderMonetisation from "./pages/crm/FounderMonetisation.tsx";
 import FounderIntelligence from "./pages/crm/FounderIntelligence.tsx";
-import PortalLayout from "./pages/PortalLayout.tsx";
-import PortalCampaigns from "./pages/portal/PortalCampaigns.tsx";
-import PortalDocuments from "./pages/portal/PortalDocuments.tsx";
-import PortalMessages from "./pages/portal/PortalMessages.tsx";
-import PortalBilling from "./pages/portal/PortalBilling.tsx";
-import PortalCampaignRequest from "./pages/portal/PortalCampaignRequest.tsx";
-import PortalNotifications from "./pages/portal/PortalNotifications.tsx";
-import PortalOnboarding from "./pages/portal/PortalOnboarding.tsx";
-import PortalWorkspaces from "./pages/portal/PortalWorkspaces.tsx";
-import PortalLegal from "./pages/portal/PortalLegal.tsx";
+// Legacy portal components intentionally not imported — /portal/* now redirects to /app/*.
+// Files retained under src/pages/portal/ and src/pages/PortalLayout.tsx for reference only.
 import DemoLogin from "./pages/DemoLogin.tsx";
 import DemoCRMLayout from "./pages/demo/DemoCRMLayout.tsx";
 import DemoCRMDashboard from "./pages/demo/DemoCRMDashboard.tsx";
@@ -190,19 +182,24 @@ const AnimatedRoutes = () => {
           <Route path="workspaces" element={<AppWorkspaces />} />
         </Route>
 
-        {/* Legacy client portal — kept for billing/legal/docs sub-routes only. */}
-        <Route path="/portal" element={<ProtectedRoute><PortalLayout /></ProtectedRoute>}>
-          <Route index element={<Navigate to="/app" replace />} />
-          <Route path="campaigns" element={<PortalCampaigns />} />
-          <Route path="documents" element={<PortalDocuments />} />
-          <Route path="messages" element={<PortalMessages />} />
-          <Route path="billing" element={<PortalBilling />} />
-          <Route path="request" element={<PortalCampaignRequest />} />
-          <Route path="notifications" element={<PortalNotifications />} />
-          <Route path="onboarding" element={<PortalOnboarding />} />
-          <Route path="workspaces" element={<PortalWorkspaces />} />
-          <Route path="legal" element={<PortalLegal />} />
-        </Route>
+        {/*
+          Legacy /portal/* routes are compatibility redirects only.
+          The modern customer surface is /app/*. Do not add new /portal routes,
+          do not link users into /portal, and do not restore Portal* components
+          into active routing. Old Portal* component files remain in the repo
+          for reference but are intentionally not rendered.
+        */}
+        <Route path="/portal" element={<Navigate to="/app" replace />} />
+        <Route path="/portal/workspaces" element={<Navigate to="/app/workspaces" replace />} />
+        <Route path="/portal/billing" element={<Navigate to="/app/billing" replace />} />
+        <Route path="/portal/legal" element={<Navigate to="/legal" replace />} />
+        <Route path="/portal/campaigns" element={<Navigate to="/app/campaigns" replace />} />
+        <Route path="/portal/request" element={<Navigate to="/app/campaigns/new" replace />} />
+        <Route path="/portal/notifications" element={<Navigate to="/app" replace />} />
+        <Route path="/portal/onboarding" element={<Navigate to="/app" replace />} />
+        <Route path="/portal/documents" element={<Navigate to="/app/settings" replace />} />
+        <Route path="/portal/messages" element={<Navigate to="/app/follow-up" replace />} />
+        <Route path="/portal/*" element={<Navigate to="/app" replace />} />
 
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
       </Routes>
