@@ -29,7 +29,6 @@ import Features from "./pages/Features.tsx";
 import Templates from "./pages/Templates.tsx";
 import Help from "./pages/Help.tsx";
 import LegalCentre from "./pages/legal/LegalCentre.tsx";
-import PlatformTermsPage from "./pages/legal/PlatformTermsPage.tsx";
 import LegalDocumentPage from "./pages/legal/LegalDocumentPage.tsx";
 import CRMLayout from "./pages/CRMLayout.tsx";
 import CRMDashboard from "./pages/crm/CRMDashboard.tsx";
@@ -81,8 +80,6 @@ import AppFollowUp from "./pages/app/AppFollowUp.tsx";
 import AppPipeline from "./pages/app/AppPipeline.tsx";
 import DemoDataVault from "./pages/demo/DemoDataVault.tsx";
 import HostedCapture from "./pages/HostedCapture.tsx";
-
-void PlatformTermsPage;
 
 const queryClient = new QueryClient();
 
@@ -138,7 +135,6 @@ const AnimatedRoutes = () => {
         <Route path="/templates" element={<PageTransition><Templates /></PageTransition>} />
         <Route path="/help" element={<PageTransition><Help /></PageTransition>} />
         <Route path="/legal" element={<PageTransition><LegalCentre /></PageTransition>} />
-        <Route path="/legal/:slug" element={<PageTransition><LegalDocumentPage /></PageTransition>} />
         <Route path="/legal/:slug" element={<PageTransition><LegalDocumentPage /></PageTransition>} />
         <Route path="/auth" element={<PageTransition><AuthPage /></PageTransition>} />
         <Route path="/demo" element={<PageTransition><DemoLogin /></PageTransition>} />
