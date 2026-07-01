@@ -24,7 +24,7 @@ Deno.serve(async (req) => {
   const sb = admin();
   const { data: ticket, error } = await sb
     .from("support_tickets")
-    .select("id, user_id, email, workspace_id, route, category, severity, subject, message, diagnostics, browser_info, source, created_at")
+    .select("id, user_id, email, workspace_id, route, category, severity, subject, message, diagnostics, browser_info, source, created_at, contact_name, contact_phone, company_name, account_reference, preferred_contact_method")
     .eq("id", ticketId)
     .maybeSingle();
 
@@ -38,28 +38,58 @@ Deno.serve(async (req) => {
   }
 
   const severity = String(ticket.severity ?? "normal");
-  const subject = `[Velocity Vision Support] ${severity.toUpperCase()} — ${ticket.subject ?? "New ticket"}`;
+  const urgencyTag = (ticket.diagnostics as any)?.urgency === "urgent" ? "URGENT" : severity.toUpperCase();
+  const subject = `[Velocity Vision Support] ${urgencyTag} — ${ticket.subject ?? "New ticket"}`;
+
+  const diag = (ticket.diagnostics ?? {}) as Record<string, any>;
+  const assistantQ = diag.assistant_question ?? "";
+  const assistantA = diag.assistant_answer ?? "";
+  const transcript = Array.isArray(diag.chat_transcript) ? diag.chat_transcript : [];
+
+  const transcriptHtml = transcript.length
+    ? transcript.map((m: any) => `<div style="margin:4px 0"><strong style="color:#666">${esc(m.role)}:</strong> <span style="white-space:pre-wrap">${esc(m.content)}</span></div>`).join("")
+    : "<em style='color:#999'>(no transcript)</em>";
 
   const diagPretty = (() => {
     try { return JSON.stringify(ticket.diagnostics ?? {}, null, 2); } catch { return String(ticket.diagnostics ?? ""); }
   })();
 
+  const row = (label: string, value: unknown) =>
+    `<tr><td style="padding:4px 12px 4px 0;color:#666;vertical-align:top">${esc(label)}</td><td>${esc(value ?? "(none)")}</td></tr>`;
+
   const html = `
     <div style="font-family:Arial,sans-serif;color:#111;line-height:1.5">
-      <h2 style="margin:0 0 12px">New support ticket — ${esc(severity)}</h2>
+      <h2 style="margin:0 0 12px">New support ticket — ${esc(urgencyTag)}</h2>
+      <h3 style="margin:16px 0 6px">Contact</h3>
       <table style="border-collapse:collapse;font-size:14px">
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Ticket ID</td><td><code>${esc(ticket.id)}</code></td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Source</td><td>${esc(ticket.source)}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Category</td><td>${esc(ticket.category)}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Severity</td><td>${esc(severity)}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Customer email</td><td>${esc(ticket.email ?? "(none)")}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666">User ID</td><td>${esc(ticket.user_id ?? "(anon)")}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Workspace ID</td><td>${esc(ticket.workspace_id ?? "(none)")}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Route</td><td>${esc(ticket.route ?? "")}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Created</td><td>${esc(ticket.created_at ?? "")}</td></tr>
+        ${row("Name", ticket.contact_name)}
+        ${row("Email", ticket.email)}
+        ${row("Phone", ticket.contact_phone)}
+        ${row("Company", ticket.company_name)}
+        ${row("Preferred contact", ticket.preferred_contact_method)}
+        ${row("Account / workspace ref", ticket.account_reference)}
+      </table>
+      <h3 style="margin:20px 0 6px">Ticket</h3>
+      <table style="border-collapse:collapse;font-size:14px">
+        ${row("Ticket ID", ticket.id)}
+        ${row("Source", ticket.source)}
+        ${row("Route", ticket.route)}
+        ${row("Category", ticket.category)}
+        ${row("Severity", severity)}
+        ${row("Urgency", diag.urgency ?? "normal")}
+        ${row("User ID", ticket.user_id ?? "(anon)")}
+        ${row("Workspace ID", ticket.workspace_id)}
+        ${row("Created", ticket.created_at)}
       </table>
       <h3 style="margin:20px 0 6px">Message</h3>
       <div style="white-space:pre-wrap;background:#f7f7f7;padding:12px;border-radius:6px">${esc(ticket.message ?? "")}</div>
+      <h3 style="margin:20px 0 6px">Assistant Q&amp;A</h3>
+      <div style="background:#f7f7f7;padding:12px;border-radius:6px;font-size:13px">
+        <div><strong>Q:</strong> <span style="white-space:pre-wrap">${esc(assistantQ)}</span></div>
+        <div style="margin-top:6px"><strong>A:</strong> <span style="white-space:pre-wrap">${esc(assistantA)}</span></div>
+      </div>
+      <h3 style="margin:20px 0 6px">Chat transcript</h3>
+      <div style="background:#f7f7f7;padding:12px;border-radius:6px;font-size:12px">${transcriptHtml}</div>
       <h3 style="margin:20px 0 6px">Diagnostics</h3>
       <pre style="white-space:pre-wrap;background:#f7f7f7;padding:12px;border-radius:6px;font-size:12px">${esc(diagPretty)}</pre>
       <h3 style="margin:20px 0 6px">Browser</h3>
