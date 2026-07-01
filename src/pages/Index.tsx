@@ -47,6 +47,7 @@ const Index = () => (
       <ProblemProof />
       <CampaignCapabilities />
       <SecurityTrust />
+      <GlobalStrip />
       <HowItWorksPreview />
       <WorkflowSavings />
       <PricingTeaser />
