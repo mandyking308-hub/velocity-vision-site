@@ -221,6 +221,16 @@ export default function AppActivation() {
         />
       ) : (
       <>
+      {!legal.loading && !legal.isCompliant && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Legal terms need to be re-accepted before activation</AlertTitle>
+          <AlertDescription>
+            {legal.missing.length} document{legal.missing.length === 1 ? "" : "s"} updated since your last acceptance.
+            You'll be prompted to review and accept when you confirm activation.
+          </AlertDescription>
+        </Alert>
+      )}
       <SendSafetyPanel s={safety} used={usedToday} scheduled={scheduledToday} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
