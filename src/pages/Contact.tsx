@@ -115,6 +115,19 @@ const Contact = () => {
                     <Input placeholder="Email *" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
                   </div>
                   <Input placeholder="Company" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
+                  <div>
+                    <label htmlFor="contact-topic" className="block text-xs font-medium text-muted-foreground mb-1">Topic</label>
+                    <select
+                      id="contact-topic"
+                      value={form.topic}
+                      onChange={(e) => setForm({ ...form, topic: e.target.value })}
+                      className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground"
+                    >
+                      {contactTopics.map((t) => (
+                        <option key={t.value} value={t.value}>{t.label}</option>
+                      ))}
+                    </select>
+                  </div>
                   <Textarea placeholder="How can we help? *" rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} />
                   <Button variant="cta" size="lg" type="submit" disabled={loading}>
                     {loading ? "Sending..." : "Send message"} <ArrowRight size={18} />
