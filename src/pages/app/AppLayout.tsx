@@ -81,6 +81,7 @@ function Shell() {
         <header className="h-14 border-b border-border bg-card flex items-center justify-between px-6 gap-3">
           <WorkspaceSwitcher />
           <div className="flex items-center gap-3">
+            <GTranslateSlot />
             <CreditPill />
             <Button size="sm" onClick={() => navigate("/app/campaigns/new")}>
               <Plus className="h-4 w-4 mr-1" /> New campaign
