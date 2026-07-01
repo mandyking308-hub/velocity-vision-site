@@ -68,7 +68,7 @@ const WorkflowSavings = () => {
           <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">
             Estimate the spend hidden in your current outreach process
           </h2>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-muted-foreground text-lg leading-relaxed">
             Most teams underestimate what they spend each month cleaning data, building assets and stitching tools together. Plug in your numbers — these are estimates, not promises.
           </p>
         </motion.div>
