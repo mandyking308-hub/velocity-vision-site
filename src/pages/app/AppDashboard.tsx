@@ -69,7 +69,7 @@ export default function AppDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { remaining, planConfig } = useCredits();
-  const { workspaces, loading: wsLoading } = useWorkspace();
+  const { workspaces, currentId, loading: wsLoading } = useWorkspace();
   const [firstName, setFirstName] = useState("");
   const [activeCampaigns, setActiveCampaigns] = useState(0);
   const [latestCampaignId, setLatestCampaignId] = useState<string | null>(null);
