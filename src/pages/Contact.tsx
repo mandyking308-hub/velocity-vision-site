@@ -20,8 +20,23 @@ const routes = [
   { icon: MessageSquare, title: "General enquiries", desc: "Anything else — press, hiring, or a question that doesn't fit above.", action: "Send a message", to: "#contact-form" },
 ];
 
+const contactTopics = [
+  { value: "general_support", label: "General support" },
+  { value: "billing", label: "Billing & account" },
+  { value: "privacy_data_request", label: "Privacy / data request" },
+  { value: "security_report", label: "Security report" },
+  { value: "abuse_acceptable_use", label: "Abuse / acceptable use" },
+  { value: "marketing_compliance_complaint", label: "Marketing compliance complaint" },
+  { value: "cookie_tracking", label: "Cookie / tracking question" },
+  { value: "legal_notice", label: "Legal notice" },
+  { value: "subprocessor_question", label: "Subprocessor question" },
+  { value: "partnerships", label: "Partnerships & integrations" },
+  { value: "enterprise_volume", label: "Enterprise / agency volume" },
+  { value: "other", label: "Other" },
+];
+
 const Contact = () => {
-  const [form, setForm] = useState({ name: "", email: "", company: "", message: "" });
+  const [form, setForm] = useState({ name: "", email: "", company: "", message: "", topic: "general_support" });
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,23 +48,20 @@ const Contact = () => {
 
     setLoading(true);
     try {
-      // All writes happen server-side in the notify-contact edge function
-      // (service role), so the public form doesn't need anon RLS on
-      // companies/contacts/leads.
       await supabase.functions.invoke("notify-contact", {
         body: {
           name: form.name,
           email: form.email,
           company: form.company,
           message: form.message,
-          route: "website_contact",
+          route: form.topic,
         },
       });
       toast.success("Message sent. We'll respond within one business day.");
-      setForm({ name: "", email: "", company: "", message: "" });
+      setForm({ name: "", email: "", company: "", message: "", topic: "general_support" });
     } catch {
       toast.success("Message sent. We'll respond within one business day.");
-      setForm({ name: "", email: "", company: "", message: "" });
+      setForm({ name: "", email: "", company: "", message: "", topic: "general_support" });
     }
     setLoading(false);
   };
@@ -103,6 +115,19 @@ const Contact = () => {
                     <Input placeholder="Email *" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
                   </div>
                   <Input placeholder="Company" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
+                  <div>
+                    <label htmlFor="contact-topic" className="block text-xs font-medium text-muted-foreground mb-1">Topic</label>
+                    <select
+                      id="contact-topic"
+                      value={form.topic}
+                      onChange={(e) => setForm({ ...form, topic: e.target.value })}
+                      className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground"
+                    >
+                      {contactTopics.map((t) => (
+                        <option key={t.value} value={t.value}>{t.label}</option>
+                      ))}
+                    </select>
+                  </div>
                   <Textarea placeholder="How can we help? *" rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} />
                   <Button variant="cta" size="lg" type="submit" disabled={loading}>
                     {loading ? "Sending..." : "Send message"} <ArrowRight size={18} />

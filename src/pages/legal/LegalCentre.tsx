@@ -14,6 +14,7 @@ const legalDocs = [
   { title: "Cookie Policy", path: "/legal/cookie-policy", description: "How cookies and similar technologies are used for essential functions, preferences, analytics, performance and lawful marketing." },
   { title: "Platform Security Policy", path: "/legal/platform-security-policy", description: "Shared security responsibilities, platform safeguards, sender governance, incident response and responsible reporting." },
   { title: "Service Level Agreement", path: "/legal/service-level-agreement", description: "Operational service targets for availability, maintenance, support response and exclusions for the self-serve workspace." },
+  { title: "Subprocessor List", path: "/legal/subprocessors", description: "Third-party providers Velocity Vision may use to host, run, secure, support and improve the platform, and how updates are communicated." },
 ];
 
 const LegalCentre = () => (

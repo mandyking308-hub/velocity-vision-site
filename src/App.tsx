@@ -11,6 +11,7 @@ import ScrollToTop from "@/components/ScrollToTop";
 import PageTransition from "@/components/PageTransition";
 import CRMProtectedRoute from "@/components/CRMProtectedRoute";
 import GTranslate from "@/components/GTranslate";
+import CookieBanner from "@/components/CookieBanner";
 import Index from "./pages/Index.tsx";
 import Services from "./pages/Services.tsx";
 import Industries from "./pages/Industries.tsx";
@@ -221,6 +222,7 @@ const App = () => (
             <ScrollToTop />
             <GTranslate />
             <AnimatedRoutes />
+            <CookieBanner />
           </BrowserRouter>
         </TooltipProvider>
       </DemoProvider>
