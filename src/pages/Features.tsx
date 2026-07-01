@@ -27,8 +27,8 @@ const groups = [
     label: "Safe Activation",
     features: [
       { title: "Sender verification", value: "DNS-based SPF/DKIM verification before any activation can proceed." },
-      { title: "Tiered daily caps", value: "Per-workspace daily limits scale with your plan; agencies pool to a single 1,000/day ceiling." },
-      { title: "Risky-record limits", value: "Risky records are capped at 10% of any batch, max 25 per batch — enforced automatically." },
+      { title: "Tiered daily caps", value: "Per-workspace daily limits scale with your plan; agencies use pooled sending governance across client workspaces." },
+      { title: "Risky-record limits", value: "Risky records are limited within each batch and reviewed before activation." },
     ],
   },
   {
@@ -75,7 +75,7 @@ const groups = [
     label: "Agency Workspaces",
     features: [
       { title: "Isolated client workspaces", value: "Run every client from one account with clean data and pipeline isolation." },
-      { title: "Pooled credits & governance", value: "Credits and the 1,000/day sending ceiling are pooled across the account." },
+      { title: "Pooled credits & governance", value: "Credits and sending governance are pooled across the account." },
       { title: "Cross-client visibility", value: "See activation health, replies and pipeline across the whole book in one view." },
     ],
   },
