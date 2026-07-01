@@ -24,7 +24,7 @@ const PACK_TO_SKU: Record<string, SkuId> = {
 export default function TopUpModal({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
   const { openCheckout, element } = useStripeCheckout();
   const { currency } = useCurrency();
-  const { user } = useAuth();
+  
   const [pendingPack, setPendingPack] = useState<string | null>(null);
 
   const handle = (packId: string) => {
