@@ -154,10 +154,98 @@ export default function AppEmailConnections() {
 }
 
 function StatusBadge({ status }: { status: string }) {
-  if (status === "connected") return <Badge variant="default" className="bg-green-600 hover:bg-green-700"><CheckCircle2 className="h-3 w-3 mr-1" /> Connected</Badge>;
+  if (status === "connected") return <Badge variant="secondary"><CheckCircle2 className="h-3 w-3 mr-1" /> SMTP connected</Badge>;
   if (status === "error") return <Badge variant="destructive"><AlertCircle className="h-3 w-3 mr-1" /> Connection issue</Badge>;
   if (status === "reconnect_required") return <Badge variant="destructive">Reconnect required</Badge>;
   return <Badge variant="outline">Pending</Badge>;
+}
+
+const VER_LABEL: Record<string, { label: string; cls: string }> = {
+  not_connected: { label: "Not connected", cls: "bg-muted text-muted-foreground" },
+  needs_dns_setup: { label: "DNS setup required", cls: "bg-amber-100 text-amber-800" },
+  checking: { label: "Checking DNS…", cls: "bg-blue-100 text-blue-800" },
+  verified: { label: "Domain verified", cls: "bg-emerald-100 text-emerald-700" },
+  failed: { label: "Verification failed", cls: "bg-rose-100 text-rose-700" },
+  reconnect_required: { label: "Reconnect required", cls: "bg-rose-100 text-rose-700" },
+  unknown: { label: "Not checked yet", cls: "bg-muted text-muted-foreground" },
+};
+
+function DnsPill({ label, value }: { label: string; value: string | null }) {
+  const v = value || "unknown";
+  const tone = v === "valid" ? "bg-emerald-100 text-emerald-700"
+    : v === "missing" || v === "invalid" ? "bg-rose-100 text-rose-700"
+    : v === "error" ? "bg-amber-100 text-amber-800"
+    : "bg-muted text-muted-foreground";
+  return <span className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium ${tone}`}>{label}: {v}</span>;
+}
+
+function ConnectionRow({
+  c, workspaceId, onDefault, onReconnect, onRemove, onVerified,
+}: {
+  c: Connection; workspaceId: string | null;
+  onDefault: () => void; onReconnect: () => void; onRemove: () => void; onVerified: () => void;
+}) {
+  const [checking, setChecking] = useState(false);
+  const ver = VER_LABEL[c.verification_status || "unknown"] || VER_LABEL.unknown;
+  const domain = c.domain || c.from_email?.split("@")[1] || "";
+
+  async function verifyDns() {
+    setChecking(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("verify-sender-domain", {
+        body: { connection_id: c.id, domain, workspace_id: workspaceId },
+      });
+      if (error) throw error;
+      if (data?.verified) toast.success("Domain verified", { description: domain });
+      else toast.warning("Not fully verified", {
+        description: `MX ${data?.mx_status} · SPF ${data?.spf_status} · DKIM ${data?.dkim_status} · DMARC ${data?.dmarc_status}`,
+      });
+      onVerified();
+    } catch (e: any) {
+      toast.error("DNS check failed", { description: e.message });
+    } finally { setChecking(false); }
+  }
+
+  return (
+    <Card>
+      <CardContent className="p-4 space-y-3">
+        <div className="flex items-center gap-4 flex-wrap">
+          <div className="flex-1 min-w-[200px]">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-semibold">{c.from_name ? `${c.from_name} <${c.from_email}>` : c.from_email}</span>
+              {c.is_default && <Badge variant="default"><Star className="h-3 w-3 mr-1" /> Default</Badge>}
+              <StatusBadge status={c.status} />
+              <span className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${ver.cls}`}>{ver.label}</span>
+              {c.sending_enabled ? (
+                <Badge variant="default" className="bg-emerald-600 hover:bg-emerald-700">Sending enabled</Badge>
+              ) : (
+                <Badge variant="outline">Sending disabled</Badge>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">{PROVIDER_HELP[c.provider]?.label} · {c.smtp_host}:{c.smtp_port}</p>
+            {c.last_error && <p className="text-xs text-destructive mt-1">{c.last_error}</p>}
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            <Button variant="outline" size="sm" onClick={verifyDns} disabled={checking || !domain}>
+              {checking ? "Checking DNS…" : "Check DNS verification"}
+            </Button>
+            {!c.is_default && <Button variant="outline" size="sm" onClick={onDefault}>Make default</Button>}
+            <Button variant="outline" size="sm" onClick={onReconnect}>Reconnect</Button>
+            <Button variant="ghost" size="sm" onClick={onRemove}><Trash2 className="h-4 w-4" /></Button>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          <DnsPill label="MX" value={c.mx_status} />
+          <DnsPill label="SPF" value={c.spf_status} />
+          <DnsPill label="DKIM" value={c.dkim_status} />
+          <DnsPill label="DMARC" value={c.dmarc_status} />
+          {c.dns_checked_at && (
+            <span className="text-[10px] text-muted-foreground ml-auto">Last checked {new Date(c.dns_checked_at).toLocaleString()}</span>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
 }
 
 function ConnectionDialog({ editing, onDone }: { editing: Connection | null; onDone: () => void }) {
