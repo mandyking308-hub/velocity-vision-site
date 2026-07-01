@@ -19,6 +19,7 @@ import { useTranslation } from "react-i18next";
 import { useCurrency } from "@/hooks/useCurrency";
 import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
 import PricingCurrencySelector from "@/components/PricingCurrencySelector";
+import BillingTermsSummary from "@/components/BillingTermsSummary";
 
 const PLAN_TO_SKU: Record<PlanId, SkuId> = {
   starter: "vv_starter_oneoff",
@@ -182,6 +183,7 @@ export default function AppBilling() {
 
       <section>
         <h2 className="text-xl font-semibold mb-3">Plans</h2>
+        <BillingTermsSummary className="mb-4" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {planEntries.map((id) => {
             const cfg = PLANS[id];
