@@ -5,7 +5,10 @@ export type LegalAcceptanceSource =
   | "signup"
   | "workspace_create"
   | "plan_checkout"
-  | "topup_checkout";
+  | "topup_checkout"
+  | "activation"
+  | "campaign_send"
+  | "human_review_checkout";
 
 interface RecordArgs {
   userId: string;
