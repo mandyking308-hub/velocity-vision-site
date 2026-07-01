@@ -140,3 +140,28 @@ body {
   background: hsl(var(--muted)) !important;
 }
 
+/*
+  Safety patch: the Google/GTranslate scripts inject fixed-position iframes,
+  tooltips and skiptranslate containers outside React. If one of those becomes
+  invisible-but-clickable, it can sit above the SPA and make every normal link
+  feel broken. Keep the real language selector interactive, but make all
+  injected translation chrome non-interactive unless it is the visible switcher.
+*/
+.gtranslate_wrapper {
+  pointer-events: none !important;
+}
+
+.gtranslate_wrapper .gt_float_switcher,
+.gtranslate_wrapper .gt_float_switcher * {
+  pointer-events: auto !important;
+}
+
+body > .skiptranslate:not(.gtranslate_wrapper),
+#goog-gt-tt,
+.VIpgJd-yAWNEb-L7lbkb,
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+iframe.skiptranslate,
+iframe.goog-te-menu-frame,
+iframe.goog-te-banner-frame {
+  pointer-events: none !important;
+}
