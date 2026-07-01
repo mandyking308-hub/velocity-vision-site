@@ -213,7 +213,7 @@ export function buildCampaignMarkdown(opts: {
   }
 
   // Video
-  if (pack.video) {
+  if (includeVideo && pack.video) {
     md += heading(2, "Video Pack");
     if (pack.video.hooks?.length) {
       md += `**Hooks**\n\n${bullets(pack.video.hooks)}`;
