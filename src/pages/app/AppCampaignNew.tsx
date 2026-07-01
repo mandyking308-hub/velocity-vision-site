@@ -102,7 +102,7 @@ export default function AppCampaignNew() {
         goal: brief.goal,
         campaign_kind: brief.kind,
         status: startIsFuture ? "scheduled" : "active",
-        type: "marketing",
+        type: "email",
         owner_id: user.id,
         created_by: user.id,
         workspace_id: workspaceId,
@@ -182,7 +182,16 @@ export default function AppCampaignNew() {
         <Card>
           <CardHeader><CardTitle>Tell us about the business</CardTitle></CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Field label="Campaign name" v={brief.name} on={(v) => update("name", v)} />
+            <Field
+              label="Campaign name"
+              v={brief.name}
+              on={(v) => update("name", v)}
+              id="campaign-name"
+              name="campaign_name"
+              placeholder="e.g. July outreach campaign"
+              required
+              testId="campaign-name-input"
+            />
             <Field label="Key CTA" v={brief.cta} on={(v) => update("cta", v)} />
             <Field label="Offer / product / service" v={brief.offer} on={(v) => update("offer", v)} full />
             <Field label="Target audience" v={brief.audience} on={(v) => update("audience", v)} />
@@ -392,11 +401,15 @@ export default function AppCampaignNew() {
           <ChevronLeft className="h-4 w-4 mr-1" /> Back
         </Button>
         {step < totalSteps ? (
-          <Button onClick={next} disabled={step === 2 && (!brief.name || !brief.offer || !brief.audience)}>
+          <Button
+            data-testid="campaign-next-button"
+            onClick={next}
+            disabled={step === 2 && (!brief.name || !brief.offer || !brief.audience)}
+          >
             Continue <ChevronRight className="h-4 w-4 ml-1" />
           </Button>
         ) : (
-          <Button onClick={generate} disabled={saving}>
+          <Button data-testid="campaign-create-button" onClick={generate} disabled={saving}>
             <Sparkles className="h-4 w-4 mr-2" /> {saving ? "Generating…" : "Generate campaign pack"}
           </Button>
         )}
@@ -405,11 +418,35 @@ export default function AppCampaignNew() {
   );
 }
 
-function Field({ label, v, on, full }: { label: string; v: string; on: (v: string) => void; full?: boolean }) {
+function Field({
+  label, v, on, full, id, name, placeholder, required, testId,
+}: {
+  label: string;
+  v: string;
+  on: (v: string) => void;
+  full?: boolean;
+  id?: string;
+  name?: string;
+  placeholder?: string;
+  required?: boolean;
+  testId?: string;
+}) {
+  const autoId = id || `field-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
   return (
     <div className={full ? "md:col-span-2" : ""}>
-      <Label>{label}</Label>
-      <Input value={v} onChange={(e) => on(e.target.value)} />
+      <Label htmlFor={autoId}>
+        {label}{required && <span className="text-destructive ml-0.5">*</span>}
+      </Label>
+      <Input
+        id={autoId}
+        name={name}
+        placeholder={placeholder}
+        aria-label={label}
+        aria-required={required || undefined}
+        data-testid={testId}
+        value={v}
+        onChange={(e) => on(e.target.value)}
+      />
     </div>
   );
 }
