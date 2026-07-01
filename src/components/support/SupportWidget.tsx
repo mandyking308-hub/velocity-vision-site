@@ -82,6 +82,12 @@ export default function SupportWidget() {
   const [problem, setProblem] = useState<string>("");
   const [ticketMessage, setTicketMessage] = useState("");
   const [email, setEmail] = useState(user?.email ?? "");
+  const [contactName, setContactName] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [accountRef, setAccountRef] = useState("");
+  const [preferredMethod, setPreferredMethod] = useState<string>("email");
+  const [urgency, setUrgency] = useState<string>("normal");
   const [submitting, setSubmitting] = useState(false);
   const [ticketRef, setTicketRef] = useState<string | null>(null);
   const [nudgeVisible, setNudgeVisible] = useState(false);
