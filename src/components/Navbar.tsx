@@ -58,6 +58,7 @@ const Navbar = () => {
 
         {/* Mobile toggle */}
         <div className="flex items-center gap-2 xl:hidden">
+          <GTranslateSlot />
           <button
             type="button"
             className="text-foreground"
