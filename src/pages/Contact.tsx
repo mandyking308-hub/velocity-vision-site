@@ -77,6 +77,7 @@ const Contact = () => {
               <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Contact</p>
               <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">Reach the right team fast</h1>
               <p className="text-primary-foreground/70 text-lg max-w-2xl">Most people don't need a demo to get started — the workspace is self-serve. Pick the route that matches what you need.</p>
+              <p className="text-primary-foreground/60 text-sm max-w-2xl mt-3">Velocity Vision supports international founders, teams and agencies. Choose the route that matches your enquiry and we'll direct it internally.</p>
             </motion.div>
           </div>
         </section>

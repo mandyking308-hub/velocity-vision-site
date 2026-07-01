@@ -10,6 +10,8 @@ const Footer = () => (
           <p className="text-primary-foreground/70 text-sm leading-relaxed max-w-xs">
             A self-serve workspace for Data Vault, quality review, governed activation, replies, follow-up and pipeline. Built for founders, lean teams and agencies.
           </p>
+          <p className="text-primary-foreground/60 text-xs mt-3">Global workspace · multilingual access · multi-currency pricing</p>
+
         </div>
         <div>
           <h4 className="font-display font-semibold mb-4 text-sm uppercase tracking-wider text-primary-foreground/75">Product</h4>

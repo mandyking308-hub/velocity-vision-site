@@ -10,6 +10,7 @@ import { useCurrency } from "@/hooks/useCurrency";
 import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
 import PricingCurrencySelector from "@/components/PricingCurrencySelector";
 import TrustStrip from "@/components/TrustStrip";
+import GlobalStrip from "@/components/GlobalStrip";
 
 interface PlanDef {
   sku: SkuId;
@@ -127,10 +128,14 @@ const Pricing = () => {
 
       <section className="relative z-10 bg-background px-6 md:px-12 lg:px-20 -mt-16 md:-mt-20 lg:-mt-28 pt-0 pb-16 md:pb-20 lg:pb-24">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-6 md:mb-8">
+          <div className="mb-6 md:mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <p className="text-xs md:text-sm text-muted-foreground max-w-xl leading-relaxed">
+              Choose your display currency. Velocity Vision is built for international buyers, agencies and teams working across markets.
+            </p>
             <PricingCurrencySelector align="right" currency={currency} onCurrencyChange={setCurrency} />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
             {plans.map((p, i) => (
               <motion.div
                 key={p.name}
@@ -170,8 +175,14 @@ const Pricing = () => {
               </motion.div>
             ))}
           </div>
+          <div className="mt-8">
+            <GlobalStrip variant="compact" />
+          </div>
         </div>
       </section>
+
+
+
 
 
       <section className="bg-background border-t border-border px-6 md:px-12 lg:px-20 py-14 md:py-16 lg:py-20">
