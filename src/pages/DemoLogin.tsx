@@ -21,7 +21,7 @@ const DemoLogin = () => {
         className="w-full max-w-md"
       >
         <div className="text-center mb-8">
-          <h1 className="font-display text-3xl font-bold text-primary-foreground">
+          <h1 className="font-display text-3xl font-bold text-primary-foreground notranslate" translate="no">
             Velocity<span className="text-accent">.</span>
           </h1>
           <p className="text-primary-foreground/60 mt-2 text-sm">

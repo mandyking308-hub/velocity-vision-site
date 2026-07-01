@@ -51,7 +51,7 @@ function Shell() {
     <div className="min-h-screen flex w-full bg-background">
       <aside className="w-60 border-r border-border bg-card flex flex-col">
         <div className="p-5 border-b border-border">
-          <div className="font-bold text-lg">Velocity</div>
+          <div className="font-bold text-lg notranslate" translate="no">Velocity</div>
           <div className="text-xs text-muted-foreground">Campaign launchpad</div>
         </div>
         <nav className="flex-1 p-3 space-y-1">

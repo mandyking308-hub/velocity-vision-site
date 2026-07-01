@@ -162,7 +162,12 @@ function ensureGoogleTranslateScript() {
     }
   };
 
-  if (!document.getElementById(GOOGLE_SCRIPT_ID) && !window.google?.translate?.TranslateElement) {
+  const existingGoogleScript =
+    document.getElementById(GOOGLE_SCRIPT_ID) ||
+    document.querySelector('script[src*="translate_a/element.js"]') ||
+    (window as Window & { gt_translate_script?: HTMLScriptElement }).gt_translate_script;
+
+  if (!existingGoogleScript && !window.google?.translate?.TranslateElement) {
     const script = document.createElement("script");
     script.id = GOOGLE_SCRIPT_ID;
     script.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit2";
@@ -232,9 +237,13 @@ function GTranslateControl({ compact = false }: { compact?: boolean }) {
       const nextLanguage = (event as CustomEvent<string>).detail;
       if (nextLanguage) setLanguage(nextLanguage);
     };
+    const onStorage = () => setLanguage(getStoredLanguage());
     window.addEventListener("velocity:gtranslate-change", onChange);
-    window.addEventListener("storage", () => setLanguage(getStoredLanguage()));
-    return () => window.removeEventListener("velocity:gtranslate-change", onChange);
+    window.addEventListener("storage", onStorage);
+    return () => {
+      window.removeEventListener("velocity:gtranslate-change", onChange);
+      window.removeEventListener("storage", onStorage);
+    };
   }, []);
 
   return (
