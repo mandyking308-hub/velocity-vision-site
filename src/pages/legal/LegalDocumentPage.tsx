@@ -7173,6 +7173,86 @@ const docs: Record<string, LegalDoc> = {
       },
     ],
   },
+  "subprocessors": {
+    title: "Subprocessor List",
+    effectiveDate: "1 July 2026",
+    lastUpdated: "1 July 2026",
+    version: "1.0",
+    sections: [
+      {
+        heading: "1. Purpose",
+        paragraphs: [
+          `This Subprocessor List identifies third-party providers that ${PLATFORM} may use to operate the platform, host customer workspaces, process payments, deliver AI-assisted features, provide analytics, monitor errors, support customers or otherwise support the operation of the ${PLATFORM} service.`,
+          `${PLATFORM} is operated by Global Solutions Management LLC, a Delaware limited liability company.`,
+          `This document is published for transparency. It supplements the Data Processing Agreement, Privacy Policy and Platform Security Policy and does not modify or replace any of them.`,
+          `This document may be displayed in your browser's preferred language using an automated machine-translation layer, including GTranslate, Google Translate or similar translation technology. Translations are provided for convenience only. The English version controls if there is any conflict, ambiguity, inconsistency, error or difference between versions.`,
+        ],
+      },
+      {
+        heading: "2. Use of Subprocessors",
+        paragraphs: [
+          `${PLATFORM} may engage subprocessors and third-party providers to host, run, secure, monitor, support, bill, translate and improve the platform.`,
+          `Subprocessors may process limited operational, workspace, account, billing, security, telemetry or customer-provided data as reasonably required to deliver the platform in accordance with the Data Processing Agreement, Privacy Policy and Platform Security Policy.`,
+          `Subprocessors may change from time to time as providers, features, integrations, regions, security controls, compliance requirements or platform architecture evolve.`,
+          `Customers should check this list periodically for updates.`,
+        ],
+      },
+      {
+        heading: "3. Current Subprocessor Categories",
+        paragraphs: [
+          `The categories below reflect the operational providers ${PLATFORM} may rely on. Specific provider entities, locations and product editions may change from time to time. Provider details are maintained as platform providers are finalised and updated.`,
+        ],
+        bullets: [
+          `Hosting and cloud infrastructure — used to host the ${PLATFORM} application, database, storage, edge functions and workspace environments.`,
+          `Database, storage and authentication platform — used to store workspace data, manage user authentication and enforce access controls.`,
+          `Payments and billing — used to process paid plans, subscriptions, credits, top-ups, tax handling and invoicing.`,
+          `AI processing — used to power AI-assisted drafting, summarisation, classification, translation, segmentation and other Generated Outputs. AI providers process customer prompts and data only as needed to return outputs and are contractually restricted from training public models on customer personal data unless expressly permitted.`,
+          `Email delivery and connectivity — used to send transactional messages and, where customers connect their own sender accounts, to route customer outreach through customer-authorised providers.`,
+          `Translation layer — used to render the public site and legal documents in the visitor's preferred language for convenience. The English version controls.`,
+          `Analytics and product telemetry — used, where enabled and consented, to understand aggregate product usage, performance and stability.`,
+          `Error monitoring and logging — used to detect, diagnose and resolve platform errors, security events and reliability issues.`,
+          `Customer support tooling — used to receive, triage, respond to and resolve support requests routed through the Contact page and in-product surfaces.`,
+        ],
+      },
+      {
+        heading: "4. Provider Details",
+        paragraphs: [
+          `Provider details, including specific provider entities, processing regions and links to provider privacy and security pages, are maintained as platform providers are finalised.`,
+          `Where a provider publishes a privacy notice, security page, trust centre or subprocessor list of its own, customers should refer to that provider's published information for authoritative details about that provider's processing, security controls, sub-processing, transfers and certifications.`,
+          `${PLATFORM} does not warrant, certify or guarantee any specific provider commitment, certification, region, data residency, security posture or compliance status beyond what is expressly stated in the Data Processing Agreement or a signed written agreement.`,
+        ],
+      },
+      {
+        heading: "5. Changes to Subprocessors",
+        paragraphs: [
+          `${PLATFORM} may add, remove, replace, migrate or reorganise subprocessors from time to time to improve reliability, security, compliance, performance, cost, provider fit, feature coverage, geographic coverage or business continuity.`,
+          `Where the Data Processing Agreement requires notice of changes to subprocessors that process customer personal data, notice will be provided in accordance with that agreement.`,
+          `Continued use of ${PLATFORM} after an update to this list constitutes acknowledgement of the updated list to the extent permitted by law and the Data Processing Agreement.`,
+        ],
+      },
+      {
+        heading: "6. Customer Responsibilities",
+        paragraphs: [
+          `Customers are responsible for reviewing this list and the Data Processing Agreement before uploading customer personal data, connecting integrations, activating outreach or otherwise using the platform.`,
+          `Customers must ensure that their own use of subprocessors and third-party providers, including any providers the customer chooses to connect, is lawful and consistent with the Data Processing Agreement, Privacy Policy, Acceptable Use Policy, Marketing Compliance Policy and applicable law.`,
+        ],
+      },
+      {
+        heading: "7. No Personal Claims",
+        paragraphs: [
+          `To the maximum extent permitted by law, any claim, complaint, demand, dispute, proceeding or allegation relating to a subprocessor, third-party provider, provider outage, provider policy, provider security event, provider decision, provider region or provider certification must be brought only against Global Solutions Management LLC where a claim against ${PLATFORM} is legally permitted, and not personally against any owner, member, manager, director, officer, employee, staff member, contractor, consultant, adviser, supplier, service provider, subprocessor, AI provider, hosting provider, payment provider, security provider, monitoring provider, email provider, integration provider or infrastructure provider.`,
+          `Nothing in this Subprocessor List excludes liability where liability cannot lawfully be excluded.`,
+        ],
+      },
+      {
+        heading: "8. Contact",
+        paragraphs: [
+          `For subprocessor questions, ${CONTACT_CTA}`,
+          `Global Solutions Management LLC, Delaware, United States. Operator of ${PLATFORM}.`,
+        ],
+      },
+    ],
+  },
 };
 
 const slugify = (heading: string) =>
