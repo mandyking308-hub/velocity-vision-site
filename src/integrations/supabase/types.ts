@@ -2154,6 +2154,69 @@ export type Database = {
           },
         ]
       }
+      support_tickets: {
+        Row: {
+          assigned_to: string | null
+          assistant_answer: string | null
+          browser_info: string | null
+          category: string | null
+          created_at: string
+          diagnostics: Json
+          email: string | null
+          id: string
+          message: string
+          resolution_notes: string | null
+          route: string | null
+          severity: string | null
+          source: string
+          status: string
+          subject: string | null
+          updated_at: string
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          assistant_answer?: string | null
+          browser_info?: string | null
+          category?: string | null
+          created_at?: string
+          diagnostics?: Json
+          email?: string | null
+          id?: string
+          message: string
+          resolution_notes?: string | null
+          route?: string | null
+          severity?: string | null
+          source?: string
+          status?: string
+          subject?: string | null
+          updated_at?: string
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          assistant_answer?: string | null
+          browser_info?: string | null
+          category?: string | null
+          created_at?: string
+          diagnostics?: Json
+          email?: string | null
+          id?: string
+          message?: string
+          resolution_notes?: string | null
+          route?: string | null
+          severity?: string | null
+          source?: string
+          status?: string
+          subject?: string | null
+          updated_at?: string
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
       tasks: {
         Row: {
           assigned_to: string | null
