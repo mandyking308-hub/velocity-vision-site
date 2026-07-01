@@ -57,7 +57,7 @@ const Templates = () => (
             ))}
           </div>
           <p className="text-muted-foreground text-sm mt-10 max-w-3xl">
-            Every template connects directly to your Data Vault, governed activation, cadence scheduler, replies inbox and pipeline — so the workflow runs end-to-end inside the workspace.
+            Every template connects directly to your Data Vault, AI-drafted asset generation, governed activation, cadence scheduler, replies inbox and pipeline — so the workflow runs end-to-end inside the workspace, with you in control of what is activated.
           </p>
         </div>
       </section>
