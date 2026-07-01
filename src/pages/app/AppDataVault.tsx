@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 import VaultSummaryCards from "@/components/app/datavault/VaultSummaryCards";
 import RecentImportsTable from "@/components/app/datavault/RecentImportsTable";
 import DataHealthPanel from "@/components/app/datavault/DataHealthPanel";
@@ -12,14 +13,17 @@ import { Users, Building2, FolderUp, CheckCircle2, AlertTriangle, AlertOctagon, 
 
 export default function AppDataVault() {
   const { user } = useAuth();
+  const { currentId } = useWorkspace();
 
   const { data, isLoading } = useQuery({
-    queryKey: ["vault-dashboard", user?.id],
+    queryKey: ["vault-dashboard", user?.id, currentId],
     queryFn: async () => {
+      // NOTE: contacts/companies do not yet have workspace_id — scoping is company-wide.
+      const importsQ = supabase.from("data_uploads").select("id, file_name, created_at, row_count, status, summary").order("created_at", { ascending: false }).limit(10);
       const [contactsRes, companiesRes, importsRes, qualityRes] = await Promise.all([
         supabase.from("contacts").select("*", { count: "exact", head: true }).not("source_upload_id", "is", null),
         supabase.from("companies").select("*", { count: "exact", head: true }).not("source_upload_id", "is", null),
-        supabase.from("data_uploads").select("id, file_name, created_at, row_count, status, summary").order("created_at", { ascending: false }).limit(10),
+        currentId ? importsQ.eq("workspace_id", currentId) : importsQ,
         supabase.from("contacts").select("quality_status, duplicate_flag, blocked").not("source_upload_id", "is", null).limit(5000),
       ]);
       const all = (qualityRes.data || []) as any[];

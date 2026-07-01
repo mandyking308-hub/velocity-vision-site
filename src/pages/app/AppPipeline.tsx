@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { toast } from "sonner";
 import { ArrowRight, AlertTriangle, TrendingUp, Clock, CheckCircle2, XCircle, MessageSquare, Send } from "lucide-react";
 import JourneyEmptyState from "@/components/app/JourneyEmptyState";
@@ -36,19 +37,22 @@ const STAGE_TONE: Record<Stage, string> = {
 export default function AppPipeline() {
   const { t } = useTranslation("app");
   const tc = useTranslation("common").t;
+  const { currentId } = useWorkspace();
   const [opps, setOpps] = useState<Opp[]>([]);
   const [campaigns, setCampaigns] = useState<Record<string, string>>({});
   const [edit, setEdit] = useState<Opp | null>(null);
 
   const load = async () => {
+    const oppsQ = supabase.from("opportunities").select("*").order("updated_at", { ascending: false });
+    const campsQ = supabase.from("campaigns").select("id, name");
     const [{ data: o }, { data: c }] = await Promise.all([
-      supabase.from("opportunities").select("*").order("updated_at", { ascending: false }),
-      supabase.from("campaigns").select("id, name"),
+      currentId ? oppsQ.eq("workspace_id", currentId) : oppsQ,
+      currentId ? campsQ.eq("workspace_id", currentId) : campsQ,
     ]);
     setOpps((o || []) as any);
     setCampaigns(Object.fromEntries((c || []).map((x: any) => [x.id, x.name])));
   };
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [currentId]);
 
   const stats = useMemo(() => {
     const now = Date.now();

@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 import LeadActionPanel, { type ActionLead } from "@/components/app/LeadActionPanel";
 import { deriveFollowUpState, STATE_LABEL, STATE_TONE, type FollowUpState } from "@/lib/leadStates";
 import { LayoutGrid, ListChecks } from "lucide-react";
@@ -13,20 +14,23 @@ const PIPE_STAGES = ["new", "contacted", "qualified", "won", "lost"] as const;
 type Stage = typeof PIPE_STAGES[number];
 
 export default function AppLeads() {
+  const { currentId } = useWorkspace();
   const [leads, setLeads] = useState<ActionLead[]>([]);
   const [campaigns, setCampaigns] = useState<Record<string, string>>({});
   const [view, setView] = useState<"actions" | "board">("actions");
   const [q, setQ] = useState("");
 
   const load = async () => {
+    const leadsQ = supabase.from("leads").select("id, name, email, phone, status, follow_up_at, follow_up_state, replied_at, snoozed_until, last_email_sent_at, last_email_subject, last_contacted_at, last_interaction_at, opportunity_id, owner_id, campaign_id, company_id, contact_id, last_action, created_at").order("created_at", { ascending: false });
+    const campsQ = supabase.from("campaigns").select("id, name");
     const [{ data: l }, { data: c }] = await Promise.all([
-      supabase.from("leads").select("id, name, email, phone, status, follow_up_at, follow_up_state, replied_at, snoozed_until, last_email_sent_at, last_email_subject, last_contacted_at, last_interaction_at, opportunity_id, owner_id, campaign_id, company_id, contact_id, last_action, created_at").order("created_at", { ascending: false }),
-      supabase.from("campaigns").select("id, name"),
+      currentId ? leadsQ.eq("workspace_id", currentId) : leadsQ,
+      currentId ? campsQ.eq("workspace_id", currentId) : campsQ,
     ]);
     setLeads((l || []) as any);
     setCampaigns(Object.fromEntries((c || []).map((x: any) => [x.id, x.name])));
   };
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [currentId]);
 
   const filtered = useMemo(
     () => leads.filter((l) => {

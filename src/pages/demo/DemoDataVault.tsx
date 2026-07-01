@@ -39,6 +39,9 @@ export default function DemoDataVault() {
 
   return (
     <div className="min-h-screen bg-background">
+      <div className="bg-accent text-accent-foreground px-4 py-2.5 text-center text-sm font-semibold sticky top-0 z-50">
+        DEMO — not your live customer data
+      </div>
       <header className="border-b border-border bg-card">
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
           <div className="font-bold">Velocity · Data Vault demo</div>
@@ -48,6 +51,7 @@ export default function DemoDataVault() {
           </div>
         </div>
       </header>
+
 
       <main className="max-w-6xl mx-auto p-6 space-y-6">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3">

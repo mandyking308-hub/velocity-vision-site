@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCredits } from "@/contexts/CreditsContext";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 import {
   computeSafety, DEFAULT_SENDER_STATE, maxRiskyOverride, SENDER_HEALTH_LABEL,
   SENDER_HEALTH_TONE, type SenderState,
@@ -29,6 +30,7 @@ export default function AppActivation() {
   const { t } = useTranslation("app");
   const { user } = useAuth();
   const { remaining, planConfig } = useCredits();
+  const { currentId } = useWorkspace();
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const campaignId = params.get("campaign") || null;
@@ -48,14 +50,16 @@ export default function AppActivation() {
   useEffect(() => {
     if (!user) return;
     (async () => {
+      const connQ = supabase.from("email_connections").select("*").eq("user_id", user.id).order("is_default", { ascending: false });
+      const sendsQ = supabase.from("email_sends").select("status, sent_at, scheduled_at, created_at");
       const [v, r, k, b, s, conn, sends] = await Promise.all([
         supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "valid").not("source_upload_id", "is", null),
         supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "needs_review").not("source_upload_id", "is", null),
         supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "risky").not("source_upload_id", "is", null),
         supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "blocked").not("source_upload_id", "is", null),
         supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "suppressed").not("source_upload_id", "is", null),
-        supabase.from("email_connections").select("*").eq("user_id", user.id).order("is_default", { ascending: false }),
-        supabase.from("email_sends").select("status, sent_at, scheduled_at, created_at"),
+        currentId ? connQ.eq("workspace_id", currentId) : connQ,
+        currentId ? sendsQ.eq("workspace_id", currentId) : sendsQ,
       ]);
       const c: Counts = {
         valid: v.count ?? 0, needs_review: r.count ?? 0, risky: k.count ?? 0,
@@ -96,7 +100,7 @@ export default function AppActivation() {
         if (typeof pooled === "number") setAgencyPooled(pooled);
       }
     })();
-  }, [user, planConfig.id]);
+  }, [user, planConfig.id, currentId]);
 
   const plan = (planConfig.id as PlanId) || "starter";
   const safety = useMemo(() => computeSafety({

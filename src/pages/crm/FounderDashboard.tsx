@@ -13,6 +13,7 @@ import {
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { format, subDays, startOfMonth, startOfWeek } from "date-fns";
+import QAWorkspaceControl from "@/components/crm/QAWorkspaceControl";
 
 const COLORS = [
   "hsl(12, 90%, 58%)", "hsl(220, 60%, 50%)", "hsl(160, 50%, 50%)",
@@ -213,6 +214,12 @@ const FounderDashboard = () => {
           <Button variant="outline" size="sm" onClick={() => navigate("/crm/manual")} className="gap-1.5"><Book size={14} /> Ops Manual</Button>
         </div>
       </div>
+
+
+      {/* Founder-only: internal QA test workspace */}
+      <QAWorkspaceControl />
+
+
 
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">

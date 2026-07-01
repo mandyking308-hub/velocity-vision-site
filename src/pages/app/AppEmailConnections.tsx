@@ -11,6 +11,7 @@ import { Mail, Plug, AlertCircle, CheckCircle2, ArrowLeft, Trash2, Star } from "
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 
 interface Connection {
   id: string;
@@ -50,6 +51,7 @@ const PROVIDER_HELP: Record<string, { label: string; help: string; host: string;
 
 export default function AppEmailConnections() {
   const tc = useTranslation("common").t;
+  const { currentId } = useWorkspace();
   const [connections, setConnections] = useState<Connection[]>([]);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Connection | null>(null);
@@ -57,12 +59,13 @@ export default function AppEmailConnections() {
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase.from("email_connections").select("*").order("created_at", { ascending: false });
+    const q = supabase.from("email_connections").select("*").order("created_at", { ascending: false });
+    const { data } = await (currentId ? q.eq("workspace_id", currentId) : q);
     setConnections((data || []) as Connection[]);
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [currentId]);
 
   const setDefault = async (id: string) => {
     const { data: { user } } = await supabase.auth.getUser();
