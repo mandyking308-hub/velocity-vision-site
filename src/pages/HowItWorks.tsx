@@ -7,14 +7,14 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Check } from "lucide-react";
 
 const steps = [
-  { n: "01", title: "Upload your data", desc: "Import CSVs or paste rows. Map your fields once. Companies and contacts land in the Data Vault." },
-  { n: "02", title: "Review quality & duplicates", desc: "See what's complete, what's duplicated and what's risky — before you act on any of it." },
+  { n: "01", title: "Upload your messy data", desc: "Import CSVs or paste rows. Map your fields once. Companies and contacts land in the Data Vault." },
+  { n: "02", title: "AI reviews quality & readiness", desc: "AI quality review flags what's complete, duplicated or risky — before you act on any of it. You stay in control." },
   { n: "03", title: "Build a safe segment", desc: "Filter to the records that are usable and safe to outreach to. Save the segment for reuse." },
   { n: "04", title: "Connect & verify sender", desc: "Connect your sending domain or mailbox. Verification gates activation — no surprises live." },
-  { n: "05", title: "Create outreach assets", desc: "Email sequence, social pack, press release and video pack generated from your brief." },
+  { n: "05", title: "Generate AI-assisted outreach assets", desc: "Email sequence, social pack, press release and video pack drafted by AI from your brief. Every output is editable before it goes anywhere." },
   { n: "06", title: "Set timing & cadence", desc: "One-off or recurring (weekly/monthly). Decide how assets refresh between runs." },
-  { n: "07", title: "Activate safely", desc: "Tiered daily caps, risky-record limits and pooled governance for agencies — enforced automatically." },
-  { n: "08", title: "Work replies & follow-up", desc: "Action queue for inbound. Snooze, mark stuck, follow up — nothing falls through the cracks." },
+  { n: "07", title: "Activate safely (governed AI)", desc: "Tiered daily caps, risky-record limits and pooled governance for agencies — enforced automatically. You approve activation." },
+  { n: "08", title: "Work replies with AI follow-up support", desc: "Action queue for inbound with AI-supported follow-up suggestions. Snooze, mark stuck, follow up — you send." },
   { n: "09", title: "Move warm contacts into pipeline", desc: "Promote replies into opportunities. Track value, stage and progress in the same workspace." },
   { n: "10", title: "Review & repeat what works", desc: "Reply rates, pipeline value and activation health summarised every cycle. Rerun the winners." },
 ];
