@@ -2,6 +2,17 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { Beaker, RotateCcw, Loader2 } from "lucide-react";
 
@@ -10,6 +21,7 @@ import { Beaker, RotateCcw, Loader2 } from "lucide-react";
 export default function QAWorkspaceControl() {
   const [creating, setCreating] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const [resetOpen, setResetOpen] = useState(false);
 
   const create = async () => {
     setCreating(true);
@@ -23,11 +35,11 @@ export default function QAWorkspaceControl() {
     return data as string | undefined;
   };
 
-  const reset = async () => {
-    if (!confirm("This will reset only the internal QA test workspace. It will not affect customer workspaces.")) return;
+  const runReset = async () => {
     setResetting(true);
     const { error } = await (supabase as any).rpc("reset_qa_workspace");
     setResetting(false);
+    setResetOpen(false);
     if (error) {
       toast.error(`Reset failed: ${error.message}`);
       return;
@@ -48,14 +60,41 @@ export default function QAWorkspaceControl() {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-wrap gap-2">
-        <Button onClick={create} disabled={creating}>
+        <Button data-testid="qa-create-button" onClick={create} disabled={creating}>
           {creating ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Beaker className="h-4 w-4 mr-2" />}
           Create QA test workspace
         </Button>
-        <Button variant="outline" onClick={reset} disabled={resetting}>
-          {resetting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RotateCcw className="h-4 w-4 mr-2" />}
-          Reset QA test workspace
-        </Button>
+
+        <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
+          <AlertDialogTrigger asChild>
+            <Button data-testid="qa-reset-open-button" variant="outline" disabled={resetting}>
+              {resetting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RotateCcw className="h-4 w-4 mr-2" />}
+              Reset QA test workspace
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Reset the internal QA workspace?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This deletes the seeded example.com contacts, companies, campaigns, leads and
+                opportunities inside <b>TEST WORKSPACE — Velocity QA</b> only. No customer
+                workspaces or real data are affected. This cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel data-testid="qa-reset-cancel-button" disabled={resetting}>
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction
+                data-testid="qa-reset-confirm-button"
+                onClick={(e) => { e.preventDefault(); void runReset(); }}
+                disabled={resetting}
+              >
+                {resetting ? "Resetting…" : "Reset QA workspace"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </CardContent>
     </Card>
   );
