@@ -8,8 +8,6 @@ import { Sparkles } from "lucide-react";
 import { useCurrency } from "@/hooks/useCurrency";
 import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
 import LegalComplianceGate from "@/components/LegalComplianceGate";
-import { useAuth } from "@/contexts/AuthContext";
-import { recordLegalAcceptance } from "@/lib/recordLegalAcceptance";
 import BillingTermsSummary from "@/components/BillingTermsSummary";
 
 const PACK_TO_PRICE: Record<string, string> = {
