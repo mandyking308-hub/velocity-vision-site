@@ -8,6 +8,9 @@ interface Props {
   /** Optional label. Default "Prices shown in". Set to null to hide. */
   label?: string | null;
   className?: string;
+  /** Optional controlled currency. If provided together with onCurrencyChange, the internal hook is bypassed. */
+  currency?: Currency;
+  onCurrencyChange?: (currency: Currency) => void;
 }
 
 /**
@@ -15,9 +18,18 @@ interface Props {
  * - Right-aligned on desktop, full-width on mobile.
  * - Controls displayed prices and downstream Stripe checkout currency.
  * - Independent of GTranslate (language does not affect this).
+ * - Supports controlled mode via `currency` + `onCurrencyChange` props.
  */
-export function PricingCurrencySelector({ align = "right", label = "Prices shown in", className }: Props) {
-  const { currency, setCurrency } = useCurrency();
+export function PricingCurrencySelector({
+  align = "right",
+  label = "Prices shown in",
+  className,
+  currency: controlledCurrency,
+  onCurrencyChange,
+}: Props) {
+  const internal = useCurrency();
+  const activeCurrency = controlledCurrency ?? internal.currency;
+  const changeCurrency = onCurrencyChange ?? internal.setCurrency;
   const alignClass =
     align === "right" ? "md:justify-end" : align === "center" ? "md:justify-center" : "md:justify-start";
 
@@ -40,14 +52,14 @@ export function PricingCurrencySelector({ align = "right", label = "Prices shown
         role="radiogroup"
       >
         {SUPPORTED_CURRENCIES.map((c) => {
-          const active = c === currency;
+          const active = c === activeCurrency;
           return (
             <button
               key={c}
               type="button"
               role="radio"
               aria-checked={active}
-              onClick={() => setCurrency(c as Currency)}
+              onClick={() => changeCurrency(c as Currency)}
               className={cn(
                 "flex-1 md:flex-none px-3 md:px-3.5 py-1.5 text-xs md:text-sm font-medium transition-colors",
                 "border-r border-border last:border-r-0",

@@ -91,7 +91,7 @@ const faqs = [
 ];
 
 const Pricing = () => {
-  const { currency } = useCurrency();
+  const { currency, setCurrency } = useCurrency();
   return (
   <>
 
