@@ -197,9 +197,36 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
 // invoice.paid fires on the initial subscription invoice AND every renewal.
 // We grant credits once per invoice id so each billing period tops up the
 // customer's included allowance without double-granting on webhook retries.
+// ── Recurring subscription renewals ──────────────────────────────────────
+// invoice.paid fires on BOTH the initial subscription invoice and every
+// renewal. The initial invoice is handled by customer.subscription.created
+// (dedupe key `sub_initial:${subscription.id}`), so here we must skip any
+// invoice whose billing_reason marks it as the creation invoice — otherwise
+// a Growth/Agency signup would receive its included credits twice (once
+// from subscription.created, once from the initial invoice.paid).
+//
+// Dedupe key map (do not change without migrating credit_ledger):
+//   initial subscription grant → sub_initial:${subscription.id}
+//   renewal grant              → invoice:${invoice.id}
+//   one-off checkout / top-up  → session:${session.id}
 async function handleInvoicePaid(invoice: any, env: StripeEnv) {
   const subId = invoice.subscription;
   if (!subId) return;
+
+  // Skip the initial subscription invoice — credits for it are granted by
+  // handleSubscriptionEvent(..., isCreate=true). Only true recurring cycle
+  // invoices should top up the included allowance here.
+  const billingReason = invoice.billing_reason;
+  const RENEWAL_REASONS = new Set([
+    "subscription_cycle",
+    "subscription_update", // proration/plan change mid-cycle renewal
+    "subscription_threshold",
+  ]);
+  if (!RENEWAL_REASONS.has(billingReason)) {
+    // subscription_create, manual, upcoming, etc. → no renewal grant.
+    return;
+  }
+
   const line = invoice.lines?.data?.[0];
   const priceKey = lookupKey(line?.price);
   if (!priceKey) return;
@@ -224,9 +251,10 @@ async function handleInvoicePaid(invoice: any, env: StripeEnv) {
     entry.credits,
     "plan_grant",
     `invoice:${invoice.id}`,
-    { plan: entry.plan, source: "stripe_renewal", invoice: invoice.id, subscription: subId },
+    { plan: entry.plan, source: "stripe_renewal", invoice: invoice.id, subscription: subId, billing_reason: billingReason },
   );
 }
+
 
 async function handleInvoicePaymentFailed(invoice: any, env: StripeEnv) {
   const subId = invoice.subscription;
