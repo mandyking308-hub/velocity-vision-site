@@ -68,12 +68,13 @@ export default function TopUpModal({ open, onOpenChange }: { open: boolean; onOp
           <BillingTermsSummary className="mt-4" compact />
         </DialogContent>
       </Dialog>
-      <LegalAcceptanceGate
+      <LegalComplianceGate
         open={pendingPack !== null}
         onOpenChange={(v) => { if (!v) setPendingPack(null); }}
-        title="Confirm before buying credits"
-        description="You must accept the legal stack before completing checkout."
-        confirmLabel="Continue to checkout"
+        source="topup_checkout"
+        title="Confirm current terms before buying credits"
+        description="Please accept the current versions of our platform legal stack to continue to checkout."
+        confirmLabel="Accept and continue to checkout"
         onConfirm={confirmBuy}
       />
       {element}
