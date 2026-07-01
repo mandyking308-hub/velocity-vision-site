@@ -97,37 +97,35 @@
   }
 }
 
-/* --- GTranslate: single inline selector in the header --- */
+/* --- GTranslate: single inline selector, moved between headers --- */
 .gtranslate_wrapper {
-  display: inline-flex;
+  display: inline-flex !important;
   align-items: center;
   line-height: 1;
 }
+.gtranslate_wrapper a,
+.gtranslate_wrapper .gt-current-lang,
 .gtranslate_wrapper .gt_selector,
 .gtranslate_wrapper select {
-  appearance: none;
-  -webkit-appearance: none;
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
   color: hsl(var(--foreground));
   font-size: 12px;
   font-weight: 500;
-  padding: 6px 26px 6px 10px;
+  padding: 6px 10px;
   border-radius: 9999px;
   outline: none;
   cursor: pointer;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='none' stroke='%23888' stroke-width='1.5' d='M1 1l4 4 4-4'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  transition: border-color .15s ease, background-color .15s ease;
+  text-decoration: none;
 }
+.gtranslate_wrapper .gt_selector { padding-right: 26px; }
 .gtranslate_wrapper .gt_selector:hover,
-.gtranslate_wrapper select:hover { border-color: hsl(var(--accent)); }
+.gtranslate_wrapper select:hover,
+.gtranslate_wrapper a:hover { border-color: hsl(var(--accent)); }
 /* Hide Google Translate top banner + prevent body shift */
 .skiptranslate iframe.goog-te-banner-frame,
 .goog-te-banner-frame { display: none !important; }
 body { top: 0 !important; }
-/* Kill the small floating "Original text" tooltip Google injects */
 .goog-tooltip, .goog-tooltip:hover, .goog-text-highlight {
   background: transparent !important; box-shadow: none !important; border: none !important;
 }

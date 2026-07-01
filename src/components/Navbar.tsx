@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import { GTranslateSlot } from "@/components/GTranslate";
 
 
 const Navbar = () => {
@@ -44,8 +45,8 @@ const Navbar = () => {
               </Link>
             ))}
           </div>
-          <div className="flex items-center gap-4">
-
+          <div className="flex items-center gap-3">
+            <GTranslateSlot />
             <Button variant="ghost" size="sm" asChild>
               <Link to="/pricing">{t("nav.seePricing")}</Link>
             </Button>
@@ -57,6 +58,7 @@ const Navbar = () => {
 
         {/* Mobile toggle */}
         <div className="flex items-center gap-2 xl:hidden">
+          <GTranslateSlot />
           <button
             type="button"
             className="text-foreground"

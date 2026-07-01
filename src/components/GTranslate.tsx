@@ -1,22 +1,14 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 
 /**
- * GTranslate — single floating language selector for Velocity Vision.
+ * GTranslate — single inline language selector, moved into the currently
+ * visible <GTranslateSlot /> on every route (public site, /app, /crm, /admin).
  *
- * Uses GTranslate's `float.js` widget, which mounts a fixed-position pill in
- * the bottom-right of the viewport. This is guaranteed visible on every
- * customer-facing page (public site, legal, demo, /app dashboard) with no
- * layout risk in the header.
- *
- * Excluded surfaces: /crm and /admin — the widget is hidden entirely and the
- * subtree is left untranslated.
- *
- * Sensitive inputs (passwords, API keys, Stripe iframes, etc.) are tagged
- * translate="no" so Google Translate never rewrites them.
+ * Sensitive fields (passwords, API keys, card fields, Stripe iframes,
+ * code/pre, [data-notranslate]) are tagged translate="no" so translation
+ * never rewrites them.
  */
-
-const EXCLUDED_PREFIXES = ["/crm", "/admin"];
 
 const SENSITIVE_INPUT_RE =
   /(password|api[_-]?key|secret|token|smtp|imap|client[_-]?secret|access[_-]?key|bearer|card|cc[_-]?number|cardnumber|cvc|cvv|iban|routing|account[_-]?number|pin)/i;
@@ -26,6 +18,8 @@ const ALWAYS_NOTRANSLATE_SELECTOR =
 
 const WIDGET_SCRIPT_ID = "gtranslate-widget-script";
 const SETTINGS_SCRIPT_ID = "gtranslate-widget-settings";
+const HOLDER_ID = "gt-widget-holder";
+const WRAPPER_SELECTOR = ".gtranslate_wrapper";
 
 function markSensitiveNodes(root: ParentNode) {
   root.querySelectorAll(ALWAYS_NOTRANSLATE_SELECTOR).forEach((el) => {
@@ -57,70 +51,94 @@ function markSensitiveNodes(root: ParentNode) {
     });
 }
 
-function ensureWidgetLoaded() {
-  if (document.getElementById(WIDGET_SCRIPT_ID)) return;
+function ensureHolderAndScripts() {
+  if (!document.getElementById(HOLDER_ID)) {
+    const holder = document.createElement("div");
+    holder.id = HOLDER_ID;
+    // Off-screen holder so the widget always exists in the DOM even
+    // if no slot is mounted on the current route yet.
+    holder.style.cssText =
+      "position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;";
+    const wrapper = document.createElement("div");
+    wrapper.className = "gtranslate_wrapper";
+    holder.appendChild(wrapper);
+    document.body.appendChild(holder);
+  }
 
-  const settings = document.createElement("script");
-  settings.id = SETTINGS_SCRIPT_ID;
-  settings.text = `window.gtranslateSettings = ${JSON.stringify({
-    default_language: "en",
-    detect_browser_language: true,
-    languages: [
-      "en", "es", "fr", "de", "it", "pt", "nl", "pl", "sv",
-      "ar", "zh-CN", "ja", "ko", "hi", "tr", "ru",
-    ],
-    flag_style: "3d",
-    switcher_horizontal_position: "right",
-    switcher_vertical_position: "bottom",
-    switcher_open_direction: "top",
-    float_switcher_open_direction: "top",
-  })};`;
-  document.head.appendChild(settings);
+  if (!document.getElementById(SETTINGS_SCRIPT_ID)) {
+    const settings = document.createElement("script");
+    settings.id = SETTINGS_SCRIPT_ID;
+    settings.text = `window.gtranslateSettings = ${JSON.stringify({
+      default_language: "en",
+      detect_browser_language: true,
+      languages: [
+        "en", "es", "fr", "de", "it", "pt", "nl", "pl", "sv",
+        "ar", "zh-CN", "ja", "ko", "hi", "tr", "ru",
+      ],
+      wrapper_selector: ".gtranslate_wrapper",
+      flag_style: "3d",
+      horizontal_position: "inline",
+      alt_flags: {},
+    })};`;
+    document.head.appendChild(settings);
+  }
 
-  const script = document.createElement("script");
-  script.id = WIDGET_SCRIPT_ID;
-  script.src = "https://cdn.gtranslate.net/widgets/latest/float.js";
-  script.defer = true;
-  document.head.appendChild(script);
+  if (!document.getElementById(WIDGET_SCRIPT_ID)) {
+    const script = document.createElement("script");
+    script.id = WIDGET_SCRIPT_ID;
+    script.src = "https://cdn.gtranslate.net/widgets/latest/dwf.js";
+    script.defer = true;
+    document.head.appendChild(script);
+  }
 }
 
-/** Kept as a no-op export so any lingering `<GTranslateSlot />` references still compile. */
-export function GTranslateSlot(_: { className?: string }) {
-  return null;
+/** Mount point for the single GTranslate widget. */
+export function GTranslateSlot({ className = "" }: { className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    ensureHolderAndScripts();
+
+    const move = () => {
+      const wrapper = document.querySelector<HTMLElement>(WRAPPER_SELECTOR);
+      if (wrapper && ref.current && wrapper.parentElement !== ref.current) {
+        ref.current.appendChild(wrapper);
+        wrapper.style.display = "";
+      }
+    };
+    move();
+    // Retry a few times while the widget script initialises.
+    const interval = window.setInterval(move, 300);
+    const stop = window.setTimeout(() => window.clearInterval(interval), 5000);
+
+    return () => {
+      window.clearInterval(interval);
+      window.clearTimeout(stop);
+      const holder = document.getElementById(HOLDER_ID);
+      const wrapper = document.querySelector<HTMLElement>(WRAPPER_SELECTOR);
+      if (holder && wrapper && wrapper.parentElement === ref.current) {
+        holder.appendChild(wrapper);
+      }
+    };
+  }, []);
+
+  return <div ref={ref} className={`inline-flex items-center ${className}`} />;
 }
 
 export default function GTranslate() {
   const location = useLocation();
-  const isExcluded = useMemo(
-    () =>
-      EXCLUDED_PREFIXES.some(
-        (p) => location.pathname === p || location.pathname.startsWith(p + "/"),
-      ),
-    [location.pathname],
-  );
 
   useEffect(() => {
-    if (!isExcluded) ensureWidgetLoaded();
-    // Hide/show the floating widget as the user moves between allowed
-    // and excluded surfaces without reloading.
-    const applyVisibility = () => {
-      document
-        .querySelectorAll<HTMLElement>(".gtranslate_wrapper, .gt_float_switcher")
-        .forEach((el) => {
-          el.style.display = isExcluded ? "none" : "";
-        });
-    };
-    applyVisibility();
-    const t = window.setInterval(applyVisibility, 500);
-    return () => window.clearInterval(t);
-  }, [isExcluded]);
+    ensureHolderAndScripts();
+  }, []);
 
   useEffect(() => {
     markSensitiveNodes(document.body);
     const observer = new MutationObserver((mutations) => {
       for (const m of mutations) {
         m.addedNodes.forEach((n) => {
-          if (n.nodeType === Node.ELEMENT_NODE) markSensitiveNodes(n as ParentNode);
+          if (n.nodeType === Node.ELEMENT_NODE)
+            markSensitiveNodes(n as ParentNode);
         });
       }
     });
