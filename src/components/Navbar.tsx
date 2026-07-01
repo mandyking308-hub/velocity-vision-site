@@ -3,7 +3,6 @@ import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
 import CurrencySwitcher from "@/components/CurrencySwitcher";
 
 const Navbar = () => {
@@ -46,7 +45,6 @@ const Navbar = () => {
             ))}
           </div>
           <div className="flex items-center gap-4">
-            <LanguageSwitcher />
             <CurrencySwitcher />
             <Button variant="ghost" size="sm" asChild>
               <Link to="/pricing">{t("nav.seePricing")}</Link>
@@ -86,7 +84,6 @@ const Navbar = () => {
               </Link>
             ))}
             <div className="flex items-center gap-2">
-              <LanguageSwitcher />
               <CurrencySwitcher />
             </div>
             <Button variant="ghost" size="sm" asChild>

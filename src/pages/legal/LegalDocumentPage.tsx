@@ -366,8 +366,9 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "7. Subprocessors",
         paragraphs: [
-          "We may use subprocessors to provide hosting, storage, authentication, payments, analytics, monitoring, communications, email connectivity, AI processing, support and other infrastructure. We will impose data protection obligations on subprocessors that are materially consistent with this DPA.",
+          "We may use subprocessors to provide hosting, storage, authentication, payments, analytics, monitoring, communications, email connectivity, AI processing, in-browser machine translation of the user interface (GTranslate / Google Translate) for display convenience only, support and other infrastructure. We will impose data protection obligations on subprocessors that are materially consistent with this DPA.",
           "Where legally required, the customer gives general authorisation for subprocessors and may request current subprocessor information. If a customer reasonably objects to a new subprocessor, the customer's remedy is to stop using the affected feature or terminate the service if we cannot reasonably resolve the objection.",
+          "The translation subprocessor operates client-side on rendered page text solely to display the interface in the viewer's preferred language. It is not used to translate Customer Personal Data for storage, and translated values are not written back to the platform database.",
         ],
       },
       {
@@ -893,6 +894,11 @@ const LegalDocumentPage = () => {
             </div>
             <p className="text-xs text-muted-foreground mt-2">Global Solutions Management LLC — Delaware, United States — operator of Velocity Vision</p>
             <p className="text-xs text-muted-foreground mt-2 max-w-3xl">These online terms are designed for product clarity and operational protection. They should be reviewed by qualified counsel before high-volume paid rollout or enterprise contracting.</p>
+            <p className="text-xs text-muted-foreground mt-2 max-w-3xl italic">
+              This document may be displayed in your browser's preferred language using an automated
+              machine-translation layer (GTranslate / Google Translate). Translations are provided for
+              convenience only. The English version controls if there is any conflict between translations.
+            </p>
           </motion.div>
 
           <div className="flex gap-10">
