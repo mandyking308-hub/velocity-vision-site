@@ -274,8 +274,12 @@ export default function AppBilling() {
         open={pendingPlan !== null}
         onOpenChange={(v) => { if (!v) setPendingPlan(null); }}
         title={pendingPlan ? `Confirm before subscribing to ${PLANS[pendingPlan].name}` : "Confirm"}
-        description="You must accept the legal stack before activating a paid plan."
-        confirmLabel="Continue to checkout"
+        description={
+          pendingPlan
+            ? `You'll be charged ${priceFor(PLAN_TO_SKU[pendingPlan], currency).formatted} ${PLANS[pendingPlan].unit} in ${currency}. Stripe checkout opens in the same currency. You must accept the legal stack before activating a paid plan.`
+            : "You must accept the legal stack before activating a paid plan."
+        }
+        confirmLabel={pendingPlan ? `Continue to checkout in ${currency}` : "Continue to checkout"}
         onConfirm={confirmBuyPlan}
       />
     </div>
