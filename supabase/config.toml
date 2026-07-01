@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.notify-contact]
 verify_jwt = false
+
+[functions.support-notify]
+verify_jwt = false
