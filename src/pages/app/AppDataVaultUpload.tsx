@@ -30,6 +30,7 @@ const STEPS: { id: Step; label: string }[] = [
 export default function AppDataVaultUpload() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { currentId: workspaceId } = useWorkspace();
   const [step, setStep] = useState<Step>("upload");
   const [busy, setBusy] = useState(false);
 
