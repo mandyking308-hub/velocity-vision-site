@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar, Clock, Rocket, Repeat } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 import {
   CADENCE_LABELS, CadenceType, LIFECYCLE_TONE, deriveLifecycle, nextActionLabel,
 } from "@/lib/cadence";
@@ -25,6 +26,7 @@ interface Row {
 
 export default function AppCampaigns() {
   const navigate = useNavigate();
+  const { currentId } = useWorkspace();
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [cadenceFilter, setCadenceFilter] = useState<string>("all");
@@ -32,14 +34,16 @@ export default function AppCampaigns() {
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase
+      setLoading(true);
+      const q = supabase
         .from("campaigns")
         .select("id, name, status, goal, campaign_kind, created_at, cadence_type, start_at, cadence_end_at, next_run_at, timezone, last_run_at, runs_completed")
         .order("created_at", { ascending: false });
+      const { data } = await (currentId ? q.eq("workspace_id", currentId) : q);
       setRows((data || []) as Row[]);
       setLoading(false);
     })();
-  }, []);
+  }, [currentId]);
 
   const filtered = useMemo(() => {
     const now = Date.now();
