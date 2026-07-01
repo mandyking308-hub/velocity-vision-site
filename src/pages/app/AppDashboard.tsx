@@ -340,8 +340,8 @@ export default function AppDashboard() {
       {/* D. Create outreach assets */}
       <SectionHeader
         icon={Sparkles}
-        title="Create outreach assets"
-        desc="Turn your data into ready-to-use outreach in minutes."
+        title="Create AI-assisted outreach assets"
+        desc="AI drafts your outreach from your data and brief. You review, edit and approve before anything is sent."
         cta={{ label: "Create assets from my data", to: "/app/campaigns/new" }}
       />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
