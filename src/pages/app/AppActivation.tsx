@@ -100,7 +100,7 @@ export default function AppActivation() {
         if (typeof pooled === "number") setAgencyPooled(pooled);
       }
     })();
-  }, [user, planConfig.id]);
+  }, [user, planConfig.id, currentId]);
 
   const plan = (planConfig.id as PlanId) || "starter";
   const safety = useMemo(() => computeSafety({
