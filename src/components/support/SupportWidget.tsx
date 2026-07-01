@@ -19,6 +19,10 @@ const NUDGE_ROUTES = new Set<string>([
   "/app/billing", "/app/settings/email",
 ]);
 const NUDGE_SESSION_KEY = "vv.support.nudgeDismissed";
+const AI_COUNT_KEY = "vv.support.aiCount";
+const MAX_INPUT_CHARS = 1000;
+const ANON_AI_CAP = 8;
+const SIGNED_AI_CAP = 20;
 
 type Mode = "chat" | "ticket" | "success";
 type Msg = { role: "user" | "assistant" | "system"; content: string; links?: { label: string; to: string }[] };
@@ -124,8 +128,19 @@ export default function SupportWidget() {
     try { return localStorage.getItem("vv.currentWorkspaceId"); } catch { return null; }
   };
 
+  const bumpAiCount = () => {
+    try {
+      const n = Number(sessionStorage.getItem(AI_COUNT_KEY) ?? "0") + 1;
+      sessionStorage.setItem(AI_COUNT_KEY, String(n));
+      return n;
+    } catch { return 0; }
+  };
+  const getAiCount = () => {
+    try { return Number(sessionStorage.getItem(AI_COUNT_KEY) ?? "0"); } catch { return 0; }
+  };
+
   const sendChat = async () => {
-    const q = input.trim();
+    const q = input.trim().slice(0, MAX_INPUT_CHARS);
     if (!q || thinking) return;
     const next: Msg[] = [...messages, { role: "user", content: q }];
     setMessages(next);
@@ -141,20 +156,34 @@ export default function SupportWidget() {
       .slice(0, 6)
       .map((k) => ({ question: k.question, answer: k.answer, links: k.links }));
 
-    // If AI already errored earlier this session, skip straight to fallback.
-    if (aiDisabled) {
+    // Session-level AI cap (cost control).
+    const cap = user ? SIGNED_AI_CAP : ANON_AI_CAP;
+    const usedAi = getAiCount();
+    const overCap = usedAi >= cap;
+
+    // If AI already errored earlier this session, or cap hit, skip to fallback.
+    if (aiDisabled || overCap) {
       const ans = fallbackAnswer(q, location.pathname, inApp);
+      if (overCap) {
+        ans.content += user
+          ? "\n\n(You've reached this session's AI limit — switching to offline mode. Open the Help Centre or raise a ticket for more.)"
+          : "\n\n(You've reached this session's AI limit — switching to offline mode. See /pricing, /contact, or raise a ticket.)";
+        setAiDisabled(true);
+      }
       setMessages([...next, ans]);
       setThinking(false);
       return;
     }
 
     try {
+      const trimmedHistory = next
+        .filter((m) => m.role === "user" || m.role === "assistant")
+        .slice(-10)
+        .map((m) => ({ role: m.role, content: String(m.content).slice(0, 4000) }));
+      bumpAiCount();
       const { data, error } = await supabase.functions.invoke("support-chat", {
         body: {
-          messages: next
-            .filter((m) => m.role === "user" || m.role === "assistant")
-            .map((m) => ({ role: m.role, content: m.content })),
+          messages: trimmedHistory,
           context: {
             route: location.pathname,
             source,
@@ -166,16 +195,19 @@ export default function SupportWidget() {
       });
 
       if (error || !data || (data as any).error) {
-        // Fall back gracefully; disable AI for the rest of the session on non-transient errors.
         const errCode = (data as any)?.error;
-        if (errCode === "ai_not_configured" || errCode === "credits_exhausted" || errCode === "upstream_error") {
+        if (
+          errCode === "ai_not_configured" ||
+          errCode === "credits_exhausted" ||
+          errCode === "upstream_error" ||
+          errCode === "rate_limited"
+        ) {
           setAiDisabled(true);
         }
         const ans = fallbackAnswer(q, location.pathname, inApp);
         setMessages([...next, ans]);
       } else {
         const answer = String((data as any).answer ?? "").trim() || fallbackAnswer(q, location.pathname, inApp).content;
-        // Attach top-hit links so the customer has a clickable next step.
         const links = grounding.flatMap((g) => g.links ?? []).slice(0, 3);
         setMessages([...next, { role: "assistant", content: answer, links }]);
       }
@@ -383,7 +415,8 @@ export default function SupportWidget() {
                   <Input
                     placeholder="Ask a question…"
                     value={input}
-                    onChange={(e) => setInput(e.target.value)}
+                    onChange={(e) => setInput(e.target.value.slice(0, MAX_INPUT_CHARS))}
+                    maxLength={MAX_INPUT_CHARS}
                     onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChat(); } }}
                     disabled={thinking}
                   />
