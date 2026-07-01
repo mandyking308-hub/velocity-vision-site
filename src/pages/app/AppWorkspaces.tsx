@@ -13,11 +13,18 @@ import { toast } from "sonner";
 
 export default function AppWorkspaces() {
   const { workspaces, currentId, setCurrentId, loading } = useWorkspace();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [industry, setIndustry] = useState("");
   const [website, setWebsite] = useState("");
   const [busy, setBusy] = useState(false);
+
+  const openWorkspace = (id: string) => {
+    setCurrentId(id);
+    toast.success("Workspace opened");
+    navigate("/app");
+  };
 
   const create = async () => {
     if (!name.trim()) return;
