@@ -90,58 +90,89 @@ export default function AppDashboard() {
     replies_due: 0, followups_today: 0, dormant: 0, warm: 0, bounces: 0,
   });
 
+  // Workspace-scoped dashboard queries. We wait for the workspace context to hydrate
+  // and for an active workspace id before pulling any workspace-sensitive metrics, so
+  // the dashboard never blends numbers across workspaces.
   useEffect(() => {
     if (!user) return;
+    if (wsLoading) return;
+    // No workspace yet → the empty-state gate below renders. Skip metric fetch.
+    if (!currentId) {
+      setActiveCampaigns(0); setLatestCampaignId(null); setCampaignRows([]);
+      setVault({ total_contacts: 0, total_companies: 0, imports: 0, clean: 0, needs_review: 0, risky: 0, blocked: 0, duplicates: 0, safe_to_activate: 0 });
+      setPipeline({ leads: 0, opportunities: 0, pipeline_value: 0, won: 0, lost: 0, by_stage: {}, stuck: 0, next_action_due: 0 });
+      setInter({ replies_due: 0, followups_today: 0, dormant: 0, warm: 0, bounces: 0 });
+      return;
+    }
+
     (async () => {
-      const wsFilter = <T extends { eq: (col: string, v: any) => T }>(q: T) =>
-        currentId ? q.eq("workspace_id", currentId) : q;
+      // 1. Profile (user-level, not workspace scoped).
+      const { data: profile } = await supabase.from("profiles").select("first_name").eq("user_id", user.id).maybeSingle();
+      setFirstName(profile?.first_name || "");
+
+      // 2. Workspace-scoped primary tables.
       const [
-        { data: profile },
         { data: campaigns },
         { data: leads },
-        { count: contactsTotal },
-        { count: contactsClean },
-        { count: contactsReview },
-        { count: contactsRisky },
-        { count: contactsBlocked },
-        { count: companiesTotal },
-        { count: importsCount },
         { data: opps },
         { data: sends },
+        { data: uploads, count: importsCount },
       ] = await Promise.all([
-        supabase.from("profiles").select("first_name").eq("user_id", user.id).maybeSingle(),
-        wsFilter(supabase.from("campaigns").select("id, name, status, created_at, cadence_type, start_at, cadence_end_at, next_run_at, timezone, runs_completed").order("created_at", { ascending: false }) as any),
-        wsFilter(supabase.from("leads").select("id, status, follow_up_at, follow_up_state, replied_at, snoozed_until, last_email_sent_at, last_contacted_at, last_interaction_at, opportunity_id, blocked, suppressed") as any),
-        supabase.from("contacts").select("*", { count: "exact", head: true }).not("source_upload_id", "is", null),
-        supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "valid").not("source_upload_id", "is", null),
-        supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "needs_review").not("source_upload_id", "is", null),
-        supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "risky").not("source_upload_id", "is", null),
-        supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "blocked").not("source_upload_id", "is", null),
-        supabase.from("companies").select("*", { count: "exact", head: true }),
-        wsFilter(supabase.from("data_uploads").select("*", { count: "exact", head: true }) as any),
-        wsFilter(supabase.from("opportunities").select("id, stage, estimated_value, stage_changed_at, next_action_at") as any),
-        wsFilter(supabase.from("email_sends").select("status, sent_at") as any),
+        supabase.from("campaigns")
+          .select("id, name, status, created_at, cadence_type, start_at, cadence_end_at, next_run_at, timezone, runs_completed")
+          .eq("workspace_id", currentId)
+          .order("created_at", { ascending: false }),
+        supabase.from("leads")
+          .select("id, status, follow_up_at, follow_up_state, replied_at, snoozed_until, last_email_sent_at, last_contacted_at, last_interaction_at, opportunity_id, blocked, suppressed")
+          .eq("workspace_id", currentId),
+        supabase.from("opportunities")
+          .select("id, stage, estimated_value, stage_changed_at, next_action_at")
+          .eq("workspace_id", currentId),
+        supabase.from("email_sends")
+          .select("status, sent_at")
+          .eq("workspace_id", currentId),
+        supabase.from("data_uploads")
+          .select("id", { count: "exact" })
+          .eq("workspace_id", currentId),
       ]);
 
-
-      setFirstName(profile?.first_name || "");
       const active = (campaigns || []).filter((c: any) => c.status === "active" || c.status === "planning").length;
       setActiveCampaigns(active);
       setLatestCampaignId(campaigns?.[0]?.id || null);
       setCampaignRows((campaigns || []) as CadenceRow[]);
 
-
-      const clean = contactsClean ?? 0;
-      const review = contactsReview ?? 0;
-      const risky = contactsRisky ?? 0;
-      const blocked = contactsBlocked ?? 0;
+      // 3. Contacts / companies — no workspace_id column. We derive a workspace-scoped
+      //    view by linking through data_uploads.source_upload_id for THIS workspace.
+      //    Schema gap: contacts/companies are otherwise account/company-scoped only.
+      const uploadIds = (uploads || []).map((u: any) => u.id);
+      let contactsTotal = 0, contactsClean = 0, contactsReview = 0, contactsRisky = 0, contactsBlocked = 0, companiesTotal = 0;
+      if (uploadIds.length > 0) {
+        const base = supabase.from("contacts").select("*", { count: "exact", head: true }).in("source_upload_id", uploadIds);
+        const [t, c1, c2, c3, c4, co] = await Promise.all([
+          base,
+          supabase.from("contacts").select("*", { count: "exact", head: true }).in("source_upload_id", uploadIds).eq("quality_status", "valid"),
+          supabase.from("contacts").select("*", { count: "exact", head: true }).in("source_upload_id", uploadIds).eq("quality_status", "needs_review"),
+          supabase.from("contacts").select("*", { count: "exact", head: true }).in("source_upload_id", uploadIds).eq("quality_status", "risky"),
+          supabase.from("contacts").select("*", { count: "exact", head: true }).in("source_upload_id", uploadIds).eq("quality_status", "blocked"),
+          supabase.from("companies").select("*", { count: "exact", head: true }).in("source_upload_id", uploadIds),
+        ]);
+        contactsTotal = t.count ?? 0;
+        contactsClean = c1.count ?? 0;
+        contactsReview = c2.count ?? 0;
+        contactsRisky = c3.count ?? 0;
+        contactsBlocked = c4.count ?? 0;
+        companiesTotal = co.count ?? 0;
+      }
       setVault({
-        total_contacts: contactsTotal ?? 0,
-        total_companies: companiesTotal ?? 0,
+        total_contacts: contactsTotal,
+        total_companies: companiesTotal,
         imports: importsCount ?? 0,
-        clean, needs_review: review, risky, blocked,
+        clean: contactsClean,
+        needs_review: contactsReview,
+        risky: contactsRisky,
+        blocked: contactsBlocked,
         duplicates: 0,
-        safe_to_activate: clean,
+        safe_to_activate: contactsClean,
       });
 
       const ls = leads || [];
@@ -180,16 +211,23 @@ export default function AppDashboard() {
         next_action_due: nextActionDue,
       });
     })();
-  }, [user, currentId]);
+  }, [user, currentId, wsLoading]);
 
+  // Sender/email — connections are user-level (account-level) but scoped to the active
+  // workspace when they carry a workspace_id. Sends are workspace-scoped.
   useEffect(() => {
     if (!user) return;
+    if (wsLoading || !currentId) {
+      setSenderEmail(null);
+      setSender(DEFAULT_SENDER_STATE);
+      setSendsUsedToday(0);
+      setSendsScheduledToday(0);
+      return;
+    }
     (async () => {
-      const connQ = supabase.from("email_connections").select("*").eq("user_id", user.id).order("is_default", { ascending: false });
-      const sendsQ = supabase.from("email_sends").select("status, sent_at, scheduled_at");
       const [{ data: conns }, { data: sends }] = await Promise.all([
-        currentId ? connQ.eq("workspace_id", currentId) : connQ,
-        currentId ? sendsQ.eq("workspace_id", currentId) : sendsQ,
+        supabase.from("email_connections").select("*").eq("user_id", user.id).eq("workspace_id", currentId).order("is_default", { ascending: false }),
+        supabase.from("email_sends").select("status, sent_at, scheduled_at").eq("workspace_id", currentId),
       ]);
       const def = (conns || [])[0];
       const today = new Date(); today.setHours(0,0,0,0);
@@ -217,7 +255,8 @@ export default function AppDashboard() {
         setSender(DEFAULT_SENDER_STATE);
       }
     })();
-  }, [user, currentId]);
+  }, [user, currentId, wsLoading]);
+
 
   const plan = (planConfig.id as PlanId) || "starter";
   const safety = computeSafety({
@@ -322,7 +361,7 @@ export default function AppDashboard() {
       <SectionHeader
         icon={Database}
         title="Database Health (AI quality review)"
-        desc="AI flags what's clean, risky, duplicated or blocked. You decide what's safe to activate."
+        desc="AI flags what's clean, risky, duplicated or blocked. You decide what's safe to activate. Contacts and companies are shown for the active workspace via its imports."
         cta={{ label: "Review data", to: "/app/data-vault" }}
       />
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
