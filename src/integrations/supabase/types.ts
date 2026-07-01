@@ -1063,6 +1063,9 @@ export type Database = {
           created_at: string
           display_name: string | null
           dkim_status: string | null
+          dmarc_status: string
+          dns_checked_at: string | null
+          domain: string | null
           domain_verification_details: Json | null
           domain_verified_at: string | null
           from_email: string
@@ -1071,8 +1074,10 @@ export type Database = {
           is_default: boolean
           last_error: string | null
           last_verified_at: string | null
+          mx_status: string
           provider: string
           rate_limit_per_hour: number
+          sending_enabled: boolean
           smtp_host: string
           smtp_port: number
           smtp_username: string
@@ -1080,12 +1085,17 @@ export type Database = {
           status: string
           updated_at: string
           user_id: string
+          verification_errors: Json | null
+          verification_status: string
           workspace_id: string | null
         }
         Insert: {
           created_at?: string
           display_name?: string | null
           dkim_status?: string | null
+          dmarc_status?: string
+          dns_checked_at?: string | null
+          domain?: string | null
           domain_verification_details?: Json | null
           domain_verified_at?: string | null
           from_email: string
@@ -1094,8 +1104,10 @@ export type Database = {
           is_default?: boolean
           last_error?: string | null
           last_verified_at?: string | null
+          mx_status?: string
           provider: string
           rate_limit_per_hour?: number
+          sending_enabled?: boolean
           smtp_host: string
           smtp_port?: number
           smtp_username: string
@@ -1103,12 +1115,17 @@ export type Database = {
           status?: string
           updated_at?: string
           user_id: string
+          verification_errors?: Json | null
+          verification_status?: string
           workspace_id?: string | null
         }
         Update: {
           created_at?: string
           display_name?: string | null
           dkim_status?: string | null
+          dmarc_status?: string
+          dns_checked_at?: string | null
+          domain?: string | null
           domain_verification_details?: Json | null
           domain_verified_at?: string | null
           from_email?: string
@@ -1117,8 +1134,10 @@ export type Database = {
           is_default?: boolean
           last_error?: string | null
           last_verified_at?: string | null
+          mx_status?: string
           provider?: string
           rate_limit_per_hour?: number
+          sending_enabled?: boolean
           smtp_host?: string
           smtp_port?: number
           smtp_username?: string
@@ -1126,6 +1145,8 @@ export type Database = {
           status?: string
           updated_at?: string
           user_id?: string
+          verification_errors?: Json | null
+          verification_status?: string
           workspace_id?: string | null
         }
         Relationships: [
