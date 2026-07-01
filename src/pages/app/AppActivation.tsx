@@ -23,6 +23,8 @@ import type { PlanId } from "@/lib/credits";
 import SendSafetyPanel from "@/components/app/SendSafetyPanel";
 import SenderStatusCard from "@/components/app/SenderStatusCard";
 import JourneyEmptyState from "@/components/app/JourneyEmptyState";
+import LegalComplianceGate from "@/components/LegalComplianceGate";
+import { useLegalStatus } from "@/lib/legalCompliance";
 
 interface Counts { valid: number; needs_review: number; risky: number; blocked: number; suppressed: number; }
 
