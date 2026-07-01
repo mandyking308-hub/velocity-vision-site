@@ -4,7 +4,7 @@ export const LEGAL_VERSIONS: Record<string, { version: string; lastUpdated: stri
   "data-processing-agreement": { version: "7.0", lastUpdated: "1 July 2026" },
   "privacy-policy": { version: "8.0", lastUpdated: "1 July 2026" },
   "acceptable-use-policy": { version: "8.0", lastUpdated: "1 July 2026" },
-  "marketing-compliance-policy": { version: "1.0", lastUpdated: "1 March 2026" },
+  "marketing-compliance-policy": { version: "10.0", lastUpdated: "1 July 2026" },
   "cookie-policy": { version: "1.0", lastUpdated: "1 March 2026" },
   "platform-security-policy": { version: "1.0", lastUpdated: "1 March 2026" },
   "service-level-agreement": { version: "1.0", lastUpdated: "1 March 2026" },
