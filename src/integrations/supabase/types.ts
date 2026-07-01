@@ -1062,6 +1062,8 @@ export type Database = {
         Row: {
           created_at: string
           display_name: string | null
+          dkim_selector: string | null
+          dkim_selectors: string[]
           dkim_status: string | null
           dmarc_status: string
           dns_checked_at: string | null
@@ -1092,6 +1094,8 @@ export type Database = {
         Insert: {
           created_at?: string
           display_name?: string | null
+          dkim_selector?: string | null
+          dkim_selectors?: string[]
           dkim_status?: string | null
           dmarc_status?: string
           dns_checked_at?: string | null
@@ -1122,6 +1126,8 @@ export type Database = {
         Update: {
           created_at?: string
           display_name?: string | null
+          dkim_selector?: string | null
+          dkim_selectors?: string[]
           dkim_status?: string | null
           dmarc_status?: string
           dns_checked_at?: string | null
