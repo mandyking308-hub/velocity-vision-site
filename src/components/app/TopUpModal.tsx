@@ -10,6 +10,7 @@ import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
 import LegalAcceptanceGate from "@/components/LegalAcceptanceGate";
 import { useAuth } from "@/contexts/AuthContext";
 import { recordLegalAcceptance } from "@/lib/recordLegalAcceptance";
+import BillingTermsSummary from "@/components/BillingTermsSummary";
 
 const PACK_TO_PRICE: Record<string, string> = {
   small: PRICE_IDS.topup_small,
@@ -71,6 +72,7 @@ export default function TopUpModal({ open, onOpenChange }: { open: boolean; onOp
             ))}
           </div>
           <p className="text-xs text-muted-foreground mt-2">Top-ups never expire while your plan is active. {taxNotice(currency)}</p>
+          <BillingTermsSummary className="mt-4" compact />
         </DialogContent>
       </Dialog>
       <LegalAcceptanceGate
