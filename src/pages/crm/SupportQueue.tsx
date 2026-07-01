@@ -52,9 +52,9 @@ export default function SupportQueue() {
 
   const selected = useMemo(() => tickets.find((t) => t.id === selectedId) ?? null, [tickets, selectedId]);
 
-  const updateTicket = async (fields: Partial<Ticket>) => {
+  const updateTicket = async (fields: Record<string, unknown>) => {
     if (!selected) return;
-    const { error } = await supabase.from("support_tickets").update(fields).eq("id", selected.id);
+    const { error } = await supabase.from("support_tickets").update(fields as never).eq("id", selected.id);
     if (error) { toast.error(error.message); return; }
     toast.success("Ticket updated");
     qc.invalidateQueries({ queryKey: ["support_tickets"] });
