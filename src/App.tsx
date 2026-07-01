@@ -10,6 +10,7 @@ import { DemoProvider } from "@/contexts/DemoContext";
 import ScrollToTop from "@/components/ScrollToTop";
 import PageTransition from "@/components/PageTransition";
 import CRMProtectedRoute from "@/components/CRMProtectedRoute";
+import GTranslate from "@/components/GTranslate";
 import Index from "./pages/Index.tsx";
 import Services from "./pages/Services.tsx";
 import Industries from "./pages/Industries.tsx";
@@ -218,6 +219,7 @@ const App = () => (
           <BrowserRouter>
             <PublicContactGuard />
             <ScrollToTop />
+            <GTranslate />
             <AnimatedRoutes />
           </BrowserRouter>
         </TooltipProvider>
