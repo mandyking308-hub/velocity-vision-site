@@ -1400,6 +1400,7 @@ export type Database = {
           last_contacted_at: string | null
           last_email_sent_at: string | null
           last_email_subject: string | null
+          last_interaction_at: string | null
           marketing_interest: string | null
           name: string | null
           opportunity_id: string | null
@@ -1426,6 +1427,7 @@ export type Database = {
           last_contacted_at?: string | null
           last_email_sent_at?: string | null
           last_email_subject?: string | null
+          last_interaction_at?: string | null
           marketing_interest?: string | null
           name?: string | null
           opportunity_id?: string | null
@@ -1452,6 +1454,7 @@ export type Database = {
           last_contacted_at?: string | null
           last_email_sent_at?: string | null
           last_email_subject?: string | null
+          last_interaction_at?: string | null
           marketing_interest?: string | null
           name?: string | null
           opportunity_id?: string | null
