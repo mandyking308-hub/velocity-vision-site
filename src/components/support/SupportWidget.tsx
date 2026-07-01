@@ -415,7 +415,8 @@ export default function SupportWidget() {
                   <Input
                     placeholder="Ask a question…"
                     value={input}
-                    onChange={(e) => setInput(e.target.value)}
+                    onChange={(e) => setInput(e.target.value.slice(0, MAX_INPUT_CHARS))}
+                    maxLength={MAX_INPUT_CHARS}
                     onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChat(); } }}
                     disabled={thinking}
                   />
