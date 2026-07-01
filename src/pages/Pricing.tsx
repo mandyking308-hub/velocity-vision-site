@@ -175,8 +175,14 @@ const Pricing = () => {
               </motion.div>
             ))}
           </div>
+          <div className="mt-8">
+            <GlobalStrip variant="compact" />
+          </div>
         </div>
       </section>
+
+
+
 
 
       <section className="bg-background border-t border-border px-6 md:px-12 lg:px-20 py-14 md:py-16 lg:py-20">
