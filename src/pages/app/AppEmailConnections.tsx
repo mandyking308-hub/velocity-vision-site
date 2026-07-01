@@ -11,6 +11,7 @@ import { Mail, Plug, AlertCircle, CheckCircle2, ArrowLeft, Trash2, Star } from "
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 
 interface Connection {
   id: string;
