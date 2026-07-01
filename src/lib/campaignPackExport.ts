@@ -43,6 +43,22 @@ export function formatCampaignPackMarkdown(campaign: { name: string; slug?: stri
   });
 }
 
+const SOCIAL_PLATFORMS = ["LinkedIn", "Instagram", "X", "Facebook", "TikTok"];
+
+function normaliseChannel(c: string): string {
+  const s = (c || "").toLowerCase().trim();
+  if (s === "linkedin") return "LinkedIn";
+  if (s === "instagram" || s === "ig") return "Instagram";
+  if (s === "x" || s === "twitter") return "X";
+  if (s === "facebook" || s === "fb") return "Facebook";
+  if (s === "tiktok") return "TikTok";
+  if (s === "email") return "Email";
+  if (s === "pr" || s === "press") return "PR";
+  if (s === "paid ads" || s === "paid" || s === "ads") return "Paid ads";
+  if (s === "video") return "Video";
+  return c;
+}
+
 export function buildCampaignMarkdown(opts: {
   name: string;
   brief: CampaignBrief | null;
@@ -50,7 +66,15 @@ export function buildCampaignMarkdown(opts: {
   cadenceSummary?: string;
 }): string {
   const { name, brief, pack, cadenceSummary } = opts;
+  const channels = (brief?.channels || []).map(normaliseChannel);
+  const hasSelection = channels.length > 0;
+  const selectedSocial = SOCIAL_PLATFORMS.filter((p) => channels.includes(p));
+  const includeEmail = !hasSelection || channels.includes("Email");
+  const includePress = !hasSelection || channels.includes("PR");
+  const includeVideo = !hasSelection || channels.includes("Video");
+  const includeSocial = !hasSelection || selectedSocial.length > 0;
   let md = "";
+
 
   md += heading(1, `Campaign Pack: ${clean(name) || "Untitled"}`);
   md += `_Generated ${new Date().toLocaleString()}_\n\n---\n\n`;
