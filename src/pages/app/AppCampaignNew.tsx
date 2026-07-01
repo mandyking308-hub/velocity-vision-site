@@ -420,7 +420,7 @@ export default function AppCampaignNew() {
             Continue <ChevronRight className="h-4 w-4 ml-1" />
           </Button>
         ) : (
-          <Button data-testid="campaign-create-button" onClick={generate} disabled={saving}>
+          <Button data-testid="campaign-create-button" onClick={generate} disabled={saving || blocked}>
             <Sparkles className="h-4 w-4 mr-2" /> {saving ? "Generating…" : "Generate campaign pack"}
           </Button>
         )}
