@@ -195,7 +195,7 @@ export function buildCampaignMarkdown(opts: {
 
 
   // Press
-  if (pack.press) {
+  if (includePress && pack.press) {
     md += heading(2, "Press / PR Pack");
     md += line("Headline", pack.press.headline);
     md += line("Subheadline", pack.press.subheadline);
