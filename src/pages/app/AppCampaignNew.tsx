@@ -14,6 +14,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { CampaignBrief, CampaignGoal, CampaignKind, CampaignLanguage, CampaignPack, CAMPAIGN_LANGUAGES, generatePack, makeSlug } from "@/lib/campaignPack";
 import { checkPackQuality } from "@/lib/campaignQuality";
+import { formatQualityFailure } from "@/lib/campaignQualityToast";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useCredits } from "@/contexts/CreditsContext";
