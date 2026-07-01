@@ -7,7 +7,7 @@ export const LEGAL_VERSIONS: Record<string, { version: string; lastUpdated: stri
   "marketing-compliance-policy": { version: "10.0", lastUpdated: "1 July 2026" },
   "cookie-policy": { version: "8.0", lastUpdated: "1 July 2026" },
   "platform-security-policy": { version: "9.0", lastUpdated: "1 July 2026" },
-  "service-level-agreement": { version: "1.0", lastUpdated: "1 March 2026" },
+  "service-level-agreement": { version: "9.0", lastUpdated: "1 July 2026" },
 };
 
 export const CURRENT_LEGAL_VERSION = "1.0";
