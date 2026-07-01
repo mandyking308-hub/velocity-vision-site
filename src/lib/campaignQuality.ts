@@ -129,7 +129,7 @@ export function checkPackQuality(pack: CampaignPack, brief: CampaignBrief): Qual
   const issues: QualityIssue[] = [];
   const chosenCta = norm(brief.cta).trim();
 
-  const all = collectAllText(pack);
+  const all = collectAllText(pack, brief);
   // Use a single-space join so field boundaries don't create phantom "excess whitespace".
   const joined = all.map((a) => a.text).join(" ");
   const nJoined = norm(joined);
