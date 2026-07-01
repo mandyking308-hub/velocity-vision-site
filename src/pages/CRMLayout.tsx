@@ -1,14 +1,18 @@
 import { Outlet } from "react-router-dom";
 import CRMSidebar from "@/components/crm/CRMSidebar";
+import { GTranslateSlot } from "@/components/GTranslate";
 
-// Internal operator surface — never translate. `translate="no"` and the
-// `notranslate` class tell Google Translate / GTranslate to skip this subtree.
 const CRMLayout = () => (
-  <div className="flex min-h-screen w-full bg-background notranslate" translate="no">
+  <div className="flex min-h-screen w-full bg-background">
     <CRMSidebar />
-    <main className="flex-1 overflow-auto">
-      <Outlet />
-    </main>
+    <div className="flex-1 flex flex-col overflow-hidden">
+      <header className="h-12 border-b border-border bg-card flex items-center justify-end px-6">
+        <GTranslateSlot />
+      </header>
+      <main className="flex-1 overflow-auto">
+        <Outlet />
+      </main>
+    </div>
   </div>
 );
 
