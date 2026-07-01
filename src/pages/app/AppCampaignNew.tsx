@@ -140,10 +140,8 @@ export default function AppCampaignNew() {
       // 2) Quality guard. If it fails, DO NOT save and DO NOT deduct credits.
       const quality = checkPackQuality(pack, brief);
       if (!quality.ok) {
-        console.warn("Campaign quality guard failed", quality.issues);
-        toast.error("Campaign quality check failed", {
-          description: `We didn't save this pack and no credits were used. Please try again. (${quality.issues.slice(0, 2).map((i) => i.code).join(", ")})`,
-        });
+        const { title, description } = formatQualityFailure(quality);
+        toast.error(title, { description });
         setSaving(false);
         return;
       }
