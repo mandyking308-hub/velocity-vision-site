@@ -16,6 +16,7 @@ export default function HumanReviewButton({ campaignId }: Props) {
   const [open, setOpen] = useState(false);
   const [existing, setExisting] = useState<{ status: string } | null>(null);
   const { openCheckout, element } = useStripeCheckout();
+  const [legalOpen, setLegalOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
