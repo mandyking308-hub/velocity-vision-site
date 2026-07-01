@@ -29,30 +29,29 @@ const GlobalStrip = ({ variant = "home" }: Props) => {
   }
 
   return (
-    <section className="bg-background border-t border-border/50 px-6 md:px-12 lg:px-20 py-14 md:py-16">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
-          <div>
-            <div className="inline-flex items-center gap-2 text-accent font-semibold text-xs uppercase tracking-widest mb-3">
-              <Globe2 size={14} /> Global from day one
+    <section className="bg-secondary/50 border-y border-border/50 px-6 md:px-12 lg:px-20 py-16 md:py-24 lg:py-28 relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-accent/5 blur-3xl -translate-y-1/2 translate-x-1/4" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-accent-warm/5 blur-3xl translate-y-1/2 -translate-x-1/4" />
+      <div className="max-w-6xl mx-auto relative">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 text-accent font-semibold text-xs uppercase tracking-widest mb-4">
+              <Globe2 size={14} /> Global by default
             </div>
-            <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground max-w-2xl">
-              Built for global teams
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-foreground leading-tight">
+              Global by default: multilingual access, multi-currency pricing and international legal documents for teams working across markets.
             </h2>
-            <p className="text-muted-foreground mt-3 max-w-2xl text-sm md:text-base leading-relaxed">
-              Velocity Vision supports international teams with multilingual site access, multi-currency pricing, global legal documents, Data Vault workflows and governed activation across markets.
-            </p>
           </div>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {badges.map((b) => (
-            <div key={b.label} className="flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 shadow-card">
+            <div key={b.label} className="flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3.5 shadow-card">
               <b.icon size={18} className="text-accent shrink-0" />
               <span className="text-sm text-foreground font-medium">{b.label}</span>
             </div>
           ))}
         </div>
-        <p className="text-xs text-muted-foreground mt-6 max-w-3xl leading-relaxed">
+        <p className="text-xs md:text-sm text-muted-foreground mt-8 max-w-3xl leading-relaxed">
           Customers can view the public website and legal centre through the translation selector, supported by automated translation technology. Pricing supports multiple currencies, and the legal document stack is designed for international SaaS use. Automated translations are provided for convenience only — the English version of legal documents controls where translations differ. Customers remain responsible for local laws and lawful use in their markets.
         </p>
       </div>
