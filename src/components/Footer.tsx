@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { openCookiePreferences } from "@/components/CookieBanner";
 
 const Footer = () => (
   <footer className="bg-primary text-primary-foreground">
