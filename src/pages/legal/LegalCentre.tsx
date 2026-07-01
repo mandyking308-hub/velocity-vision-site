@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { FileText, Shield, Scale } from "lucide-react";
+import TrustStrip from "@/components/TrustStrip";
 
 const legalDocs = [
   { title: "Platform Terms of Service", path: "/legal/terms-of-service", description: "The core rules for using the Velocity Vision website, app, workspaces, data tools, activation controls and generated outputs." },
@@ -55,6 +56,10 @@ const LegalCentre = () => (
               </Link>
             </motion.div>
           ))}
+        </div>
+
+        <div className="mt-12">
+          <TrustStrip variant="legal" />
         </div>
       </div>
     </main>

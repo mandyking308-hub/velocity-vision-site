@@ -189,6 +189,9 @@ const Pricing = () => {
             <p className="text-muted-foreground text-sm">Multi-currency pricing (GBP, USD, EUR and more), localised tax at checkout, multilingual outreach. Built for distributed teams from day one.</p>
           </div>
         </div>
+        <div className="max-w-5xl mx-auto mt-10 md:mt-12">
+          <TrustStrip variant="pricing" />
+        </div>
       </section>
 
       <section className="bg-secondary px-6 md:px-12 lg:px-20 py-14 md:py-16 lg:py-20">
