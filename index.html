@@ -40,5 +40,24 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- GTranslate Float Widget (official) -->
+    <script>
+      window.gtranslateSettings = {
+        default_language: "en",
+        detect_browser_language: false,
+        languages: ["en","es","fr","de","it","pt","nl","pl","sv","ar","zh-CN","ja","ko","hi","tr","ru"],
+        wrapper_selector: ".gtranslate_wrapper",
+        flag_style: "3d",
+        flag_size: 24,
+        switcher_horizontal_position: "right",
+        switcher_vertical_position: "bottom",
+        switcher_open_direction: "top",
+        alt_flags: {},
+        native_language_names: true
+      };
+    </script>
+    <div class="gtranslate_wrapper notranslate" translate="no"></div>
+    <script defer src="https://cdn.gtranslate.net/widgets/latest/float.js"></script>
   </body>
 </html>

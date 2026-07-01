@@ -97,94 +97,13 @@
   }
 }
 
-/* --- GTranslate: Velocity-controlled selector, hidden translation engine --- */
-.vv-translate-slot {
-  flex: 0 0 auto;
-  min-width: 118px;
-  min-height: 34px;
-}
-
-.vv-translate-control {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 34px;
-  max-width: 160px;
-  padding: 0 10px;
-  border: 1px solid hsl(var(--border));
-  border-radius: 9999px;
-  background: hsl(var(--card) / 0.92);
-  color: hsl(var(--foreground));
-  box-shadow: var(--shadow-card);
-  backdrop-filter: blur(12px);
-  white-space: nowrap;
-}
-
-.vv-translate-control:hover,
-.vv-translate-control:focus-within {
-  border-color: hsl(var(--accent));
-}
-
-.vv-translate-flag {
-  font-size: 14px;
-  line-height: 1;
-}
-
-.vv-translate-select {
-  width: 100%;
-  min-width: 72px;
-  max-width: 112px;
-  appearance: none;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: hsl(var(--foreground));
-  font: inherit;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.vv-translate-control::after {
-  content: "";
-  width: 7px;
-  height: 7px;
-  margin-left: -2px;
-  border-right: 1.5px solid hsl(var(--muted-foreground));
-  border-bottom: 1.5px solid hsl(var(--muted-foreground));
-  transform: rotate(45deg) translateY(-2px);
-  pointer-events: none;
-}
-
-.vv-translate-fallback {
-  position: fixed;
-  right: 18px;
-  bottom: 18px;
-  z-index: 60;
-}
-
-#gtranslate-engine,
-#gtranslate-engine *,
-.skiptranslate,
-body > .skiptranslate,
-.goog-te-gadget,
-.goog-te-combo,
+/* --- GTranslate Float Widget: keep Google Translate banner suppressed --- */
 .goog-te-banner-frame,
 iframe.goog-te-banner-frame,
-.gt_switcher_wrapper {
-  position: fixed !important;
-  left: -10000px !important;
-  top: auto !important;
-  bottom: 0 !important;
-  width: 1px !important;
-  height: 1px !important;
-  max-width: 1px !important;
-  max-height: 1px !important;
-  overflow: hidden !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
+.skiptranslate > iframe {
+  display: none !important;
   visibility: hidden !important;
+  height: 0 !important;
 }
 
 body {
@@ -199,18 +118,25 @@ body {
   border: none !important;
 }
 
-@media (max-width: 420px) {
-  .vv-translate-slot {
-    min-width: 88px;
-  }
-
-  .vv-translate-control {
-    max-width: 104px;
-    padding: 0 8px;
-  }
-
-  .vv-translate-select {
-    min-width: 42px;
-    max-width: 54px;
-  }
+/* Match Velocity Vision dark/neutral palette on the float switcher */
+.gt_float_switcher {
+  font-family: inherit !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  box-shadow: 0 10px 30px hsl(0 0% 0% / 0.25) !important;
 }
+.gt_float_switcher .gt-selected {
+  background: hsl(var(--card)) !important;
+  color: hsl(var(--foreground)) !important;
+}
+.gt_float_switcher .gt-selected .gt_options {
+  background: hsl(var(--card)) !important;
+  color: hsl(var(--foreground)) !important;
+}
+.gt_float_switcher a {
+  color: hsl(var(--foreground)) !important;
+}
+.gt_float_switcher a:hover {
+  background: hsl(var(--muted)) !important;
+}
+
