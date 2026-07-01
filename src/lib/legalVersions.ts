@@ -1,7 +1,7 @@
 export const LEGAL_VERSIONS: Record<string, { version: string; lastUpdated: string }> = {
   "terms-of-service": { version: "5.0", lastUpdated: "1 July 2026" },
   "client-services-agreement": { version: "6.0", lastUpdated: "1 July 2026" },
-  "data-processing-agreement": { version: "1.0", lastUpdated: "1 March 2026" },
+  "data-processing-agreement": { version: "7.0", lastUpdated: "1 July 2026" },
   "privacy-policy": { version: "1.0", lastUpdated: "1 March 2026" },
   "acceptable-use-policy": { version: "1.0", lastUpdated: "1 March 2026" },
   "marketing-compliance-policy": { version: "1.0", lastUpdated: "1 March 2026" },
