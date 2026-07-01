@@ -7,8 +7,6 @@ import { useWorkspace, WorkspaceProvider } from "@/contexts/WorkspaceContext";
 import { CreditsProvider } from "@/contexts/CreditsContext";
 import { CreditPill } from "@/components/app/CreditMeter";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import CurrencySwitcher from "@/components/CurrencySwitcher";
-import { GTranslateSlot } from "@/components/GTranslate";
 import { useLanguageSync } from "@/hooks/useLanguageSync";
 
 const navConfig: { to: string; key: string; icon: typeof LayoutDashboard; end?: boolean }[] = [
@@ -82,8 +80,6 @@ function Shell() {
         <header className="h-14 border-b border-border bg-card flex items-center justify-between px-6 gap-3">
           <WorkspaceSwitcher />
           <div className="flex items-center gap-3">
-            <GTranslateSlot />
-            <CurrencySwitcher />
             <CreditPill />
             <Button size="sm" onClick={() => navigate("/app/campaigns/new")}>
               <Plus className="h-4 w-4 mr-1" /> New campaign

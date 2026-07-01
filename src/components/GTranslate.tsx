@@ -1,21 +1,19 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 
 /**
- * Single-selector GTranslate integration for Velocity Vision.
+ * GTranslate — single floating language selector for Velocity Vision.
  *
- * There is ONE persistent widget DOM node that is created once and then moved
- * (via appendChild) into whichever <GTranslateSlot /> is currently mounted —
- * the site Navbar on public/legal/demo pages and the AppLayout header on the
- * signed-in /app dashboard. This guarantees:
- *   • exactly one selector on screen at any time,
- *   • it lives inline in the header (no floating overlay on CTAs/forms),
- *   • the Google Translate script keeps running against the same element as
- *     the user navigates between routes.
+ * Uses GTranslate's `float.js` widget, which mounts a fixed-position pill in
+ * the bottom-right of the viewport. This is guaranteed visible on every
+ * customer-facing page (public site, legal, demo, /app dashboard) with no
+ * layout risk in the header.
  *
- * Excluded surfaces (/crm, /admin) never render a slot; the widget stays
- * parked in an off-screen holder and the whole subtree is marked
- * translate="no" so Google Translate skips it entirely.
+ * Excluded surfaces: /crm and /admin — the widget is hidden entirely and the
+ * subtree is left untranslated.
+ *
+ * Sensitive inputs (passwords, API keys, Stripe iframes, etc.) are tagged
+ * translate="no" so Google Translate never rewrites them.
  */
 
 const EXCLUDED_PREFIXES = ["/crm", "/admin"];
@@ -28,8 +26,6 @@ const ALWAYS_NOTRANSLATE_SELECTOR =
 
 const WIDGET_SCRIPT_ID = "gtranslate-widget-script";
 const SETTINGS_SCRIPT_ID = "gtranslate-widget-settings";
-const WRAPPER_CLASS = "gtranslate_wrapper";
-const HOLDER_ID = "gtranslate-holder";
 
 function markSensitiveNodes(root: ParentNode) {
   root.querySelectorAll(ALWAYS_NOTRANSLATE_SELECTOR).forEach((el) => {
@@ -61,29 +57,6 @@ function markSensitiveNodes(root: ParentNode) {
     });
 }
 
-/** Create / retrieve the singleton widget wrapper and its off-screen holder. */
-function getWidgetElement(): HTMLDivElement {
-  let widget = document.querySelector<HTMLDivElement>("." + WRAPPER_CLASS);
-  if (!widget) {
-    let holder = document.getElementById(HOLDER_ID) as HTMLDivElement | null;
-    if (!holder) {
-      holder = document.createElement("div");
-      holder.id = HOLDER_ID;
-      // parked off-screen when no slot is mounted
-      holder.style.position = "absolute";
-      holder.style.left = "-9999px";
-      holder.style.top = "0";
-      document.body.appendChild(holder);
-    }
-    widget = document.createElement("div");
-    widget.className = WRAPPER_CLASS;
-    widget.setAttribute("translate", "no");
-    widget.setAttribute("data-notranslate", "true");
-    holder.appendChild(widget);
-  }
-  return widget;
-}
-
 function ensureWidgetLoaded() {
   if (document.getElementById(WIDGET_SCRIPT_ID)) return;
 
@@ -92,68 +65,30 @@ function ensureWidgetLoaded() {
   settings.text = `window.gtranslateSettings = ${JSON.stringify({
     default_language: "en",
     detect_browser_language: true,
-    wrapper_selector: "." + WRAPPER_CLASS,
-    flag_style: "3d",
-    switcher_horizontal_position: "inline",
     languages: [
       "en", "es", "fr", "de", "it", "pt", "nl", "pl", "sv",
       "ar", "zh-CN", "ja", "ko", "hi", "tr", "ru",
     ],
+    flag_style: "3d",
+    switcher_horizontal_position: "right",
+    switcher_vertical_position: "bottom",
+    switcher_open_direction: "top",
+    float_switcher_open_direction: "top",
   })};`;
   document.head.appendChild(settings);
 
-  // Make sure the wrapper exists before the widget script runs.
-  getWidgetElement();
-
   const script = document.createElement("script");
   script.id = WIDGET_SCRIPT_ID;
-  script.src = "https://cdn.gtranslate.net/widgets/latest/dropdown-with-flags.js";
+  script.src = "https://cdn.gtranslate.net/widgets/latest/float.js";
   script.defer = true;
   document.head.appendChild(script);
 }
 
-/**
- * Inline mount point. Place inside the navbar / app header where the selector
- * should visually appear. On mount, it captures the singleton widget; on
- * unmount, it returns the widget to the off-screen holder.
- */
-export function GTranslateSlot({ className = "" }: { className?: string }) {
-  const hostRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    ensureWidgetLoaded();
-
-    const isVisible = (el: HTMLElement) =>
-      el.offsetParent !== null || getComputedStyle(el).position === "fixed";
-
-    const claim = () => {
-      const host = hostRef.current;
-      if (!host || !isVisible(host)) return;
-      const widget = getWidgetElement();
-      if (widget.parentElement !== host) host.appendChild(widget);
-    };
-
-    claim();
-    window.addEventListener("resize", claim);
-    return () => {
-      window.removeEventListener("resize", claim);
-      const widget = document.querySelector<HTMLDivElement>("." + WRAPPER_CLASS);
-      const host = hostRef.current;
-      const holder = document.getElementById(HOLDER_ID);
-      if (widget && host && widget.parentElement === host && holder) {
-        holder.appendChild(widget);
-      }
-    };
-  }, []);
-
-  return <div ref={hostRef} className={className} aria-label="Translate this page" />;
+/** Kept as a no-op export so any lingering `<GTranslateSlot />` references still compile. */
+export function GTranslateSlot(_: { className?: string }) {
+  return null;
 }
 
-/**
- * Root-level controller. Ensures the widget script loads, tags sensitive
- * inputs so they are never translated, and hides the selector entirely on
- * excluded routes (/crm, /admin).
- */
 export default function GTranslate() {
   const location = useLocation();
   const isExcluded = useMemo(
@@ -166,8 +101,18 @@ export default function GTranslate() {
 
   useEffect(() => {
     if (!isExcluded) ensureWidgetLoaded();
-    const widget = document.querySelector<HTMLDivElement>("." + WRAPPER_CLASS);
-    if (widget) widget.style.display = isExcluded ? "none" : "";
+    // Hide/show the floating widget as the user moves between allowed
+    // and excluded surfaces without reloading.
+    const applyVisibility = () => {
+      document
+        .querySelectorAll<HTMLElement>(".gtranslate_wrapper, .gt_float_switcher")
+        .forEach((el) => {
+          el.style.display = isExcluded ? "none" : "";
+        });
+    };
+    applyVisibility();
+    const t = window.setInterval(applyVisibility, 500);
+    return () => window.clearInterval(t);
   }, [isExcluded]);
 
   useEffect(() => {
