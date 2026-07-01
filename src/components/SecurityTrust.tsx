@@ -102,7 +102,7 @@ const SecurityTrust = () => (
             <h3 className="font-display font-semibold text-foreground text-sm md:text-base mb-2 leading-snug">
               {b.title}
             </h3>
-            <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{b.body}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed">{b.body}</p>
           </motion.div>
         ))}
       </div>
