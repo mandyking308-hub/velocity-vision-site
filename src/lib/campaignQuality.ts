@@ -10,12 +10,14 @@
 // - No long verbatim brief-field reuse across assets
 // - No placeholder or QA-seed leaks
 
-import type { CampaignBrief, CampaignPack } from "@/lib/campaignPack";
+import { getCampaignChannelConfig, normaliseCampaignChannel, type CampaignBrief, type CampaignPack } from "@/lib/campaignPack";
 
 export interface QualityIssue {
   code: string;
   message: string;
   where?: string;
+  matchedSnippet?: string;
+  source?: "ai_output" | "fallback_merge" | "selected_channel_filter" | "quality_guard_logic";
 }
 
 export interface QualityResult {
@@ -88,14 +90,30 @@ function neutraliseAllowedTokens(text: string): string {
   });
 }
 
-function collectAllText(pack: CampaignPack): { key: string; text: string }[] {
+function collectAllText(pack: CampaignPack, brief?: CampaignBrief): { key: string; text: string }[] {
   const out: { key: string; text: string }[] = [];
+  const cfg = brief ? getCampaignChannelConfig(brief) : null;
   const push = (k: string, v: unknown) => {
     if (typeof v === "string") out.push({ key: k, text: v });
     else if (Array.isArray(v)) v.forEach((x, i) => push(`${k}[${i}]`, x));
     else if (v && typeof v === "object") for (const [k2, v2] of Object.entries(v)) push(`${k}.${k2}`, v2);
   };
-  push("pack", pack);
+  const selectedSocial = new Set(cfg?.selectedSocial || []);
+  const visiblePack = {
+    strategy: pack.strategy,
+    landing: pack.landing,
+    offer: pack.offer,
+    emails: cfg?.includeEmail === false ? [] : pack.emails,
+    social: pack.social ? {
+      ...pack.social,
+      launchPosts: (pack.social.launchPosts || []).filter((p) => !cfg?.hasSelection || selectedSocial.has(normaliseCampaignChannel(p?.platform || ""))),
+      followUps: (pack.social.followUps || []).filter((p) => !cfg?.hasSelection || selectedSocial.has(normaliseCampaignChannel(p?.platform || ""))),
+    } : pack.social,
+    press: cfg?.includePress === false ? null : pack.press,
+    video: cfg?.includeVideo === false ? null : pack.video,
+    leadCapture: pack.leadCapture,
+  };
+  push("pack", visiblePack);
   return out;
 }
 
@@ -119,7 +137,7 @@ export function checkPackQuality(pack: CampaignPack, brief: CampaignBrief): Qual
   // 1) Banned phrases
   for (const p of BANNED_PHRASES) {
     if (nJoined.includes(p)) {
-      issues.push({ code: "banned_phrase", message: `Contains disallowed phrase: "${p}"` });
+      issues.push({ code: "banned_phrase", message: `Contains disallowed phrase: "${p}"`, where: "pack", matchedSnippet: p, source: "quality_guard_logic" });
     }
   }
 
@@ -134,16 +152,18 @@ export function checkPackQuality(pack: CampaignPack, brief: CampaignBrief): Qual
         code: "broken_phrase",
         message: `Broken grammar (${label})${snip ? `: "${snip}"` : ""}`,
         where: hit.key,
+        matchedSnippet: snip,
+        source: "quality_guard_logic",
       });
     } else if (rx.test(grammarText)) {
-      issues.push({ code: "broken_phrase", message: `Broken grammar (${label})` });
+      issues.push({ code: "broken_phrase", message: `Broken grammar (${label})`, source: "quality_guard_logic" });
     }
   }
 
   // 3) Placeholder leaks — disallowed brief tokens
   if (DISALLOWED_TOKEN_RE.test(joined)) {
     const snip = snippet(joined, DISALLOWED_TOKEN_RE);
-    issues.push({ code: "placeholder_leak", message: `Unrendered brief token in output${snip ? `: "${snip}"` : ""}` });
+    issues.push({ code: "placeholder_leak", message: `Unrendered brief token in output${snip ? `: "${snip}"` : ""}`, where: "pack", matchedSnippet: snip, source: "quality_guard_logic" });
   }
   // Any other unresolved token that isn't in the allow-list is also a leak.
   const seenUnknown = new Set<string>();
@@ -153,33 +173,38 @@ export function checkPackQuality(pack: CampaignPack, brief: CampaignBrief): Qual
     if (/^(offer|audience|industry|geography|goal|cta)$/.test(name)) continue; // handled above
     if (seenUnknown.has(name)) continue;
     seenUnknown.add(name);
-    issues.push({ code: "placeholder_leak", message: `Unknown unresolved token: {{${name}}}` });
+    issues.push({ code: "placeholder_leak", message: `Unknown unresolved token: {{${name}}}`, where: "pack", matchedSnippet: `{{${name}}}`, source: "quality_guard_logic" });
   }
 
   // 4) Blanks in key fields
+  const cfg = getCampaignChannelConfig(brief);
   const mustHaveNonEmpty: [string, string | undefined][] = [
     ["strategy.positioning", pack.strategy?.positioning],
     ["strategy.bigIdea", pack.strategy?.bigIdea],
     ["landing.headline", pack.landing?.headline],
     ["landing.subheadline", pack.landing?.subheadline],
     ["offer.framing", pack.offer?.framing],
-    ["press.opening", pack.press?.opening],
     ["leadCapture.formTitle", pack.leadCapture?.formTitle],
   ];
+  if (cfg.includePress) mustHaveNonEmpty.push(["press.opening", pack.press?.opening]);
+  if (cfg.includeVideo) mustHaveNonEmpty.push(["video.script30", pack.video?.script30]);
+  if (cfg.includeEmail) mustHaveNonEmpty.push(["emails[0].subject", pack.emails?.[0]?.subject]);
   for (const [k, v] of mustHaveNonEmpty) {
-    if (!v || v.trim().length < 4) issues.push({ code: "blank_field", message: `Missing or too short: ${k}`, where: k });
+    if (!v || v.trim().length < 4) issues.push({ code: "blank_field", message: `Missing or too short: ${k}`, where: k, source: "quality_guard_logic" });
   }
 
   // 5) Subject lines <= 90 chars (allow slight slack over the 70 target)
-  (pack.emails || []).forEach((e, i) => {
-    if (!e?.subject || e.subject.length > 90) {
-      issues.push({ code: "subject_too_long", message: `Email #${i + 1} subject too long (${e?.subject?.length ?? 0} chars)`, where: `emails[${i}].subject` });
-    }
-  });
+  if (cfg.includeEmail) {
+    (pack.emails || []).forEach((e, i) => {
+      if (!e?.subject || e.subject.length > 90) {
+        issues.push({ code: "subject_too_long", message: `Email #${i + 1} subject too long (${e?.subject?.length ?? 0} chars)`, where: `emails[${i}].subject`, matchedSnippet: e?.subject, source: "quality_guard_logic" });
+      }
+    });
+  }
 
   // 6) Landing headline concise
   if (pack.landing?.headline && pack.landing.headline.length > 120) {
-    issues.push({ code: "headline_too_long", message: `Landing headline too long (${pack.landing.headline.length} chars)` });
+    issues.push({ code: "headline_too_long", message: `Landing headline too long (${pack.landing.headline.length} chars)`, where: "landing.headline", matchedSnippet: pack.landing.headline, source: "quality_guard_logic" });
   }
 
   // 7) CTA — invented CTAs anywhere that don't match user's chosen CTA
@@ -187,7 +212,7 @@ export function checkPackQuality(pack: CampaignPack, brief: CampaignBrief): Qual
     for (const invented of INVENTED_CTAS) {
       if (invented === chosenCta) continue;
       if (nJoined.includes(invented)) {
-        issues.push({ code: "invented_cta", message: `Invented CTA present: "${invented}"` });
+        issues.push({ code: "invented_cta", message: `Invented CTA present: "${invented}"`, where: "pack", matchedSnippet: invented, source: "quality_guard_logic" });
       }
     }
     // Landing / offer / leadCapture CTA fields must match user's CTA
@@ -198,18 +223,27 @@ export function checkPackQuality(pack: CampaignPack, brief: CampaignBrief): Qual
     ];
     for (const [k, v] of ctaChecks) {
       if (v && norm(v).trim() !== chosenCta) {
-        issues.push({ code: "cta_mismatch", message: `${k} does not match chosen CTA`, where: k });
+        issues.push({ code: "cta_mismatch", message: `${k} does not match chosen CTA`, where: k, matchedSnippet: v, source: "quality_guard_logic" });
       }
     }
   }
 
-  // 8) Raw brief-field stuffing — the same >= 30-char slice of offer/audience appearing in >4 assets
+  // 8) Raw brief-field stuffing — only fail when a long, distinctive slice is copied repeatedly.
+  // Short product/category names (e.g. "AI-supported growth workspace") are allowed to recur.
   const bigFields = [brief.offer, brief.audience].filter((f) => f && f.length >= 30);
   for (const f of bigFields) {
-    const slice = f.slice(0, 30).toLowerCase();
-    const hits = all.filter((a) => norm(a.text).includes(slice)).length;
-    if (hits > 6) {
-      issues.push({ code: "raw_brief_stuffing", message: `Raw brief slice repeated across ${hits} assets: "${slice}…"` });
+    const cleanField = f.replace(/\s+/g, " ").trim();
+    const slice = cleanField.slice(0, 90).toLowerCase();
+    if (slice.split(/\s+/).length < 10) continue;
+    const hits = all.filter((a) => norm(a.text).replace(/\s+/g, " ").includes(slice)).map((a) => a.key);
+    if (hits.length > 3) {
+      issues.push({
+        code: "raw_brief_stuffing",
+        message: `Long raw brief slice repeated across ${hits.length} assets`,
+        where: hits.slice(0, 3).join(", "),
+        matchedSnippet: `${slice}…`,
+        source: "quality_guard_logic",
+      });
     }
   }
 
