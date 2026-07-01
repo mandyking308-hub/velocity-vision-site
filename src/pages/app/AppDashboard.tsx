@@ -235,14 +235,25 @@ export default function AppDashboard() {
       setSendsScheduledToday(sched);
       if (def) {
         setSenderEmail(def.from_email);
+        setSenderConnectionId(def.id);
+        setSenderDetail({
+          verification_status: def.verification_status,
+          mx_status: def.mx_status,
+          spf_status: def.spf_status,
+          dkim_status: def.dkim_status,
+          dmarc_status: def.dmarc_status,
+          sending_enabled: def.sending_enabled,
+          dns_checked_at: def.dns_checked_at,
+        });
         const lastSend = (sends || []).filter((x: any) => x.status === "sent").map((x: any) => x.sent_at).filter(Boolean).sort().pop() || null;
         const totalSends = (sends || []).length || 1;
         const bounces = (sends || []).filter((x: any) => x.status === "bounced" || x.status === "failed").length;
         const newly = def.last_verified_at ? (Date.now() - new Date(def.last_verified_at).getTime()) < 7 * 86400000 : true;
+        const verified = def.verification_status === "verified" && def.sending_enabled === true;
         setSender({
           connected: def.status === "connected",
-          domain_authenticated: false,
-          reconnect_required: def.status === "reconnect_required",
+          domain_authenticated: verified,
+          reconnect_required: def.status === "reconnect_required" || def.verification_status === "reconnect_required",
           newly_connected: newly,
           last_send_at: lastSend,
           bounce_rate: bounces / totalSends,
@@ -250,6 +261,8 @@ export default function AppDashboard() {
         });
       } else {
         setSenderEmail(null);
+        setSenderConnectionId(null);
+        setSenderDetail(null);
         setSender(DEFAULT_SENDER_STATE);
       }
     })();
