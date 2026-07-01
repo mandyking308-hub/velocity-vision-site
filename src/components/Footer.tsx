@@ -64,6 +64,8 @@ const Footer = () => (
           <Link to="/legal/privacy-policy" className="text-xs text-primary-foreground/70 hover:text-accent transition-colors">Privacy</Link>
           <Link to="/legal/terms-of-service" className="text-xs text-primary-foreground/70 hover:text-accent transition-colors">Terms</Link>
           <Link to="/legal/cookie-policy" className="text-xs text-primary-foreground/70 hover:text-accent transition-colors">Cookies</Link>
+          <Link to="/legal/subprocessors" className="text-xs text-primary-foreground/70 hover:text-accent transition-colors">Subprocessors</Link>
+          <button type="button" onClick={openCookiePreferences} className="text-xs text-primary-foreground/70 hover:text-accent transition-colors">Cookie preferences</button>
         </div>
       </div>
     </div>
