@@ -153,8 +153,8 @@ const sections = [
 const Help = () => (
   <>
     <SEO
-      title="Help — Velocity Vision knowledge base"
-      description="Practical answers for Velocity Vision: Data Vault, quality review, templates, safe activation, replies, follow-up, pipeline, credits, agency workspaces and exports."
+      title="Velocity Vision Help Centre"
+      description="User guide for Velocity Vision: workspaces, Data Vault, sender verification, campaigns, billing, activation and support tickets."
       path="/help"
     />
     <Navbar />
@@ -162,9 +162,11 @@ const Help = () => (
       <section className="section-padding bg-hero">
         <div className="max-w-4xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-            <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Help</p>
-            <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-4">Knowledge base</h1>
-            <p className="text-primary-foreground/75 text-lg">Practical answers for running data, activation, replies and pipeline inside Velocity Vision.</p>
+            <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">User guide</p>
+            <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-4">Velocity Vision Help Centre</h1>
+            <p className="text-primary-foreground/75 text-lg">
+              Use this guide to understand workspaces, Data Vault, sender verification, campaigns, billing, activation and support tickets.
+            </p>
           </motion.div>
         </div>
       </section>
