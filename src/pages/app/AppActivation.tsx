@@ -52,12 +52,16 @@ export default function AppActivation() {
     (async () => {
       const connQ = supabase.from("email_connections").select("*").eq("user_id", user.id).order("is_default", { ascending: false });
       const sendsQ = supabase.from("email_sends").select("status, sent_at, scheduled_at, created_at");
+      const cBase = (q: string) => {
+        const b = supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", q);
+        return currentId ? b.eq("workspace_id", currentId) : b.not("source_upload_id", "is", null);
+      };
       const [v, r, k, b, s, conn, sends] = await Promise.all([
-        supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "valid").not("source_upload_id", "is", null),
-        supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "needs_review").not("source_upload_id", "is", null),
-        supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "risky").not("source_upload_id", "is", null),
-        supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "blocked").not("source_upload_id", "is", null),
-        supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", "suppressed").not("source_upload_id", "is", null),
+        cBase("valid"),
+        cBase("needs_review"),
+        cBase("risky"),
+        cBase("blocked"),
+        cBase("suppressed"),
         currentId ? connQ.eq("workspace_id", currentId) : connQ,
         currentId ? sendsQ.eq("workspace_id", currentId) : sendsQ,
       ]);

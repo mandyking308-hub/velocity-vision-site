@@ -141,20 +141,16 @@ export default function AppDashboard() {
       setLatestCampaignId(campaigns?.[0]?.id || null);
       setCampaignRows((campaigns || []) as CadenceRow[]);
 
-      // 3. Contacts / companies — no workspace_id column. We derive a workspace-scoped
-      //    view by linking through data_uploads.source_upload_id for THIS workspace.
-      //    Schema gap: contacts/companies are otherwise account/company-scoped only.
-      const uploadIds = (uploads || []).map((u: any) => u.id);
+      // 3. Contacts / companies — scoped directly by workspace_id.
       let contactsTotal = 0, contactsClean = 0, contactsReview = 0, contactsRisky = 0, contactsBlocked = 0, companiesTotal = 0;
-      if (uploadIds.length > 0) {
-        const base = supabase.from("contacts").select("*", { count: "exact", head: true }).in("source_upload_id", uploadIds);
+      {
         const [t, c1, c2, c3, c4, co] = await Promise.all([
-          base,
-          supabase.from("contacts").select("*", { count: "exact", head: true }).in("source_upload_id", uploadIds).eq("quality_status", "valid"),
-          supabase.from("contacts").select("*", { count: "exact", head: true }).in("source_upload_id", uploadIds).eq("quality_status", "needs_review"),
-          supabase.from("contacts").select("*", { count: "exact", head: true }).in("source_upload_id", uploadIds).eq("quality_status", "risky"),
-          supabase.from("contacts").select("*", { count: "exact", head: true }).in("source_upload_id", uploadIds).eq("quality_status", "blocked"),
-          supabase.from("companies").select("*", { count: "exact", head: true }).in("source_upload_id", uploadIds),
+          supabase.from("contacts").select("*", { count: "exact", head: true }).eq("workspace_id", currentId),
+          supabase.from("contacts").select("*", { count: "exact", head: true }).eq("workspace_id", currentId).eq("quality_status", "valid"),
+          supabase.from("contacts").select("*", { count: "exact", head: true }).eq("workspace_id", currentId).eq("quality_status", "needs_review"),
+          supabase.from("contacts").select("*", { count: "exact", head: true }).eq("workspace_id", currentId).eq("quality_status", "risky"),
+          supabase.from("contacts").select("*", { count: "exact", head: true }).eq("workspace_id", currentId).eq("quality_status", "blocked"),
+          supabase.from("companies").select("*", { count: "exact", head: true }).eq("workspace_id", currentId),
         ]);
         contactsTotal = t.count ?? 0;
         contactsClean = c1.count ?? 0;

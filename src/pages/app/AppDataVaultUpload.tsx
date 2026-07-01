@@ -97,11 +97,12 @@ export default function AppDataVaultUpload() {
     if (!table || !user) return;
     setBusy(true);
     try {
-      // Fetch existing contacts for duplicate checks (cap)
-      const { data: existing } = await supabase
+      // Fetch existing contacts (this workspace only) for duplicate checks
+      const dupQ = supabase
         .from("contacts")
         .select("id, email, first_name, last_name, company_id")
         .limit(5000);
+      const { data: existing } = workspaceId ? await dupQ.eq("workspace_id", workspaceId) : await dupQ;
       const existingForCheck: ExistingContact[] = (existing || []).map((c: any) => ({
         id: c.id, email: c.email, first_name: c.first_name, last_name: c.last_name,
       }));
@@ -201,11 +202,14 @@ export default function AppDataVaultUpload() {
           if (companyCache.has(key)) {
             companyId = companyCache.get(key)!;
           } else {
-            const { data: existing } = await supabase
+            // Scope company lookup to this workspace so we don't merge into another workspace's company
+            const companyLookup = supabase
               .from("companies")
               .select("id")
-              .ilike("name", companyName)
-              .maybeSingle();
+              .ilike("name", companyName);
+            const { data: existing } = workspaceId
+              ? await companyLookup.eq("workspace_id", workspaceId).maybeSingle()
+              : await companyLookup.maybeSingle();
             if (existing?.id) {
               companyId = existing.id;
             } else {
@@ -217,6 +221,7 @@ export default function AppDataVaultUpload() {
                   country: m.country || null,
                   language: m.language || null,
                   source_upload_id: uploadId,
+                  workspace_id: workspaceId,
                   created_by: user.id,
                 })
                 .select("id")
@@ -245,6 +250,7 @@ export default function AppDataVaultUpload() {
             country: m.country || null,
             language: m.language || null,
             source_upload_id: uploadId,
+            workspace_id: workspaceId,
             quality_status: row.validation_status,
             duplicate_flag: row.duplicate_status !== "none",
             blocked: row.validation_status === "blocked",

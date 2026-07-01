@@ -18,13 +18,16 @@ export default function AppDataVault() {
   const { data, isLoading } = useQuery({
     queryKey: ["vault-dashboard", user?.id, currentId],
     queryFn: async () => {
-      // NOTE: contacts/companies do not yet have workspace_id — scoping is company-wide.
+      // Scoped by active workspace_id.
       const importsQ = supabase.from("data_uploads").select("id, file_name, created_at, row_count, status, summary").order("created_at", { ascending: false }).limit(10);
+      const contactsQ = supabase.from("contacts").select("*", { count: "exact", head: true });
+      const companiesQ = supabase.from("companies").select("*", { count: "exact", head: true });
+      const qualityQ = supabase.from("contacts").select("quality_status, duplicate_flag, blocked").limit(5000);
       const [contactsRes, companiesRes, importsRes, qualityRes] = await Promise.all([
-        supabase.from("contacts").select("*", { count: "exact", head: true }).not("source_upload_id", "is", null),
-        supabase.from("companies").select("*", { count: "exact", head: true }).not("source_upload_id", "is", null),
+        currentId ? contactsQ.eq("workspace_id", currentId) : contactsQ.not("source_upload_id", "is", null),
+        currentId ? companiesQ.eq("workspace_id", currentId) : companiesQ.not("source_upload_id", "is", null),
         currentId ? importsQ.eq("workspace_id", currentId) : importsQ,
-        supabase.from("contacts").select("quality_status, duplicate_flag, blocked").not("source_upload_id", "is", null).limit(5000),
+        currentId ? qualityQ.eq("workspace_id", currentId) : qualityQ.not("source_upload_id", "is", null),
       ]);
       const all = (qualityRes.data || []) as any[];
       const clean = all.filter((c) => c.quality_status === "valid" && !c.blocked).length;
