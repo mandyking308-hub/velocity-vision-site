@@ -9,6 +9,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { useCurrency } from "@/hooks/useCurrency";
 import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
 import PricingCurrencySelector from "@/components/PricingCurrencySelector";
+import TrustStrip from "@/components/TrustStrip";
 
 interface PlanDef {
   sku: SkuId;
@@ -187,6 +188,9 @@ const Pricing = () => {
             <h3 className="font-display font-semibold text-lg mb-2">International by default</h3>
             <p className="text-muted-foreground text-sm">Multi-currency pricing (GBP, USD, EUR and more), localised tax at checkout, multilingual outreach. Built for distributed teams from day one.</p>
           </div>
+        </div>
+        <div className="max-w-5xl mx-auto mt-10 md:mt-12">
+          <TrustStrip variant="pricing" />
         </div>
       </section>
 

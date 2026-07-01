@@ -8,6 +8,7 @@ import HowItWorksPreview from "@/components/HowItWorksPreview";
 import WorkflowSavings from "@/components/WorkflowSavings";
 import PricingTeaser from "@/components/PricingTeaser";
 import AudienceSplit from "@/components/AudienceSplit";
+import SecurityTrust from "@/components/SecurityTrust";
 import HomeFAQ from "@/components/HomeFAQ";
 import FinalCTA from "@/components/FinalCTA";
 
@@ -44,6 +45,7 @@ const Index = () => (
       <HeroSection />
       <ProblemProof />
       <CampaignCapabilities />
+      <SecurityTrust />
       <HowItWorksPreview />
       <WorkflowSavings />
       <PricingTeaser />
