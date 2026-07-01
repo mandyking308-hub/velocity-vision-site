@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import { CheckCircle2, ChevronLeft, ChevronRight, Sparkles } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
-import { CampaignBrief, CampaignGoal, CampaignKind, CampaignLanguage, CampaignPack, CAMPAIGN_LANGUAGES, generatePack, makeSlug } from "@/lib/campaignPack";
+import { CampaignBrief, CampaignGoal, CampaignKind, CampaignLanguage, CampaignPack, CAMPAIGN_LANGUAGES, makeSlug, mergeGeneratedPack } from "@/lib/campaignPack";
 import { checkPackQuality } from "@/lib/campaignQuality";
 import { formatQualityFailure } from "@/lib/campaignQualityToast";
 import { useTranslation } from "react-i18next";
@@ -64,6 +64,7 @@ export default function AppCampaignNew() {
   const defaultLang: CampaignLanguage = (i18n.language?.startsWith("es") ? "es" : "en");
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
+  const [qualityDebug, setQualityDebug] = useState(false);
   const [brief, setBrief] = useState<CampaignBrief>({
     name: "",
     goal: (params.get("goal") as CampaignGoal) || "leads",
@@ -82,6 +83,16 @@ export default function AppCampaignNew() {
     language: defaultLang,
   });
   const [cadence, setCadence] = useState<CadenceConfig>(defaultCadence());
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const { data } = await (supabase.from("user_roles") as any)
+        .select("role")
+        .eq("user_id", user.id)
+        .in("role", ["admin", "founder"]);
+      setQualityDebug(!!data?.length);
+    })();
+  }, [user]);
   const updateCadence = <K extends keyof CadenceConfig>(k: K, v: CadenceConfig[K]) =>
     setCadence((c) => ({ ...c, [k]: v }));
 
@@ -114,34 +125,20 @@ export default function AppCampaignNew() {
         });
         if (aiErr) throw aiErr;
         if (aiData?.pack) {
-          // Merge AI JSON into the strict CampaignPack shape. Missing pieces
-          // are backfilled from the deterministic fallback so nothing breaks.
-          const base = generatePack(brief);
-          pack = {
-            language: (brief.language || "en") as CampaignLanguage,
-            generatedAs: (aiData.generatedAs || brief.language || "en") as CampaignLanguage,
-            strategy: { ...base.strategy, ...(aiData.pack.strategy || {}) },
-            landing: { ...base.landing, ...(aiData.pack.landing || {}), cta: brief.cta },
-            offer: { ...base.offer, ...(aiData.pack.offer || {}), cta: brief.cta },
-            emails: Array.isArray(aiData.pack.emails) && aiData.pack.emails.length ? aiData.pack.emails : base.emails,
-            social: { ...base.social, ...(aiData.pack.social || {}) },
-            press: { ...base.press, ...(aiData.pack.press || {}) },
-            video: { ...base.video, ...(aiData.pack.video || {}) },
-            leadCapture: { ...base.leadCapture, ...(aiData.pack.leadCapture || {}), ctaLabel: brief.cta },
-          } as CampaignPack;
+          pack = mergeGeneratedPack(brief, aiData.pack, aiData.generatedAs) as CampaignPack;
         }
       } catch (aiErr) {
         console.warn("AI generation failed, using deterministic fallback", aiErr);
       }
       if (!pack) {
-        pack = generatePack(brief);
+        pack = mergeGeneratedPack(brief, null);
         usedFallback = true;
       }
 
       // 2) Quality guard. If it fails, DO NOT save and DO NOT deduct credits.
       const quality = checkPackQuality(pack, brief);
       if (!quality.ok) {
-        const { title, description } = formatQualityFailure(quality);
+        const { title, description } = formatQualityFailure(quality, qualityDebug);
         toast.error(title, { description });
         setSaving(false);
         return;

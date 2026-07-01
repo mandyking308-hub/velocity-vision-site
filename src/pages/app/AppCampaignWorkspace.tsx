@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Copy, Download, Sparkles, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { CampaignBrief, CampaignLanguage, CampaignPack, generatePack } from "@/lib/campaignPack";
+import { CampaignBrief, CampaignPack, getCampaignChannelConfig, mergeGeneratedPack } from "@/lib/campaignPack";
 import { toast } from "sonner";
 import i18n from "@/i18n";
 import { useTranslation } from "react-i18next";
@@ -64,6 +64,7 @@ export default function AppCampaignWorkspace() {
   const [c, setC] = useState<Campaign | null>(null);
   const [leads, setLeads] = useState<any[]>([]);
   const [regenerating, setRegenerating] = useState(false);
+  const [qualityDebug, setQualityDebug] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -76,6 +77,19 @@ export default function AppCampaignWorkspace() {
       setLeads(ld || []);
     })();
   }, [id]);
+
+  useEffect(() => {
+    (async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      const uid = userData.user?.id;
+      if (!uid) return;
+      const { data } = await (supabase.from("user_roles") as any)
+        .select("role")
+        .eq("user_id", uid)
+        .in("role", ["admin", "founder"]);
+      setQualityDebug(!!data?.length);
+    })();
+  }, []);
 
   const { consume, remaining, starterExpired } = useCredits();
 
@@ -104,22 +118,10 @@ export default function AppCampaignWorkspace() {
         if (aiErr) throw aiErr;
         if (!aiData?.pack) throw new Error("AI generation returned no pack");
 
-        const base = generatePack(c.brief);
-        pack = {
-          language: (c.brief.language || "en") as CampaignLanguage,
-          generatedAs: (aiData.generatedAs || c.brief.language || "en") as CampaignLanguage,
-          strategy: { ...base.strategy, ...(aiData.pack.strategy || {}) },
-          landing: { ...base.landing, ...(aiData.pack.landing || {}), cta: c.brief.cta },
-          offer: { ...base.offer, ...(aiData.pack.offer || {}), cta: c.brief.cta },
-          emails: Array.isArray(aiData.pack.emails) && aiData.pack.emails.length ? aiData.pack.emails : base.emails,
-          social: { ...base.social, ...(aiData.pack.social || {}) },
-          press: { ...base.press, ...(aiData.pack.press || {}) },
-          video: { ...base.video, ...(aiData.pack.video || {}) },
-          leadCapture: { ...base.leadCapture, ...(aiData.pack.leadCapture || {}), ctaLabel: c.brief.cta },
-        } as CampaignPack;
+        pack = mergeGeneratedPack(c.brief, aiData.pack, aiData.generatedAs) as CampaignPack;
       } catch (aiErr) {
         console.warn("AI regeneration failed, checking deterministic fallback", aiErr);
-        pack = generatePack(c.brief);
+        pack = mergeGeneratedPack(c.brief, null);
         usedFallback = true;
       }
 
@@ -127,7 +129,7 @@ export default function AppCampaignWorkspace() {
 
       const quality = checkPackQuality(pack, c.brief);
       if (!quality.ok) {
-        const { title, description } = formatQualityFailure(quality);
+        const { title, description } = formatQualityFailure(quality, qualityDebug);
         toast.error(title, { description });
         return;
       }
@@ -198,6 +200,7 @@ export default function AppCampaignWorkspace() {
   if (!c) return <p className="text-muted-foreground">Loading…</p>;
   const pack = c.pack;
   const brief = c.brief;
+  const channelCfg = getCampaignChannelConfig(brief);
   const lifecycleCfg = {
     cadence_type: (c.cadence_type || "one_off") as CadenceType,
     start_at: c.start_at, cadence_end_at: c.cadence_end_at,
@@ -309,10 +312,10 @@ export default function AppCampaignWorkspace() {
             <TabsTrigger value="strategy">Strategy</TabsTrigger>
             <TabsTrigger value="landing">Landing</TabsTrigger>
             <TabsTrigger value="offer">Offer</TabsTrigger>
-            <TabsTrigger value="emails">Emails</TabsTrigger>
-            <TabsTrigger value="social">Social</TabsTrigger>
-            <TabsTrigger value="press">Press</TabsTrigger>
-            <TabsTrigger value="video">Video</TabsTrigger>
+            {channelCfg.includeEmail && <TabsTrigger value="emails">Emails</TabsTrigger>}
+            {channelCfg.includeSocial && <TabsTrigger value="social">Social</TabsTrigger>}
+            {channelCfg.includePress && pack.press && <TabsTrigger value="press">Press</TabsTrigger>}
+            {channelCfg.includeVideo && pack.video && <TabsTrigger value="video">Video</TabsTrigger>}
             <TabsTrigger value="capture">Lead capture</TabsTrigger>
             <TabsTrigger value="pipeline">Pipeline</TabsTrigger>
             <TabsTrigger value="performance">Performance</TabsTrigger>
@@ -352,11 +355,13 @@ export default function AppCampaignWorkspace() {
             ))}</div></Section>
           </TabsContent>
 
-          <TabsContent value="emails" className="space-y-3 mt-4">
-            <EmailSequenceSender emails={pack.emails} campaignId={c.id} leads={leads} />
-          </TabsContent>
+          {channelCfg.includeEmail && (
+            <TabsContent value="emails" className="space-y-3 mt-4">
+              <EmailSequenceSender emails={pack.emails} campaignId={c.id} leads={leads} />
+            </TabsContent>
+          )}
 
-          <TabsContent value="social" className="space-y-4 mt-4">
+          {channelCfg.includeSocial && <TabsContent value="social" className="space-y-4 mt-4">
             <Section title="Launch posts">
               <div className="grid md:grid-cols-2 gap-3">
                 {pack.social.launchPosts.map((p, i) => <PostCard key={i} p={p} />)}
@@ -378,9 +383,9 @@ export default function AppCampaignWorkspace() {
               ))}</div>
             </Section>
             <Section title="Repost / remix ideas"><ul className="list-disc pl-5">{pack.social.repostIdeas.map((r, i) => <li key={i}>{r}</li>)}</ul></Section>
-          </TabsContent>
+          </TabsContent>}
 
-          <TabsContent value="press" className="space-y-4 mt-4">
+          {channelCfg.includePress && pack.press && <TabsContent value="press" className="space-y-4 mt-4">
             <Section title="Headline" copyText={pack.press.headline}><p className="text-xl font-semibold">{pack.press.headline}</p></Section>
             <Section title="Subheadline"><p>{pack.press.subheadline}</p></Section>
             <Section title="Opening paragraph" copyText={pack.press.opening}><p>{pack.press.opening}</p></Section>
@@ -388,9 +393,9 @@ export default function AppCampaignWorkspace() {
             <Section title="Quote" copyText={pack.press.quote}><p className="italic">{pack.press.quote}</p></Section>
             <Section title="Boilerplate" copyText={pack.press.boilerplate}><p>{pack.press.boilerplate}</p></Section>
             <Section title="Contact"><p>{pack.press.contactLine}</p></Section>
-          </TabsContent>
+          </TabsContent>}
 
-          <TabsContent value="video" className="space-y-4 mt-4">
+          {channelCfg.includeVideo && pack.video && <TabsContent value="video" className="space-y-4 mt-4">
             <Section title="3 video hooks"><ol className="list-decimal pl-5 space-y-1">{pack.video.hooks.map((h, i) => <li key={i}>{h}</li>)}</ol></Section>
             <Section title="30-second script" copyText={pack.video.script30}><pre className="whitespace-pre-wrap font-sans text-sm">{pack.video.script30}</pre></Section>
             <Section title="60-second script" copyText={pack.video.script60}><pre className="whitespace-pre-wrap font-sans text-sm">{pack.video.script60}</pre></Section>
@@ -401,7 +406,7 @@ export default function AppCampaignWorkspace() {
             <Section title="On-screen text"><ul className="list-disc pl-5">{pack.video.onScreenText.map((s, i) => <li key={i}>{s}</li>)}</ul></Section>
             <Section title="Caption / subtitle" copyText={pack.video.captionText}><p>{pack.video.captionText}</p></Section>
             <Section title="CTA endings"><ul className="list-disc pl-5">{pack.video.ctaEndings.map((s, i) => <li key={i}>{s}</li>)}</ul></Section>
-          </TabsContent>
+          </TabsContent>}
 
           <TabsContent value="capture" className="space-y-4 mt-4">
             <LeadFormConfig

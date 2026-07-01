@@ -12,17 +12,18 @@ function isDebug(): boolean {
   }
 }
 
-export function formatQualityFailure(quality: QualityResult): { title: string; description: string } {
+export function formatQualityFailure(quality: QualityResult, showDebug = false): { title: string; description: string } {
   // Always log full details for founder/dev inspection.
   // eslint-disable-next-line no-console
   console.warn("[campaign quality] failed", quality.issues);
 
   const first = quality.issues[0];
-  if (isDebug() && first) {
+  if ((showDebug || isDebug()) && first) {
     const where = first.where ? ` @ ${first.where}` : "";
+    const snippet = first.matchedSnippet ? ` — ${first.matchedSnippet}` : "";
     return {
       title: "Campaign quality check failed",
-      description: `${first.code}${where}: ${first.message}`,
+      description: `${first.code}${where}: ${first.message}${snippet}`,
     };
   }
 
