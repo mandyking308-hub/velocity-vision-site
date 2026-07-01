@@ -121,8 +121,11 @@ export default function SenderStatusCard({
           </div>
         )}
         {status !== "verified" && state.connected && (
-          <div className="rounded-md border border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-900 p-2 text-amber-900 dark:text-amber-200 text-xs">
-            Publish MX, SPF, DKIM and DMARC DNS records for <b>{domain || "your domain"}</b>, then run a real DNS check. Until every check passes, sending stays disabled.
+          <div className="rounded-md border border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-900 p-2 text-amber-900 dark:text-amber-200 text-xs space-y-1">
+            <p>Publish MX, SPF, DKIM and DMARC DNS records for <b>{domain || "your domain"}</b>, then run a real DNS check. Until every check passes, sending stays disabled.</p>
+            {detail?.dkim_status === "unknown" && (
+              <p><b>DKIM selector required</b> — enter the selector supplied by your email provider on the Email settings page. Fallback records won't enable sending.</p>
+            )}
           </div>
         )}
         <div className="flex gap-2 mt-1">
