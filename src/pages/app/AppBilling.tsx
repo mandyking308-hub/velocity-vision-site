@@ -95,13 +95,6 @@ export default function AppBilling() {
 
   const confirmBuyPlan = async () => {
     if (!pendingPlan) return;
-    if (user) {
-      await recordLegalAcceptance({
-        userId: user.id,
-        email: user.email ?? null,
-        source: "plan_checkout",
-      });
-    }
     const id = pendingPlan;
     setPendingPlan(null);
     openCheckout({
