@@ -1,6 +1,10 @@
 // Real DNS verification for MX + SPF + DKIM + DMARC on a sender domain.
-// Auth: requires a signed-in user. Workspace-scoped: connection must belong to
-// caller and to the workspace they pass in (if the connection is workspace-bound).
+// DKIM truth model: only counts as valid if the selector is either
+//   (a) a known provider selector for the configured SMTP host, OR
+//   (b) explicitly stored on the connection (dkim_selector / dkim_selectors), OR
+//   (c) explicitly submitted in this request body (selectors: []).
+// Fallback probes may surface as "detected" so the user can see what's live,
+// but they never mark DKIM valid and never enable sending on their own.
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
@@ -19,6 +23,9 @@ interface Result {
   mx_records: string[];
   spf_records: string[];
   dkim_selectors_checked: string[];
+  dkim_configured_selectors: string[];
+  dkim_detected_selectors: string[];
+  dkim_matched_selectors: string[];
   dkim_records: Record<string, string>;
   dmarc_records: string[];
   errors: string[];
@@ -37,25 +44,34 @@ async function resolveMx(name: string): Promise<{ preference: number; exchange: 
   try { return await Deno.resolveDns(name, "MX") as any; } catch (_e) { return []; }
 }
 
-// Provider → known selectors that we can trust. If we don't recognise the provider
-// we still probe a broad list, but if none are found we mark DKIM as needs setup
-// rather than pretending it's fine.
+// Trusted, provider-defined DKIM selectors. Only these count toward "valid" DKIM
+// unless the user has explicitly configured a selector for their connection.
 const PROVIDER_SELECTORS: Record<string, string[]> = {
   "smtp.gmail.com": ["google"],
   "smtp.office365.com": ["selector1", "selector2"],
 };
-const FALLBACK_SELECTORS = [
+
+// Broader probe list — used ONLY to surface "detected" DKIM records to the user.
+// Records found via this list DO NOT mark DKIM valid.
+const FALLBACK_PROBE_SELECTORS = [
   "default", "google", "selector1", "selector2", "k1", "k2",
   "mandrill", "mxvault", "sendgrid", "s1", "s2",
   "smtp", "dkim", "zoho", "fm1", "fm2", "fm3", "protonmail",
 ];
 
-async function verifyDomain(domain: string, smtpHost: string | null, extra: string[]): Promise<Result> {
+async function verifyDomain(
+  domain: string,
+  smtpHost: string | null,
+  configuredSelectors: string[],
+): Promise<Result> {
   const errors: string[] = [];
   const out: Result = {
     domain,
     mx_status: "missing", spf_status: "missing", dkim_status: "missing", dmarc_status: "missing",
-    mx_records: [], spf_records: [], dkim_selectors_checked: [], dkim_records: {}, dmarc_records: [],
+    mx_records: [], spf_records: [],
+    dkim_selectors_checked: [], dkim_configured_selectors: [...configuredSelectors],
+    dkim_detected_selectors: [], dkim_matched_selectors: [],
+    dkim_records: {}, dmarc_records: [],
     errors, verified: false, verification_status: "needs_dns_setup", sending_enabled: false,
   };
 
@@ -84,21 +100,38 @@ async function verifyDomain(domain: string, smtpHost: string | null, extra: stri
     out.dmarc_status = dmarc.length > 0 ? "valid" : "missing";
   } catch (e) { out.dmarc_status = "error"; errors.push(`DMARC lookup: ${(e as Error).message}`); }
 
-  // DKIM — provider-known selectors first, then broad probe. If nothing found and
-  // we don't know the required selector, mark unknown (needs setup) rather than valid.
-  const known = smtpHost && PROVIDER_SELECTORS[smtpHost] ? PROVIDER_SELECTORS[smtpHost] : [];
-  const selectors = Array.from(new Set([...known, ...extra, ...FALLBACK_SELECTORS]));
-  for (const sel of selectors) {
+  // DKIM — truth model.
+  const providerKnown = smtpHost && PROVIDER_SELECTORS[smtpHost] ? PROVIDER_SELECTORS[smtpHost] : [];
+  // "Trusted" = selectors we are allowed to promote to valid.
+  const trusted = Array.from(new Set([...providerKnown, ...configuredSelectors].map((s) => s.trim()).filter(Boolean)));
+  const probes = Array.from(new Set([...trusted, ...FALLBACK_PROBE_SELECTORS]));
+
+  for (const sel of probes) {
     out.dkim_selectors_checked.push(sel);
     const txts = await resolveTxt(`${sel}._domainkey.${domain}`);
     const joined = txts.join("");
-    if (joined && /v=DKIM1/i.test(joined)) out.dkim_records[sel] = joined;
+    if (joined && /v=DKIM1/i.test(joined)) {
+      out.dkim_records[sel] = joined;
+      out.dkim_detected_selectors.push(sel);
+      if (trusted.includes(sel)) out.dkim_matched_selectors.push(sel);
+    }
   }
-  if (Object.keys(out.dkim_records).length === 0) {
-    out.dkim_status = known.length > 0 ? "missing" : "unknown";
-    if (out.dkim_status === "unknown") errors.push("DKIM selector for this provider is not known — please publish DKIM and re-check.");
-  } else {
+
+  if (out.dkim_matched_selectors.length > 0) {
     out.dkim_status = "valid";
+  } else if (trusted.length === 0) {
+    // We don't know the required selector — cannot claim DKIM is valid, even if
+    // fallback probes found something (that could belong to a different provider).
+    out.dkim_status = "unknown";
+    errors.push(
+      out.dkim_detected_selectors.length > 0
+        ? `DKIM records were detected at selector(s) ${out.dkim_detected_selectors.join(", ")}, but no selector is configured for this sender. Enter the DKIM selector supplied by your email provider to confirm.`
+        : "DKIM selector required — enter the selector supplied by your email provider."
+    );
+  } else {
+    // We know which selector(s) SHOULD publish DKIM, and none did.
+    out.dkim_status = "missing";
+    errors.push(`Expected DKIM at selector(s) ${trusted.join(", ")} but no matching DKIM record was found.`);
   }
 
   const allOk = out.mx_status === "valid"
@@ -134,7 +167,12 @@ Deno.serve(async (req) => {
     const connectionId: string | undefined = body.connection_id;
     const workspaceId: string | undefined = body.workspace_id;
     let domain: string | undefined = body.domain;
-    const extraSelectors: string[] = Array.isArray(body.selectors) ? body.selectors : [];
+    const requestSelectors: string[] = Array.isArray(body.selectors)
+      ? body.selectors.filter((s: unknown): s is string => typeof s === "string" && s.trim().length > 0)
+      : [];
+    const persistSelector: string | undefined = typeof body.persist_selector === "string" && body.persist_selector.trim()
+      ? body.persist_selector.trim()
+      : undefined;
 
     const admin = createClient(SUPABASE_URL, SERVICE);
 
@@ -142,8 +180,6 @@ Deno.serve(async (req) => {
     if (connectionId) {
       const { data } = await admin.from("email_connections").select("*").eq("id", connectionId).eq("user_id", userId).maybeSingle();
       if (!data) return json({ error: "Connection not found" }, 404);
-      // Workspace scoping — if the caller passed a workspace_id, the connection must
-      // belong to the same workspace (or be unbound / account-level, which we allow).
       if (workspaceId && data.workspace_id && data.workspace_id !== workspaceId) {
         return json({ error: "Connection does not belong to the active workspace" }, 403);
       }
@@ -153,14 +189,32 @@ Deno.serve(async (req) => {
     if (!domain) return json({ error: "Missing domain" }, 400);
     domain = domain.trim().toLowerCase();
 
-    // Mark checking so the UI can reflect real state if it re-reads mid-flight.
+    // If caller supplied a selector to save, persist it now so the next check
+    // (and all future ones) count it as trusted.
+    if (target && persistSelector) {
+      const existing: string[] = Array.isArray(target.dkim_selectors) ? target.dkim_selectors : [];
+      const merged = Array.from(new Set([...existing, persistSelector]));
+      await admin.from("email_connections").update({
+        dkim_selector: persistSelector,
+        dkim_selectors: merged,
+      }).eq("id", target.id);
+      target.dkim_selector = persistSelector;
+      target.dkim_selectors = merged;
+    }
+
+    // Compose the trusted selector list for this run.
+    const configuredSelectors: string[] = [];
+    if (target?.dkim_selector) configuredSelectors.push(String(target.dkim_selector));
+    if (Array.isArray(target?.dkim_selectors)) for (const s of target.dkim_selectors) if (typeof s === "string") configuredSelectors.push(s);
+    for (const s of requestSelectors) configuredSelectors.push(s);
+
     if (target) {
       await admin.from("email_connections").update({
         verification_status: "checking", dns_checked_at: new Date().toISOString(), domain,
       }).eq("id", target.id);
     }
 
-    const result = await verifyDomain(domain, target?.smtp_host ?? null, extraSelectors);
+    const result = await verifyDomain(domain, target?.smtp_host ?? null, configuredSelectors);
 
     if (target) {
       await admin.from("email_connections").update({
@@ -170,7 +224,13 @@ Deno.serve(async (req) => {
         dkim_status: result.dkim_status,
         dmarc_status: result.dmarc_status,
         dns_checked_at: new Date().toISOString(),
-        verification_errors: { errors: result.errors, dkim_selectors_checked: result.dkim_selectors_checked },
+        verification_errors: {
+          errors: result.errors,
+          dkim_selectors_checked: result.dkim_selectors_checked,
+          dkim_detected_selectors: result.dkim_detected_selectors,
+          dkim_matched_selectors: result.dkim_matched_selectors,
+          dkim_configured_selectors: result.dkim_configured_selectors,
+        },
         domain_verified_at: result.verified ? new Date().toISOString() : null,
         verification_status: result.verification_status,
         sending_enabled: result.sending_enabled,
