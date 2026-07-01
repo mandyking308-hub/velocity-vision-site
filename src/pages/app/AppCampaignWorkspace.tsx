@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Copy, Download, Sparkles, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { CampaignBrief, CampaignPack, generatePack } from "@/lib/campaignPack";
+import { CampaignBrief, CampaignLanguage, CampaignPack, generatePack } from "@/lib/campaignPack";
 import { toast } from "sonner";
 import i18n from "@/i18n";
 import { useTranslation } from "react-i18next";
@@ -20,7 +20,7 @@ import {
   computeNextRun, deriveLifecycle, nextActionLabel, plainEnglish,
 } from "@/lib/cadence";
 import { Pause, Play, Clock, Repeat } from "lucide-react";
-import { buildCampaignMarkdown, slugify } from "@/lib/campaignPackExport";
+import { formatCampaignPackMarkdown, slugify } from "@/lib/campaignPackExport";
 import { checkPackQuality } from "@/lib/campaignQuality";
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
@@ -62,6 +62,7 @@ export default function AppCampaignWorkspace() {
   const navigate = useNavigate();
   const [c, setC] = useState<Campaign | null>(null);
   const [leads, setLeads] = useState<any[]>([]);
+  const [regenerating, setRegenerating] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -75,16 +76,83 @@ export default function AppCampaignWorkspace() {
     })();
   }, [id]);
 
-  const { consume } = useCredits();
+  const { consume, remaining, starterExpired } = useCredits();
 
   const regenerate = async () => {
-    if (!c?.brief) return;
-    const ok = await consume("full_campaign_pack", c.id, c.name);
-    if (!ok) return;
-    const pack = generatePack(c.brief);
-    await supabase.from("campaigns").update({ pack: pack as any }).eq("id", c.id);
-    setC({ ...c, pack });
-    toast.success(t("campaigns.toasts.packRegenerated"));
+    if (!c?.brief || regenerating) return;
+    if (remaining < CREDIT_COSTS.full_campaign_pack) {
+      toast.error("You don't have enough Campaign Credits", {
+        description: `Regenerating a full campaign pack costs ${CREDIT_COSTS.full_campaign_pack} credits. Top up or upgrade to continue.`,
+      });
+      return;
+    }
+    if (starterExpired) {
+      toast.error("Starter access has ended", { description: "Upgrade or buy another Starter to keep generating." });
+      return;
+    }
+
+    setRegenerating(true);
+    try {
+      let pack: CampaignPack | null = null;
+      let usedFallback = false;
+
+      try {
+        const { data: aiData, error: aiErr } = await supabase.functions.invoke("generate-campaign-pack", {
+          body: { brief: c.brief },
+        });
+        if (aiErr) throw aiErr;
+        if (!aiData?.pack) throw new Error("AI generation returned no pack");
+
+        const base = generatePack(c.brief);
+        pack = {
+          language: (c.brief.language || "en") as CampaignLanguage,
+          generatedAs: (aiData.generatedAs || c.brief.language || "en") as CampaignLanguage,
+          strategy: { ...base.strategy, ...(aiData.pack.strategy || {}) },
+          landing: { ...base.landing, ...(aiData.pack.landing || {}), cta: c.brief.cta },
+          offer: { ...base.offer, ...(aiData.pack.offer || {}), cta: c.brief.cta },
+          emails: Array.isArray(aiData.pack.emails) && aiData.pack.emails.length ? aiData.pack.emails : base.emails,
+          social: { ...base.social, ...(aiData.pack.social || {}) },
+          press: { ...base.press, ...(aiData.pack.press || {}) },
+          video: { ...base.video, ...(aiData.pack.video || {}) },
+          leadCapture: { ...base.leadCapture, ...(aiData.pack.leadCapture || {}), ctaLabel: c.brief.cta },
+        } as CampaignPack;
+      } catch (aiErr) {
+        console.warn("AI regeneration failed, checking deterministic fallback", aiErr);
+        pack = generatePack(c.brief);
+        usedFallback = true;
+      }
+
+      if (!pack) throw new Error("Could not generate campaign pack");
+
+      const quality = checkPackQuality(pack, c.brief);
+      if (!quality.ok) {
+        toast.error("Campaign quality check failed", {
+          description: `We didn't save this pack and no credits were used. Please try again. (${quality.issues.slice(0, 2).map((i) => i.code).join(", ")})`,
+        });
+        return;
+      }
+
+      const { error } = await supabase.from("campaigns").update({ pack: pack as any }).eq("id", c.id);
+      if (error) throw error;
+
+      if (usedFallback) {
+        toast.warning("AI was unavailable, so a safe fallback pack was used and quality-checked.");
+      }
+
+      const charged = await consume("full_campaign_pack", c.id, `${c.name} regeneration`);
+      if (!charged) {
+        toast.error("Campaign regenerated, but credit usage was not recorded", {
+          description: "Please avoid regenerating again and contact support so we can reconcile your credits.",
+        });
+      } else {
+        toast.success(t("campaigns.toasts.packRegenerated"));
+      }
+      setC({ ...c, pack });
+    } catch (e: any) {
+      toast.error(e.message || "Could not regenerate campaign pack");
+    } finally {
+      setRegenerating(false);
+    }
   };
 
   const withQualityCheck = (action: () => void) => {
@@ -101,12 +169,11 @@ export default function AppCampaignWorkspace() {
 
   const buildMd = () => {
     if (!c?.pack) return "";
-    return buildCampaignMarkdown({
+    return formatCampaignPackMarkdown({
       name: c.name,
-      brief: c.brief,
-      pack: c.pack,
+      slug: c.slug,
       cadenceSummary: c.start_at ? plainEnglish(cadenceFull as any) : undefined,
-    });
+    }, c.brief, c.pack);
   };
 
   const exportMarkdown = () => withQualityCheck(() => {
@@ -127,20 +194,6 @@ export default function AppCampaignWorkspace() {
     await navigator.clipboard.writeText(buildMd());
     toast.success("Full campaign pack copied");
   });
-
-  const exportJsonDebug = () => {
-    if (!c?.pack) return;
-    const blob = new Blob([JSON.stringify(c.pack, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `campaign-pack-${slugify(c.slug || c.name)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const showJsonExport = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("debug");
-
 
   if (!c) return <p className="text-muted-foreground">Loading…</p>;
   const pack = c.pack;
@@ -230,7 +283,9 @@ export default function AppCampaignWorkspace() {
           {(lifecycle === "active" || lifecycle === "scheduled") && cadenceFull.cadence_type !== "one_off" && (
             <Button variant="outline" size="sm" onClick={advanceRun}><Repeat className="h-4 w-4 mr-1" />Mark run complete</Button>
           )}
-          <Button variant="outline" size="sm" onClick={regenerate}><Sparkles className="h-4 w-4 mr-1" />Regenerate ({CREDIT_COSTS.full_campaign_pack} credits)</Button>
+          <Button variant="outline" size="sm" onClick={regenerate} disabled={regenerating}>
+            <Sparkles className="h-4 w-4 mr-1" />{regenerating ? "Regenerating…" : `Regenerate (${CREDIT_COSTS.full_campaign_pack} credits)`}
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm"><Download className="h-4 w-4 mr-1" />Export</Button>
@@ -238,9 +293,6 @@ export default function AppCampaignWorkspace() {
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={exportMarkdown}>Download Markdown (.md)</DropdownMenuItem>
               <DropdownMenuItem onClick={copyFullPack}>Copy full pack</DropdownMenuItem>
-              {showJsonExport && (
-                <DropdownMenuItem onClick={exportJsonDebug}>Export JSON (debug)</DropdownMenuItem>
-              )}
             </DropdownMenuContent>
           </DropdownMenu>
           
