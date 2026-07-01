@@ -76,6 +76,8 @@ export default function AppDashboard() {
   const [campaignRows, setCampaignRows] = useState<CadenceRow[]>([]);
   const [sender, setSender] = useState<SenderState>(DEFAULT_SENDER_STATE);
   const [senderEmail, setSenderEmail] = useState<string | null>(null);
+  const [senderConnectionId, setSenderConnectionId] = useState<string | null>(null);
+  const [senderDetail, setSenderDetail] = useState<any>(null);
   const [sendsUsedToday, setSendsUsedToday] = useState(0);
   const [sendsScheduledToday, setSendsScheduledToday] = useState(0);
 
