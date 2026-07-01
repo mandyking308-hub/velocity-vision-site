@@ -200,6 +200,7 @@ export default function AppCampaignWorkspace() {
   if (!c) return <p className="text-muted-foreground">Loading…</p>;
   const pack = c.pack;
   const brief = c.brief;
+  const channelCfg = getCampaignChannelConfig(brief);
   const lifecycleCfg = {
     cadence_type: (c.cadence_type || "one_off") as CadenceType,
     start_at: c.start_at, cadence_end_at: c.cadence_end_at,
@@ -311,10 +312,10 @@ export default function AppCampaignWorkspace() {
             <TabsTrigger value="strategy">Strategy</TabsTrigger>
             <TabsTrigger value="landing">Landing</TabsTrigger>
             <TabsTrigger value="offer">Offer</TabsTrigger>
-            <TabsTrigger value="emails">Emails</TabsTrigger>
-            <TabsTrigger value="social">Social</TabsTrigger>
-            <TabsTrigger value="press">Press</TabsTrigger>
-            <TabsTrigger value="video">Video</TabsTrigger>
+            {channelCfg.includeEmail && <TabsTrigger value="emails">Emails</TabsTrigger>}
+            {channelCfg.includeSocial && <TabsTrigger value="social">Social</TabsTrigger>}
+            {channelCfg.includePress && pack.press && <TabsTrigger value="press">Press</TabsTrigger>}
+            {channelCfg.includeVideo && pack.video && <TabsTrigger value="video">Video</TabsTrigger>}
             <TabsTrigger value="capture">Lead capture</TabsTrigger>
             <TabsTrigger value="pipeline">Pipeline</TabsTrigger>
             <TabsTrigger value="performance">Performance</TabsTrigger>
@@ -354,11 +355,13 @@ export default function AppCampaignWorkspace() {
             ))}</div></Section>
           </TabsContent>
 
-          <TabsContent value="emails" className="space-y-3 mt-4">
-            <EmailSequenceSender emails={pack.emails} campaignId={c.id} leads={leads} />
-          </TabsContent>
+          {channelCfg.includeEmail && (
+            <TabsContent value="emails" className="space-y-3 mt-4">
+              <EmailSequenceSender emails={pack.emails} campaignId={c.id} leads={leads} />
+            </TabsContent>
+          )}
 
-          <TabsContent value="social" className="space-y-4 mt-4">
+          {channelCfg.includeSocial && <TabsContent value="social" className="space-y-4 mt-4">
             <Section title="Launch posts">
               <div className="grid md:grid-cols-2 gap-3">
                 {pack.social.launchPosts.map((p, i) => <PostCard key={i} p={p} />)}
@@ -380,9 +383,9 @@ export default function AppCampaignWorkspace() {
               ))}</div>
             </Section>
             <Section title="Repost / remix ideas"><ul className="list-disc pl-5">{pack.social.repostIdeas.map((r, i) => <li key={i}>{r}</li>)}</ul></Section>
-          </TabsContent>
+          </TabsContent>}
 
-          <TabsContent value="press" className="space-y-4 mt-4">
+          {channelCfg.includePress && pack.press && <TabsContent value="press" className="space-y-4 mt-4">
             <Section title="Headline" copyText={pack.press.headline}><p className="text-xl font-semibold">{pack.press.headline}</p></Section>
             <Section title="Subheadline"><p>{pack.press.subheadline}</p></Section>
             <Section title="Opening paragraph" copyText={pack.press.opening}><p>{pack.press.opening}</p></Section>
@@ -390,9 +393,9 @@ export default function AppCampaignWorkspace() {
             <Section title="Quote" copyText={pack.press.quote}><p className="italic">{pack.press.quote}</p></Section>
             <Section title="Boilerplate" copyText={pack.press.boilerplate}><p>{pack.press.boilerplate}</p></Section>
             <Section title="Contact"><p>{pack.press.contactLine}</p></Section>
-          </TabsContent>
+          </TabsContent>}
 
-          <TabsContent value="video" className="space-y-4 mt-4">
+          {channelCfg.includeVideo && pack.video && <TabsContent value="video" className="space-y-4 mt-4">
             <Section title="3 video hooks"><ol className="list-decimal pl-5 space-y-1">{pack.video.hooks.map((h, i) => <li key={i}>{h}</li>)}</ol></Section>
             <Section title="30-second script" copyText={pack.video.script30}><pre className="whitespace-pre-wrap font-sans text-sm">{pack.video.script30}</pre></Section>
             <Section title="60-second script" copyText={pack.video.script60}><pre className="whitespace-pre-wrap font-sans text-sm">{pack.video.script60}</pre></Section>
@@ -403,7 +406,7 @@ export default function AppCampaignWorkspace() {
             <Section title="On-screen text"><ul className="list-disc pl-5">{pack.video.onScreenText.map((s, i) => <li key={i}>{s}</li>)}</ul></Section>
             <Section title="Caption / subtitle" copyText={pack.video.captionText}><p>{pack.video.captionText}</p></Section>
             <Section title="CTA endings"><ul className="list-disc pl-5">{pack.video.ctaEndings.map((s, i) => <li key={i}>{s}</li>)}</ul></Section>
-          </TabsContent>
+          </TabsContent>}
 
           <TabsContent value="capture" className="space-y-4 mt-4">
             <LeadFormConfig
