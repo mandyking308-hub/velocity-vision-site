@@ -76,7 +76,9 @@ STRICT RULES (breaking any of these makes the output unusable):
 8. Every sentence must be grammatical. Never produce broken fragments.
 9. Press release must read like a genuine business announcement — no hype, no unverifiable claims, no fabricated quotes attributed to specific people. Use "a company spokesperson" if a quote is included.
 10. RESPECT SELECTED CHANNELS. Only produce assets for the channels the user selected. Do NOT invent Facebook, Instagram, TikTok, Paid Ads, Email, PR or Video content if the user did not select it.
-11. Return ONLY the JSON object described below. No prose, no markdown fences, no commentary.
+11. EVERY objection object in offer.objections MUST include BOTH a non-empty "objection" (>= 4 chars) AND a non-empty "response" (>= 8 chars, ideally a full sentence). Never emit an objection with a blank, missing, or placeholder response.
+12. EMAIL BODY STRUCTURE. Each email body MUST end in this exact order: (a) 1–2 short paragraphs of body copy, then (b) a single CTA sentence using the user's chosen CTA verbatim, then (c) the sign-off line ("Best," / "Thanks," etc.) followed by "{{sender}}". The CTA MUST appear BEFORE the sign-off. Never place the CTA after the signature. Never append the CTA as a trailing fragment after the sender name.
+13. Return ONLY the JSON object described below. No prose, no markdown fences, no commentary.
 
 Channel-specific rules for THIS brief:
 ${socialLines}

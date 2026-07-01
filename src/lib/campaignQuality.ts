@@ -193,6 +193,33 @@ export function checkPackQuality(pack: CampaignPack, brief: CampaignBrief): Qual
     if (!v || v.trim().length < 4) issues.push({ code: "blank_field", message: `Missing or too short: ${k}`, where: k, source: "quality_guard_logic" });
   }
 
+  // 4b) Every offer objection must have both a non-empty objection and a
+  // non-empty response. Blank responses have shipped in the past ("… —").
+  const objections = pack.offer?.objections;
+  if (Array.isArray(objections)) {
+    objections.forEach((o, i) => {
+      const q = (o?.objection || "").trim();
+      const a = (o?.response || "").trim();
+      if (!q || q.length < 4) {
+        issues.push({
+          code: "blank_field",
+          message: `Objection #${i + 1} has no text`,
+          where: `offer.objections[${i}].objection`,
+          source: "quality_guard_logic",
+        });
+      }
+      if (!a || a.length < 8) {
+        issues.push({
+          code: "blank_field",
+          message: `Objection #${i + 1} response is blank or too short`,
+          where: `offer.objections[${i}].response`,
+          matchedSnippet: a || "(empty)",
+          source: "quality_guard_logic",
+        });
+      }
+    });
+  }
+
   // 5) Subject lines <= 90 chars (allow slight slack over the 70 target)
   if (cfg.includeEmail) {
     (pack.emails || []).forEach((e, i) => {
