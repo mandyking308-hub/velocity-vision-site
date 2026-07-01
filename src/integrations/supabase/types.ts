@@ -1129,6 +1129,7 @@ export type Database = {
           lead_id: string | null
           recipient_email: string
           recipient_name: string | null
+          scheduled_at: string | null
           scheduled_for: string | null
           sent_at: string | null
           sequence_step: number | null
@@ -1148,6 +1149,7 @@ export type Database = {
           lead_id?: string | null
           recipient_email: string
           recipient_name?: string | null
+          scheduled_at?: string | null
           scheduled_for?: string | null
           sent_at?: string | null
           sequence_step?: number | null
@@ -1167,6 +1169,7 @@ export type Database = {
           lead_id?: string | null
           recipient_email?: string
           recipient_name?: string | null
+          scheduled_at?: string | null
           scheduled_for?: string | null
           sent_at?: string | null
           sequence_step?: number | null
@@ -1394,6 +1397,7 @@ export type Database = {
           follow_up_state: Database["public"]["Enums"]["lead_follow_state"]
           id: string
           last_action: string | null
+          last_contacted_at: string | null
           last_email_sent_at: string | null
           last_email_subject: string | null
           marketing_interest: string | null
@@ -1419,6 +1423,7 @@ export type Database = {
           follow_up_state?: Database["public"]["Enums"]["lead_follow_state"]
           id?: string
           last_action?: string | null
+          last_contacted_at?: string | null
           last_email_sent_at?: string | null
           last_email_subject?: string | null
           marketing_interest?: string | null
@@ -1444,6 +1449,7 @@ export type Database = {
           follow_up_state?: Database["public"]["Enums"]["lead_follow_state"]
           id?: string
           last_action?: string | null
+          last_contacted_at?: string | null
           last_email_sent_at?: string | null
           last_email_subject?: string | null
           marketing_interest?: string | null
