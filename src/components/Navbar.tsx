@@ -45,8 +45,8 @@ const Navbar = () => {
               </Link>
             ))}
           </div>
-          <div className="flex items-center gap-4">
-
+          <div className="flex items-center gap-3">
+            <GTranslateSlot />
             <Button variant="ghost" size="sm" asChild>
               <Link to="/pricing">{t("nav.seePricing")}</Link>
             </Button>
