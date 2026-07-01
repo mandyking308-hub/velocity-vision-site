@@ -817,6 +817,7 @@ export type Database = {
       credit_ledger: {
         Row: {
           created_at: string
+          dedupe_key: string | null
           delta: number
           id: string
           meta: Json | null
@@ -826,6 +827,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          dedupe_key?: string | null
           delta: number
           id?: string
           meta?: Json | null
@@ -835,6 +837,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          dedupe_key?: string | null
           delta?: number
           id?: string
           meta?: Json | null
@@ -851,6 +854,7 @@ export type Database = {
           credits: number
           id: string
           pack: string
+          stripe_session_id: string | null
           user_id: string
         }
         Insert: {
@@ -859,6 +863,7 @@ export type Database = {
           credits: number
           id?: string
           pack: string
+          stripe_session_id?: string | null
           user_id: string
         }
         Update: {
@@ -867,6 +872,7 @@ export type Database = {
           credits?: number
           id?: string
           pack?: string
+          stripe_session_id?: string | null
           user_id?: string
         }
         Relationships: []
@@ -1297,6 +1303,7 @@ export type Database = {
           notes: string | null
           purchased_at: string
           status: string
+          stripe_session_id: string | null
           updated_at: string
           user_id: string
         }
@@ -1309,6 +1316,7 @@ export type Database = {
           notes?: string | null
           purchased_at?: string
           status?: string
+          stripe_session_id?: string | null
           updated_at?: string
           user_id: string
         }
@@ -1321,6 +1329,7 @@ export type Database = {
           notes?: string | null
           purchased_at?: string
           status?: string
+          stripe_session_id?: string | null
           updated_at?: string
           user_id?: string
         }
