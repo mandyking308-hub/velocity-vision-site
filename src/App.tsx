@@ -140,6 +140,8 @@ const AnimatedRoutes = () => {
           <Route index element={<DemoCRMDashboard />} />
         </Route>
         <Route path="/demo/data-vault" element={<DemoDataVault />} />
+        {/* Non-blocking convenience redirect — legacy /demo/crm/dashboard link */}
+        <Route path="/demo/crm/dashboard" element={<Navigate to="/demo/crm" replace />} />
 
         {/* CRM (protected - internal team) */}
         <Route path="/crm" element={<CRMProtectedRoute><CRMLayout /></CRMProtectedRoute>}>
