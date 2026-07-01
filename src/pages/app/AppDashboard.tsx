@@ -315,8 +315,8 @@ export default function AppDashboard() {
       {/* C. Activation Readiness + Send Safety Engine */}
       <SectionHeader
         icon={ShieldCheck}
-        title="Activation Readiness & Send Safety"
-        desc="Store generously. Activate carefully. We protect your sender reputation by default."
+        title="Activation Readiness & Send Safety (governed AI activation)"
+        desc="Store generously. Activate carefully. Sender verification and daily caps gate every send — you approve activation."
         cta={{ label: "Open pre-flight", to: "/app/activate" }}
       />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
