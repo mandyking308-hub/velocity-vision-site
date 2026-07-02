@@ -36,7 +36,29 @@ export default function AppBilling() {
   const { user } = useAuth();
   const tc = useTranslation("common").t;
   const { plan, planConfig, periodEnd, starterExpired, refresh } = useCredits();
-  const { currency, country } = useCurrency();
+  const { currency, setCurrency, country } = useCurrency();
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  const openBillingPortal = async () => {
+    setPortalLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-billing-portal-session", {
+        body: { returnPath: "/app/billing" },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      } else if (data?.noCustomer) {
+        toast.info("No Stripe billing profile yet.");
+      } else {
+        toast.error("Couldn't open billing portal.");
+      }
+    } catch (e: any) {
+      toast.error(e?.message || "Couldn't open billing portal.");
+    } finally {
+      setPortalLoading(false);
+    }
+  };
   const [topupOpen, setTopupOpen] = useState(false);
 
   const [ledger, setLedger] = useState<any[]>([]);
@@ -116,7 +138,7 @@ export default function AppBilling() {
             {country && <> · Detected region <strong className="text-foreground">{country}</strong></>}
           </p>
         </div>
-        <PricingCurrencySelector align="right" className="md:max-w-md" />
+        <PricingCurrencySelector align="right" className="md:max-w-md" currency={currency} onCurrencyChange={setCurrency} />
       </div>
       <p className="text-xs text-muted-foreground -mt-4">{taxNotice(currency)}</p>
 
@@ -174,6 +196,9 @@ export default function AppBilling() {
                 : "Credits apply to this workspace."}
             </div>
             <Button variant="outline" size="sm" className="w-full" onClick={() => setTopupOpen(true)}>Buy credit top-up</Button>
+            <Button variant="secondary" size="sm" className="w-full" onClick={openBillingPortal} disabled={portalLoading}>
+              {portalLoading ? "Opening…" : "Manage billing & invoices"}
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -212,7 +237,13 @@ export default function AppBilling() {
 
 
       <section>
-        <h2 className="text-xl font-semibold mb-3">Billing history</h2>
+        <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+          <h2 className="text-xl font-semibold">Billing history</h2>
+          <Button variant="outline" size="sm" onClick={openBillingPortal} disabled={portalLoading}>
+            <ArrowUpRight className="h-4 w-4 mr-1" />
+            {portalLoading ? "Opening…" : "Manage billing & invoices"}
+          </Button>
+        </div>
         <Card>
           <CardContent className="p-0">
             {payments.length === 0 ? (
