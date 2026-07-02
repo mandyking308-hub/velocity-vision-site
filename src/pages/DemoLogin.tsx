@@ -46,7 +46,7 @@ const DemoLogin = () => {
               <li className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-accent shrink-0" />Data Vault upload + quality review</li>
               <li className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-accent shrink-0" />Activation readiness + safe send limits</li>
               <li className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-accent shrink-0" />Asset creation, cadence and follow-up</li>
-              <li className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-accent shrink-0" />Replies, pipeline and next best actions</li>
+              <li className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-accent shrink-0" />Follow-up, pipeline and next best actions</li>
             </ul>
           </div>
 
