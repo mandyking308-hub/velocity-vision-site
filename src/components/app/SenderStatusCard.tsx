@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { SENDER_HEALTH_LABEL, SENDER_HEALTH_TONE, type SenderHealth, type SenderState } from "@/lib/sendSafety";
+import { computeReadiness, type ConnectionShape } from "@/lib/senderReadiness";
 
 type DnsStatus = "valid" | "invalid" | "missing" | "error" | "unknown";
 
