@@ -18,7 +18,7 @@ const Templates = () => (
   <>
     <SEO
       title="Templates — Reusable commercial templates | Velocity Vision"
-      description="Templates aren't starter packs — they're repeatable commercial workflows that connect data, activation, cadence, replies and pipeline."
+      description="Templates aren't starter packs — they're repeatable commercial workflows that connect data, activation, cadence, follow-up and pipeline."
       path="/templates"
     />
     <Navbar />

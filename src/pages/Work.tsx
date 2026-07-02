@@ -50,7 +50,7 @@ const useCases = [
 
 const Work = () => (
   <>
-    <SEO title="Use Cases & Example Plays | Velocity Vision" description="How founders, lean teams, and agencies use Velocity Vision to organise data, activate safely, work replies, and move opportunities into pipeline." path="/work" />
+    <SEO title="Use Cases & Example Plays | Velocity Vision" description="How founders, lean teams, and agencies use Velocity Vision to organise data, activate safely, work follow-up, and move opportunities into pipeline." path="/work" />
     <Navbar />
     <main className="pt-20">
       <section className="section-padding bg-hero">

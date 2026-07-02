@@ -86,7 +86,7 @@ const Features = () => (
   <>
     <SEO
       title="Features — Commercial operating workspace | Velocity Vision"
-      description="Data Vault, quality review, safe activation, outreach assets, cadence, replies, pipeline, credits and agency workspaces — connected end to end."
+      description="Data Vault, quality review, safe activation, outreach assets, cadence, follow-up, pipeline, credits and agency workspaces — connected end to end."
       path="/features"
     />
     <Navbar />

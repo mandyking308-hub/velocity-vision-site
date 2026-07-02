@@ -33,7 +33,7 @@ const ForAgencies = () => (
               One account. One workspace per client. No tool sprawl.
             </h1>
             <p className="text-primary-foreground/75 text-lg mb-8 max-w-2xl">
-              Manage data, activation, replies and pipeline per client — with pooled credits, pooled sending governance and clear visibility across the whole book.
+              Manage data, activation, follow-up and pipeline per client — with pooled credits, pooled sending governance and clear visibility across the whole book.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button variant="hero" size="lg" asChild>

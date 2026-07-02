@@ -76,7 +76,7 @@ const About = () => (
   <>
     <SEO
       title="About Velocity Vision — Global AI commercial workspace"
-      description="Velocity Vision is an international-first AI commercial workspace for Data Vault, quality review, governed activation, outreach assets, replies, follow-up and pipeline."
+      description="Velocity Vision is an international-first AI commercial workspace for Data Vault, quality review, governed activation, outreach assets, follow-up and pipeline."
       path="/about"
     />
     <Navbar />

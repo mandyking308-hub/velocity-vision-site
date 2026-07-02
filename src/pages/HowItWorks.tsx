@@ -38,7 +38,7 @@ const HowItWorks = () => (
   <>
     <SEO
       title="How it works — Velocity Vision commercial workspace"
-      description="The end-to-end flow: upload data, review quality, activate safely, create outreach, set cadence, work replies and move opportunities into pipeline."
+      description="The end-to-end flow: upload data, review quality, activate safely, create outreach, set cadence, work follow-up and move opportunities into pipeline."
       path="/how-it-works"
     />
     <Navbar />
