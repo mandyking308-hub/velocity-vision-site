@@ -329,7 +329,7 @@ function ConnectionRow({
   const [selectorInput, setSelectorInput] = useState(c.dkim_selector || "");
   const ver = VER_LABEL[c.verification_status || "unknown"] || VER_LABEL.unknown;
   const domain = c.domain || c.from_email?.split("@")[1] || "";
-  const providerKnown = KNOWN_DKIM_HOSTS.has(c.smtp_host);
+  const providerKnown = KNOWN_DKIM_HOSTS.has(c.smtp_host || "") || c.auth_type === "nylas";
   const hasConfiguredSelector = !!(c.dkim_selector || (c.dkim_selectors && c.dkim_selectors.length > 0));
   const dkimSelectorRequired = !providerKnown && !hasConfiguredSelector;
 
