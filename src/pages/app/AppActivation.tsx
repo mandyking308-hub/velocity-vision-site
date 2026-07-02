@@ -183,30 +183,109 @@ export default function AppActivation() {
   const sendNow = Math.min(totalSelected, safety.remainingToday);
   const blocked = safety.pauseReasons.length > 0 || !legal.isCompliant;
   const wantsRisky = riskyClamped > 0;
-  const canActivate = sendNow > 0 && !blocked && (!wantsRisky || riskAck);
+  const targetCampaignId = selectedCampaign || campaignId || null;
+  const canActivate = sendNow > 0 && !blocked && (!wantsRisky || riskAck) && !!targetCampaignId && !activating;
 
   async function audit(action: string, details: any) {
     try {
       await (supabase as any).from("send_audit_log").insert({
-        action, details, user_id: user!.id, campaign_id: campaignId,
+        action, details, user_id: user!.id, campaign_id: targetCampaignId,
       });
-    } catch { /* table is optional/best-effort */ }
+    } catch { /* best-effort */ }
+  }
+
+  async function fetchContactsByQuality(status: "valid" | "needs_review" | "risky", limit: number) {
+    if (limit <= 0) return [] as any[];
+    let q = supabase
+      .from("contacts")
+      .select("id, email, first_name, last_name, company_id, quality_status, duplicate_flag, blocked, suppressed")
+      .eq("quality_status", status)
+      .eq("blocked", false)
+      .eq("suppressed", false)
+      .eq("duplicate_flag", false)
+      .not("email", "is", null)
+      .order("created_at", { ascending: true })
+      .limit(limit);
+    if (currentId) q = q.eq("workspace_id", currentId);
+    const { data, error } = await q;
+    if (error) throw error;
+    return (data || []) as any[];
   }
 
   async function runActivation() {
-    await audit("activation_started", {
-      batch: sendNow, includeReview, riskyOverride: riskyClamped, plan, safeAllowance: safety.safeAllowance,
-    });
-    toast.success(t("activate.toasts.prepared", { count: sendNow }));
-    if (campaignId) navigate(`/app/campaigns/${campaignId}`);
-    else navigate("/app/campaigns");
+    if (!user || !targetCampaignId) return;
+    setActivating(true);
+    try {
+      await audit("activation_started", {
+        campaign_id: targetCampaignId, batch: totalSelected, includeReview,
+        riskyOverride: riskyClamped, plan, safeAllowance: safety.safeAllowance,
+      });
+
+      // Pull the selected slices, safest-first.
+      const validContacts = await fetchContactsByQuality("valid", safeSelected);
+      const reviewContacts = includeReview ? await fetchContactsByQuality("needs_review", reviewSelected) : [];
+      const riskyContacts = riskyClamped > 0 ? await fetchContactsByQuality("risky", riskyClamped) : [];
+      const chosen = [...validContacts, ...reviewContacts, ...riskyContacts];
+
+      // Skip contacts already attached to this campaign as leads.
+      const contactIds = chosen.map((c) => c.id);
+      let existingContactIds = new Set<string>();
+      if (contactIds.length) {
+        const { data: existing } = await supabase
+          .from("leads")
+          .select("contact_id")
+          .eq("campaign_id", targetCampaignId)
+          .in("contact_id", contactIds);
+        existingContactIds = new Set((existing || []).map((l: any) => l.contact_id).filter(Boolean));
+      }
+      const toInsert = chosen.filter((c) => !existingContactIds.has(c.id));
+
+      const rows = toInsert.map((c) => ({
+        source: "activation",
+        contact_id: c.id,
+        company_id: c.company_id,
+        campaign_id: targetCampaignId,
+        workspace_id: currentId,
+        email: c.email,
+        name: [c.first_name, c.last_name].filter(Boolean).join(" ") || null,
+        status: "new" as const,
+        created_by: user.id,
+        owner_id: user.id,
+      }));
+
+      let created = 0;
+      const CHUNK = 100;
+      for (let i = 0; i < rows.length; i += CHUNK) {
+        const slice = rows.slice(i, i + CHUNK);
+        const { error, count } = await supabase.from("leads").insert(slice as any, { count: "exact" });
+        if (error) throw error;
+        created += count ?? slice.length;
+      }
+
+      await audit("activation_completed", {
+        campaign_id: targetCampaignId,
+        requested: chosen.length,
+        already_linked: existingContactIds.size,
+        leads_created: created,
+        includeReview, riskyIncluded: riskyClamped,
+      });
+
+      toast.success(`Activated: ${created} lead${created === 1 ? "" : "s"} added to the campaign`);
+      navigate(`/app/campaigns/${targetCampaignId}`);
+    } catch (e: any) {
+      await audit("activation_failed", { error: e?.message });
+      toast.error("Activation failed", { description: e?.message });
+    } finally {
+      setActivating(false);
+    }
   }
 
   async function handleActivate() {
-    if (sendNow <= 0 || safety.pauseReasons.length > 0 || (wantsRisky && !riskAck)) return;
+    if (!canActivate) return;
     if (!legal.isCompliant) { setLegalGateOpen(true); return; }
     await runActivation();
   }
+
 
   const totalContacts = counts.valid + counts.needs_review + counts.risky + counts.blocked + counts.suppressed;
   const noData = totalContacts === 0;
