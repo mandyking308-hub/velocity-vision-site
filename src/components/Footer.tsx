@@ -8,7 +8,7 @@ const Footer = () => (
         <div className="lg:col-span-2">
           <h3 className="text-2xl font-display font-bold mb-4">Velocity<span className="text-accent">.</span></h3>
           <p className="text-primary-foreground/70 text-sm leading-relaxed max-w-xs">
-            A self-serve workspace for Data Vault, quality review, governed activation, replies, follow-up and pipeline. Built for founders, lean teams and agencies.
+            A self-serve workspace for Data Vault, quality review, governed activation, follow-up and pipeline. Built for founders, lean teams and agencies.
           </p>
           <p className="text-primary-foreground/60 text-xs mt-3">Global workspace · multilingual access · multi-currency pricing</p>
 

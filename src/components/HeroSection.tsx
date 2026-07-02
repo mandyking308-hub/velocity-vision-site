@@ -25,10 +25,10 @@ const HeroSection = () => (
             <Sparkles size={14} /> AI-powered outreach · Human-controlled activation
           </p>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-primary-foreground leading-[1.05] mb-6">
-            Turn messy data into outreach, replies and <span className="text-gradient">live pipeline</span>.
+            Turn messy data into outreach, follow-up and <span className="text-gradient">live pipeline</span>.
           </h1>
           <p className="text-lg md:text-xl text-primary-foreground/75 max-w-xl mb-10 leading-relaxed">
-            The AI-powered commercial workspace for turning messy contact data into governed outreach, replies and pipeline. AI drafts the assets and quality-reviews your data — you review, edit and control what gets activated.
+            The AI-powered commercial workspace for turning messy contact data into governed outreach, follow-up and pipeline. AI drafts the assets and quality-reviews your data — you review, edit and control what gets activated.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button variant="hero" size="lg" asChild>
@@ -78,7 +78,7 @@ const HeroSection = () => (
                 {[
                   { i: Database, label: "Data Vault — quality reviewed", val: "92% clean" },
                   { i: ShieldCheck, label: "Email sequence + social pack live", val: "Sending" },
-                  { i: GitBranch, label: "Replies worked → pipeline", val: "8 warm" },
+                  { i: GitBranch, label: "Follow-up worked → pipeline", val: "8 warm" },
                 ].map((row) => (
                   <div key={row.label} className="flex items-center justify-between bg-secondary/40 rounded-md px-3 py-2">
                     <span className="flex items-center gap-2 text-xs text-foreground">

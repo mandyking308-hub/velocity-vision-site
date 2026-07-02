@@ -9,7 +9,7 @@ const bullets = [
   "Sender verification and governed activation",
   "Outreach email, social, press and video from one brief",
   "Cadence and scheduling for recurring campaigns",
-  "Replies inbox with follow-up states and snooze",
+  "Follow-up inbox with reply states and snooze",
   "Pipeline movement with opportunity value tracking",
   "Agency mode: multiple client workspaces, pooled governance",
 ];
@@ -28,7 +28,7 @@ const PlatformPositioning = () => (
           One connected system, not a stack of disconnected tools
         </h2>
         <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
-          Your data, activation, outreach, replies and pipeline live in the same workspace — so the same flow that creates a campaign also captures the revenue from it.
+          Your data, activation, outreach, follow-up and pipeline live in the same workspace — so the same flow that creates a campaign also captures the revenue from it.
         </p>
         <ul className="space-y-3 mb-8">
           {bullets.map((b) => (

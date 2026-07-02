@@ -8,7 +8,7 @@ const blocks = [
   },
   {
     title: "Not a stack of disconnected tools",
-    desc: "Data, sending, replies and pipeline live in the same place — no exports between six apps.",
+    desc: "Data, sending, follow-up and pipeline live in the same place — no exports between six apps.",
   },
   {
     title: "Not a blank AI generator",
