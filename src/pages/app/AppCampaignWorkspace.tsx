@@ -110,6 +110,7 @@ export default function AppCampaignWorkspace() {
     try {
       let pack: CampaignPack | null = null;
       let usedFallback = false;
+      let ledgerId: string | null = null;
 
       try {
         const { data: aiData, error: aiErr } = await supabase.functions.invoke("generate-campaign-pack", {
@@ -119,7 +120,17 @@ export default function AppCampaignWorkspace() {
         if (!aiData?.pack) throw new Error("AI generation returned no pack");
 
         pack = mergeGeneratedPack(c.brief, aiData.pack, aiData.generatedAs) as CampaignPack;
-      } catch (aiErr) {
+        ledgerId = (aiData as any)?.ledgerId ?? null;
+      } catch (aiErr: any) {
+        const status = aiErr?.status ?? aiErr?.context?.status;
+        const body = aiErr?.context?.body ? String(aiErr.context.body) : String(aiErr?.message || "");
+        if (status === 402 || /insufficient_credits|starter_expired|no_plan/.test(body)) {
+          toast.error("You don't have enough Campaign Credits", {
+            description: `Regenerating a full campaign pack costs ${CREDIT_COSTS.full_campaign_pack} credits. Top up or upgrade to continue.`,
+          });
+          await refreshCredits();
+          return;
+        }
         console.warn("AI regeneration failed, checking deterministic fallback", aiErr);
         pack = mergeGeneratedPack(c.brief, null);
         usedFallback = true;
@@ -131,21 +142,30 @@ export default function AppCampaignWorkspace() {
       if (!quality.ok) {
         const { title, description } = formatQualityFailure(quality, qualityDebug);
         toast.error(title, { description });
+        if (ledgerId) {
+          try { await supabase.rpc("refund_campaign_credits", { _ledger_id: ledgerId }); } catch (_e) { /* noop */ }
+          await refreshCredits();
+        }
         return;
       }
 
       const { error } = await supabase.from("campaigns").update({ pack: pack as any }).eq("id", c.id);
-      if (error) throw error;
+      if (error) {
+        if (ledgerId) {
+          try { await supabase.rpc("refund_campaign_credits", { _ledger_id: ledgerId }); } catch (_e) { /* noop */ }
+        }
+        throw error;
+      }
+
+      if (ledgerId) {
+        try {
+          await supabase.rpc("finalise_campaign_credits", { _ledger_id: ledgerId, _ref_id: c.id, _label: `${c.name} regeneration` });
+        } catch (_e) { /* noop */ }
+      }
+      await refreshCredits();
 
       if (usedFallback) {
         toast.warning("AI was unavailable, so a safe fallback pack was used and quality-checked.");
-      }
-
-      const charged = await consume("full_campaign_pack", c.id, `${c.name} regeneration`);
-      if (!charged) {
-        toast.error("Campaign regenerated, but credit usage was not recorded", {
-          description: "Please avoid regenerating again and contact support so we can reconcile your credits.",
-        });
       } else {
         toast.success(t("campaigns.toasts.packRegenerated"));
       }
