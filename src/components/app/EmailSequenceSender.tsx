@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import i18n from "@/i18n";
+import { computeReadiness, READINESS_BADGE, type ConnectionShape } from "@/lib/senderReadiness";
 
 interface SequenceEmail {
   subject: string;
