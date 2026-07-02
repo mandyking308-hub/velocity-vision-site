@@ -877,6 +877,63 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_feedback: {
+        Row: {
+          browser_info: string | null
+          contact_permission: boolean
+          created_at: string
+          email: string | null
+          feedback_type: string
+          id: string
+          message: string
+          metadata: Json
+          plan: string | null
+          rating: number | null
+          route: string | null
+          source: string
+          status: string
+          updated_at: string
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          browser_info?: string | null
+          contact_permission?: boolean
+          created_at?: string
+          email?: string | null
+          feedback_type: string
+          id?: string
+          message: string
+          metadata?: Json
+          plan?: string | null
+          rating?: number | null
+          route?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          browser_info?: string | null
+          contact_permission?: boolean
+          created_at?: string
+          email?: string | null
+          feedback_type?: string
+          id?: string
+          message?: string
+          metadata?: Json
+          plan?: string | null
+          rating?: number | null
+          route?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
       data_upload_mappings: {
         Row: {
           created_at: string
