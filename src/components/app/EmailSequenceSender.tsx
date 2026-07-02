@@ -193,8 +193,15 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
                         },
                       });
                       setTesting(false);
-                      if (error || (data as any)?.error) {
-                        toast.error("Test send failed", { description: (data as any)?.error || error?.message });
+                      const errCode = (data as any)?.error;
+                      if (error || errCode) {
+                        if (errCode === "legal_not_current") {
+                          toast.error("Please review and accept the current platform terms before sending.", {
+                            action: { label: "Review terms", onClick: () => setLegalGateOpen(true) },
+                          });
+                        } else {
+                          toast.error("Test send failed", { description: errCode || error?.message });
+                        }
                       } else {
                         toast.success("Test sent to your inbox");
                       }
