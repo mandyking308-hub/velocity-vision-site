@@ -187,6 +187,13 @@ export function computeSafety(input: SafetyInput): SafetyResult {
 
   const adjusted = Math.floor(ceiling * factor);
   let safeAllowance = Math.max(0, Math.min(adjusted, input.sendCreditsRemaining, input.vault.valid));
+  if (input.sender.warmup_daily_cap && input.sender.warmup_daily_cap > 0) {
+    if (safeAllowance > input.sender.warmup_daily_cap) {
+      adjustments.push({ factor: input.sender.warmup_daily_cap / Math.max(safeAllowance, 1),
+        reason: `Warm-up cap: ${input.sender.warmup_daily_cap}/day for this sender.` });
+    }
+    safeAllowance = Math.min(safeAllowance, input.sender.warmup_daily_cap);
+  }
 
   // Agency pooled enforcement — the 1,000/day ceiling is shared across all child workspaces.
   let agencyPooledRemaining: number | undefined = undefined;
