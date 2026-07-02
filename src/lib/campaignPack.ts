@@ -182,6 +182,7 @@ export function enforceCampaignChannels(pack: CampaignPack, brief: CampaignBrief
     } : { launchPosts: [], followUps: [], hooks: [], ctas: [], launchWeek: [], repostIdeas: [] },
     press: cfg.includePress ? pack.press : null,
     video: cfg.includeVideo ? pack.video : null,
+    paidAds: cfg.includePaidAds ? pack.paidAds : null,
   };
 }
 
