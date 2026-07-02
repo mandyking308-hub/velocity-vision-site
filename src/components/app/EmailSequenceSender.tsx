@@ -272,8 +272,8 @@ function SendStatusBadge({ status }: { status: string }) {
   return <Badge className={map[status] || ""}>{status}</Badge>;
 }
 
-function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspaceId, allowSchedule = true, onClose }:
-  { email: SequenceEmail; stepIndex: number; leads: Lead[]; connectionId?: string; campaignId: string; workspaceId?: string | null; allowSchedule?: boolean; onClose: () => void; }) {
+function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspaceId, allowSchedule = true, onLegalRequired, onClose }:
+  { email: SequenceEmail; stepIndex: number; leads: Lead[]; connectionId?: string; campaignId: string; workspaceId?: string | null; allowSchedule?: boolean; onLegalRequired?: () => void; onClose: () => void; }) {
   const { t } = useTranslation("app");
   const [subject, setSubject] = useState(email.subject);
   const [body, setBody] = useState(email.body);
