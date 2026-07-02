@@ -40,6 +40,15 @@ export interface CampaignBrief {
 
 export interface SocialPost { platform: string; hook: string; short: string; long: string; cta: string; visualPrompt: string; }
 
+export interface PaidAdsPack {
+  campaignAngle: string;
+  headlines: string[];
+  primaryText: string[];
+  descriptions: string[];
+  audienceNote: string;
+  complianceNote: string;
+}
+
 export interface CampaignPack {
   language: CampaignLanguage;
   generatedAs: CampaignLanguage; // actual rendered language (after fallback)
@@ -50,6 +59,7 @@ export interface CampaignPack {
   social: { launchPosts: SocialPost[]; followUps: SocialPost[]; hooks: string[]; ctas: string[]; launchWeek: { day: string; theme: string; post: string }[]; repostIdeas: string[]; };
   press: { headline: string; subheadline: string; opening: string; body: string[]; quote: string; boilerplate: string; contactLine: string; } | null;
   video: { hooks: string[]; script30: string; script60: string; talkingHead: string; bRoll: string; shotList: string[]; storyboard: string[]; onScreenText: string[]; captionText: string; ctaEndings: string[]; } | null;
+  paidAds: PaidAdsPack | null;
   leadCapture: { formTitle: string; fields: { label: string; type: string; required: boolean }[]; ctaLabel: string; thankYou: string; };
 }
 
