@@ -219,6 +219,7 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
           connectionId={defaultConn?.id}
           campaignId={campaignId}
           workspaceId={workspaceId}
+          allowSchedule={!isNylas}
           onClose={() => { setOpenIdx(null); load(); }}
         />
       )}
