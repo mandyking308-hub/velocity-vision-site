@@ -36,7 +36,29 @@ export default function AppBilling() {
   const { user } = useAuth();
   const tc = useTranslation("common").t;
   const { plan, planConfig, periodEnd, starterExpired, refresh } = useCredits();
-  const { currency, country } = useCurrency();
+  const { currency, setCurrency, country } = useCurrency();
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  const openBillingPortal = async () => {
+    setPortalLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-billing-portal-session", {
+        body: { returnPath: "/app/billing" },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      } else if (data?.noCustomer) {
+        toast.info("No Stripe billing profile yet.");
+      } else {
+        toast.error("Couldn't open billing portal.");
+      }
+    } catch (e: any) {
+      toast.error(e?.message || "Couldn't open billing portal.");
+    } finally {
+      setPortalLoading(false);
+    }
+  };
   const [topupOpen, setTopupOpen] = useState(false);
 
   const [ledger, setLedger] = useState<any[]>([]);
