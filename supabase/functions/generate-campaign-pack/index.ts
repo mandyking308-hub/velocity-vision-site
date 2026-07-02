@@ -250,6 +250,7 @@ Brief:
 - Email selected: ${includeEmail ? "YES" : "NO"}
 - PR selected: ${includePress ? "YES" : "NO"}
 - Video selected: ${includeVideo ? "YES" : "NO"}
+- Paid ads selected: ${includePaidAds ? "YES" : "NO"}
 - Deadline / timing: ${brief.deadline || "(not provided — do not invent one)"}
 - Extra notes: ${brief.notes || "(none)"}
 
