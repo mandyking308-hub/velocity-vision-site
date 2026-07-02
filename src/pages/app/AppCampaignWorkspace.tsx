@@ -429,6 +429,15 @@ export default function AppCampaignWorkspace() {
             <Section title="CTA endings"><ul className="list-disc pl-5">{pack.video.ctaEndings.map((s, i) => <li key={i}>{s}</li>)}</ul></Section>
           </TabsContent>}
 
+          {channelCfg.includePaidAds && pack.paidAds && <TabsContent value="paidads" className="space-y-4 mt-4">
+            <Section title="Campaign angle" copyText={pack.paidAds.campaignAngle}><p>{pack.paidAds.campaignAngle}</p></Section>
+            <Section title="Headlines"><ul className="list-disc pl-5">{pack.paidAds.headlines.map((h, i) => <li key={i}>{h}</li>)}</ul></Section>
+            <Section title="Primary text options"><ul className="list-disc pl-5 space-y-2">{pack.paidAds.primaryText.map((t, i) => <li key={i}>{t}</li>)}</ul></Section>
+            <Section title="Descriptions"><ul className="list-disc pl-5">{pack.paidAds.descriptions.map((d, i) => <li key={i}>{d}</li>)}</ul></Section>
+            <Section title="Audience note"><p>{pack.paidAds.audienceNote}</p></Section>
+            <Section title="Compliance note"><p className="text-sm text-muted-foreground">{pack.paidAds.complianceNote}</p></Section>
+          </TabsContent>}
+
           <TabsContent value="capture" className="space-y-4 mt-4">
             <LeadFormConfig
               campaignId={c.id}
