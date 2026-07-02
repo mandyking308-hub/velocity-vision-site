@@ -159,9 +159,8 @@ export function computeSafety(input: SafetyInput): SafetyResult {
     factor = 0;
   }
   if (!input.sender.domain_authenticated && input.sender.connected && !input.sender.warmup_daily_cap) {
-    // SMTP / custom domain that has not been DNS-verified and is not eligible
-    // for provider-managed warm-up. Hard block until verified.
-    pause.push("Sender domain is not verified (SPF / DKIM missing). Verify your domain to activate.");
+    // Not warm-up eligible (SMTP/custom without verification) — pause.
+    pause.push("Sender setup is not complete.");
     factor = 0;
   }
   if (input.sender.newly_connected && input.sender.connected) {
