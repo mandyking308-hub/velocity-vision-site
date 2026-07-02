@@ -103,6 +103,16 @@ export default function AppCampaignNew() {
 
   const generate = async () => {
     if (!user) return;
+    // Schedule guard — never accept a past-dated one-off schedule.
+    if (
+      cadence.cadence_type === "one_off" &&
+      cadence.start_at &&
+      new Date(cadence.start_at).getTime() <= Date.now()
+    ) {
+      toast.error("Choose a future campaign date and time.");
+      setStep(5);
+      return;
+    }
     // Hard credit gate — never insert a campaign if the user cannot pay for it.
     if (remaining < CREDIT_COSTS.full_campaign_pack) {
       toast.error("You don't have enough Campaign Credits", {
