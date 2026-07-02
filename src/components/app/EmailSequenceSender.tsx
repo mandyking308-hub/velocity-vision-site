@@ -20,7 +20,10 @@ interface SequenceEmail {
   preview?: string;
 }
 
-interface Connection { id: string; from_email: string; from_name: string | null; is_default: boolean; status: string; }
+interface Connection {
+  id: string; from_email: string; from_name: string | null; is_default: boolean;
+  status: string; sending_enabled?: boolean | null; auth_type?: string | null;
+}
 
 interface Lead { id: string; name: string | null; email: string | null; }
 
