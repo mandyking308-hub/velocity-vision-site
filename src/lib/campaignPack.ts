@@ -214,6 +214,9 @@ export function mergeGeneratedPack(brief: CampaignBrief, aiPack: Partial<Campaig
     video: cfg.includeVideo
       ? (aiPack?.video === null ? null : { ...(base.video || {}), ...(aiPack?.video || {}) })
       : null,
+    paidAds: cfg.includePaidAds
+      ? mergePaidAds(base.paidAds, aiPack?.paidAds, brief)
+      : null,
     leadCapture: { ...base.leadCapture, ...(aiPack?.leadCapture || {}), ctaLabel: brief.cta },
   } as CampaignPack;
   return enforceCampaignChannels(merged, brief);
