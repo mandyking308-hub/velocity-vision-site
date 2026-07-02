@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Copy, Download, Sparkles, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { CampaignBrief, CampaignPack, getCampaignChannelConfig, mergeGeneratedPack } from "@/lib/campaignPack";
+import { CampaignBrief, CampaignPack, getCampaignChannelConfig, mergeGeneratedPack, filterSupportedChannels } from "@/lib/campaignPack";
 import { toast } from "sonner";
 import i18n from "@/i18n";
 import { useTranslation } from "react-i18next";
