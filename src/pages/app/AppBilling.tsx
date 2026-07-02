@@ -196,6 +196,9 @@ export default function AppBilling() {
                 : "Credits apply to this workspace."}
             </div>
             <Button variant="outline" size="sm" className="w-full" onClick={() => setTopupOpen(true)}>Buy credit top-up</Button>
+            <Button variant="secondary" size="sm" className="w-full" onClick={openBillingPortal} disabled={portalLoading}>
+              {portalLoading ? "Opening…" : "Manage billing & invoices"}
+            </Button>
           </CardContent>
         </Card>
       </div>
