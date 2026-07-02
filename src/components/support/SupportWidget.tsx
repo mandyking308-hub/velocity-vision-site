@@ -639,6 +639,93 @@ export default function SupportWidget() {
               <Button size="sm" variant="outline" onClick={resetChat}>Back to chat</Button>
             </div>
           )}
+
+          {mode === "feedback" && (
+            <div className="p-4 space-y-3 max-h-[70vh] overflow-y-auto">
+              <div className="text-xs text-muted-foreground">
+                Tell us what's confusing, missing, broken but not urgent, or valuable. This is <strong>not a support channel</strong> — if you need help, use{" "}
+                <button type="button" onClick={() => setMode("ticket")} className="underline">Raise a ticket</button>.
+              </div>
+
+              <div>
+                <div className="text-xs font-medium mb-1">How would you rate this experience?</div>
+                <div className="flex gap-1">
+                  {[1,2,3,4,5].map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setFbRating(n)}
+                      aria-label={`Rate ${n} out of 5`}
+                      className={`h-8 w-8 rounded-md border text-sm ${fbRating >= n ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border text-muted-foreground hover:border-primary/50"}`}
+                    >
+                      {n}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <Select value={fbType} onValueChange={setFbType}>
+                <SelectTrigger><SelectValue placeholder="Feedback type *" /></SelectTrigger>
+                <SelectContent>
+                  {FEEDBACK_TYPES.map((t) => (
+                    <SelectItem key={t.id} value={t.id}>{t.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Textarea
+                placeholder="What would you like us to know? *"
+                rows={4}
+                value={fbMessage}
+                onChange={(e) => setFbMessage(e.target.value.slice(0, 4000))}
+              />
+
+              <label className="flex items-start gap-2 text-xs text-muted-foreground">
+                <input
+                  type="checkbox"
+                  checked={fbContactPermission}
+                  onChange={(e) => setFbContactPermission(e.target.checked)}
+                  className="mt-0.5"
+                />
+                <span>You can contact me about this feedback</span>
+              </label>
+
+              {fbContactPermission && (
+                <Input
+                  placeholder="Reply email"
+                  type="email"
+                  value={fbEmail}
+                  onChange={(e) => setFbEmail(e.target.value.slice(0, 320))}
+                />
+              )}
+
+              <div className="text-[11px] text-muted-foreground">
+                We capture the page you're on and basic browser info to make feedback easier to review.
+              </div>
+
+              <div className="flex gap-2">
+                <Button size="sm" onClick={submitFeedback} disabled={fbSubmitting}>
+                  {fbSubmitting ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <Send className="h-3 w-3 mr-1" />}
+                  Send feedback
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => setMode("chat")}>Back to chat</Button>
+              </div>
+            </div>
+          )}
+
+          {mode === "feedback_success" && (
+            <div className="p-6 text-center space-y-2">
+              <CheckCircle2 className="h-8 w-8 text-green-600 mx-auto" />
+              <div className="font-medium text-sm">Thanks — feedback received</div>
+              <p className="text-xs text-muted-foreground">
+                We read every piece of feedback. If you asked us to contact you, we'll reach out. Feedback is not a support channel — if something is broken, please raise a ticket.
+              </p>
+              <div className="flex gap-2 justify-center">
+                <Button size="sm" variant="outline" onClick={resetChat}>Back to chat</Button>
+                <Button size="sm" variant="ghost" onClick={() => setMode("ticket")}>Raise a ticket instead</Button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </>
