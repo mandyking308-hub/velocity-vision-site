@@ -456,6 +456,15 @@ export default function AppCampaignNew() {
               <div className="font-medium mb-1">Schedule preview</div>
               <div className="text-muted-foreground">{plainEnglish(cadence)}</div>
             </div>
+
+            {schedulePastError && (
+              <div
+                role="alert"
+                className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+              >
+                Choose a future campaign date and time.
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
