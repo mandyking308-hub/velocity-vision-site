@@ -6,13 +6,40 @@ import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 function nylasConfig(region: string) {
   const r = (region || "eu").toLowerCase() === "us" ? "US" : "EU";
   const defaultUri = r === "US" ? "https://api.us.nylas.com" : "https://api.eu.nylas.com";
+  const apiKey = Deno.env.get(`NYLAS_${r}_API_KEY`) ?? Deno.env.get("NYLAS_API_KEY");
+  const clientId = Deno.env.get(`NYLAS_${r}_CLIENT_ID`) ?? Deno.env.get("NYLAS_CLIENT_ID");
+  const apiUri = (Deno.env.get(`NYLAS_${r}_API_URI`) ?? defaultUri).replace(/\/$/, "");
+  const callback = Deno.env.get("NYLAS_CALLBACK_URI");
   return {
     region: r.toLowerCase(),
-    apiKey: Deno.env.get(`NYLAS_${r}_API_KEY`) ?? Deno.env.get("NYLAS_API_KEY"),
-    clientId: Deno.env.get(`NYLAS_${r}_CLIENT_ID`) ?? Deno.env.get("NYLAS_CLIENT_ID"),
-    apiUri: (Deno.env.get(`NYLAS_${r}_API_URI`) ?? defaultUri).replace(/\/$/, ""),
-    callback: Deno.env.get("NYLAS_CALLBACK_URI"),
+    envNames: {
+      apiKey: `NYLAS_${r}_API_KEY`,
+      fallbackApiKey: "NYLAS_API_KEY",
+      clientId: `NYLAS_${r}_CLIENT_ID`,
+      fallbackClientId: "NYLAS_CLIENT_ID",
+      apiUri: `NYLAS_${r}_API_URI`,
+      callback: "NYLAS_CALLBACK_URI",
+    },
+    exists: {
+      apiKey: Boolean(apiKey),
+      clientId: Boolean(clientId),
+      apiUri: Boolean(Deno.env.get(`NYLAS_${r}_API_URI`)),
+      callback: Boolean(callback),
+      fallbackApiKey: Boolean(Deno.env.get("NYLAS_API_KEY")),
+      fallbackClientId: Boolean(Deno.env.get("NYLAS_CLIENT_ID")),
+    },
+    apiKey,
+    clientId,
+    apiUri,
+    callback,
   };
+}
+
+function edgeRequestId(req: Request) {
+  return req.headers.get("sb-request-id")
+    ?? req.headers.get("x-sb-request-id")
+    ?? req.headers.get("x-request-id")
+    ?? "unavailable";
 }
 
 Deno.serve(async (req) => {
@@ -46,6 +73,16 @@ Deno.serve(async (req) => {
     }
 
     const cfg = nylasConfig(region);
+    console.info("nylas-auth-start diagnostics", {
+      request_id: edgeRequestId(req),
+      selected_region: cfg.region,
+      env_var_names_read: cfg.envNames,
+      env_exists: cfg.exists,
+      client_id: cfg.clientId || null,
+      api_uri: cfg.apiUri,
+      callback_uri: cfg.callback || null,
+      provider_requested: provider,
+    });
     if (!cfg.clientId || !cfg.callback) return json({ error: "nylas_not_configured" }, 500);
 
     const state = crypto.randomUUID().replace(/-/g, "") + crypto.randomUUID().replace(/-/g, "");
@@ -78,6 +115,12 @@ Deno.serve(async (req) => {
     } else if (provider === "microsoft") {
       url.searchParams.set("scope", "Mail.Send offline_access openid email profile");
     }
+
+    console.info("nylas-auth-start hosted auth url", {
+      request_id: edgeRequestId(req),
+      provider_requested: provider,
+      hosted_auth_url: url.toString(),
+    });
 
     return json({ auth_url: url.toString(), state, region: cfg.region });
   } catch (e) {
