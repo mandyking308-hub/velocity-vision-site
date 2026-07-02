@@ -1,0 +1,2 @@
+ALTER TABLE public.email_connections DROP CONSTRAINT IF EXISTS email_connections_provider_check;
+ALTER TABLE public.email_connections ADD CONSTRAINT email_connections_provider_check CHECK (provider = ANY (ARRAY['gmail'::text,'outlook'::text,'icloud'::text,'imap'::text,'ews'::text,'smtp'::text]));

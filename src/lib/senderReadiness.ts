@@ -4,7 +4,7 @@
 
 export type AuthType = "smtp" | "nylas" | null | undefined;
 export type Provider =
-  | "gmail" | "outlook" | "yahoo" | "icloud" | "imap" | "smtp" | "unknown";
+  | "gmail" | "outlook" | "yahoo" | "icloud" | "imap" | "ews" | "smtp" | "unknown";
 
 export type ReadinessState =
   | "disconnected"
@@ -47,11 +47,12 @@ export function detectProvider(c: ConnectionShape | null | undefined): Provider 
     if (np.includes("microsoft") || np === "outlook") return "outlook";
     if (np.includes("yahoo")) return "yahoo";
     if (np.includes("icloud")) return "icloud";
+    if (np === "ews" || np.includes("exchange")) return "ews";
     if (np.includes("imap")) return "imap";
-    return "unknown";
+    // Fall through to the local provider column if nylas_provider unknown.
   }
   const p = (c.provider || "").toLowerCase();
-  if (p === "gmail" || p === "outlook" || p === "smtp") return p as Provider;
+  if (["gmail","outlook","icloud","imap","ews","smtp","yahoo"].includes(p)) return p as Provider;
   return "smtp";
 }
 
@@ -108,18 +109,23 @@ export function computeReadiness(c: ConnectionShape | null | undefined): Readine
         canTestSend: true, canSendWarmup: true, canSendFull: full,
         friendlyLine: full
           ? "Ready to send."
-          : "Mailbox connected — warm-up sending available.",
+          : "Mailbox connected — warm-up sending available. Replies return to this inbox.",
       };
     }
-    // Custom domain via Nylas: warm-up allowed, full send needs sending_enabled.
+    // Custom domain via Nylas (Workspace, M365, IMAP, EWS): warm-up allowed,
+    // full send needs sending_enabled. Copy is provider-appropriate.
     const full = c.sending_enabled === true;
+    const providerNote =
+      provider === "ews" ? " Exchange/EWS uses your organisation's mail infrastructure."
+      : provider === "imap" ? " IMAP sender uses your provider's outbound service."
+      : "";
     return {
       state: full ? "ready_full" : "ready_warmup",
       provider, personal, inboxConnected: true,
       canTestSend: true, canSendWarmup: true, canSendFull: full,
       friendlyLine: full
         ? "Ready to send."
-        : "Ready for warm-up sending. Complete sender setup before higher-volume sending.",
+        : `Mailbox connected — warm-up sending available.${providerNote} Complete sender setup before higher-volume sending.`,
     };
   }
 

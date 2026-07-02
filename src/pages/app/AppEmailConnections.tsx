@@ -8,15 +8,16 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Mail, Plug, AlertCircle, CheckCircle2, ArrowLeft, Trash2, Star, ChevronDown } from "lucide-react";
+import { Mail, Plug, AlertCircle, CheckCircle2, ArrowLeft, Trash2, Star, ChevronDown, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
+import { computeReadiness, READINESS_BADGE, type ConnectionShape } from "@/lib/senderReadiness";
 
 interface Connection {
   id: string;
-  provider: "gmail" | "outlook" | "smtp";
+  provider: "gmail" | "outlook" | "icloud" | "imap" | "ews" | "smtp";
   display_name: string | null;
   from_email: string;
   from_name: string | null;
@@ -42,6 +43,34 @@ interface Connection {
   nylas_provider: string | null;
   token_status: string | null;
 }
+
+// Native Nylas connection options exposed on the Choose your mailbox card.
+// Order and copy are customer-facing.
+type NylasProviderKey = "google" | "microsoft" | "icloud" | "imap" | "ews";
+interface ProviderCard {
+  key: NylasProviderKey | "yahoo" | "smtp";
+  title: string;
+  note: string;
+  badge: string;
+  badgeTone: string;
+  action: "oauth" | "smtp" | "yahoo";
+}
+const PROVIDER_CARDS: ProviderCard[] = [
+  { key: "google",    title: "Gmail / Google Workspace", note: "Personal Gmail or Google Workspace",           badge: "OAuth · Enabled",    badgeTone: "bg-emerald-100 text-emerald-700", action: "oauth" },
+  { key: "microsoft", title: "Outlook / Microsoft 365",  note: "Outlook, Hotmail, Live, or Microsoft 365",     badge: "OAuth · Enabled",    badgeTone: "bg-emerald-100 text-emerald-700", action: "oauth" },
+  { key: "icloud",    title: "iCloud Mail",              note: "Use your Apple/iCloud mail account",           badge: "Nylas · Enabled",    badgeTone: "bg-emerald-100 text-emerald-700", action: "oauth" },
+  { key: "imap",      title: "IMAP mailbox",             note: "For providers supported through IMAP",         badge: "Nylas · Enabled",    badgeTone: "bg-emerald-100 text-emerald-700", action: "oauth" },
+  { key: "ews",       title: "Exchange / EWS",           note: "For on-prem Exchange / EWS accounts",          badge: "Advanced · Enabled", badgeTone: "bg-emerald-100 text-emerald-700", action: "oauth" },
+  { key: "yahoo",     title: "Yahoo Mail",               note: "Yahoo connector is not enabled yet in Nylas. Use SMTP for now.", badge: "Coming next", badgeTone: "bg-amber-100 text-amber-800", action: "yahoo" },
+  { key: "smtp",      title: "Advanced SMTP",            note: "For any provider that supports SMTP with an app password (Fastmail, Zoho, your own server, or Yahoo for now).", badge: "Fallback", badgeTone: "bg-muted text-muted-foreground", action: "smtp" },
+];
+const OAUTH_BUTTON_LABEL: Record<NylasProviderKey, string> = {
+  google: "Connect with Google",
+  microsoft: "Connect with Microsoft",
+  icloud: "Connect with iCloud",
+  imap: "Connect IMAP mailbox",
+  ews: "Connect Exchange",
+};
 
 // Providers we consider "known" for DKIM selectors on the client. Kept in sync
 // with the edge function so the UI only prompts for a selector when we truly
@@ -77,7 +106,7 @@ export default function AppEmailConnections() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Connection | null>(null);
   const [loading, setLoading] = useState(true);
-  const [oauthLoading, setOauthLoading] = useState<null | "google" | "microsoft">(null);
+  const [oauthLoading, setOauthLoading] = useState<NylasProviderKey | null>(null);
   const [showSmtp, setShowSmtp] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -119,7 +148,7 @@ export default function AppEmailConnections() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const startOAuth = async (provider: "google" | "microsoft") => {
+  const startOAuth = async (provider: NylasProviderKey) => {
     setOauthLoading(provider);
     try {
       const { data, error } = await supabase.functions.invoke("nylas-auth-start", {
@@ -131,7 +160,7 @@ export default function AppEmailConnections() {
         },
       });
       if (error || !data?.auth_url) {
-        throw new Error((data as any)?.error || error?.message || "Failed to start OAuth");
+        throw new Error((data as any)?.error || error?.message || "Failed to start connection");
       }
       window.location.href = data.auth_url;
     } catch (e: any) {
@@ -162,11 +191,27 @@ export default function AppEmailConnections() {
 
   const reverify = async (c: Connection) => {
     if (c.auth_type === "nylas") {
-      startOAuth(c.nylas_provider === "microsoft" ? "microsoft" : "google");
+      const np = (c.nylas_provider || "").toLowerCase();
+      const key: NylasProviderKey =
+        np.includes("microsoft") || np === "outlook" ? "microsoft"
+        : np.includes("icloud") ? "icloud"
+        : np === "ews" || np.includes("exchange") ? "ews"
+        : np.includes("imap") ? "imap"
+        : "google";
+      startOAuth(key);
       return;
     }
     setEditing(c);
     setOpen(true);
+  };
+
+  const handleProviderCard = (card: ProviderCard) => {
+    if (card.action === "oauth") startOAuth(card.key as NylasProviderKey);
+    else if (card.action === "yahoo" || card.action === "smtp") {
+      setShowSmtp(true);
+      // Scroll advanced section into view for discoverability.
+      setTimeout(() => document.getElementById("advanced-smtp")?.scrollIntoView({ behavior: "smooth", block: "center" }), 60);
+    }
   };
 
   return (
@@ -181,43 +226,53 @@ export default function AppEmailConnections() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Connect a mailbox</CardTitle>
-          <CardDescription>Recommended: sign in with Google or Microsoft. Google and Microsoft can send in warm-up mode after secure connection and terms acceptance. Custom domains and SMTP may need additional sender setup before higher-volume sending.</CardDescription>
+          <CardTitle className="text-lg">Choose your mailbox</CardTitle>
+          <CardDescription>
+            Google, Microsoft, iCloud, IMAP and Exchange connect via secure OAuth — we never see your password. All connected mailboxes can send in warm-up mode after terms acceptance. Custom domains may need additional sender setup (SPF / DKIM) before higher-volume sending.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="grid sm:grid-cols-2 gap-3">
-            <Button
-              variant="outline"
-              className="h-12 justify-start gap-3"
-              onClick={() => startOAuth("google")}
-              disabled={oauthLoading !== null}
-            >
-              <GoogleGlyph />
-              <span className="font-medium">
-                {oauthLoading === "google" ? "Redirecting…" : "Connect with Google"}
-              </span>
-            </Button>
-            <Button
-              variant="outline"
-              className="h-12 justify-start gap-3"
-              onClick={() => startOAuth("microsoft")}
-              disabled={oauthLoading !== null}
-            >
-              <MicrosoftGlyph />
-              <span className="font-medium">
-                {oauthLoading === "microsoft" ? "Redirecting…" : "Connect with Microsoft"}
-              </span>
-            </Button>
+            {PROVIDER_CARDS.filter((p) => p.action !== "smtp").map((card) => {
+              const isOAuth = card.action === "oauth";
+              const isYahoo = card.action === "yahoo";
+              const loading = isOAuth && oauthLoading === (card.key as NylasProviderKey);
+              return (
+                <button
+                  key={card.key}
+                  type="button"
+                  onClick={() => handleProviderCard(card)}
+                  disabled={oauthLoading !== null && !loading}
+                  className="text-left rounded-lg border bg-card hover:bg-accent/40 transition p-4 flex items-start gap-3 disabled:opacity-60"
+                  data-testid={`provider-card-${card.key}`}
+                >
+                  <div className="mt-0.5">
+                    {card.key === "google" ? <GoogleGlyph />
+                      : card.key === "microsoft" ? <MicrosoftGlyph />
+                      : isYahoo ? <Clock className="h-4 w-4 text-amber-600" />
+                      : <Mail className="h-4 w-4 text-muted-foreground" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-medium text-sm">{card.title}</span>
+                      <span className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium ${card.badgeTone}`}>{card.badge}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">{card.note}</p>
+                    <p className="text-xs mt-2 font-medium text-primary">
+                      {isOAuth ? (loading ? "Redirecting…" : OAUTH_BUTTON_LABEL[card.key as NylasProviderKey])
+                        : isYahoo ? "Use SMTP for now →"
+                        : ""}
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
           </div>
 
-          <div className="rounded-md border border-dashed p-3 text-xs text-muted-foreground">
-            <p className="font-medium text-foreground mb-1">Other mailboxes (Yahoo, iCloud, IMAP and more)</p>
-            <p>Native one-click connect for other providers is coming next. In the meantime, connect them via <b>Advanced SMTP setup</b> below using an app password from your provider.</p>
-          </div>
 
           <Collapsible open={showSmtp} onOpenChange={setShowSmtp}>
             <CollapsibleTrigger asChild>
-              <Button variant="ghost" size="sm" className="text-muted-foreground">
+              <Button variant="ghost" size="sm" className="text-muted-foreground" id="advanced-smtp">
                 <ChevronDown className={`h-4 w-4 mr-1 transition-transform ${showSmtp ? "rotate-180" : ""}`} />
                 Advanced SMTP setup
               </Button>
@@ -225,7 +280,7 @@ export default function AppEmailConnections() {
             <CollapsibleContent className="pt-3">
               <div className="rounded-md border p-3 text-sm space-y-2">
                 <p className="text-muted-foreground">
-                  For any provider that supports SMTP with an app password (Yahoo, iCloud, Fastmail, Zoho, IMAP hosts, or your own server).
+                  Fallback for providers without a native connector — enter host, port, and an app password. Yahoo, Fastmail, Zoho, IMAP hosts, or your own server all work here.
                 </p>
                 <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setEditing(null); }}>
                   <DialogTrigger asChild>
@@ -326,11 +381,19 @@ const VER_LABEL: Record<string, { label: string; cls: string }> = {
 };
 
 function providerLabel(c: Connection) {
+  const np = (c.nylas_provider || "").toLowerCase();
   if (c.auth_type === "nylas") {
-    return c.nylas_provider === "microsoft" ? "Microsoft" : "Google";
+    if (np.includes("microsoft") || np === "outlook") return "Microsoft";
+    if (np.includes("icloud")) return "iCloud";
+    if (np === "ews" || np.includes("exchange")) return "Exchange";
+    if (np.includes("imap")) return "IMAP";
+    return "Google";
   }
   if (c.provider === "gmail") return "Google";
   if (c.provider === "outlook") return "Microsoft";
+  if (c.provider === "icloud") return "iCloud";
+  if (c.provider === "ews") return "Exchange";
+  if (c.provider === "imap") return "IMAP";
   return "SMTP";
 }
 
@@ -366,28 +429,13 @@ function ConnectionRow({
     !hasConfiguredSelector &&
     (c.verification_status === "failed" || c.verification_status === "needs_dns_setup");
 
-  // Customer-facing send readiness derived from backend state. Personal Nylas
-  // mailboxes stay in "setup_needed" (with reassuring copy) until Phase 2
-  // sending is wired; custom domains follow the DNS verification signal.
-  const sendReady = c.sending_enabled === true && c.verification_status === "verified";
-  const readinessLabel = sendReady
-    ? "Ready to send"
-    : c.status === "reconnect_required"
-    ? "Reconnect required"
-    : "Setup needed";
-  const readinessTone = sendReady
-    ? "bg-emerald-600 text-white"
-    : c.status === "reconnect_required"
-    ? "bg-rose-600 text-white"
-    : "bg-amber-100 text-amber-800";
-
-  const friendlyStatusLine = c.auth_type === "nylas" && isPersonalMailbox
-    ? "Mailbox connected. Sending will be available when campaign activation is enabled."
-    : c.auth_type === "nylas"
-    ? "Mailbox connected. We'll guide you through a sender setup check before high-volume sending."
-    : sendReady
-    ? "Advanced SMTP sender verified and ready."
-    : "Advanced SMTP sender connected. Complete sender setup to enable sending.";
+  // Customer-facing send readiness — derived from the shared helper so this
+  // stays in lockstep with /app/activate and the send dialog.
+  const readiness = computeReadiness(c as ConnectionShape);
+  const badge = READINESS_BADGE[readiness.state];
+  const readinessLabel = badge.label;
+  const readinessTone = badge.cls;
+  const friendlyStatusLine = readiness.friendlyLine;
 
   async function verifyDns(persistSelector?: string) {
     setChecking(true);
@@ -512,7 +560,11 @@ function ConnectionRow({
 function ConnectionDialog({ editing, workspaceId, onDone }: { editing: Connection | null; workspaceId: string | null; onDone: () => void }) {
   const { t } = useTranslation("app");
   const tc = useTranslation("common").t;
-  const [provider, setProvider] = useState<"gmail" | "outlook" | "smtp">(editing?.provider || "gmail");
+  // SMTP dialog only handles the three SMTP-configurable provider values —
+  // OAuth-only providers (icloud/imap/ews) never open this dialog.
+  const initialProvider: "gmail" | "outlook" | "smtp" =
+    editing?.provider === "gmail" || editing?.provider === "outlook" ? editing.provider : "smtp";
+  const [provider, setProvider] = useState<"gmail" | "outlook" | "smtp">(initialProvider);
   const [fromEmail, setFromEmail] = useState(editing?.from_email || "");
   const [fromName, setFromName] = useState(editing?.from_name || "");
   const [smtpUser, setSmtpUser] = useState(editing?.smtp_username || "");
