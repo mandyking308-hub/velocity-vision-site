@@ -289,11 +289,14 @@ function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspa
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="now">Send now</SelectItem>
-                <SelectItem value="schedule">Schedule for later</SelectItem>
+                {allowSchedule && <SelectItem value="schedule">Schedule for later</SelectItem>}
               </SelectContent>
             </Select>
-            {mode === "schedule" && (
+            {mode === "schedule" && allowSchedule && (
               <Input type="datetime-local" className="mt-2" value={scheduledFor} onChange={(e) => setScheduledFor(e.target.value)} />
+            )}
+            {!allowSchedule && (
+              <p className="text-xs text-muted-foreground mt-1">Scheduling for OAuth mailboxes is coming next — send now for Google / Microsoft.</p>
             )}
           </div>
           <div>
