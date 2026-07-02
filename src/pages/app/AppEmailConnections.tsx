@@ -221,7 +221,7 @@ export default function AppEmailConnections() {
       </Link>
       <div>
         <h1 className="text-3xl font-bold">Email connections</h1>
-        <p className="text-muted-foreground">Connect the inbox you want campaign follow-ups to send from. We never store your password — Google and Microsoft use secure OAuth.</p>
+        <p className="text-muted-foreground">Connect the inbox you want campaign follow-ups to send from. Google, Microsoft, iCloud, IMAP and Exchange connect securely through Nylas. Advanced SMTP is available for providers that require app-password setup.</p>
       </div>
 
       <Card>
@@ -280,7 +280,7 @@ export default function AppEmailConnections() {
             <CollapsibleContent className="pt-3">
               <div className="rounded-md border p-3 text-sm space-y-2">
                 <p className="text-muted-foreground">
-                  Fallback for providers without a native connector — enter host, port, and an app password. Yahoo, Fastmail, Zoho, IMAP hosts, or your own server all work here.
+                  Fallback for providers without a native connector, or where you prefer SMTP — enter host, port and an app password. Yahoo, Fastmail, Zoho, your own server, or custom SMTP providers can work here.
                 </p>
                 <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setEditing(null); }}>
                   <DialogTrigger asChild>
@@ -322,9 +322,9 @@ export default function AppEmailConnections() {
 
       <Card className="bg-muted/30">
         <CardHeader>
-          <CardTitle className="text-base">Why connect via OAuth?</CardTitle>
+          <CardTitle className="text-base">Why connect through Nylas?</CardTitle>
           <CardDescription>
-            Google and Microsoft OAuth keeps your password out of our system entirely — we get a scoped token that only allows sending mail on your behalf, and you can revoke it any time. Google and Microsoft mailboxes can send in warm-up mode as soon as they're connected and terms are accepted. Custom domains and SMTP may need additional sender setup (SPF / DKIM) before higher-volume sending. Replies return to the connected inbox.
+            Nylas lets you connect supported mailboxes without sharing your normal password with Velocity. Google, Microsoft, iCloud, IMAP and Exchange connections use secure provider authorisation where available. You can revoke access at any time. Replies return to the connected inbox. Custom domains and SMTP may need additional sender setup before higher-volume sending.
           </CardDescription>
         </CardHeader>
       </Card>
