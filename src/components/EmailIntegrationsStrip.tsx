@@ -1,9 +1,18 @@
-import { Cloud, Mail, Server, Plug } from "lucide-react";
+import { siGmail, siGoogle, siIcloud } from "simple-icons";
+import { Mail, Server, Plug, AtSign, Inbox } from "lucide-react";
 
-const Initial = ({ children }: { children: string }) => (
-  <div className="h-8 w-8 rounded-lg bg-muted flex items-center justify-center font-bold text-sm text-foreground shrink-0">
-    {children}
-  </div>
+type BrandProps = { icon: { path: string; hex: string; title: string }; size?: number };
+const BrandIcon = ({ icon, size = 22 }: BrandProps) => (
+  <svg
+    role="img"
+    aria-label={icon.title}
+    viewBox="0 0 24 24"
+    width={size}
+    height={size}
+    fill={`#${icon.hex}`}
+  >
+    <path d={icon.path} />
+  </svg>
 );
 
 interface Provider {
@@ -13,18 +22,49 @@ interface Provider {
 }
 
 const providers: Provider[] = [
-  { label: "Google / Gmail", note: "Personal Gmail", icon: <Initial>G</Initial> },
-  { label: "Google Workspace", note: "Workspace", icon: <Initial>G</Initial> },
-  { label: "Outlook", note: "Outlook.com", icon: <Initial>M</Initial> },
-  { label: "Microsoft 365", note: "Microsoft 365", icon: <Initial>M</Initial> },
-  { label: "iCloud Mail", note: "Apple iCloud", icon: <Cloud size={18} className="text-accent" /> },
-  { label: "IMAP mailboxes", note: "Any IMAP provider", icon: <Mail size={18} className="text-accent" /> },
-  { label: "Exchange / EWS", note: "On-prem / hosted", icon: <Server size={18} className="text-accent" /> },
-  { label: "Yahoo via SMTP", note: "SMTP until native connector", icon: <Initial>Y</Initial> },
-  { label: "Advanced SMTP", note: "Custom SMTP host", icon: <Plug size={18} className="text-accent" /> },
+  { label: "Google / Gmail", note: "Personal Gmail", icon: <BrandIcon icon={siGmail} /> },
+  { label: "Google Workspace", note: "Workspace", icon: <BrandIcon icon={siGoogle} /> },
+  { label: "Outlook", note: "Outlook.com", icon: <Inbox size={22} className="text-[#0078D4]" /> },
+  { label: "Microsoft 365", note: "Microsoft 365", icon: <Mail size={22} className="text-[#D83B01]" /> },
+  { label: "iCloud Mail", note: "Apple iCloud", icon: <BrandIcon icon={siIcloud} /> },
+  { label: "IMAP mailboxes", note: "Any IMAP provider", icon: <AtSign size={22} className="text-accent" /> },
+  { label: "Exchange / EWS", note: "On-prem / hosted", icon: <Server size={22} className="text-[#0078D4]" /> },
+  { label: "Yahoo via SMTP", note: "SMTP now", icon: <Mail size={22} className="text-[#6001D2]" /> },
+  { label: "Advanced SMTP", note: "Custom SMTP host", icon: <Plug size={22} className="text-accent" /> },
 ];
 
-export default function EmailIntegrationsStrip() {
+interface Props {
+  variant?: "full" | "compact";
+}
+
+export default function EmailIntegrationsStrip({ variant = "full" }: Props) {
+  if (variant === "compact") {
+    return (
+      <section className="py-10 border-y border-border/50 bg-background">
+        <div className="max-w-6xl mx-auto px-4">
+          <p className="text-center text-xs uppercase tracking-widest text-muted-foreground mb-5">
+            Connects with Google, Microsoft, iCloud, IMAP, Exchange and SMTP
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
+            {providers.map((p) => (
+              <div
+                key={p.label}
+                className="flex items-center gap-2 opacity-90 hover:opacity-100 transition"
+                title={p.label}
+              >
+                <div className="flex items-center justify-center h-6 w-6 shrink-0">{p.icon}</div>
+                <span className="text-xs font-medium text-foreground/80">{p.label}</span>
+              </div>
+            ))}
+          </div>
+          <p className="text-[11px] text-muted-foreground mt-4 text-center">
+            Yahoo via SMTP today; native Yahoo connector coming next. Replies return to your connected inbox.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="section-padding bg-background border-b border-border/50">
       <div className="max-w-6xl mx-auto">
@@ -46,7 +86,9 @@ export default function EmailIntegrationsStrip() {
               key={p.label}
               className="flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 shadow-card"
             >
-              <div className="flex items-center justify-center h-8 w-8 shrink-0">{p.icon}</div>
+              <div className="flex items-center justify-center h-9 w-9 shrink-0 rounded-lg bg-muted/40">
+                {p.icon}
+              </div>
               <div className="min-w-0">
                 <p className="text-sm font-medium text-foreground truncate">{p.label}</p>
                 <p className="text-[10px] text-muted-foreground">{p.note}</p>
@@ -57,6 +99,7 @@ export default function EmailIntegrationsStrip() {
 
         <p className="text-xs text-muted-foreground mt-6 max-w-2xl mx-auto text-center">
           Yahoo native connector is coming next; Yahoo can be connected through SMTP/app-password setup today.
+          Logos shown for identification only; each provider is a trademark of its respective owner.
         </p>
       </div>
     </section>
