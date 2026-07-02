@@ -231,6 +231,15 @@ export default function AppActivation() {
           </AlertDescription>
         </Alert>
       )}
+      {sender.connected && !sender.domain_authenticated && (
+        <Alert>
+          <Mail className="h-4 w-4" />
+          <AlertTitle>Sender connected — setup not finished</AlertTitle>
+          <AlertDescription>
+            Your mailbox is connected. Sending is not enabled yet. Complete sender setup on the Email settings page before activation.
+          </AlertDescription>
+        </Alert>
+      )}
       <SendSafetyPanel s={safety} used={usedToday} scheduled={scheduledToday} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
