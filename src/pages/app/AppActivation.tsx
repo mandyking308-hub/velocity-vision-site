@@ -59,6 +59,16 @@ export default function AppActivation() {
 
   useEffect(() => {
     if (!user) return;
+    supabase.from("user_roles").select("role").eq("user_id", user.id).then(({ data }) => {
+      setRoles((data || []).map((r: any) => r.role));
+    });
+  }, [user]);
+
+  const isFounderOrAdmin = roles.some((r) => r === "founder" || r === "admin");
+
+
+  useEffect(() => {
+    if (!user) return;
     (async () => {
       const connQ = supabase.from("email_connections").select("*").eq("user_id", user.id).order("is_default", { ascending: false });
       const sendsQ = supabase.from("email_sends").select("status, sent_at, scheduled_at, created_at");
