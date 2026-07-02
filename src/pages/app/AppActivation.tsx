@@ -83,6 +83,7 @@ export default function AppActivation() {
       setBatchSize(c.valid);
 
       const def = conn.data?.[0];
+      setDefaultConn(def || null);
       if (def) {
         setConnectionId(def.id);
         setFromEmail(def.from_email);
