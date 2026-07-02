@@ -20,6 +20,9 @@ const CRMLayout = () => {
 
   return (
     <div className="flex min-h-screen w-full bg-background">
+      <Helmet>
+        <meta name="robots" content="noindex,nofollow" />
+      </Helmet>
       {/* Desktop sidebar */}
       <div className="hidden lg:block">
         <CRMSidebar />
