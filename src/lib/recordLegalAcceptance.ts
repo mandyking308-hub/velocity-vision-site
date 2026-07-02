@@ -7,6 +7,7 @@ export type LegalAcceptanceSource =
   | "plan_checkout"
   | "topup_checkout"
   | "activation"
+  | "founder_qa_activation"
   | "campaign_send"
   | "human_review_checkout";
 
