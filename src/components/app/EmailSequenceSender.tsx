@@ -248,12 +248,24 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
           campaignId={campaignId}
           workspaceId={workspaceId}
           allowSchedule={!isNylas}
+          onLegalRequired={() => setLegalGateOpen(true)}
           onClose={() => { setOpenIdx(null); load(); }}
         />
       )}
+      <LegalComplianceGate
+        open={legalGateOpen}
+        onOpenChange={setLegalGateOpen}
+        source="campaign_send"
+        workspaceId={currentId}
+        title="Accept current terms before sending"
+        description="Sending on your behalf requires up-to-date acceptance of our platform legal stack."
+        confirmLabel="Accept and continue"
+        onConfirm={async () => { await legal.refresh(); }}
+      />
     </div>
   );
 }
+
 
 function SendStatusBadge({ status }: { status: string }) {
   const map: Record<string, string> = { sent: "bg-green-600", scheduled: "bg-blue-600", sending: "bg-amber-600", failed: "bg-destructive", draft: "bg-muted-foreground", cancelled: "bg-muted-foreground" };
