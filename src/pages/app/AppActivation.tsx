@@ -26,7 +26,7 @@ import JourneyEmptyState from "@/components/app/JourneyEmptyState";
 import LegalComplianceGate from "@/components/LegalComplianceGate";
 import { useLegalStatus } from "@/lib/legalCompliance";
 import { recordLegalAcceptance } from "@/lib/recordLegalAcceptance";
-import { computeReadiness } from "@/lib/senderReadiness";
+import { computeReadiness, warmupCap } from "@/lib/senderReadiness";
 
 interface Counts { valid: number; needs_review: number; risky: number; blocked: number; suppressed: number; }
 
