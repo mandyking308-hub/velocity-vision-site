@@ -269,10 +269,11 @@ Return the JSON object only.`;
       }),
     });
 
-    if (upstream.status === 429) return json({ error: "rate_limited" }, 429);
-    if (upstream.status === 402) return json({ error: "credits_exhausted" }, 402);
+    if (upstream.status === 429) { await refund(); return json({ error: "rate_limited" }, 429); }
+    if (upstream.status === 402) { await refund(); return json({ error: "credits_exhausted" }, 402); }
     if (!upstream.ok) {
       const detail = await upstream.text();
+      await refund();
       return json({ error: "upstream_error", detail: detail.slice(0, 400) }, 502);
     }
     const data = await upstream.json();
@@ -282,11 +283,13 @@ Return the JSON object only.`;
       pack = JSON.parse(raw);
     } catch {
       const m = raw.match(/\{[\s\S]*\}/);
-      if (!m) return json({ error: "invalid_ai_output", detail: raw.slice(0, 400) }, 502);
+      if (!m) { await refund(); return json({ error: "invalid_ai_output", detail: raw.slice(0, 400) }, 502); }
       try { pack = JSON.parse(m[0]); } catch (e) {
+        await refund();
         return json({ error: "invalid_ai_output", detail: String(e).slice(0, 400) }, 502);
       }
     }
+
 
     // Server-side enforcement — strip any unselected channels, split any extras to "optional"
     if (pack && typeof pack === "object") {
