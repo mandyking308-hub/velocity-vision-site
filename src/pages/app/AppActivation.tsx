@@ -181,10 +181,15 @@ export default function AppActivation() {
   const riskyClamped = Math.min(riskyOverride, riskyMax, counts.risky);
   const totalSelected = safeSelected + reviewSelected + riskyClamped;
   const sendNow = Math.min(totalSelected, safety.remainingToday);
-  const blocked = safety.pauseReasons.length > 0 || !legal.isCompliant;
+  // Activation only prepares leads inside the campaign. It never sends.
+  // Send-time gates (sender, warm-up caps, legal at send, etc.) are enforced
+  // separately by the send engine. Blocking activation on those would
+  // contradict the "activation ≠ send" promise.
   const wantsRisky = riskyClamped > 0;
   const targetCampaignId = selectedCampaign || campaignId || null;
-  const canActivate = totalSelected > 0 && !blocked && (!wantsRisky || riskAck) && !!targetCampaignId && !activating;
+  const sendPaused = safety.pauseReasons.length > 0;
+  const activationBlocked = !legal.isCompliant;
+  const canActivate = totalSelected > 0 && !activationBlocked && (!wantsRisky || riskAck) && !!targetCampaignId && !activating;
 
   async function audit(action: string, details: any) {
     try {
@@ -289,15 +294,14 @@ export default function AppActivation() {
 
   const totalContacts = counts.valid + counts.needs_review + counts.risky + counts.blocked + counts.suppressed;
   const noData = totalContacts === 0;
-  const noSender = !sender.connected;
 
   return (
     <div className="max-w-6xl space-y-6">
       <div className="flex items-center justify-between gap-3">
         <div>
           <Button variant="ghost" size="sm" onClick={() => navigate(-1)}><ArrowLeft className="h-4 w-4 mr-1" /> Back</Button>
-          <h1 className="text-3xl font-bold tracking-tight mt-2">Activate: turn safe data into outreach</h1>
-          <p className="text-muted-foreground mt-1">Storage is free. Activation is the governed action that moves contacts into your campaign.</p>
+          <h1 className="text-3xl font-bold tracking-tight mt-2">Activate: prepare safe contacts as campaign leads</h1>
+          <p className="text-muted-foreground mt-1">Activation moves safe contacts into a campaign as leads. It does not send emails. Sending is a separate, governed action inside the campaign.</p>
         </div>
         <Badge className={`border-0 ${SENDER_HEALTH_TONE[safety.health]}`}>
           Sender: {SENDER_HEALTH_LABEL[safety.health]}
@@ -316,27 +320,15 @@ export default function AppActivation() {
             { to: "/app/data-vault", label: "View Data Vault" },
           ]}
         />
-      ) : noSender ? (
-        <JourneyEmptyState
-          icon={Mail}
-          flow={`Step 3 of the journey — you have ${counts.valid} safe contacts ready`}
-          title="Connect a sender to activate"
-          description="Connect a sender before activating campaigns. We'll check that it is safe to send from before anything goes out."
-          steps={[
-            { to: "/app/settings/email", label: "Connect sender", icon: Mail },
-            { to: "/app/data-vault", label: "Review data first" },
-          ]}
-        />
-      ) : counts.valid === 0 ? (
+      ) : counts.valid === 0 && counts.needs_review === 0 && counts.risky === 0 ? (
         <JourneyEmptyState
           icon={ShieldCheck}
-          flow={`Step 2 of the journey — ${totalContacts} contacts uploaded but none are safe yet`}
-          title="No safe contacts in your segment"
-          description="Your uploads have records flagged as needs-review, risky or blocked. Review them in the Data Vault to graduate contacts into the safe pool."
+          flow={`Step 2 of the journey — ${totalContacts} contacts uploaded but none are eligible`}
+          title="No eligible contacts to activate"
+          description="Every uploaded record is currently blocked or suppressed. Review or import cleaner data to prepare leads."
           steps={[
-            { to: "/app/data-vault?quality=needs_review", label: "Review flagged contacts", icon: ShieldCheck },
+            { to: "/app/data-vault", label: "Open Data Vault", icon: ShieldCheck },
             { to: "/app/data-vault/upload", label: "Upload cleaner list", icon: Upload },
-            { to: "/app/campaigns/new", label: "Create assets meanwhile", icon: Wand2, variant: "ghost" },
           ]}
         />
       ) : (
@@ -509,8 +501,8 @@ export default function AppActivation() {
                   All {totalSelected} contact(s) will be prepared as leads. Only {sendNow} can go out today under your current safe cap — the rest wait in the campaign until you send them.
                 </div>
               )}
-              {blocked && (
-                <div className="text-xs text-rose-600 flex items-center gap-1"><Pause className="h-3.5 w-3.5" /> Sending is paused — resolve the reasons in the panel above. You can still prepare leads.</div>
+              {sendPaused && (
+                <div className="text-xs text-amber-700 dark:text-amber-400 flex items-start gap-1"><Pause className="h-3.5 w-3.5 mt-0.5 shrink-0" /> Sending is paused (see reasons above). You can still activate — leads are prepared inside the campaign and wait until sending is resumed.</div>
               )}
               <Button className="w-full mt-1" size="lg" disabled={!canActivate} onClick={handleActivate}>
                 <Send className="h-4 w-4 mr-2" /> {activating ? "Activating…" : "Confirm safe activation"}
