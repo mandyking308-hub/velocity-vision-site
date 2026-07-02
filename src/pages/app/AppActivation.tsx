@@ -110,16 +110,22 @@ export default function AppActivation() {
         const newly = def.last_verified_at ? (Date.now() - new Date(def.last_verified_at).getTime()) < 7 * 86400000 : true;
         const totalSends = (sends.data || []).length || 1;
         const bounces = (sends.data || []).filter((x: any) => x.status === "bounced" || x.status === "failed").length;
-        // Truthful: only mark authenticated when the DB says sending_enabled AND verified.
-        const verified = def.verification_status === "verified" && def.sending_enabled === true;
+        // Provider-agnostic readiness: Nylas warm-up-eligible senders are
+        // treated as domain_authenticated so activation is not hard-blocked
+        // on DNS. SMTP still gates on real verification.
+        const r = computeReadiness(def);
+        const dnsVerified = def.verification_status === "verified" && def.sending_enabled === true;
+        const readyWarmup = r.canSendWarmup;
+        const wCap = readyWarmup && !dnsVerified ? warmupCap((planConfig.id as PlanId) || "starter") : null;
         setSender({
           connected: def.status === "connected",
-          domain_authenticated: verified,
+          domain_authenticated: dnsVerified || readyWarmup,
           reconnect_required: def.status === "reconnect_required" || def.verification_status === "reconnect_required",
           newly_connected: newly,
           last_send_at: last,
           bounce_rate: bounces / totalSends,
           unsubscribe_rate: 0,
+          warmup_daily_cap: wCap,
         });
       } else {
         setSenderDetail(null);
