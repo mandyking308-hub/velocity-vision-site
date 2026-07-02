@@ -1,5 +1,5 @@
-import { siLinkedin, siX, siFacebook, siInstagram, siGoogleads, siMeta } from "simple-icons";
-import { Mail, Newspaper, LayoutTemplate, Repeat2 } from "lucide-react";
+import { siX, siFacebook, siInstagram, siGoogleads, siMeta } from "simple-icons";
+import { Mail, Newspaper, LayoutTemplate, Repeat2, Linkedin } from "lucide-react";
 
 type BrandProps = { icon: { path: string; hex: string; title: string }; size?: number };
 const BrandIcon = ({ icon, size = 22 }: BrandProps) => (
@@ -23,7 +23,7 @@ interface Channel {
 
 const channels: Channel[] = [
   { label: "Email campaigns", note: "Sequences & one-offs", icon: <Mail size={22} className="text-accent" /> },
-  { label: "LinkedIn posts", note: "Company & personal", icon: <BrandIcon icon={siLinkedin} /> },
+  { label: "LinkedIn posts", note: "Company & personal", icon: <Linkedin size={22} className="text-[#0A66C2]" /> },
   { label: "X / Twitter posts", note: "Short-form", icon: <BrandIcon icon={siX} /> },
   { label: "Facebook posts", note: "Page updates", icon: <BrandIcon icon={siFacebook} /> },
   { label: "Instagram captions", note: "Feed & reels copy", icon: <BrandIcon icon={siInstagram} /> },
