@@ -1,7 +1,11 @@
 User-agent: *
 Allow: /
+Disallow: /app
+Disallow: /app/
 Disallow: /crm
+Disallow: /crm/
 Disallow: /portal
+Disallow: /portal/
 Disallow: /auth
 Disallow: /demo
 
