@@ -83,11 +83,11 @@ const plans: PlanDef[] = [
 
 
 const faqs = [
-  { q: "What am I actually paying for?", a: "An AI-powered commercial operating workspace: Data Vault, AI quality review, sender verification, governed activation, AI-assisted outreach asset generation, cadence, replies, follow-up and pipeline. Storage is generous on every plan. Credits cover heavy-value AI generations." },
-  { q: "What are Campaign Credits?", a: "Campaign Credits power AI-heavy actions such as outreach packs, social posts, press releases, video scripts, follow-up assets and multilingual variants. Uploading, reviewing, sending, replying, moving pipeline and exporting are always free." },
+  { q: "What am I actually paying for?", a: "An AI-powered commercial operating workspace: Data Vault, AI quality review, sender verification, governed activation, AI-assisted outreach asset generation, cadence, follow-up and pipeline. Storage is generous on every plan. Credits cover heavy-value AI generations." },
+  { q: "What are Campaign Credits?", a: "Campaign Credits power AI-heavy actions such as outreach packs, social posts, press releases, video scripts, follow-up assets and multilingual variants. Uploading, reviewing, sending, following up, moving pipeline and exporting are always free." },
   { q: "Is storing data the same as activating it?", a: "No. You can upload and review unlimited data within plan limits. Activation is the governed step where you verify your sender, pick a safe segment and start sending — with daily caps and risky-record limits enforced. AI drafts assets; you approve activation." },
   { q: "What sending limits apply?", a: "Tiered daily caps protect deliverability. Starter and Growth have per-workspace limits; Agency has pooled sending governance across client workspaces. Risky records are limited within each batch." },
-  { q: "What happens if I run out of credits?", a: "The workspace stays fully usable — data, replies, pipeline and reports remain live. Only new AI generations pause. Top up in seconds or upgrade your plan." },
+  { q: "What happens if I run out of credits?", a: "The workspace stays fully usable — data, follow-up, pipeline and reports remain live. Only new AI generations pause. Top up in seconds or upgrade your plan." },
   { q: "Are outputs AI-generated?", a: "Yes. Velocity Vision uses AI to help draft and structure outreach assets, run quality checks and suggest follow-ups. Every output is a draft — you review, edit and control what is activated or sent. We don't guarantee replies, sales, deliverability or legal compliance." },
   { q: "Can agencies share credits across clients?", a: "Yes — Agency Workspace pools monthly credits and sending governance across every client workspace in the account." },
 ];
