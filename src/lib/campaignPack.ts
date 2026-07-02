@@ -78,7 +78,7 @@ export function filterSupportedChannels(channels: string[] | null | undefined): 
 }
 
 export function getCampaignChannelConfig(brief: Pick<CampaignBrief, "channels" | "outputs"> | null | undefined) {
-  const channels = (brief?.channels || []).map(normaliseCampaignChannel);
+  const channels = filterSupportedChannels(brief?.channels);
   const outputs = (brief?.outputs || []).map((o) => (o || "").toLowerCase().trim());
   const hasSelection = channels.length > 0;
   const selectedSocial = PLATFORMS.filter((p) => channels.includes(p));
