@@ -8,15 +8,16 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Mail, Plug, AlertCircle, CheckCircle2, ArrowLeft, Trash2, Star, ChevronDown } from "lucide-react";
+import { Mail, Plug, AlertCircle, CheckCircle2, ArrowLeft, Trash2, Star, ChevronDown, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
+import { computeReadiness, READINESS_BADGE, type ConnectionShape } from "@/lib/senderReadiness";
 
 interface Connection {
   id: string;
-  provider: "gmail" | "outlook" | "smtp";
+  provider: "gmail" | "outlook" | "icloud" | "imap" | "ews" | "smtp";
   display_name: string | null;
   from_email: string;
   from_name: string | null;
@@ -42,6 +43,34 @@ interface Connection {
   nylas_provider: string | null;
   token_status: string | null;
 }
+
+// Native Nylas connection options exposed on the Choose your mailbox card.
+// Order and copy are customer-facing.
+type NylasProviderKey = "google" | "microsoft" | "icloud" | "imap" | "ews";
+interface ProviderCard {
+  key: NylasProviderKey | "yahoo" | "smtp";
+  title: string;
+  note: string;
+  badge: string;
+  badgeTone: string;
+  action: "oauth" | "smtp" | "yahoo";
+}
+const PROVIDER_CARDS: ProviderCard[] = [
+  { key: "google",    title: "Gmail / Google Workspace", note: "Personal Gmail or Google Workspace",           badge: "OAuth · Enabled",    badgeTone: "bg-emerald-100 text-emerald-700", action: "oauth" },
+  { key: "microsoft", title: "Outlook / Microsoft 365",  note: "Outlook, Hotmail, Live, or Microsoft 365",     badge: "OAuth · Enabled",    badgeTone: "bg-emerald-100 text-emerald-700", action: "oauth" },
+  { key: "icloud",    title: "iCloud Mail",              note: "Use your Apple/iCloud mail account",           badge: "Nylas · Enabled",    badgeTone: "bg-emerald-100 text-emerald-700", action: "oauth" },
+  { key: "imap",      title: "IMAP mailbox",             note: "For providers supported through IMAP",         badge: "Nylas · Enabled",    badgeTone: "bg-emerald-100 text-emerald-700", action: "oauth" },
+  { key: "ews",       title: "Exchange / EWS",           note: "For on-prem Exchange / EWS accounts",          badge: "Advanced · Enabled", badgeTone: "bg-emerald-100 text-emerald-700", action: "oauth" },
+  { key: "yahoo",     title: "Yahoo Mail",               note: "Yahoo connector is not enabled yet in Nylas. Use SMTP for now.", badge: "Coming next", badgeTone: "bg-amber-100 text-amber-800", action: "yahoo" },
+  { key: "smtp",      title: "Advanced SMTP",            note: "For any provider that supports SMTP with an app password (Fastmail, Zoho, your own server, or Yahoo for now).", badge: "Fallback", badgeTone: "bg-muted text-muted-foreground", action: "smtp" },
+];
+const OAUTH_BUTTON_LABEL: Record<NylasProviderKey, string> = {
+  google: "Connect with Google",
+  microsoft: "Connect with Microsoft",
+  icloud: "Connect with iCloud",
+  imap: "Connect IMAP mailbox",
+  ews: "Connect Exchange",
+};
 
 // Providers we consider "known" for DKIM selectors on the client. Kept in sync
 // with the edge function so the UI only prompts for a selector when we truly
@@ -77,7 +106,7 @@ export default function AppEmailConnections() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Connection | null>(null);
   const [loading, setLoading] = useState(true);
-  const [oauthLoading, setOauthLoading] = useState<null | "google" | "microsoft">(null);
+  const [oauthLoading, setOauthLoading] = useState<NylasProviderKey | null>(null);
   const [showSmtp, setShowSmtp] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
