@@ -29,9 +29,9 @@ Deno.serve(async (req) => {
 
   const token = Deno.env.get("LIFTOR_BRIDGE_TOKEN");
   if (!token) return unauthorized();
-  const provided =
-    (req.headers.get("authorization") || "").replace(/^Bearer\s+/i, "") ||
-    new URL(req.url).searchParams.get("token") || "";
+  // Authorization: Bearer <token> only. Query-string tokens removed so secrets
+  // do not appear in access logs, browser history, or referrer headers.
+  const provided = (req.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
   if (!provided || !safeEqual(provided, token)) return unauthorized();
 
   const sb = createClient(
