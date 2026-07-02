@@ -226,9 +226,10 @@ Deno.serve(async (req) => {
   const includeEmail = normalisedChannels.includes("Email");
   const includePress = normalisedChannels.includes("PR");
   const includeVideo = normalisedChannels.includes("Video") || (brief.outputs || []).includes("video");
+  const includePaidAds = normalisedChannels.includes("Paid ads") || (brief.outputs || []).includes("ads");
 
   const language = brief.language || "en";
-  const SYSTEM = buildSystemPrompt(selectedSocial, includeEmail, includePress, includeVideo);
+  const SYSTEM = buildSystemPrompt(selectedSocial, includeEmail, includePress, includeVideo, includePaidAds);
 
 
   const userMsg = `Generate the campaign pack.
