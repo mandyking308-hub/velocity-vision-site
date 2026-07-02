@@ -39,6 +39,10 @@ Deno.serve(async (req) => {
     await logError("support-notify: missing config");
     return json({ ok: true, notified: false, reason: "missing_config" });
   }
+  if (!EMAIL_FROM) {
+    await logError("support-notify: missing_email_from");
+    return json({ ok: true, notified: false, reason: "missing_email_from" });
+  }
 
   const severity = String(ticket.severity ?? "normal");
   const urgencyTag = (ticket.diagnostics as any)?.urgency === "urgent" ? "URGENT" : severity.toUpperCase();
