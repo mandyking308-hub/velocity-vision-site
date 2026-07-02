@@ -496,13 +496,22 @@ export default function AppCampaignNew() {
         {step < totalSteps ? (
           <Button
             data-testid="campaign-next-button"
-            onClick={next}
-            disabled={step === 2 && (!brief.name || !brief.offer || !brief.audience)}
+            onClick={() => {
+              if (step === 5 && schedulePastError) {
+                toast.error("Choose a future campaign date and time.");
+                return;
+              }
+              next();
+            }}
+            disabled={
+              (step === 2 && (!brief.name || !brief.offer || !brief.audience)) ||
+              (step === 5 && schedulePastError)
+            }
           >
             Continue <ChevronRight className="h-4 w-4 ml-1" />
           </Button>
         ) : (
-          <Button data-testid="campaign-create-button" onClick={generate} disabled={saving || blocked}>
+          <Button data-testid="campaign-create-button" onClick={generate} disabled={saving || blocked || schedulePastError}>
             <Sparkles className="h-4 w-4 mr-2" /> {saving ? "Generating…" : "Generate campaign pack"}
           </Button>
         )}
