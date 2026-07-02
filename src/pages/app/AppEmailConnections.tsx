@@ -314,7 +314,7 @@ function ConnectionRow({
   );
 }
 
-function ConnectionDialog({ editing, onDone }: { editing: Connection | null; onDone: () => void }) {
+function ConnectionDialog({ editing, workspaceId, onDone }: { editing: Connection | null; workspaceId: string | null; onDone: () => void }) {
   const { t } = useTranslation("app");
   const tc = useTranslation("common").t;
   const [provider, setProvider] = useState<"gmail" | "outlook" | "smtp">(editing?.provider || "gmail");
