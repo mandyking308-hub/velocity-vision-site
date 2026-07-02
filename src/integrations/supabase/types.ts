@@ -2337,6 +2337,10 @@ export type Database = {
     }
     Functions: {
       agency_pooled_sends_today: { Args: never; Returns: number }
+      finalise_campaign_credits: {
+        Args: { _label: string; _ledger_id: string; _ref_id: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -2394,6 +2398,14 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      refund_campaign_credits: {
+        Args: { _ledger_id: string }
+        Returns: boolean
+      }
+      reserve_campaign_credits: {
+        Args: { _action: string; _cost: number }
+        Returns: string
       }
       reset_qa_workspace: { Args: never; Returns: boolean }
     }
