@@ -75,6 +75,17 @@ export default function AppEmailConnections() {
 
   const load = async () => {
     setLoading(true);
+    if (currentId) {
+      // Backfill legacy rows that were saved before workspace scoping existed.
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase
+          .from("email_connections")
+          .update({ workspace_id: currentId })
+          .eq("user_id", user.id)
+          .is("workspace_id", null);
+      }
+    }
     const q = supabase.from("email_connections").select("*").order("created_at", { ascending: false });
     const { data } = await (currentId ? q.eq("workspace_id", currentId) : q);
     setConnections((data || []) as Connection[]);
