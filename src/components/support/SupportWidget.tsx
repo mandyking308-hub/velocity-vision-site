@@ -564,9 +564,15 @@ export default function SupportWidget() {
                   Your ticket reference is: <span className="font-mono font-medium">{ticketRef.slice(0, 8)}</span>
                 </div>
               )}
-              <p className="text-xs text-muted-foreground">
-                We've notified the team. If you provided contact details, we'll use them to follow up. Platform gates (legal, sender, activation, billing) remain in place — nothing is bypassed.
-              </p>
+              {notifyResult === "sent" ? (
+                <p className="text-xs text-muted-foreground">
+                  Ticket received — we've emailed the support team and they'll reply to <span className="font-medium">{email}</span>.
+                </p>
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  Ticket received, but the email notification did not send. Your ticket is saved and the team can still see it in the support queue — we'll follow up at <span className="font-medium">{email}</span>.
+                </p>
+              )}
               <Button size="sm" variant="outline" onClick={resetChat}>Back to chat</Button>
             </div>
           )}
