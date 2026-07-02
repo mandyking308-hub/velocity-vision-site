@@ -196,7 +196,7 @@ Deno.serve(async (req) => {
         message: writeRes.error.message,
         mode: existing?.id ? "update" : "insert",
       });
-      return redirectBack({ nylas: "error", reason: "db_write_failed" });
+      return redirectBack({ nylas: "error", reason: "connection_save_failed" });
     }
 
     await admin
