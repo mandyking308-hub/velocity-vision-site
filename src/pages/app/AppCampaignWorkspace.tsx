@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import i18n from "@/i18n";
 import { useTranslation } from "react-i18next";
 import { useCredits } from "@/contexts/CreditsContext";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { CREDIT_COSTS } from "@/lib/credits";
 
 import EmailSequenceSender from "@/components/app/EmailSequenceSender";
