@@ -354,8 +354,9 @@ Return the JSON object only.`;
       }
     }
 
-    return json({ pack, language, generatedAs: language, selectedChannels: normalisedChannels });
+    return json({ pack, language, generatedAs: language, selectedChannels: normalisedChannels, ledgerId });
   } catch (e) {
+    await refund();
     return json({ error: "exception", detail: String(e).slice(0, 400) }, 500);
   }
 });
