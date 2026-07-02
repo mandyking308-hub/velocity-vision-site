@@ -1,11 +1,18 @@
 // AI-powered campaign pack generator.
 // Uses Lovable AI Gateway (google/gemini-3-flash-preview).
-// Returns a structured JSON CampaignPack. The caller runs a quality guard
-// and only saves/deducts credits when the guard passes.
+// SECURITY: server-side credit reservation is performed BEFORE the AI call
+// so the paid AI Gateway request cannot be triggered without deducting
+// credits. If AI generation fails, the reservation is refunded.
 
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
+
+const CAMPAIGN_PACK_COST = 10;
+const CAMPAIGN_PACK_ACTION = "full_campaign_pack";
 
 interface Brief {
   name: string;
