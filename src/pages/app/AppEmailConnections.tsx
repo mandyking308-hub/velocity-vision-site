@@ -210,6 +210,11 @@ export default function AppEmailConnections() {
             </Button>
           </div>
 
+          <div className="rounded-md border border-dashed p-3 text-xs text-muted-foreground">
+            <p className="font-medium text-foreground mb-1">Other mailboxes (Yahoo, iCloud, IMAP and more)</p>
+            <p>Native one-click connect for other providers is coming next. In the meantime, connect them via <b>Advanced SMTP setup</b> below using an app password from your provider.</p>
+          </div>
+
           <Collapsible open={showSmtp} onOpenChange={setShowSmtp}>
             <CollapsibleTrigger asChild>
               <Button variant="ghost" size="sm" className="text-muted-foreground">
@@ -220,7 +225,7 @@ export default function AppEmailConnections() {
             <CollapsibleContent className="pt-3">
               <div className="rounded-md border p-3 text-sm space-y-2">
                 <p className="text-muted-foreground">
-                  Only needed for custom SMTP providers (Fastmail, Zoho, your own server) or if you can't use OAuth. Requires an app password.
+                  For any provider that supports SMTP with an app password (Yahoo, iCloud, Fastmail, Zoho, IMAP hosts, or your own server).
                 </p>
                 <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setEditing(null); }}>
                   <DialogTrigger asChild>
