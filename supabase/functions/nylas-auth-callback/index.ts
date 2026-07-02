@@ -4,12 +4,52 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 function nylasConfig(region: string) {
   const r = (region || "eu").toLowerCase() === "us" ? "US" : "EU";
   const defaultUri = r === "US" ? "https://api.us.nylas.com" : "https://api.eu.nylas.com";
+  const apiKey = Deno.env.get(`NYLAS_${r}_API_KEY`) ?? Deno.env.get("NYLAS_API_KEY");
+  const clientId = Deno.env.get(`NYLAS_${r}_CLIENT_ID`) ?? Deno.env.get("NYLAS_CLIENT_ID");
+  const apiUri = (Deno.env.get(`NYLAS_${r}_API_URI`) ?? defaultUri).replace(/\/$/, "");
+  const callback = Deno.env.get("NYLAS_CALLBACK_URI");
   return {
     region: r.toLowerCase(),
-    apiKey: Deno.env.get(`NYLAS_${r}_API_KEY`) ?? Deno.env.get("NYLAS_API_KEY"),
-    clientId: Deno.env.get(`NYLAS_${r}_CLIENT_ID`) ?? Deno.env.get("NYLAS_CLIENT_ID"),
-    apiUri: (Deno.env.get(`NYLAS_${r}_API_URI`) ?? defaultUri).replace(/\/$/, ""),
-    callback: Deno.env.get("NYLAS_CALLBACK_URI"),
+    envNames: {
+      apiKey: `NYLAS_${r}_API_KEY`,
+      fallbackApiKey: "NYLAS_API_KEY",
+      clientId: `NYLAS_${r}_CLIENT_ID`,
+      fallbackClientId: "NYLAS_CLIENT_ID",
+      apiUri: `NYLAS_${r}_API_URI`,
+      callback: "NYLAS_CALLBACK_URI",
+    },
+    exists: {
+      apiKey: Boolean(apiKey),
+      clientId: Boolean(clientId),
+      apiUri: Boolean(Deno.env.get(`NYLAS_${r}_API_URI`)),
+      callback: Boolean(callback),
+      fallbackApiKey: Boolean(Deno.env.get("NYLAS_API_KEY")),
+      fallbackClientId: Boolean(Deno.env.get("NYLAS_CLIENT_ID")),
+    },
+    apiKey,
+    clientId,
+    apiUri,
+    callback,
+  };
+}
+
+function edgeRequestId(req: Request) {
+  return req.headers.get("sb-request-id")
+    ?? req.headers.get("x-sb-request-id")
+    ?? req.headers.get("x-request-id")
+    ?? "unavailable";
+}
+
+function nylasErrorDetails(payload: unknown) {
+  const data = payload as Record<string, unknown> | null;
+  const error = data?.error as Record<string, unknown> | string | undefined;
+  if (typeof error === "string") {
+    return { type: null, code: error, message: data?.message ?? error };
+  }
+  return {
+    type: error?.type ?? data?.type ?? null,
+    code: error?.code ?? data?.code ?? null,
+    message: error?.message ?? data?.message ?? null,
   };
 }
 
@@ -54,6 +94,16 @@ Deno.serve(async (req) => {
 
     const cfg = nylasConfig(stateRow.region || "eu");
     const { apiKey, clientId, apiUri, callback } = cfg;
+    console.info("nylas-auth-callback diagnostics", {
+      request_id: edgeRequestId(req),
+      selected_region: cfg.region,
+      env_var_names_read: cfg.envNames,
+      env_exists: cfg.exists,
+      client_id: clientId || null,
+      api_uri: apiUri,
+      callback_uri: callback || null,
+      provider_requested: stateRow.provider || null,
+    });
     if (!apiKey || !clientId || !callback) {
       return redirectBack({ nylas: "error", reason: "nylas_not_configured" });
     }
@@ -72,7 +122,11 @@ Deno.serve(async (req) => {
     });
     const tokenJson = await tokenRes.json().catch(() => ({}));
     if (!tokenRes.ok || !tokenJson?.grant_id) {
-      console.error("nylas token exchange failed", tokenRes.status, tokenJson);
+      console.error("nylas token exchange failed", {
+        request_id: edgeRequestId(req),
+        status: tokenRes.status,
+        nylas_error: nylasErrorDetails(tokenJson),
+      });
       return redirectBack({ nylas: "error", reason: "token_exchange_failed" });
     }
 
@@ -87,6 +141,13 @@ Deno.serve(async (req) => {
         headers: { Authorization: `Bearer ${apiKey}` },
       });
       const grantJson = await grantRes.json().catch(() => ({}));
+      if (!grantRes.ok) {
+        console.error("nylas grant lookup failed", {
+          request_id: edgeRequestId(req),
+          status: grantRes.status,
+          nylas_error: nylasErrorDetails(grantJson),
+        });
+      }
       fromEmail = grantJson?.data?.email;
     }
     if (!fromEmail) return redirectBack({ nylas: "error", reason: "no_email_from_grant" });
