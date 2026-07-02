@@ -158,8 +158,9 @@ export function computeSafety(input: SafetyInput): SafetyResult {
     pause.push("Sender requires reconnection.");
     factor = 0;
   }
-  if (!input.sender.domain_authenticated && input.sender.connected) {
-    // Founder decision: sender verification is a hard block on Activate.
+  if (!input.sender.domain_authenticated && input.sender.connected && !input.sender.warmup_daily_cap) {
+    // SMTP / custom domain that has not been DNS-verified and is not eligible
+    // for provider-managed warm-up. Hard block until verified.
     pause.push("Sender domain is not verified (SPF / DKIM missing). Verify your domain to activate.");
     factor = 0;
   }
