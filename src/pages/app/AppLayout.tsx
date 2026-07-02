@@ -87,6 +87,9 @@ function Shell() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   return (
     <div className="min-h-screen flex w-full bg-background">
+      <Helmet>
+        <meta name="robots" content="noindex,nofollow" />
+      </Helmet>
       {/* Desktop sidebar */}
       <aside className="hidden lg:flex w-60 border-r border-border bg-card flex-col">
         <NavList t={t} signOut={signOut} navigate={navigate} />
