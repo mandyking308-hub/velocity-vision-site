@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import HeroSection from "@/components/HeroSection";
 import EmailIntegrationsStrip from "@/components/EmailIntegrationsStrip";
+import CampaignChannelsStrip from "@/components/CampaignChannelsStrip";
 import ProblemProof from "@/components/ProblemProof";
 import CampaignCapabilities from "@/components/CampaignCapabilities";
 import HowItWorksPreview from "@/components/HowItWorksPreview";
@@ -47,6 +48,7 @@ const Index = () => (
       <HeroSection />
       <EmailIntegrationsStrip />
       <ProblemProof />
+      <CampaignChannelsStrip />
       <CampaignCapabilities />
       <SecurityTrust />
       <GlobalStrip />
