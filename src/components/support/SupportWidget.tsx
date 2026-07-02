@@ -237,9 +237,11 @@ export default function SupportWidget() {
 
   const submitTicket = async () => {
     if (!ticketMessage.trim()) { toast.error("Please describe the issue"); return; }
-    if (!user) {
-      if (!contactName.trim()) { toast.error("Please add your name so we can reply"); return; }
-      if (!email.trim()) { toast.error("Please add your email so we can reply"); return; }
+    if (!user && !contactName.trim()) { toast.error("Please add your name so we can reply"); return; }
+    const replyEmail = email.trim();
+    if (!replyEmail || !isValidEmail(replyEmail)) {
+      toast.error("Please add a valid reply email so we can respond");
+      return;
     }
     setSubmitting(true);
     try {
@@ -266,7 +268,7 @@ export default function SupportWidget() {
       const derivedSeverity = isUrgent || problem === "broken" || problem === "billing" ? "high" : "normal";
       const payload = {
         user_id: user?.id ?? null,
-        email: user?.email ?? (email.trim() || null),
+        email: replyEmail,
         workspace_id: wsId,
         route: location.pathname,
         category: cat?.category ?? "other",
@@ -286,16 +288,22 @@ export default function SupportWidget() {
       if (error) throw error;
       setTicketRef(data.id);
 
+      let notified: "sent" | "not_sent" = "not_sent";
       try {
         const { data: notifyRes, error: notifyErr } = await supabase.functions.invoke("support-notify", {
           body: { ticket_id: data.id },
         });
-        if (notifyErr || (notifyRes && (notifyRes as any).notified === false)) {
-          console.warn("support-notify not delivered", notifyErr ?? notifyRes);
+        if (notifyErr) {
+          console.warn("support-notify invocation error", notifyErr);
+        } else if (notifyRes && (notifyRes as any).notified === true) {
+          notified = "sent";
+        } else {
+          console.warn("support-notify did not send", notifyRes);
         }
       } catch (notifyEx) {
-        console.warn("support-notify failed", notifyEx);
+        console.warn("support-notify threw", notifyEx);
       }
+      setNotifyResult(notified);
 
       setMode("success");
     } catch (e: any) {
