@@ -41,8 +41,8 @@ const loopCards = [
   },
   {
     icon: GitBranch,
-    title: "Replies into pipeline",
-    desc: "Follow-up, reply handling and pipeline movement keep commercial activity connected after the first send.",
+    title: "Follow-up into pipeline",
+    desc: "Follow-up handling and pipeline movement keep commercial activity connected after the first send.",
   },
 ];
 
@@ -94,7 +94,7 @@ const About = () => (
               Built for global teams turning data into governed growth.
             </h1>
             <p className="text-primary-foreground/80 text-lg leading-relaxed">
-              Velocity Vision is an international-first AI commercial workspace for founders, lean teams and agencies. It brings Data Vault, quality review, outreach assets, governed activation, replies, follow-up and pipeline into one self-serve platform — built for customers working across markets, languages and currencies.
+              Velocity Vision is an international-first AI commercial workspace for founders, lean teams and agencies. It brings Data Vault, quality review, outreach assets, governed activation, follow-up and pipeline into one self-serve platform — built for customers working across markets, languages and currencies.
             </p>
             <div className="mt-8 flex flex-wrap gap-2">
               {heroBadges.map((b) => (
@@ -225,7 +225,7 @@ const About = () => (
         <div className="max-w-2xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground mb-4">Build your commercial workspace.</h2>
           <p className="text-primary-foreground/75 mb-8 leading-relaxed">
-            Start with your data, review what is usable, create the assets, activate safely and move replies into pipeline.
+            Start with your data, review what is usable, create the assets, activate safely and move warm contacts into pipeline.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button variant="hero" size="lg" asChild>

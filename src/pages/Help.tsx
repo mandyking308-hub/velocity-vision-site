@@ -85,11 +85,11 @@ const sections = [
     items: [
       {
         q: "Where do replies go?",
-        a: "Replies from connected sending accounts are organised into the follow-up workspace. From there you can reply, snooze, mark done, assign a next action or move a warm contact into pipeline.",
+        a: "Replies return to your connected inbox. You can then log follow-up actions, snooze, mark done, assign a next action or move a warm contact into pipeline in the follow-up workspace.",
       },
       {
         q: "How do follow-up states work?",
-        a: "Follow-up states help you separate new replies, warm conversations, snoozed items, dormant contacts and stuck opportunities. The aim is to stop useful replies disappearing into a normal inbox.",
+        a: "Follow-up states help you separate new replies, warm conversations, snoozed items, dormant contacts and stuck opportunities. The aim is to stop useful follow-up actions disappearing into a normal inbox.",
       },
       {
         q: "When should I move someone into pipeline?",
@@ -119,7 +119,7 @@ const sections = [
     items: [
       {
         q: "How are clients kept separate?",
-        a: "Each client runs in its own workspace with isolated data, templates, activation, replies and pipeline. Agency users can switch between client workspaces without mixing lists, senders or opportunities.",
+        a: "Each client runs in its own workspace with isolated data, templates, activation, follow-up and pipeline. Agency users can switch between client workspaces without mixing lists, senders or opportunities.",
       },
       {
         q: "Can I reuse templates across clients?",
@@ -193,7 +193,7 @@ const Help = () => (
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground mb-4">Ready to put your workspace to work?</h2>
           <p className="text-primary-foreground/75 text-lg mb-8 max-w-2xl mx-auto">
-            Open your workspace and start moving data into safe outreach, replies, follow-up and pipeline.
+            Open your workspace and start moving data into safe outreach, follow-up and pipeline.
           </p>
           <Button variant="hero" size="lg" asChild>
             <Link to="/auth">Open your workspace <ArrowRight size={18} /></Link>

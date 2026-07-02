@@ -15,8 +15,8 @@ const steps = [
   { n: "05", title: "Generate AI-assisted outreach assets", desc: "Email sequence, social pack, press release and video pack drafted by AI from your brief. Every output is editable before it goes anywhere." },
   { n: "06", title: "Set timing & cadence", desc: "One-off or recurring (weekly/monthly). Decide how assets refresh between runs." },
   { n: "07", title: "Activate safely (governed AI)", desc: "Tiered daily caps, risky-record limits and pooled governance for agencies — enforced automatically. You approve activation." },
-  { n: "08", title: "Work replies with AI follow-up support", desc: "Action queue for inbound with AI-supported follow-up suggestions. Snooze, mark stuck, follow up — you send." },
-  { n: "09", title: "Move warm contacts into pipeline", desc: "Promote replies into opportunities. Track value, stage and progress in the same workspace." },
+  { n: "08", title: "Work follow-up with AI support", desc: "Action queue for follow-up actions with AI-supported suggestions. Snooze, mark stuck, follow up — you send." },
+  { n: "09", title: "Move warm contacts into pipeline", desc: "Promote warm contacts into opportunities. Track value, stage and progress in the same workspace." },
   { n: "10", title: "Review & repeat what works", desc: "Reply rates, pipeline value and activation health summarised every cycle. Rerun the winners." },
 ];
 
@@ -102,7 +102,7 @@ const HowItWorks = () => (
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">Self-serve, end to end</h2>
           <p className="text-muted-foreground text-lg mb-6">
-            Everything runs from your own workspace — upload, generate, activate, reply and report. No call required to get started.
+            Everything runs from your own workspace — upload, generate, activate, follow up and report. No call required to get started.
           </p>
           <Button variant="cta" asChild>
             <Link to="/auth">Start your workspace <ArrowRight size={16} /></Link>
