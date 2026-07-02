@@ -400,6 +400,9 @@ export default function AppActivation() {
         </Card>
 
         <SenderStatusCard
+          connection={defaultConn}
+          usedToday={usedToday}
+          warmupCap={warmupCap((planConfig.id as PlanId) || "starter")}
           state={sender}
           health={safety.health}
           scheduledToday={scheduledToday}
