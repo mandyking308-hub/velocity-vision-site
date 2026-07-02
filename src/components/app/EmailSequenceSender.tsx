@@ -47,6 +47,9 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
   const [history, setHistory] = useState<any[]>([]);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [testing, setTesting] = useState(false);
+  const legal = useLegalStatus();
+  const [legalGateOpen, setLegalGateOpen] = useState(false);
+  const { currentId } = useWorkspace();
 
   const load = async () => {
     const [{ data: c }, { data: h }, userRes] = await Promise.all([
