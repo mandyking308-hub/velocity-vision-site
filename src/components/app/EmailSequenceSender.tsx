@@ -60,8 +60,11 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
   const defaultConn = connections.find((c) => c.is_default) || connections[0];
   const noConnection = connections.length === 0;
   const connectionIssue = defaultConn && defaultConn.status !== "connected" && defaultConn.status !== "pending";
-  const sendReady = !!defaultConn?.sending_enabled && defaultConn?.status === "connected";
-  const canTestOnly = !!defaultConn && !sendReady && !connectionIssue;
+  const readiness = computeReadiness(defaultConn);
+  const sendReady = readiness.canSendFull || readiness.canSendWarmup;
+  const canTestOnly = !!defaultConn && !sendReady && !connectionIssue && readiness.canTestSend;
+  const isNylas = defaultConn?.auth_type === "nylas";
+  const badge = READINESS_BADGE[readiness.state];
 
   const exportAll = () => {
     const text = emails.map((e, i) => `--- Email ${i + 1} ---\nSubject: ${e.subject}\n\n${e.body}`).join("\n\n");
