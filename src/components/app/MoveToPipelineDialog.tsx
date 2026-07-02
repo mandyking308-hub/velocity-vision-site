@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 
 const STAGES = ["discovery", "demo", "proposal", "negotiation", "won", "lost"] as const;
 
@@ -18,6 +19,8 @@ export interface MoveToPipelineLead {
   company_id?: string | null;
   contact_id?: string | null;
   campaign_id?: string | null;
+  workspace_id?: string | null;
+  opportunity_id?: string | null;
 }
 
 export default function MoveToPipelineDialog({
