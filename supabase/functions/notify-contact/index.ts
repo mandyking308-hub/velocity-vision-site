@@ -3,7 +3,28 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 const CONTACT_NOTIFY_TO = Deno.env.get('CONTACT_NOTIFY_TO');
-const EMAIL_FROM = Deno.env.get('EMAIL_FROM') ?? 'Velocity Vision <notifications@velocity-outreach.com>';
+// Expected production value once Resend domain is verified:
+//   Velocity Vision <support@mail.velocity-outreach.com>
+// No silent fallback: if EMAIL_FROM is not set, notification email is skipped
+// and we log missing_email_from. CRM insert still happens.
+const EMAIL_FROM = Deno.env.get('EMAIL_FROM');
+
+// Strong-enough email format check + disposable/test domain filter.
+const EMAIL_RE = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+const FAKE_DOMAINS = new Set([
+  'example.com', 'example.org', 'example.net',
+  'test.com', 'test.org', 'test.net',
+  'localhost', 'invalid', 'mailinator.com', 'tempmail.com',
+  'yopmail.com', '10minutemail.com', 'guerrillamail.com',
+]);
+function classifyEmail(email: string): { ok: boolean; fake: boolean; reason?: string } {
+  if (!email || email.length > 320) return { ok: false, fake: false, reason: 'invalid_email' };
+  if (!EMAIL_RE.test(email)) return { ok: false, fake: false, reason: 'invalid_email' };
+  const domain = email.split('@')[1]?.toLowerCase() ?? '';
+  if (!domain.includes('.')) return { ok: false, fake: false, reason: 'invalid_email' };
+  if (FAKE_DOMAINS.has(domain)) return { ok: false, fake: true, reason: 'fake_email_domain' };
+  return { ok: true, fake: false };
+}
 
 // Human-readable labels for each supported contact route.
 const ROUTE_LABELS: Record<string, string> = {
