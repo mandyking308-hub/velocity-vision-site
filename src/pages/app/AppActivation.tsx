@@ -53,6 +53,9 @@ export default function AppActivation() {
   const [senderDetail, setSenderDetail] = useState<any>(null);
   const legal = useLegalStatus();
   const [legalGateOpen, setLegalGateOpen] = useState(false);
+  const [roles, setRoles] = useState<string[]>([]);
+  const [founderAccepting, setFounderAccepting] = useState(false);
+  const [defaultConn, setDefaultConn] = useState<any>(null);
 
   useEffect(() => {
     if (!user) return;
