@@ -237,7 +237,13 @@ export default function AppBilling() {
 
 
       <section>
-        <h2 className="text-xl font-semibold mb-3">Billing history</h2>
+        <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+          <h2 className="text-xl font-semibold">Billing history</h2>
+          <Button variant="outline" size="sm" onClick={openBillingPortal} disabled={portalLoading}>
+            <ArrowUpRight className="h-4 w-4 mr-1" />
+            {portalLoading ? "Opening…" : "Manage billing & invoices"}
+          </Button>
+        </div>
         <Card>
           <CardContent className="p-0">
             {payments.length === 0 ? (
