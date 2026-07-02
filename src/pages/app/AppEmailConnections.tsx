@@ -75,6 +75,17 @@ export default function AppEmailConnections() {
 
   const load = async () => {
     setLoading(true);
+    if (currentId) {
+      // Backfill legacy rows that were saved before workspace scoping existed.
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase
+          .from("email_connections")
+          .update({ workspace_id: currentId })
+          .eq("user_id", user.id)
+          .is("workspace_id", null);
+      }
+    }
     const q = supabase.from("email_connections").select("*").order("created_at", { ascending: false });
     const { data } = await (currentId ? q.eq("workspace_id", currentId) : q);
     setConnections((data || []) as Connection[]);
@@ -118,7 +129,7 @@ export default function AppEmailConnections() {
           <DialogTrigger asChild>
             <Button><Plug className="h-4 w-4 mr-2" /> Connect email</Button>
           </DialogTrigger>
-          <ConnectionDialog editing={editing} onDone={() => { setOpen(false); setEditing(null); load(); }} />
+          <ConnectionDialog editing={editing} workspaceId={currentId} onDone={() => { setOpen(false); setEditing(null); load(); }} />
         </Dialog>
       </div>
 
@@ -303,7 +314,7 @@ function ConnectionRow({
   );
 }
 
-function ConnectionDialog({ editing, onDone }: { editing: Connection | null; onDone: () => void }) {
+function ConnectionDialog({ editing, workspaceId, onDone }: { editing: Connection | null; workspaceId: string | null; onDone: () => void }) {
   const { t } = useTranslation("app");
   const tc = useTranslation("common").t;
   const [provider, setProvider] = useState<"gmail" | "outlook" | "smtp">(editing?.provider || "gmail");
@@ -335,6 +346,7 @@ function ConnectionDialog({ editing, onDone }: { editing: Connection | null; onD
         smtp_host: smtpHost || helpConfig.host,
         smtp_port: smtpPort || helpConfig.port,
         is_default: isDefault,
+        workspace_id: workspaceId || undefined,
       },
     });
     setSaving(false);
