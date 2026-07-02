@@ -112,6 +112,7 @@ function collectAllText(pack: CampaignPack, brief?: CampaignBrief): { key: strin
     } : pack.social,
     press: cfg?.includePress === false ? null : pack.press,
     video: cfg?.includeVideo === false ? null : pack.video,
+    paidAds: cfg?.includePaidAds === false ? null : pack.paidAds,
     leadCapture: pack.leadCapture,
   };
   push("pack", visiblePack);
