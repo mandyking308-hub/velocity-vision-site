@@ -1,5 +1,18 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 
+// Region-aware Nylas config resolver — mirrors nylas-auth-start.
+function nylasConfig(region: string) {
+  const r = (region || "eu").toLowerCase() === "us" ? "US" : "EU";
+  const defaultUri = r === "US" ? "https://api.us.nylas.com" : "https://api.eu.nylas.com";
+  return {
+    region: r.toLowerCase(),
+    apiKey: Deno.env.get(`NYLAS_${r}_API_KEY`) ?? Deno.env.get("NYLAS_API_KEY"),
+    clientId: Deno.env.get(`NYLAS_${r}_CLIENT_ID`) ?? Deno.env.get("NYLAS_CLIENT_ID"),
+    apiUri: (Deno.env.get(`NYLAS_${r}_API_URI`) ?? defaultUri).replace(/\/$/, ""),
+    callback: Deno.env.get("NYLAS_CALLBACK_URI"),
+  };
+}
+
 // Public endpoint: Nylas redirects the user's browser here with ?code&state.
 // We exchange the code for a grant, upsert an email_connections row (auth_type = 'nylas'),
 // then redirect the user back into the app.
@@ -39,10 +52,8 @@ Deno.serve(async (req) => {
       return redirectBack({ nylas: "error", reason: "state_expired" });
     }
 
-    const apiKey = Deno.env.get("NYLAS_EU_API_KEY");
-    const clientId = Deno.env.get("NYLAS_EU_CLIENT_ID");
-    const apiUri = (Deno.env.get("NYLAS_EU_API_URI") || "https://api.eu.nylas.com").replace(/\/$/, "");
-    const callback = Deno.env.get("NYLAS_CALLBACK_URI");
+    const cfg = nylasConfig(stateRow.region || "eu");
+    const { apiKey, clientId, apiUri, callback } = cfg;
     if (!apiKey || !clientId || !callback) {
       return redirectBack({ nylas: "error", reason: "nylas_not_configured" });
     }
@@ -99,6 +110,7 @@ Deno.serve(async (req) => {
       auth_type: "nylas",
       nylas_grant_id: grantId,
       nylas_provider: providerFromNylas,
+      nylas_region: cfg.region,
       connected_via: "hosted_oauth",
       nylas_connected_at: new Date().toISOString(),
       nylas_disconnected_at: null,

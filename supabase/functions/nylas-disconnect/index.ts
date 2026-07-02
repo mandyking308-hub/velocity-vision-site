@@ -1,6 +1,16 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
+function nylasConfig(region: string) {
+  const r = (region || "eu").toLowerCase() === "us" ? "US" : "EU";
+  const defaultUri = r === "US" ? "https://api.us.nylas.com" : "https://api.eu.nylas.com";
+  return {
+    apiKey: Deno.env.get(`NYLAS_${r}_API_KEY`) ?? Deno.env.get("NYLAS_API_KEY"),
+    apiUri: (Deno.env.get(`NYLAS_${r}_API_URI`) ?? defaultUri).replace(/\/$/, ""),
+  };
+}
+
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
@@ -24,15 +34,14 @@ Deno.serve(async (req) => {
     const admin = createClient(supabaseUrl, serviceKey);
     const { data: conn, error: fetchErr } = await admin
       .from("email_connections")
-      .select("id, user_id, nylas_grant_id")
+      .select("id, user_id, nylas_grant_id, nylas_region")
       .eq("id", connection_id)
       .maybeSingle();
     if (fetchErr || !conn) return json({ error: "not_found" }, 404);
     if (conn.user_id !== user.id) return json({ error: "forbidden" }, 403);
 
     if (conn.nylas_grant_id) {
-      const apiKey = Deno.env.get("NYLAS_EU_API_KEY");
-      const apiUri = (Deno.env.get("NYLAS_EU_API_URI") || "https://api.eu.nylas.com").replace(/\/$/, "");
+      const { apiKey, apiUri } = nylasConfig(conn.nylas_region || "eu");
       if (apiKey) {
         const res = await fetch(`${apiUri}/v3/grants/${conn.nylas_grant_id}`, {
           method: "DELETE",
