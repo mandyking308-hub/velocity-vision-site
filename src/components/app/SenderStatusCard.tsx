@@ -109,42 +109,69 @@ export default function SenderStatusCard({
         </CardTitle>
       </CardHeader>
       <CardContent className="text-sm space-y-2">
-        <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium ${STATUS_TONE[status] || STATUS_TONE.unknown}`}>
-          {STATUS_LABEL[status] || STATUS_LABEL.unknown}
-        </div>
-        <Row label="Connected mailbox" value={state.connected ? (fromEmail || "Connected") : "Not connected"} tone={state.connected ? "good" : "bad"} />
-        <DnsRow label="MX (mail routing)" value={detail?.mx_status} />
-        <DnsRow label="SPF" value={detail?.spf_status} />
-        <DnsRow label="DKIM" value={detail?.dkim_status} />
-        <DnsRow label="DMARC" value={detail?.dmarc_status} />
-        <Row label="Last checked" value={detail?.dns_checked_at ? new Date(detail.dns_checked_at).toLocaleString() : "Never"} />
-        <Row label="Scheduled today" value={scheduledToday} />
-        <Row
-          label="Sending enabled"
-          value={detail?.sending_enabled ? "Yes" : "No — verification required"}
-          tone={detail?.sending_enabled ? "good" : "bad"}
-        />
-        {state.reconnect_required && (
-          <div className="rounded-md border border-rose-200 bg-rose-50 dark:bg-rose-950/20 dark:border-rose-900 p-2 text-rose-800 dark:text-rose-200 text-xs flex items-center gap-2">
-            <RefreshCw className="h-3.5 w-3.5" /> Reconnect required — sending is paused.
-          </div>
-        )}
-        {status !== "verified" && state.connected && (
-          <div className="rounded-md border border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-900 p-2 text-amber-900 dark:text-amber-200 text-xs space-y-1">
-            <p>Publish MX, SPF, DKIM and DMARC DNS records for <b>{domain || "your domain"}</b>, then run a real DNS check. Until every check passes, sending stays disabled.</p>
-            {detail?.dkim_status === "unknown" && (
-              <p><b>DKIM selector required</b> — enter the selector supplied by your email provider on the Email settings page. Fallback records won't enable sending.</p>
+        {simplified ? (
+          <>
+            <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+              {readiness!.friendlyLine}
+            </div>
+            <Row label="Connected mailbox" value={fromEmail || "Connected"} tone="good" />
+            <Row label="Sending mode" value={readiness!.canSendFull ? "Full" : "Warm-up"} tone="good" />
+            <Row label="Replies" value="Return to this inbox" />
+            {typeof warmupCap === "number" && (
+              <Row label="Today's cap" value={`${usedToday ?? 0} / ${warmupCap}`} />
             )}
-          </div>
+            <Row label="Scheduled today" value={scheduledToday} />
+            {state.reconnect_required && (
+              <div className="rounded-md border border-rose-200 bg-rose-50 dark:bg-rose-950/20 dark:border-rose-900 p-2 text-rose-800 dark:text-rose-200 text-xs flex items-center gap-2">
+                <RefreshCw className="h-3.5 w-3.5" /> Reconnect required — sending is paused.
+              </div>
+            )}
+            <div className="flex gap-2 mt-1">
+              <Button asChild size="sm" variant="ghost" className="flex-1">
+                <Link to="/app/settings/email">Email settings</Link>
+              </Button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium ${STATUS_TONE[status] || STATUS_TONE.unknown}`}>
+              {STATUS_LABEL[status] || STATUS_LABEL.unknown}
+            </div>
+            <Row label="Connected mailbox" value={state.connected ? (fromEmail || "Connected") : "Not connected"} tone={state.connected ? "good" : "bad"} />
+            <DnsRow label="MX (mail routing)" value={detail?.mx_status} />
+            <DnsRow label="SPF" value={detail?.spf_status} />
+            <DnsRow label="DKIM" value={detail?.dkim_status} />
+            <DnsRow label="DMARC" value={detail?.dmarc_status} />
+            <Row label="Last checked" value={detail?.dns_checked_at ? new Date(detail.dns_checked_at).toLocaleString() : "Never"} />
+            <Row label="Scheduled today" value={scheduledToday} />
+            <Row
+              label="Sending enabled"
+              value={detail?.sending_enabled ? "Yes" : "No — verification required"}
+              tone={detail?.sending_enabled ? "good" : "bad"}
+            />
+            {state.reconnect_required && (
+              <div className="rounded-md border border-rose-200 bg-rose-50 dark:bg-rose-950/20 dark:border-rose-900 p-2 text-rose-800 dark:text-rose-200 text-xs flex items-center gap-2">
+                <RefreshCw className="h-3.5 w-3.5" /> Reconnect required — sending is paused.
+              </div>
+            )}
+            {status !== "verified" && state.connected && (
+              <div className="rounded-md border border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-900 p-2 text-amber-900 dark:text-amber-200 text-xs space-y-1">
+                <p>Publish MX, SPF, DKIM and DMARC DNS records for <b>{domain || "your domain"}</b>, then run a real DNS check. Until every check passes, sending stays disabled.</p>
+                {detail?.dkim_status === "unknown" && (
+                  <p><b>DKIM selector required</b> — enter the selector supplied by your email provider on the Email settings page. Fallback records won't enable sending.</p>
+                )}
+              </div>
+            )}
+            <div className="flex gap-2 mt-1">
+              <Button size="sm" variant="outline" className="flex-1" onClick={verifyNow} disabled={verifying || !domain}>
+                {verifying ? <><Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> Checking DNS…</> : <><ShieldCheck className="h-3.5 w-3.5 mr-1" /> Check DNS verification</>}
+              </Button>
+              <Button asChild size="sm" variant="ghost">
+                <Link to="/app/settings/email">Email settings</Link>
+              </Button>
+            </div>
+          </>
         )}
-        <div className="flex gap-2 mt-1">
-          <Button size="sm" variant="outline" className="flex-1" onClick={verifyNow} disabled={verifying || !domain}>
-            {verifying ? <><Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> Checking DNS…</> : <><ShieldCheck className="h-3.5 w-3.5 mr-1" /> Check DNS verification</>}
-          </Button>
-          <Button asChild size="sm" variant="ghost">
-            <Link to="/app/settings/email">Email settings</Link>
-          </Button>
-        </div>
       </CardContent>
     </Card>
   );
