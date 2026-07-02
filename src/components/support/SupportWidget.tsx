@@ -522,6 +522,13 @@ export default function SupportWidget() {
                     >
                       Raise a ticket
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => setMode("feedback")}
+                      className="underline"
+                    >
+                      Give feedback
+                    </button>
                   </div>
                   <span>{inApp ? location.pathname : ""}</span>
                 </div>
