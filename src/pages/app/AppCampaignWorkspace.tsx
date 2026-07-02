@@ -336,6 +336,7 @@ export default function AppCampaignWorkspace() {
             {channelCfg.includeSocial && <TabsTrigger value="social">Social</TabsTrigger>}
             {channelCfg.includePress && pack.press && <TabsTrigger value="press">Press</TabsTrigger>}
             {channelCfg.includeVideo && pack.video && <TabsTrigger value="video">Video</TabsTrigger>}
+            {channelCfg.includePaidAds && pack.paidAds && <TabsTrigger value="paidads">Paid ads</TabsTrigger>}
             <TabsTrigger value="capture">Lead capture</TabsTrigger>
             <TabsTrigger value="pipeline">Pipeline</TabsTrigger>
             <TabsTrigger value="performance">Performance</TabsTrigger>
