@@ -1,10 +1,10 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
-// Region-aware Nylas config resolver. Defaults to EU; US can be added by
-// setting NYLAS_US_API_KEY / NYLAS_US_CLIENT_ID / NYLAS_US_API_URI later.
+// Region-aware Nylas config resolver. Defaults to US (active Nylas app is US
+// Sandbox). EU support is retained for a future switch.
 function nylasConfig(region: string) {
-  const r = (region || "eu").toLowerCase() === "us" ? "US" : "EU";
+  const r = (region || "us").toLowerCase() === "eu" ? "EU" : "US";
   const defaultUri = r === "US" ? "https://api.us.nylas.com" : "https://api.eu.nylas.com";
   const apiKey = Deno.env.get(`NYLAS_${r}_API_KEY`) ?? Deno.env.get("NYLAS_API_KEY");
   const clientId = Deno.env.get(`NYLAS_${r}_CLIENT_ID`) ?? Deno.env.get("NYLAS_CLIENT_ID");
