@@ -222,6 +222,35 @@ export function checkPackQuality(pack: CampaignPack, brief: CampaignBrief): Qual
     });
   }
 
+  // 4c) Paid ads — when selected, require complete, non-blank fields.
+  if (cfg.includePaidAds) {
+    const pa: any = pack.paidAds;
+    if (!pa || typeof pa !== "object") {
+      issues.push({ code: "blank_field", message: "Paid Ads section is missing", where: "paidAds", source: "quality_guard_logic" });
+    } else {
+      const angle = stripInvisible(pa.campaignAngle).trim();
+      if (angle.length < 8) issues.push({ code: "blank_field", message: "Paid Ads campaign angle is blank or too short", where: "paidAds.campaignAngle", source: "quality_guard_logic" });
+      const listChecks: [string, any[]][] = [
+        ["headlines", Array.isArray(pa.headlines) ? pa.headlines : []],
+        ["primaryText", Array.isArray(pa.primaryText) ? pa.primaryText : []],
+        ["descriptions", Array.isArray(pa.descriptions) ? pa.descriptions : []],
+      ];
+      for (const [name, arr] of listChecks) {
+        const valid = arr.map((v) => stripInvisible(v).trim()).filter((s) => s.length >= 4);
+        if (valid.length < 3) {
+          issues.push({
+            code: "blank_field",
+            message: `Paid Ads ${name} must have at least 3 non-empty entries (found ${valid.length})`,
+            where: `paidAds.${name}[0]`,
+            source: "quality_guard_logic",
+          });
+        }
+      }
+      const comp = stripInvisible(pa.complianceNote).trim();
+      if (comp.length < 8) issues.push({ code: "blank_field", message: "Paid Ads compliance note is blank", where: "paidAds.complianceNote", source: "quality_guard_logic" });
+    }
+  }
+
   // 5) Subject lines <= 90 chars (allow slight slack over the 70 target)
   if (cfg.includeEmail) {
     (pack.emails || []).forEach((e, i) => {
