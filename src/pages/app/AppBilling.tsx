@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import { useCurrency } from "@/hooks/useCurrency";
 import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
 import PricingCurrencySelector from "@/components/PricingCurrencySelector";
+import FeedbackPrompt from "@/components/support/FeedbackPrompt";
 import BillingTermsSummary from "@/components/BillingTermsSummary";
 
 const PLAN_TO_SKU: Record<PlanId, SkuId> = {
