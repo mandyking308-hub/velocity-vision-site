@@ -58,7 +58,7 @@ export default function AppCampaignNew() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { currentId: workspaceId } = useWorkspace();
-  const { remaining, consume, starterExpired } = useCredits();
+  const { remaining, starterExpired, refresh: refreshCredits } = useCredits();
   const [params] = useSearchParams();
   const { i18n, t } = useTranslation("app");
   const defaultLang: CampaignLanguage = (i18n.language?.startsWith("es") ? "es" : "en");
