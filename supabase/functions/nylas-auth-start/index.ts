@@ -111,9 +111,25 @@ Deno.serve(async (req) => {
     url.searchParams.set("provider", provider);
     url.searchParams.set("state", state);
     if (provider === "google") {
-      url.searchParams.set("scope", "https://www.googleapis.com/auth/gmail.send openid email profile");
+      url.searchParams.set(
+        "scope",
+        [
+          "https://www.googleapis.com/auth/gmail.send",
+          "https://www.googleapis.com/auth/userinfo.email",
+          "https://www.googleapis.com/auth/userinfo.profile",
+          "openid",
+        ].join(" "),
+      );
     } else if (provider === "microsoft") {
-      url.searchParams.set("scope", "Mail.Send offline_access openid email profile");
+      url.searchParams.set(
+        "scope",
+        [
+          "https://graph.microsoft.com/Mail.Send",
+          "https://graph.microsoft.com/User.Read",
+          "offline_access",
+          "openid",
+        ].join(" "),
+      );
     }
 
     console.info("nylas-auth-start hosted auth url", {
