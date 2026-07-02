@@ -153,7 +153,8 @@ Deno.serve(async (req) => {
     if (!fromEmail) return redirectBack({ nylas: "error", reason: "no_email_from_grant" });
 
     const domain = fromEmail.split("@")[1] || null;
-    const localProvider = providerFromNylas === "microsoft" ? "outlook" : providerFromNylas;
+    // Map Nylas provider name -> allowed provider column value (CHECK: gmail|outlook|smtp).
+    const localProvider = providerFromNylas === "microsoft" ? "outlook" : "gmail";
 
     // Upsert the connection. Prefer to update an existing Nylas row for this user+email.
     const { data: existing } = await admin
@@ -185,10 +186,17 @@ Deno.serve(async (req) => {
       sending_enabled: false,
     };
 
-    if (existing?.id) {
-      await admin.from("email_connections").update(row).eq("id", existing.id);
-    } else {
-      await admin.from("email_connections").insert(row);
+    const writeRes = existing?.id
+      ? await admin.from("email_connections").update(row).eq("id", existing.id)
+      : await admin.from("email_connections").insert(row);
+    if (writeRes.error) {
+      console.error("email_connections upsert failed", {
+        request_id: edgeRequestId(req),
+        code: writeRes.error.code,
+        message: writeRes.error.message,
+        mode: existing?.id ? "update" : "insert",
+      });
+      return redirectBack({ nylas: "error", reason: "db_write_failed" });
     }
 
     await admin
