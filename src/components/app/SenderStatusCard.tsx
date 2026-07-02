@@ -50,6 +50,9 @@ export default function SenderStatusCard({
   connectionId,
   detail,
   onVerified,
+  connection,
+  usedToday,
+  warmupCap,
 }: {
   state: SenderState;
   health: SenderHealth;
@@ -58,6 +61,9 @@ export default function SenderStatusCard({
   connectionId?: string | null;
   detail?: SenderVerificationDetail | null;
   onVerified?: (result: any) => void;
+  connection?: ConnectionShape | null;
+  usedToday?: number;
+  warmupCap?: number;
 }) {
   const { t } = useTranslation("app");
   const { currentId } = useWorkspace();
