@@ -1,11 +1,18 @@
 // AI-powered campaign pack generator.
 // Uses Lovable AI Gateway (google/gemini-3-flash-preview).
-// Returns a structured JSON CampaignPack. The caller runs a quality guard
-// and only saves/deducts credits when the guard passes.
+// SECURITY: server-side credit reservation is performed BEFORE the AI call
+// so the paid AI Gateway request cannot be triggered without deducting
+// credits. If AI generation fails, the reservation is refunded.
 
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
+
+const CAMPAIGN_PACK_COST = 10;
+const CAMPAIGN_PACK_ACTION = "full_campaign_pack";
 
 interface Brief {
   name: string;
@@ -172,10 +179,42 @@ Deno.serve(async (req) => {
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
   if (!LOVABLE_API_KEY) return json({ error: "ai_not_configured" }, 503);
 
+  // Auth: require a valid JWT and scope the Supabase client to the caller.
+  const authHeader = req.headers.get("Authorization") || "";
+  if (!authHeader.toLowerCase().startsWith("bearer ")) {
+    return json({ error: "unauthorized" }, 401);
+  }
+  const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    global: { headers: { Authorization: authHeader } },
+  });
+  const token = authHeader.slice(7);
+  const { data: claimsData, error: claimsErr } = await userClient.auth.getClaims(token);
+  if (claimsErr || !claimsData?.claims?.sub) {
+    return json({ error: "unauthorized" }, 401);
+  }
+
   let payload: { brief: Brief };
   try { payload = await req.json(); } catch { return json({ error: "invalid_json" }, 400); }
   const brief = payload?.brief;
   if (!brief || typeof brief !== "object") return json({ error: "brief required" }, 400);
+
+  // Server-side credit gate — reserve BEFORE the paid AI call. Refund on any
+  // failure below so users are never charged for a failed generation.
+  const { data: reservedId, error: reserveErr } = await userClient.rpc(
+    "reserve_campaign_credits",
+    { _cost: CAMPAIGN_PACK_COST, _action: CAMPAIGN_PACK_ACTION },
+  );
+  if (reserveErr || !reservedId) {
+    const msg = String(reserveErr?.message || "");
+    if (msg.includes("insufficient_credits")) return json({ error: "insufficient_credits" }, 402);
+    if (msg.includes("starter_expired")) return json({ error: "starter_expired" }, 402);
+    if (msg.includes("no_plan")) return json({ error: "no_plan" }, 402);
+    return json({ error: "credit_reservation_failed", detail: msg.slice(0, 200) }, 402);
+  }
+  const ledgerId = reservedId as string;
+  const refund = async () => {
+    try { await userClient.rpc("refund_campaign_credits", { _ledger_id: ledgerId }); } catch (_e) { /* best-effort */ }
+  };
 
   const normalisedChannels = (brief.channels || []).map(normaliseChannel);
   const selectedSocial = SOCIAL_PLATFORMS.filter((p) => normalisedChannels.includes(p));
@@ -185,6 +224,7 @@ Deno.serve(async (req) => {
 
   const language = brief.language || "en";
   const SYSTEM = buildSystemPrompt(selectedSocial, includeEmail, includePress, includeVideo);
+
 
   const userMsg = `Generate the campaign pack.
 
@@ -229,10 +269,11 @@ Return the JSON object only.`;
       }),
     });
 
-    if (upstream.status === 429) return json({ error: "rate_limited" }, 429);
-    if (upstream.status === 402) return json({ error: "credits_exhausted" }, 402);
+    if (upstream.status === 429) { await refund(); return json({ error: "rate_limited" }, 429); }
+    if (upstream.status === 402) { await refund(); return json({ error: "credits_exhausted" }, 402); }
     if (!upstream.ok) {
       const detail = await upstream.text();
+      await refund();
       return json({ error: "upstream_error", detail: detail.slice(0, 400) }, 502);
     }
     const data = await upstream.json();
@@ -242,11 +283,13 @@ Return the JSON object only.`;
       pack = JSON.parse(raw);
     } catch {
       const m = raw.match(/\{[\s\S]*\}/);
-      if (!m) return json({ error: "invalid_ai_output", detail: raw.slice(0, 400) }, 502);
+      if (!m) { await refund(); return json({ error: "invalid_ai_output", detail: raw.slice(0, 400) }, 502); }
       try { pack = JSON.parse(m[0]); } catch (e) {
+        await refund();
         return json({ error: "invalid_ai_output", detail: String(e).slice(0, 400) }, 502);
       }
     }
+
 
     // Server-side enforcement — strip any unselected channels, split any extras to "optional"
     if (pack && typeof pack === "object") {
@@ -311,8 +354,9 @@ Return the JSON object only.`;
       }
     }
 
-    return json({ pack, language, generatedAs: language, selectedChannels: normalisedChannels });
+    return json({ pack, language, generatedAs: language, selectedChannels: normalisedChannels, ledgerId });
   } catch (e) {
+    await refund();
     return json({ error: "exception", detail: String(e).slice(0, 400) }, 500);
   }
 });
