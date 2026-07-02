@@ -100,6 +100,7 @@ Deno.serve(async (req) => {
     </div>
   `;
 
+  let notified = false;
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -115,13 +116,51 @@ Deno.serve(async (req) => {
     if (!res.ok) {
       const detail = await res.text();
       await logError(`support-notify: resend ${res.status}`, detail.slice(0, 500));
-      return json({ ok: true, notified: false });
+    } else {
+      notified = true;
     }
-    return json({ ok: true, notified: true });
   } catch (e) {
     await logError("support-notify: exception", String(e).slice(0, 500));
-    return json({ ok: true, notified: false });
   }
+
+  // Best-effort customer confirmation. Does not affect `notified` for the ops team notification.
+  const customerEmail = String(ticket.email ?? "").trim();
+  const validCustomer = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail);
+  if (validCustomer) {
+    const ref = String(ticket.id).slice(0, 8);
+    const confirmHtml = `
+      <div style="font-family:Arial,sans-serif;color:#111;line-height:1.5">
+        <h2 style="margin:0 0 12px">We've received your support ticket</h2>
+        <p>Thanks for getting in touch with Velocity Vision. Our support team has your request and will reply by email.</p>
+        <p><strong>Ticket reference:</strong> <span style="font-family:monospace">${esc(ref)}</span></p>
+        <p style="color:#555;font-size:13px">
+          For your security, please never include passwords, API keys, or card details in support messages.
+          If you sent any of these by mistake, rotate them and let us know.
+        </p>
+        <p style="color:#555;font-size:13px">— The Velocity Vision team</p>
+      </div>
+    `;
+    try {
+      const confirmRes = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },
+        body: JSON.stringify({
+          from: EMAIL_FROM,
+          to: [customerEmail],
+          subject: "Velocity Vision support ticket received",
+          html: confirmHtml,
+        }),
+      });
+      if (!confirmRes.ok) {
+        const detail = await confirmRes.text();
+        await logError(`support-notify: customer confirm ${confirmRes.status}`, detail.slice(0, 500));
+      }
+    } catch (e) {
+      await logError("support-notify: customer confirm exception", String(e).slice(0, 500));
+    }
+  }
+
+  return json({ ok: true, notified });
 });
 
 function json(body: unknown, status = 200) {

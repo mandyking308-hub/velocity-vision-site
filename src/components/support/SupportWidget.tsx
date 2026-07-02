@@ -90,6 +90,7 @@ export default function SupportWidget() {
   const [urgency, setUrgency] = useState<string>("normal");
   const [submitting, setSubmitting] = useState(false);
   const [ticketRef, setTicketRef] = useState<string | null>(null);
+  const [notifyResult, setNotifyResult] = useState<"sent" | "not_sent" | null>(null);
   const [nudgeVisible, setNudgeVisible] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -126,9 +127,12 @@ export default function SupportWidget() {
     setInput("");
     setMode("chat");
     setTicketRef(null);
+    setNotifyResult(null);
     setProblem("");
     setTicketMessage("");
   };
+
+  const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 
   const currentWorkspaceId = () => {
     try { return localStorage.getItem("vv.currentWorkspaceId"); } catch { return null; }
@@ -233,9 +237,11 @@ export default function SupportWidget() {
 
   const submitTicket = async () => {
     if (!ticketMessage.trim()) { toast.error("Please describe the issue"); return; }
-    if (!user) {
-      if (!contactName.trim()) { toast.error("Please add your name so we can reply"); return; }
-      if (!email.trim()) { toast.error("Please add your email so we can reply"); return; }
+    if (!user && !contactName.trim()) { toast.error("Please add your name so we can reply"); return; }
+    const replyEmail = email.trim();
+    if (!replyEmail || !isValidEmail(replyEmail)) {
+      toast.error("Please add a valid reply email so we can respond");
+      return;
     }
     setSubmitting(true);
     try {
@@ -262,7 +268,7 @@ export default function SupportWidget() {
       const derivedSeverity = isUrgent || problem === "broken" || problem === "billing" ? "high" : "normal";
       const payload = {
         user_id: user?.id ?? null,
-        email: user?.email ?? (email.trim() || null),
+        email: replyEmail,
         workspace_id: wsId,
         route: location.pathname,
         category: cat?.category ?? "other",
@@ -282,16 +288,22 @@ export default function SupportWidget() {
       if (error) throw error;
       setTicketRef(data.id);
 
+      let notified: "sent" | "not_sent" = "not_sent";
       try {
         const { data: notifyRes, error: notifyErr } = await supabase.functions.invoke("support-notify", {
           body: { ticket_id: data.id },
         });
-        if (notifyErr || (notifyRes && (notifyRes as any).notified === false)) {
-          console.warn("support-notify not delivered", notifyErr ?? notifyRes);
+        if (notifyErr) {
+          console.warn("support-notify invocation error", notifyErr);
+        } else if (notifyRes && (notifyRes as any).notified === true) {
+          notified = "sent";
+        } else {
+          console.warn("support-notify did not send", notifyRes);
         }
       } catch (notifyEx) {
-        console.warn("support-notify failed", notifyEx);
+        console.warn("support-notify threw", notifyEx);
       }
+      setNotifyResult(notified);
 
       setMode("success");
     } catch (e: any) {
@@ -481,16 +493,22 @@ export default function SupportWidget() {
               </Select>
 
               {!user && (
-                <>
-                  <Input placeholder="Your name *" value={contactName} onChange={(e) => setContactName(e.target.value.slice(0, 200))} />
-                  <Input placeholder="Your email *" type="email" value={email} onChange={(e) => setEmail(e.target.value.slice(0, 320))} />
-                </>
+                <Input placeholder="Your name *" value={contactName} onChange={(e) => setContactName(e.target.value.slice(0, 200))} />
               )}
-              {user && (
+              <div className="space-y-1">
+                <Input
+                  placeholder="Reply email *"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value.slice(0, 320))}
+                  aria-label="Reply email"
+                />
                 <div className="text-[11px] text-muted-foreground">
-                  Replying as <span className="font-medium">{user.email}</span>. Add extra contact details below if you'd like a call.
+                  {user
+                    ? "Prefilled from your account — edit if you'd like us to reply somewhere else."
+                    : "We'll only use this to reply to your ticket."}
                 </div>
-              )}
+              </div>
 
               <div className="grid grid-cols-2 gap-2">
                 <Input placeholder="Phone (optional)" value={contactPhone} onChange={(e) => setContactPhone(e.target.value.slice(0, 60))} />
@@ -546,9 +564,15 @@ export default function SupportWidget() {
                   Your ticket reference is: <span className="font-mono font-medium">{ticketRef.slice(0, 8)}</span>
                 </div>
               )}
-              <p className="text-xs text-muted-foreground">
-                We've notified the team. If you provided contact details, we'll use them to follow up. Platform gates (legal, sender, activation, billing) remain in place — nothing is bypassed.
-              </p>
+              {notifyResult === "sent" ? (
+                <p className="text-xs text-muted-foreground">
+                  Ticket received — we've emailed the support team and they'll reply to <span className="font-medium">{email}</span>.
+                </p>
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  Ticket received, but the email notification did not send. Your ticket is saved and the team can still see it in the support queue — we'll follow up at <span className="font-medium">{email}</span>.
+                </p>
+              )}
               <Button size="sm" variant="outline" onClick={resetChat}>Back to chat</Button>
             </div>
           )}
