@@ -58,6 +58,10 @@ export default function AppActivation() {
   const [roles, setRoles] = useState<string[]>([]);
   const [founderAccepting, setFounderAccepting] = useState(false);
   const [defaultConn, setDefaultConn] = useState<any>(null);
+  const [campaigns, setCampaigns] = useState<Array<{ id: string; name: string; status: string | null }>>([]);
+  const [selectedCampaign, setSelectedCampaign] = useState<string>(campaignId || "");
+  const [activating, setActivating] = useState(false);
+
 
   useEffect(() => {
     if (!user) return;
