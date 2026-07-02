@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
     const provider = (body?.provider || "google").toString();
     const workspace_id = body?.workspace_id || null;
     const redirect_to = typeof body?.redirect_to === "string" ? body.redirect_to : null;
-    const region = (body?.region || "eu").toString().toLowerCase();
+    const region = (body?.region || "us").toString().toLowerCase();
 
     if (!["google", "microsoft"].includes(provider)) {
       return json({ error: "invalid_provider" }, 400);
