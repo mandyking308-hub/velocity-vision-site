@@ -241,21 +241,68 @@ export default function AppActivation() {
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Legal terms need to be re-accepted before activation</AlertTitle>
-          <AlertDescription>
-            {legal.missing.length} document{legal.missing.length === 1 ? "" : "s"} updated since your last acceptance.
-            You'll be prompted to review and accept when you confirm activation.
+          <AlertDescription className="space-y-2">
+            <p>
+              {legal.missing.length} document{legal.missing.length === 1 ? "" : "s"} updated since your last acceptance.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <Button size="sm" variant="secondary" onClick={() => setLegalGateOpen(true)}>
+                Review and accept terms
+              </Button>
+              {isFounderOrAdmin && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={founderAccepting}
+                  onClick={async () => {
+                    if (!user) return;
+                    setFounderAccepting(true);
+                    try {
+                      await recordLegalAcceptance({
+                        userId: user.id, email: user.email ?? null,
+                        source: "activation" as any, workspaceId: currentId,
+                      });
+                      toast.success("Founder QA acceptance recorded");
+                      await legal.refresh();
+                    } catch (e: any) {
+                      toast.error("Could not record acceptance", { description: e?.message });
+                    } finally { setFounderAccepting(false); }
+                  }}
+                >
+                  {founderAccepting ? "Recording…" : "Founder QA: accept current platform terms"}
+                </Button>
+              )}
+            </div>
           </AlertDescription>
         </Alert>
       )}
-      {sender.connected && !sender.domain_authenticated && (
-        <Alert>
-          <Mail className="h-4 w-4" />
-          <AlertTitle>Sender connected — setup not finished</AlertTitle>
-          <AlertDescription>
-            Your mailbox is connected. Sending is not enabled yet. Complete sender setup on the Email settings page before activation.
-          </AlertDescription>
-        </Alert>
-      )}
+      {(() => {
+        const r = computeReadiness(defaultConn);
+        if (!defaultConn) return null;
+        if (r.canSendFull) return null;
+        if (r.canSendWarmup) {
+          return (
+            <Alert>
+              <Mail className="h-4 w-4" />
+              <AlertTitle>Mailbox connected — warm-up sending available</AlertTitle>
+              <AlertDescription>
+                {r.personal
+                  ? "You can activate low-volume outreach now. We'll protect your daily limits and sender reputation."
+                  : r.friendlyLine}
+              </AlertDescription>
+            </Alert>
+          );
+        }
+        return (
+          <Alert>
+            <Mail className="h-4 w-4" />
+            <AlertTitle>Sender setup needed</AlertTitle>
+            <AlertDescription>
+              Connect a mailbox, choose safe contacts, and activate outreach. We'll protect your daily limits and sender reputation.
+            </AlertDescription>
+          </Alert>
+        );
+      })()}
       <SendSafetyPanel s={safety} used={usedToday} scheduled={scheduledToday} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
