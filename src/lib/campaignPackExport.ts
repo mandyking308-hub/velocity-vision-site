@@ -215,6 +215,18 @@ export function buildCampaignMarkdown(opts: {
     if (pack.video.ctaEndings?.length) md += `\n**CTA endings**\n\n${bullets(pack.video.ctaEndings)}`;
   }
 
+  // Paid Ads
+  if (cfg.includePaidAds && pack.paidAds) {
+    const pa = pack.paidAds;
+    md += heading(2, "Paid Ads Pack");
+    md += line("Campaign angle", pa.campaignAngle);
+    if (pa.headlines?.length) md += `\n**Headlines**\n\n${bullets(pa.headlines)}`;
+    if (pa.primaryText?.length) md += `**Primary text options**\n\n${bullets(pa.primaryText)}`;
+    if (pa.descriptions?.length) md += `**Descriptions**\n\n${bullets(pa.descriptions)}`;
+    md += line("Audience note", pa.audienceNote);
+    md += line("Compliance note", pa.complianceNote);
+    md += "\n";
+
   // Lead capture
   if (pack.leadCapture) {
     md += heading(2, "Lead Capture");
