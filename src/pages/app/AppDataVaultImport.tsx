@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import ImportReport, { ImportSummary } from "@/components/app/datavault/ImportReport";
+import FeedbackPrompt from "@/components/support/FeedbackPrompt";
 import PreviewStep, { PreviewRow } from "@/components/app/datavault/PreviewStep";
 import { format } from "date-fns";
 
@@ -69,6 +70,15 @@ export default function AppDataVaultImport() {
       </div>
 
       <ImportReport s={s} />
+
+      {u.status === "imported" && (
+        <FeedbackPrompt
+          promptKey={`data_vault_import_${u.id}`}
+          question="Was this import experience clear?"
+          feedbackType="confusing"
+        />
+      )}
+
 
       <Card>
         <CardHeader><CardTitle className="text-base">Rows in this import</CardTitle></CardHeader>

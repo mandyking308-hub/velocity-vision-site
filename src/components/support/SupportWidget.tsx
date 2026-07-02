@@ -24,8 +24,17 @@ const MAX_INPUT_CHARS = 1000;
 const ANON_AI_CAP = 8;
 const SIGNED_AI_CAP = 20;
 
-type Mode = "chat" | "ticket" | "success";
+type Mode = "chat" | "ticket" | "success" | "feedback" | "feedback_success";
 type Msg = { role: "user" | "assistant" | "system"; content: string; links?: { label: string; to: string }[] };
+
+const FEEDBACK_TYPES: { id: string; label: string }[] = [
+  { id: "confusing", label: "Confusing" },
+  { id: "missing_feature", label: "Missing feature" },
+  { id: "bug", label: "Bug / rough edge" },
+  { id: "loved", label: "Loved this" },
+  { id: "pricing_billing", label: "Pricing / billing feedback" },
+  { id: "other", label: "Other" },
+];
 
 const WELCOME: Msg = {
   role: "assistant",
@@ -91,10 +100,16 @@ export default function SupportWidget() {
   const [submitting, setSubmitting] = useState(false);
   const [ticketRef, setTicketRef] = useState<string | null>(null);
   const [notifyResult, setNotifyResult] = useState<"sent" | "not_sent" | null>(null);
+  const [fbRating, setFbRating] = useState<number>(0);
+  const [fbType, setFbType] = useState<string>("");
+  const [fbMessage, setFbMessage] = useState<string>("");
+  const [fbContactPermission, setFbContactPermission] = useState<boolean>(false);
+  const [fbEmail, setFbEmail] = useState<string>(user?.email ?? "");
+  const [fbSubmitting, setFbSubmitting] = useState<boolean>(false);
   const [nudgeVisible, setNudgeVisible] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { setEmail(user?.email ?? ""); }, [user?.email]);
+  useEffect(() => { setEmail(user?.email ?? ""); setFbEmail(user?.email ?? ""); }, [user?.email]);
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages, thinking, mode]);
@@ -130,6 +145,47 @@ export default function SupportWidget() {
     setNotifyResult(null);
     setProblem("");
     setTicketMessage("");
+    setFbRating(0);
+    setFbType("");
+    setFbMessage("");
+    setFbContactPermission(false);
+  };
+
+  const submitFeedback = async () => {
+    if (!fbType) { toast.error("Please pick a feedback type"); return; }
+    if (!fbMessage.trim()) { toast.error("Please add a short message"); return; }
+    if (fbContactPermission && !isValidEmail(fbEmail.trim())) {
+      toast.error("Add a valid email or turn off 'contact me'");
+      return;
+    }
+    setFbSubmitting(true);
+    try {
+      const wsId = currentWorkspaceId();
+      const payload = {
+        user_id: user?.id ?? null,
+        workspace_id: wsId,
+        email: fbContactPermission ? fbEmail.trim() : (user?.email ?? null),
+        rating: fbRating > 0 ? fbRating : null,
+        feedback_type: fbType,
+        message: fbMessage.trim().slice(0, 4000),
+        route: location.pathname,
+        source,
+        contact_permission: fbContactPermission,
+        browser_info: typeof navigator !== "undefined" ? navigator.userAgent.slice(0, 500) : null,
+        metadata: {
+          search: location.search,
+          timestamp: new Date().toISOString(),
+        },
+      };
+      const { error } = await supabase.from("customer_feedback").insert(payload);
+      if (error) throw error;
+      setMode("feedback_success");
+    } catch (e: any) {
+      console.error("feedback error", e);
+      toast.error("Could not send feedback", { description: e?.message ?? "Please try again shortly." });
+    } finally {
+      setFbSubmitting(false);
+    }
   };
 
   const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
@@ -466,6 +522,13 @@ export default function SupportWidget() {
                     >
                       Raise a ticket
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => setMode("feedback")}
+                      className="underline"
+                    >
+                      Give feedback
+                    </button>
                   </div>
                   <span>{inApp ? location.pathname : ""}</span>
                 </div>
@@ -574,6 +637,93 @@ export default function SupportWidget() {
                 </p>
               )}
               <Button size="sm" variant="outline" onClick={resetChat}>Back to chat</Button>
+            </div>
+          )}
+
+          {mode === "feedback" && (
+            <div className="p-4 space-y-3 max-h-[70vh] overflow-y-auto">
+              <div className="text-xs text-muted-foreground">
+                Tell us what's confusing, missing, broken but not urgent, or valuable. This is <strong>not a support channel</strong> — if you need help, use{" "}
+                <button type="button" onClick={() => setMode("ticket")} className="underline">Raise a ticket</button>.
+              </div>
+
+              <div>
+                <div className="text-xs font-medium mb-1">How would you rate this experience?</div>
+                <div className="flex gap-1">
+                  {[1,2,3,4,5].map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setFbRating(n)}
+                      aria-label={`Rate ${n} out of 5`}
+                      className={`h-8 w-8 rounded-md border text-sm ${fbRating >= n ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border text-muted-foreground hover:border-primary/50"}`}
+                    >
+                      {n}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <Select value={fbType} onValueChange={setFbType}>
+                <SelectTrigger><SelectValue placeholder="Feedback type *" /></SelectTrigger>
+                <SelectContent>
+                  {FEEDBACK_TYPES.map((t) => (
+                    <SelectItem key={t.id} value={t.id}>{t.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Textarea
+                placeholder="What would you like us to know? *"
+                rows={4}
+                value={fbMessage}
+                onChange={(e) => setFbMessage(e.target.value.slice(0, 4000))}
+              />
+
+              <label className="flex items-start gap-2 text-xs text-muted-foreground">
+                <input
+                  type="checkbox"
+                  checked={fbContactPermission}
+                  onChange={(e) => setFbContactPermission(e.target.checked)}
+                  className="mt-0.5"
+                />
+                <span>You can contact me about this feedback</span>
+              </label>
+
+              {fbContactPermission && (
+                <Input
+                  placeholder="Reply email"
+                  type="email"
+                  value={fbEmail}
+                  onChange={(e) => setFbEmail(e.target.value.slice(0, 320))}
+                />
+              )}
+
+              <div className="text-[11px] text-muted-foreground">
+                We capture the page you're on and basic browser info to make feedback easier to review.
+              </div>
+
+              <div className="flex gap-2">
+                <Button size="sm" onClick={submitFeedback} disabled={fbSubmitting}>
+                  {fbSubmitting ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <Send className="h-3 w-3 mr-1" />}
+                  Send feedback
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => setMode("chat")}>Back to chat</Button>
+              </div>
+            </div>
+          )}
+
+          {mode === "feedback_success" && (
+            <div className="p-6 text-center space-y-2">
+              <CheckCircle2 className="h-8 w-8 text-green-600 mx-auto" />
+              <div className="font-medium text-sm">Thanks — feedback received</div>
+              <p className="text-xs text-muted-foreground">
+                We read every piece of feedback. If you asked us to contact you, we'll reach out. Feedback is not a support channel — if something is broken, please raise a ticket.
+              </p>
+              <div className="flex gap-2 justify-center">
+                <Button size="sm" variant="outline" onClick={resetChat}>Back to chat</Button>
+                <Button size="sm" variant="ghost" onClick={() => setMode("ticket")}>Raise a ticket instead</Button>
+              </div>
             </div>
           )}
         </div>

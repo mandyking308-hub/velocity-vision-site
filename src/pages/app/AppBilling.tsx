@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import { useCurrency } from "@/hooks/useCurrency";
 import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
 import PricingCurrencySelector from "@/components/PricingCurrencySelector";
+import FeedbackPrompt from "@/components/support/FeedbackPrompt";
 import BillingTermsSummary from "@/components/BillingTermsSummary";
 
 const PLAN_TO_SKU: Record<PlanId, SkuId> = {
@@ -71,6 +72,7 @@ export default function AppBilling() {
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
   const [pendingPlan, setPendingPlan] = useState<PlanId | null>(null);
+  const [showCheckoutFeedback, setShowCheckoutFeedback] = useState(false);
 
   const load = async () => {
     if (!user) return;
@@ -93,6 +95,7 @@ export default function AppBilling() {
     const flag = params.get("checkout");
     if (!flag) return;
     (async () => {
+      setShowCheckoutFeedback(true);
       toast.success(tc("toasts.paymentReceived"));
       // Webhook normally writes within 1-3s; refresh credits + tables a couple times
       for (let i = 0; i < 4; i++) {
@@ -141,6 +144,16 @@ export default function AppBilling() {
         <PricingCurrencySelector align="right" className="md:max-w-md" currency={currency} onCurrencyChange={setCurrency} />
       </div>
       <p className="text-xs text-muted-foreground -mt-4">{taxNotice(currency)}</p>
+
+      {showCheckoutFeedback && (
+        <FeedbackPrompt
+          promptKey="checkout_success"
+          question="Was checkout clear?"
+          feedbackType="pricing_billing"
+        />
+      )}
+
+
 
 
       {stripeSub?.status === "past_due" && (

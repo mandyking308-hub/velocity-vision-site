@@ -15,6 +15,7 @@ import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { CREDIT_COSTS } from "@/lib/credits";
 
 import EmailSequenceSender from "@/components/app/EmailSequenceSender";
+import FeedbackPrompt from "@/components/support/FeedbackPrompt";
 import LeadFormConfig from "@/components/app/LeadFormConfig";
 import {
   CADENCE_LABELS, CadenceType, LIFECYCLE_TONE, REFRESH_LABELS, RefreshStrategy,
@@ -276,6 +277,11 @@ export default function AppCampaignWorkspace() {
       <button onClick={() => navigate("/app/campaigns")} className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
         <ArrowLeft className="h-3 w-3" /> All campaigns
       </button>
+      <FeedbackPrompt
+        promptKey={`campaign_pack_${c.id}`}
+        question="Was this campaign pack useful?"
+        feedbackType="loved"
+      />
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">{c.name}</h1>

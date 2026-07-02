@@ -50,6 +50,7 @@ import FounderManual from "./pages/crm/FounderManual.tsx";
 import FounderMonetisation from "./pages/crm/FounderMonetisation.tsx";
 import FounderIntelligence from "./pages/crm/FounderIntelligence.tsx";
 import SupportQueue from "./pages/crm/SupportQueue.tsx";
+import FeedbackQueue from "./pages/crm/FeedbackQueue.tsx";
 // Legacy portal components intentionally not imported — /portal/* now redirects to /app/*.
 // Files retained under src/pages/portal/ and src/pages/PortalLayout.tsx for reference only.
 import DemoLogin from "./pages/DemoLogin.tsx";
@@ -164,6 +165,7 @@ const AnimatedRoutes = () => {
           <Route path="monetisation" element={<FounderMonetisation />} />
           <Route path="intelligence" element={<FounderIntelligence />} />
           <Route path="support" element={<SupportQueue />} />
+          <Route path="feedback" element={<FeedbackQueue />} />
         </Route>
 
         {/* Self-serve customer app (protected) */}
