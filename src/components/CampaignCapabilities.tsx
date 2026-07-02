@@ -32,7 +32,7 @@ const CampaignCapabilities = () => (
           Everything you need for marketing-led growth, outreach and early pipeline
         </h2>
         <p className="text-muted-foreground text-lg leading-relaxed">
-          Data Vault, quality review, email sequences, social pack, press releases, video pack, replies inbox, early pipeline movement — all in one workspace for founders, agencies and lean growth teams.
+          Data Vault, quality review, email sequences, social pack, press releases, video pack, follow-up inbox, early pipeline movement — all in one workspace for founders, agencies and lean growth teams.
         </p>
       </motion.div>
 

@@ -30,7 +30,7 @@ type Msg = { role: "user" | "assistant" | "system"; content: string; links?: { l
 const WELCOME: Msg = {
   role: "assistant",
   content:
-    "Hi — I'm the Velocity Vision assistant. Ask me how the workspace works (Data Vault, sender verification, activation, campaigns, credits, billing, replies, pipeline) or tell me what isn't behaving as expected. I can also raise a ticket for you.",
+    "Hi — I'm the Velocity Vision assistant. Ask me how the workspace works (Data Vault, sender verification, activation, campaigns, credits, billing, follow-up, pipeline) or tell me what isn't behaving as expected. I can also raise a ticket for you.",
 };
 
 function routeSuggestions(pathname: string, inApp: boolean): KnowledgeEntry[] {
