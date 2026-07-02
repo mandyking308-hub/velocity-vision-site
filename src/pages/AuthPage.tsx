@@ -92,6 +92,12 @@ const AuthPage = () => {
   };
 
   return (
+    <>
+    <Helmet>
+      <title>Sign in or start your Velocity Vision workspace</title>
+      <meta name="description" content="Sign in to your Velocity Vision workspace or create a new account to start planning, generating and safely activating campaigns." />
+      <meta name="robots" content="noindex,nofollow" />
+    </Helmet>
     <div className="min-h-screen bg-primary flex items-center justify-center px-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
