@@ -7,8 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ShieldCheck, AlertTriangle, Send, ArrowLeft, Pause, Upload, Mail, Wand2 } from "lucide-react";
+import { ShieldCheck, AlertTriangle, Send, ArrowLeft, Pause, Upload, Mail, Wand2, Plus } from "lucide-react";
+
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -56,6 +58,10 @@ export default function AppActivation() {
   const [roles, setRoles] = useState<string[]>([]);
   const [founderAccepting, setFounderAccepting] = useState(false);
   const [defaultConn, setDefaultConn] = useState<any>(null);
+  const [campaigns, setCampaigns] = useState<Array<{ id: string; name: string; status: string | null }>>([]);
+  const [selectedCampaign, setSelectedCampaign] = useState<string>(campaignId || "");
+  const [activating, setActivating] = useState(false);
+
 
   useEffect(() => {
     if (!user) return;
@@ -142,8 +148,21 @@ export default function AppActivation() {
         const { data: pooled } = await (supabase as any).rpc("agency_pooled_sends_today");
         if (typeof pooled === "number") setAgencyPooled(pooled);
       }
+
+      // Load selectable campaigns in this workspace (draft/scheduled first).
+      const campQ = supabase.from("campaigns").select("id, name, status").order("created_at", { ascending: false }).limit(50);
+      const { data: camps } = currentId ? await campQ.eq("workspace_id", currentId) : await campQ;
+      const list = (camps || []) as Array<{ id: string; name: string; status: string | null }>;
+      setCampaigns(list);
+      if (!selectedCampaign && list.length > 0) {
+        // Prefer the one the user came in with, else the most recent draft/scheduled, else first.
+        const prefer = campaignId && list.find((c) => c.id === campaignId);
+        const draft = list.find((c) => c.status === "draft" || c.status === "scheduled");
+        setSelectedCampaign((prefer || draft || list[0]).id);
+      }
     })();
   }, [user, planConfig.id, currentId]);
+
 
   const plan = (planConfig.id as PlanId) || "starter";
   const safety = useMemo(() => computeSafety({
@@ -164,30 +183,109 @@ export default function AppActivation() {
   const sendNow = Math.min(totalSelected, safety.remainingToday);
   const blocked = safety.pauseReasons.length > 0 || !legal.isCompliant;
   const wantsRisky = riskyClamped > 0;
-  const canActivate = sendNow > 0 && !blocked && (!wantsRisky || riskAck);
+  const targetCampaignId = selectedCampaign || campaignId || null;
+  const canActivate = totalSelected > 0 && !blocked && (!wantsRisky || riskAck) && !!targetCampaignId && !activating;
 
   async function audit(action: string, details: any) {
     try {
       await (supabase as any).from("send_audit_log").insert({
-        action, details, user_id: user!.id, campaign_id: campaignId,
+        action, details, user_id: user!.id, campaign_id: targetCampaignId,
       });
-    } catch { /* table is optional/best-effort */ }
+    } catch { /* best-effort */ }
+  }
+
+  async function fetchContactsByQuality(status: "valid" | "needs_review" | "risky", limit: number) {
+    if (limit <= 0) return [] as any[];
+    let q = supabase
+      .from("contacts")
+      .select("id, email, first_name, last_name, company_id, quality_status, duplicate_flag, blocked, suppressed")
+      .eq("quality_status", status)
+      .eq("blocked", false)
+      .eq("suppressed", false)
+      .eq("duplicate_flag", false)
+      .not("email", "is", null)
+      .order("created_at", { ascending: true })
+      .limit(limit);
+    if (currentId) q = q.eq("workspace_id", currentId);
+    const { data, error } = await q;
+    if (error) throw error;
+    return (data || []) as any[];
   }
 
   async function runActivation() {
-    await audit("activation_started", {
-      batch: sendNow, includeReview, riskyOverride: riskyClamped, plan, safeAllowance: safety.safeAllowance,
-    });
-    toast.success(t("activate.toasts.prepared", { count: sendNow }));
-    if (campaignId) navigate(`/app/campaigns/${campaignId}`);
-    else navigate("/app/campaigns");
+    if (!user || !targetCampaignId) return;
+    setActivating(true);
+    try {
+      await audit("activation_started", {
+        campaign_id: targetCampaignId, batch: totalSelected, includeReview,
+        riskyOverride: riskyClamped, plan, safeAllowance: safety.safeAllowance,
+      });
+
+      // Pull the selected slices, safest-first.
+      const validContacts = await fetchContactsByQuality("valid", safeSelected);
+      const reviewContacts = includeReview ? await fetchContactsByQuality("needs_review", reviewSelected) : [];
+      const riskyContacts = riskyClamped > 0 ? await fetchContactsByQuality("risky", riskyClamped) : [];
+      const chosen = [...validContacts, ...reviewContacts, ...riskyContacts];
+
+      // Skip contacts already attached to this campaign as leads.
+      const contactIds = chosen.map((c) => c.id);
+      let existingContactIds = new Set<string>();
+      if (contactIds.length) {
+        const { data: existing } = await supabase
+          .from("leads")
+          .select("contact_id")
+          .eq("campaign_id", targetCampaignId)
+          .in("contact_id", contactIds);
+        existingContactIds = new Set((existing || []).map((l: any) => l.contact_id).filter(Boolean));
+      }
+      const toInsert = chosen.filter((c) => !existingContactIds.has(c.id));
+
+      const rows = toInsert.map((c) => ({
+        source: "activation",
+        contact_id: c.id,
+        company_id: c.company_id,
+        campaign_id: targetCampaignId,
+        workspace_id: currentId,
+        email: c.email,
+        name: [c.first_name, c.last_name].filter(Boolean).join(" ") || null,
+        status: "new" as const,
+        created_by: user.id,
+        owner_id: user.id,
+      }));
+
+      let created = 0;
+      const CHUNK = 100;
+      for (let i = 0; i < rows.length; i += CHUNK) {
+        const slice = rows.slice(i, i + CHUNK);
+        const { error, count } = await supabase.from("leads").insert(slice as any, { count: "exact" });
+        if (error) throw error;
+        created += count ?? slice.length;
+      }
+
+      await audit("activation_completed", {
+        campaign_id: targetCampaignId,
+        requested: chosen.length,
+        already_linked: existingContactIds.size,
+        leads_created: created,
+        includeReview, riskyIncluded: riskyClamped,
+      });
+
+      toast.success(`Activated: ${created} lead${created === 1 ? "" : "s"} added to the campaign`);
+      navigate(`/app/campaigns/${targetCampaignId}`);
+    } catch (e: any) {
+      await audit("activation_failed", { error: e?.message });
+      toast.error("Activation failed", { description: e?.message });
+    } finally {
+      setActivating(false);
+    }
   }
 
   async function handleActivate() {
-    if (sendNow <= 0 || safety.pauseReasons.length > 0 || (wantsRisky && !riskAck)) return;
+    if (!canActivate) return;
     if (!legal.isCompliant) { setLegalGateOpen(true); return; }
     await runActivation();
   }
+
 
   const totalContacts = counts.valid + counts.needs_review + counts.risky + counts.blocked + counts.suppressed;
   const noData = totalContacts === 0;
@@ -375,27 +473,51 @@ export default function AppActivation() {
               )}
             </div>
 
-            <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 space-y-2">
+            <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 space-y-3">
               <div className="text-sm font-medium">Pre-flight summary</div>
+
+              <div className="space-y-1">
+                <Label className="text-xs">Target campaign</Label>
+                {campaigns.length === 0 ? (
+                  <div className="flex items-center justify-between gap-2 rounded border border-dashed border-border p-3">
+                    <div className="text-xs text-muted-foreground">You don't have a campaign yet. Create one to activate leads into.</div>
+                    <Button size="sm" variant="outline" onClick={() => navigate("/app/campaigns/new")}>
+                      <Plus className="h-3.5 w-3.5 mr-1" /> New campaign
+                    </Button>
+                  </div>
+                ) : (
+                  <Select value={selectedCampaign} onValueChange={setSelectedCampaign}>
+                    <SelectTrigger><SelectValue placeholder="Choose a campaign" /></SelectTrigger>
+                    <SelectContent>
+                      {campaigns.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>{c.name}{c.status ? ` · ${c.status}` : ""}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+                <p className="text-[11px] text-muted-foreground">Leads are added to this campaign. No emails are sent from this screen.</p>
+              </div>
+
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
                 <Tile label="Audience selected" value={totalSelected} />
-                <Tile label="Will send now" value={sendNow} tone="good" />
-                <Tile label="Send credits used" value={sendNow} />
+                <Tile label="Leads to create" value={totalSelected} tone="good" />
+                <Tile label="Can send today" value={sendNow} />
                 <Tile label="Today's safe cap" value={safety.safeAllowance} />
               </div>
               {sendNow < totalSelected && (
                 <div className="text-xs text-amber-700 dark:text-amber-400">
-                  {totalSelected - sendNow} contact(s) will be queued for upcoming days — today's safe cap reached.
+                  All {totalSelected} contact(s) will be prepared as leads. Only {sendNow} can go out today under your current safe cap — the rest wait in the campaign until you send them.
                 </div>
               )}
               {blocked && (
-                <div className="text-xs text-rose-600 flex items-center gap-1"><Pause className="h-3.5 w-3.5" /> Sending is paused — resolve the reasons in the panel above.</div>
+                <div className="text-xs text-rose-600 flex items-center gap-1"><Pause className="h-3.5 w-3.5" /> Sending is paused — resolve the reasons in the panel above. You can still prepare leads.</div>
               )}
               <Button className="w-full mt-1" size="lg" disabled={!canActivate} onClick={handleActivate}>
-                <Send className="h-4 w-4 mr-2" /> Confirm safe activation
+                <Send className="h-4 w-4 mr-2" /> {activating ? "Activating…" : "Confirm safe activation"}
               </Button>
-              <p className="text-xs text-muted-foreground text-center">Storing contacts is free. Activating outreach consumes send credits.</p>
+              <p className="text-xs text-muted-foreground text-center">Storing contacts is free. Sending consumes credits — and stays a separate click in the campaign.</p>
             </div>
+
           </CardContent>
         </Card>
 
