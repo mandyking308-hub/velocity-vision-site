@@ -184,7 +184,7 @@ export default function AppActivation() {
   const blocked = safety.pauseReasons.length > 0 || !legal.isCompliant;
   const wantsRisky = riskyClamped > 0;
   const targetCampaignId = selectedCampaign || campaignId || null;
-  const canActivate = sendNow > 0 && !blocked && (!wantsRisky || riskAck) && !!targetCampaignId && !activating;
+  const canActivate = totalSelected > 0 && !blocked && (!wantsRisky || riskAck) && !!targetCampaignId && !activating;
 
   async function audit(action: string, details: any) {
     try {
