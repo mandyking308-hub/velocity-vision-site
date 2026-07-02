@@ -153,8 +153,15 @@ Deno.serve(async (req) => {
     if (!fromEmail) return redirectBack({ nylas: "error", reason: "no_email_from_grant" });
 
     const domain = fromEmail.split("@")[1] || null;
-    // Map Nylas provider name -> allowed provider column value (CHECK: gmail|outlook|smtp).
-    const localProvider = providerFromNylas === "microsoft" ? "outlook" : "gmail";
+    // Map Nylas provider name -> local provider column value.
+    // Allowed by CHECK: gmail | outlook | icloud | imap | ews | smtp.
+    const np = (providerFromNylas || "").toLowerCase();
+    const localProvider =
+      np === "microsoft" || np === "outlook" ? "outlook"
+      : np === "icloud" ? "icloud"
+      : np === "imap" ? "imap"
+      : np === "ews" || np === "exchange" ? "ews"
+      : "gmail"; // google / gmail / unknown default
 
     // Upsert the connection. Prefer to update an existing Nylas row for this user+email.
     const { data: existing } = await admin

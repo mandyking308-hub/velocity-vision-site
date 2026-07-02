@@ -65,7 +65,9 @@ Deno.serve(async (req) => {
     const redirect_to = typeof body?.redirect_to === "string" ? body.redirect_to : null;
     const region = (body?.region || "us").toString().toLowerCase();
 
-    if (!["google", "microsoft"].includes(provider)) {
+    // Providers enabled on Nylas dashboard (US Sandbox). Yahoo/EWS/etc. are
+    // added here only when the corresponding Nylas connector is enabled.
+    if (!["google", "microsoft", "icloud", "imap", "ews"].includes(provider)) {
       return json({ error: "invalid_provider" }, 400);
     }
     if (!["eu", "us"].includes(region)) {
@@ -131,6 +133,9 @@ Deno.serve(async (req) => {
         ].join(" "),
       );
     }
+    // For icloud / imap / ews, do not set explicit provider scopes — Nylas
+    // Hosted Auth applies the connector's default scopes. Passing Gmail or
+    // Microsoft Graph scopes here would break the flow.
 
     console.info("nylas-auth-start hosted auth url", {
       request_id: edgeRequestId(req),
