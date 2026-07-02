@@ -173,6 +173,7 @@ const AuthPage = () => {
         </div>
       </motion.div>
     </div>
+    </>
   );
 };
 
