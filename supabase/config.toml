@@ -1,37 +1,29 @@
 project_id = "fdubhpzthtfzrzkjkalw"
 
-[functions.create-checkout]
-verify_jwt = false
-
-[functions.payments-webhook]
-verify_jwt = false
-
-[functions.create-portal-session]
-verify_jwt = false
-
-[functions.lead-submit]
-verify_jwt = false
-
-[functions.public-campaign]
-verify_jwt = false
-
-[functions.notify-contact]
-verify_jwt = false
-
-[functions.support-notify]
-verify_jwt = false
-
-[functions.support-chat]
-verify_jwt = false
-
-[functions.generate-campaign-pack]
-verify_jwt = true
-
-[functions.nylas-auth-callback]
-verify_jwt = false
-
-[functions.liftor-status]
-verify_jwt = false
-
-[functions.process-email-queue]
-verify_jwt = true
+[functions]
+  [functions.auth-email-hook]
+    verify_jwt = false
+  [functions.create-checkout]
+    verify_jwt = false
+  [functions.create-portal-session]
+    verify_jwt = false
+  [functions.generate-campaign-pack]
+    verify_jwt = true
+  [functions.lead-submit]
+    verify_jwt = false
+  [functions.liftor-status]
+    verify_jwt = false
+  [functions.notify-contact]
+    verify_jwt = false
+  [functions.nylas-auth-callback]
+    verify_jwt = false
+  [functions.payments-webhook]
+    verify_jwt = false
+  [functions.process-email-queue]
+    verify_jwt = true
+  [functions.public-campaign]
+    verify_jwt = false
+  [functions.support-chat]
+    verify_jwt = false
+  [functions.support-notify]
+    verify_jwt = false
