@@ -36,7 +36,7 @@ export default function AppFollowUp() {
 
   const load = async () => {
     setLoading(true);
-    const leadsQ = supabase.from("leads").select("id, name, email, phone, status, follow_up_at, follow_up_state, replied_at, snoozed_until, last_email_sent_at, last_email_subject, last_contacted_at, last_interaction_at, opportunity_id, owner_id, campaign_id, company_id, contact_id, last_action, created_at").order("created_at", { ascending: false });
+    const leadsQ = supabase.from("leads").select("id, name, email, phone, status, follow_up_at, follow_up_state, replied_at, snoozed_until, last_email_sent_at, last_email_subject, last_contacted_at, last_interaction_at, opportunity_id, owner_id, campaign_id, company_id, contact_id, workspace_id, last_action, created_at").order("created_at", { ascending: false });
     const campsQ = supabase.from("campaigns").select("id, name");
     const [{ data: l }, { data: c }] = await Promise.all([
       currentId ? leadsQ.eq("workspace_id", currentId) : leadsQ,
@@ -97,6 +97,13 @@ export default function AppFollowUp() {
         </div>
         <Button variant="outline" size="sm" onClick={load}><RefreshCw className="h-4 w-4 mr-1" /> {tc("actions.refresh")}</Button>
       </div>
+
+      <Card className="border-primary/20 bg-primary/5">
+        <CardContent className="p-3 text-xs text-muted-foreground space-y-1">
+          <p><strong className="text-foreground">Replies return to your connected inbox.</strong> Inbound reply sync: <Badge variant="outline" className="ml-1">coming next</Badge></p>
+          <p>Use the action queue to track what needs follow-up. Promote warm replies into pipeline when ready — nothing is moved into pipeline automatically without your approval.</p>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
         <Stat label={t("followUp.stats.needsAction")} value={needsAction.length} tone="warn" />

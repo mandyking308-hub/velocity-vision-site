@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 
 const STAGES = ["discovery", "demo", "proposal", "negotiation", "won", "lost"] as const;
 
@@ -18,6 +19,8 @@ export interface MoveToPipelineLead {
   company_id?: string | null;
   contact_id?: string | null;
   campaign_id?: string | null;
+  workspace_id?: string | null;
+  opportunity_id?: string | null;
 }
 
 export default function MoveToPipelineDialog({
@@ -34,14 +37,22 @@ export default function MoveToPipelineDialog({
   const [close, setClose] = useState("");
   const [notes, setNotes] = useState("");
   const [busy, setBusy] = useState(false);
+  const { currentId: contextWorkspaceId } = useWorkspace();
 
   if (!lead) return null;
 
   const submit = async () => {
+    if (busy) return;
+    if (lead.opportunity_id) {
+      toast.error("This lead is already in the pipeline.");
+      onOpenChange(false);
+      return;
+    }
     setBusy(true);
     try {
       const { data: user } = await supabase.auth.getUser();
       const uid = user.user?.id;
+      const workspaceId = lead.workspace_id || contextWorkspaceId || null;
       const { data: opp, error } = await supabase
         .from("opportunities")
         .insert({
@@ -50,6 +61,8 @@ export default function MoveToPipelineDialog({
           expected_close_date: close || null,
           notes: notes || null,
           owner_id: uid,
+          created_by: uid,
+          workspace_id: workspaceId,
           source_lead_id: lead.id,
           source_campaign_id: lead.campaign_id || null,
           company_id: lead.company_id || null,

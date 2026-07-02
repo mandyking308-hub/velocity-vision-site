@@ -28,6 +28,8 @@ export interface ActionLead extends LeadLike {
   campaign_id?: string | null;
   company_id?: string | null;
   contact_id?: string | null;
+  workspace_id?: string | null;
+  opportunity_id?: string | null;
 }
 
 async function logAction(leadId: string, action: string, details: any = {}) {
@@ -90,6 +92,7 @@ export default function LeadActionPanel({
   const mp: MoveToPipelineLead = {
     id: lead.id, name: lead.name || null, email: lead.email || null,
     campaign_id: lead.campaign_id || null, company_id: lead.company_id || null, contact_id: lead.contact_id || null,
+    workspace_id: lead.workspace_id || null, opportunity_id: lead.opportunity_id || null,
   };
 
   return (
