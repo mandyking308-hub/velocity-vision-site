@@ -145,6 +145,12 @@ Deno.serve(async (req) => {
     await logError('notify-contact: missing config');
     return json({ ok: true, lead_id: leadId, contact_id: contactId, company_id: companyId, notified: false });
   }
+  if (!EMAIL_FROM) {
+    await logError('notify-contact: missing_email_from');
+    return json({ ok: true, lead_id: leadId, contact_id: contactId, company_id: companyId, notified: false });
+  }
+    return json({ ok: true, lead_id: leadId, contact_id: contactId, company_id: companyId, notified: false });
+  }
 
   const subject = `[${routeLabel}] Website enquiry — ${name || 'Unknown'}`;
   const html = `
