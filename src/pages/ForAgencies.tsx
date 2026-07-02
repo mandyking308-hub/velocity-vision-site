@@ -11,7 +11,7 @@ const benefits = [
   { icon: Layers, title: "One workspace per client", desc: "Isolated data, isolated activation, isolated pipeline. No cross-client contamination, no context-switching tax." },
   { icon: Coins, title: "Pooled credits across the account", desc: "Agency Workspace credits flow across all client workspaces — use them where the work lands that month." },
   { icon: ShieldCheck, title: "Pooled sending governance", desc: "Shared send limits and account-level safety controls protect deliverability across every client." },
-  { icon: Inbox, title: "Replies & pipeline per client", desc: "Inbound replies, follow-up states and opportunity movement, tracked per client — without bolting on another system." },
+  { icon: Inbox, title: "Replies & pipeline per client", desc: "Reply follow-up, follow-up states and opportunity movement, tracked per client — without bolting on another system." },
   { icon: Eye, title: "Cross-client visibility", desc: "See what's active, what's stuck and where pipeline is moving across your whole book of clients." },
   { icon: Building2, title: "Repeatable delivery", desc: "Reusable templates, segments and cadences. Operators ship the work; they don't reinvent the workflow each time." },
 ];
@@ -80,7 +80,7 @@ const ForAgencies = () => (
               { icon: Share2, title: "Social content at scale", desc: "Generate posts, hooks and platform variants alongside each client's campaign." },
               { icon: Newspaper, title: "Press releases", desc: "Draft distribution-ready announcements for launches, wins and funding news." },
               { icon: Megaphone, title: "Safe segment activation", desc: "Verify the sender, cap daily sends and flag risky records before anything goes live." },
-              { icon: Inbox, title: "Follow-up per client", desc: "Replies, snoozes and stuck-deal alerts stay in the right workspace — no crossed wires." },
+              { icon: Inbox, title: "Follow-up per client", desc: "Follow-up actions, snoozes and stuck-deal alerts stay in the right workspace — no crossed wires." },
               { icon: GitBranch, title: "Pipeline tracking", desc: "Move warm contacts into opportunities and track value without adding another sales system seat." },
               { icon: RefreshCw, title: "Reusable templates", desc: "Save cadences, segments and asset packs. Onboard new clients faster." },
               { icon: Users, title: "Team clarity", desc: "Everyone works in the same system with clear client separation and shared templates." },
@@ -113,7 +113,7 @@ const ForAgencies = () => (
               { icon: XCircle, title: "Spreadsheets per client", desc: "Replace scattered contact lists with field-mapped, deduplicated data vaults for each account." },
               { icon: XCircle, title: "Disconnected sales / email / content tools", desc: "Outreach, social, PR, replies and pipeline live in one connected workspace." },
               { icon: XCircle, title: "Messy handoffs", desc: "Every client has its own workspace. No more guessing which list or thread belongs to whom." },
-              { icon: Clock, title: "Unclear follow-up ownership", desc: "Replies land in a single action queue per client with clear states and snooze logic." },
+              { icon: Clock, title: "Unclear follow-up ownership", desc: "Follow-up actions land in a single action queue per client with clear states and snooze logic." },
               { icon: Layers, title: "Tool sprawl across the team", desc: "One platform, one login, one billing rhythm. Reduce seats, reduce context switching." },
               { icon: RefreshCw, title: "Duplicated work across accounts", desc: "Reusable templates and segments mean you build the workflow once, deploy it many times." },
             ].map((r, i) => (

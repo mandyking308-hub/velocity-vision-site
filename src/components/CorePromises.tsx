@@ -15,7 +15,7 @@ const promises = [
   {
     icon: GitBranch,
     title: "Replies and pipeline, not just sends",
-    desc: "Work inbound replies, follow-up states and warm opportunities inside the same workspace.",
+    desc: "Work reply follow-up, follow-up states and warm opportunities inside the same workspace.",
   },
 ];
 
