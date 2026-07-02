@@ -92,7 +92,7 @@ Deno.serve(async (req) => {
       return redirectBack({ nylas: "error", reason: "state_expired" });
     }
 
-    const cfg = nylasConfig(stateRow.region || "eu");
+    const cfg = nylasConfig(stateRow.region || "us");
     const { apiKey, clientId, apiUri, callback } = cfg;
     console.info("nylas-auth-callback diagnostics", {
       request_id: edgeRequestId(req),
