@@ -109,7 +109,7 @@ export default function SupportWidget() {
   const [nudgeVisible, setNudgeVisible] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { setEmail(user?.email ?? ""); }, [user?.email]);
+  useEffect(() => { setEmail(user?.email ?? ""); setFbEmail(user?.email ?? ""); }, [user?.email]);
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages, thinking, mode]);
