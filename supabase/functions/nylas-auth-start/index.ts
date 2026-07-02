@@ -1,8 +1,10 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
-// Region-aware Nylas config resolver. Defaults to US (active Nylas app is US
-// Sandbox). EU support is retained for a future switch.
+// Region-aware Nylas config resolver. Defaults to the US Nylas app; keys and
+// callback URI are supplied entirely via environment secrets so the same code
+// runs against the production Nylas application in prod. EU support is
+// retained for a future switch.
 function nylasConfig(region: string) {
   const r = (region || "us").toLowerCase() === "eu" ? "EU" : "US";
   const defaultUri = r === "US" ? "https://api.us.nylas.com" : "https://api.eu.nylas.com";
