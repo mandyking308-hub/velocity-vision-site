@@ -1,0 +1,101 @@
+email,first_name,last_name,company,job_title
+contact1@company1.io,First1,Last1,Company1,Head of Ops
+contact2@company2.io,First2,Last2,Company2,Head of Ops
+contact3@company3.io,First3,Last3,Company3,Head of Ops
+contact4@company4.io,First4,Last4,Company4,Head of Ops
+contact5@company5.io,First5,Last5,Company5,Head of Ops
+contact6@company6.io,First6,Last6,Company6,Head of Ops
+contact7@company7.io,First7,Last7,Company7,Head of Ops
+contact8@company8.io,First8,Last8,Company8,Head of Ops
+contact9@company9.io,First9,Last9,Company9,Head of Ops
+contact10@company10.io,First10,Last10,Company10,Head of Ops
+contact11@company11.io,First11,Last11,Company11,Head of Ops
+contact12@company12.io,First12,Last12,Company12,Head of Ops
+contact13@company13.io,First13,Last13,Company13,Head of Ops
+contact14@company14.io,First14,Last14,Company14,Head of Ops
+contact15@company15.io,First15,Last15,Company15,Head of Ops
+contact16@company16.io,First16,Last16,Company16,Head of Ops
+contact17@company17.io,First17,Last17,Company17,Head of Ops
+contact18@company18.io,First18,Last18,Company18,Head of Ops
+contact19@company19.io,First19,Last19,Company19,Head of Ops
+contact20@company0.io,First20,Last20,Company0,Head of Ops
+contact21@company1.io,First21,Last21,Company1,Head of Ops
+contact22@company2.io,First22,Last22,Company2,Head of Ops
+contact23@company3.io,First23,Last23,Company3,Head of Ops
+contact24@company4.io,First24,Last24,Company4,Head of Ops
+contact25@company5.io,First25,Last25,Company5,Head of Ops
+contact26@company6.io,First26,Last26,Company6,Head of Ops
+contact27@company7.io,First27,Last27,Company7,Head of Ops
+contact28@company8.io,First28,Last28,Company8,Head of Ops
+contact29@company9.io,First29,Last29,Company9,Head of Ops
+contact30@company10.io,First30,Last30,Company10,Head of Ops
+contact31@company11.io,First31,Last31,Company11,Head of Ops
+contact32@company12.io,First32,Last32,Company12,Head of Ops
+contact33@company13.io,First33,Last33,Company13,Head of Ops
+contact34@company14.io,First34,Last34,Company14,Head of Ops
+contact35@company15.io,First35,Last35,Company15,Head of Ops
+contact36@company16.io,First36,Last36,Company16,Head of Ops
+contact37@company17.io,First37,Last37,Company17,Head of Ops
+contact38@company18.io,First38,Last38,Company18,Head of Ops
+contact39@company19.io,First39,Last39,Company19,Head of Ops
+contact40@company0.io,First40,Last40,Company0,Head of Ops
+contact41@company1.io,First41,Last41,Company1,Head of Ops
+contact42@company2.io,First42,Last42,Company2,Head of Ops
+contact43@company3.io,First43,Last43,Company3,Head of Ops
+contact44@company4.io,First44,Last44,Company4,Head of Ops
+contact45@company5.io,First45,Last45,Company5,Head of Ops
+contact46@company6.io,First46,Last46,Company6,Head of Ops
+contact47@company7.io,First47,Last47,Company7,Head of Ops
+contact48@company8.io,First48,Last48,Company8,Head of Ops
+contact49@company9.io,First49,Last49,Company9,Head of Ops
+contact50@company10.io,First50,Last50,Company10,Head of Ops
+info@acme.io,,,Acme Ltd,
+admin@acme.io,,,Acme Ltd,
+sales@acme.io,,,Acme Ltd,
+support@acme.io,,,Acme Ltd,
+noreply@acme.io,,,Acme Ltd,
+contact@acme.io,,,Acme Ltd,
+hello@acme.io,,,Acme Ltd,
+team@acme.io,,,Acme Ltd,
+office@acme.io,,,Acme Ltd,
+marketing@acme.io,,,Acme Ltd,
+person0@gmail.com,Pers0,Onal0,SideCo0,Freelancer
+person1@yahoo.com,Pers1,Onal1,SideCo1,Freelancer
+person2@outlook.com,Pers2,Onal2,SideCo2,Freelancer
+person3@icloud.com,Pers3,Onal3,SideCo3,Freelancer
+person4@gmail.com,Pers4,Onal4,SideCo4,Freelancer
+person5@yahoo.com,Pers5,Onal5,SideCo5,Freelancer
+person6@outlook.com,Pers6,Onal6,SideCo6,Freelancer
+person7@icloud.com,Pers7,Onal7,SideCo7,Freelancer
+lone0@gmail.com,Lone0,Wolf,,
+lone1@yahoo.com,Lone1,Wolf,,
+lone2@outlook.com,Lone2,Wolf,,
+lone3@icloud.com,Lone3,Wolf,,
+,NoMail0,Person0,Firm0,Manager
+,NoMail1,Person1,Firm1,Manager
+,NoMail2,Person2,Firm2,Manager
+,NoMail3,Person3,Firm3,Manager
+,NoMail4,Person4,Firm4,Manager
+,NoMail5,Person5,Firm5,Manager
+not-an-email-0,Bad0,Fmt0,BadFmt0,
+not-an-email-1,Bad1,Fmt1,BadFmt1,
+not-an-email-2,Bad2,Fmt2,BadFmt2,
+not-an-email-3,Bad3,Fmt3,BadFmt3,
+not-an-email-4,Bad4,Fmt4,BadFmt4,
+burner@mailinator.com,Burn,Er,Throwaway Inc,
+burner@tempmail.com,Burn,Er,Throwaway Inc,
+burner@yopmail.com,Burn,Er,Throwaway Inc,
+typoer@gnail.com,Ty,Po,Typo Corp,
+typoer@gmial.com,Ty,Po,Typo Corp,
+typoer@hotnail.com,Ty,Po,Typo Corp,
+weird0@nodomain0,Sus0,Domain,Weird0,
+weird1@nodomain1,Sus1,Domain,Weird1,
+weird2@nodomain2,Sus2,Domain,Weird2,
+contact1@company1.io,First1,Last1,Company1,
+contact2@company2.io,Dup,Two,Company2,
+contact3@company3.io,Dup,Three,Company3,
+contact4@company4.io,Dup,Four,Company4,
+alt1@company5.io,First5,Last5,Company5,
+alt2@company5.io,First5,Last5,Company5,
+,,,,
+,,,,
