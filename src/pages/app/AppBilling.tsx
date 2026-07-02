@@ -71,6 +71,7 @@ export default function AppBilling() {
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
   const [pendingPlan, setPendingPlan] = useState<PlanId | null>(null);
+  const [showCheckoutFeedback, setShowCheckoutFeedback] = useState(false);
 
   const load = async () => {
     if (!user) return;
