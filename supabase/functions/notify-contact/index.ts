@@ -77,11 +77,38 @@ Deno.serve(async (req) => {
   const routeLabel = ROUTE_LABELS[route] ?? 'Other';
   const source = route === 'demo_booking' ? 'demo_booking' : 'website_contact';
 
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  if (req.method !== 'POST') return json({ ok: false, error: 'method_not_allowed' }, 405);
+
+  let payload: Record<string, any> = {};
+  try {
+    payload = await req.json();
+  } catch {
+    return json({ ok: false, error: 'invalid_json' }, 400);
+  }
+
+  const name = String(payload.name ?? '').trim();
+  const rawEmail = String(payload.email ?? '').trim();
+  const email = rawEmail.toLowerCase();
+  const company = String(payload.company ?? '').trim();
+  const message = String(payload.message ?? '').trim();
+  const rawRoute = String(payload.route ?? 'general_support').slice(0, 64);
+  const route = ROUTE_LABELS[rawRoute] ? rawRoute : 'other';
+  const routeLabel = ROUTE_LABELS[route] ?? 'Other';
+  const source = route === 'demo_booking' ? 'demo_booking' : 'website_contact';
+
   if (!name || !email) {
     return json({ ok: false, error: 'missing_fields' }, 400);
   }
   if (name.length > 200 || email.length > 320 || company.length > 200 || message.length > 5000) {
     return json({ ok: false, error: 'field_too_long' }, 400);
+  }
+
+  const emailCheck = classifyEmail(email);
+  if (!emailCheck.ok) {
+    // Fake/test domains are rejected so they never pollute the CRM.
+    return json({ ok: false, error: emailCheck.reason ?? 'invalid_email' }, 400);
   }
 
   const supabase = admin();
