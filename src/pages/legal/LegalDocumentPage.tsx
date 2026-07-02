@@ -1,4 +1,5 @@
 import { useParams, Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { useState, useEffect, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -7310,6 +7311,10 @@ const LegalDocumentPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>{`${doc.title} — Velocity Vision Legal Centre`}</title>
+        <meta name="description" content={`${doc.title} for the Velocity Vision platform, operated by Global Solutions Management LLC.`} />
+      </Helmet>
       <Navbar />
       <main className="pt-24 pb-20">
         <div className="max-w-6xl mx-auto px-6 lg:px-8">

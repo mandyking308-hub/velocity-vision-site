@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import LegalAcceptanceCheckbox from "@/components/LegalAcceptanceCheckbox";
 import { recordLegalAcceptance } from "@/lib/recordLegalAcceptance";
+import { Helmet } from "react-helmet-async";
 
 const _legalLinks = [
   { label: "Platform Terms of Service", path: "/legal/terms-of-service" },

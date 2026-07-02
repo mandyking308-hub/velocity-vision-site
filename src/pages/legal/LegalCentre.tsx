@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
@@ -20,6 +21,10 @@ const legalDocs = [
 
 const LegalCentre = () => (
   <div className="min-h-screen bg-background">
+    <Helmet>
+      <title>Legal Centre — Velocity Vision</title>
+      <meta name="description" content="Terms, policies and agreements governing use of the Velocity Vision platform, including privacy, DPA, acceptable use, marketing compliance, security and SLA." />
+    </Helmet>
     <Navbar />
     <main className="pt-24 pb-20">
       <div className="max-w-4xl mx-auto px-6 lg:px-8">
