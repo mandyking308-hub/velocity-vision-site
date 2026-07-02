@@ -113,7 +113,7 @@ export default function AppActivation() {
         // Provider-agnostic readiness: Nylas warm-up-eligible senders are
         // treated as domain_authenticated so activation is not hard-blocked
         // on DNS. SMTP still gates on real verification.
-        const r = computeReadiness(def);
+        const r = computeReadiness(def as any);
         const dnsVerified = def.verification_status === "verified" && def.sending_enabled === true;
         const readyWarmup = r.canSendWarmup;
         const wCap = readyWarmup && !dnsVerified ? warmupCap((planConfig.id as PlanId) || "starter") : null;
