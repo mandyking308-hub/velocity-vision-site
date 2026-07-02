@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import i18n from "@/i18n";
 import { useTranslation } from "react-i18next";
 import { useCredits } from "@/contexts/CreditsContext";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { CREDIT_COSTS } from "@/lib/credits";
 
 import EmailSequenceSender from "@/components/app/EmailSequenceSender";
@@ -92,6 +93,7 @@ export default function AppCampaignWorkspace() {
   }, []);
 
   const { remaining, starterExpired, refresh: refreshCredits } = useCredits();
+  const { currentId: workspaceId } = useWorkspace();
 
   const regenerate = async () => {
     if (!c?.brief || regenerating) return;
@@ -378,7 +380,7 @@ export default function AppCampaignWorkspace() {
 
           {channelCfg.includeEmail && (
             <TabsContent value="emails" className="space-y-3 mt-4">
-              <EmailSequenceSender emails={pack.emails} campaignId={c.id} leads={leads} />
+              <EmailSequenceSender emails={pack.emails} campaignId={c.id} workspaceId={workspaceId} leads={leads} />
             </TabsContent>
           )}
 

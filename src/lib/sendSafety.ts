@@ -70,13 +70,15 @@ export type SenderHealth = "healthy" | "warming" | "needs_attention" | "paused" 
 
 export interface SenderState {
   connected: boolean;
-  domain_authenticated: boolean;        // SPF + DKIM
+  domain_authenticated: boolean;        // SPF + DKIM (or provider-managed for Nylas warm-up)
   reconnect_required: boolean;
   newly_connected: boolean;             // < 7 days
   last_send_at: string | null;
   bounce_rate: number;                  // 0..1
   unsubscribe_rate: number;             // 0..1
   complaint_rate?: number;              // optional
+  /** When set, sender is warm-up-eligible; caps the daily safeAllowance. */
+  warmup_daily_cap?: number | null;
 }
 
 export function senderHealth(s: SenderState): SenderHealth {
@@ -156,8 +158,9 @@ export function computeSafety(input: SafetyInput): SafetyResult {
     pause.push("Sender requires reconnection.");
     factor = 0;
   }
-  if (!input.sender.domain_authenticated && input.sender.connected) {
-    // Founder decision: sender verification is a hard block on Activate.
+  if (!input.sender.domain_authenticated && input.sender.connected && !input.sender.warmup_daily_cap) {
+    // SMTP / custom domain that has not been DNS-verified and is not eligible
+    // for provider-managed warm-up. Hard block until verified.
     pause.push("Sender domain is not verified (SPF / DKIM missing). Verify your domain to activate.");
     factor = 0;
   }
@@ -184,6 +187,13 @@ export function computeSafety(input: SafetyInput): SafetyResult {
 
   const adjusted = Math.floor(ceiling * factor);
   let safeAllowance = Math.max(0, Math.min(adjusted, input.sendCreditsRemaining, input.vault.valid));
+  if (input.sender.warmup_daily_cap && input.sender.warmup_daily_cap > 0) {
+    if (safeAllowance > input.sender.warmup_daily_cap) {
+      adjustments.push({ factor: input.sender.warmup_daily_cap / Math.max(safeAllowance, 1),
+        reason: `Warm-up cap: ${input.sender.warmup_daily_cap}/day for this sender.` });
+    }
+    safeAllowance = Math.min(safeAllowance, input.sender.warmup_daily_cap);
+  }
 
   // Agency pooled enforcement — the 1,000/day ceiling is shared across all child workspaces.
   let agencyPooledRemaining: number | undefined = undefined;

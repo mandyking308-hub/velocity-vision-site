@@ -26,7 +26,7 @@ import JourneyEmptyState from "@/components/app/JourneyEmptyState";
 import LegalComplianceGate from "@/components/LegalComplianceGate";
 import { useLegalStatus } from "@/lib/legalCompliance";
 import { recordLegalAcceptance } from "@/lib/recordLegalAcceptance";
-import { computeReadiness } from "@/lib/senderReadiness";
+import { computeReadiness, warmupCap } from "@/lib/senderReadiness";
 
 interface Counts { valid: number; needs_review: number; risky: number; blocked: number; suppressed: number; }
 
@@ -110,16 +110,22 @@ export default function AppActivation() {
         const newly = def.last_verified_at ? (Date.now() - new Date(def.last_verified_at).getTime()) < 7 * 86400000 : true;
         const totalSends = (sends.data || []).length || 1;
         const bounces = (sends.data || []).filter((x: any) => x.status === "bounced" || x.status === "failed").length;
-        // Truthful: only mark authenticated when the DB says sending_enabled AND verified.
-        const verified = def.verification_status === "verified" && def.sending_enabled === true;
+        // Provider-agnostic readiness: Nylas warm-up-eligible senders are
+        // treated as domain_authenticated so activation is not hard-blocked
+        // on DNS. SMTP still gates on real verification.
+        const r = computeReadiness(def as any);
+        const dnsVerified = def.verification_status === "verified" && def.sending_enabled === true;
+        const readyWarmup = r.canSendWarmup;
+        const wCap = readyWarmup && !dnsVerified ? warmupCap((planConfig.id as PlanId) || "starter") : null;
         setSender({
           connected: def.status === "connected",
-          domain_authenticated: verified,
+          domain_authenticated: dnsVerified || readyWarmup,
           reconnect_required: def.status === "reconnect_required" || def.verification_status === "reconnect_required",
           newly_connected: newly,
           last_send_at: last,
           bounce_rate: bounces / totalSends,
           unsubscribe_rate: 0,
+          warmup_daily_cap: wCap,
         });
       } else {
         setSenderDetail(null);
@@ -260,7 +266,7 @@ export default function AppActivation() {
                     try {
                       await recordLegalAcceptance({
                         userId: user.id, email: user.email ?? null,
-                        source: "activation" as any, workspaceId: currentId,
+                        source: "founder_qa_activation", workspaceId: currentId,
                       });
                       toast.success("Founder QA acceptance recorded");
                       await legal.refresh();
@@ -277,18 +283,19 @@ export default function AppActivation() {
         </Alert>
       )}
       {(() => {
-        const r = computeReadiness(defaultConn);
+        const r = computeReadiness(defaultConn as any);
         if (!defaultConn) return null;
         if (r.canSendFull) return null;
         if (r.canSendWarmup) {
+          const cap = warmupCap((planConfig.id as PlanId) || "starter");
           return (
             <Alert>
               <Mail className="h-4 w-4" />
               <AlertTitle>Mailbox connected — warm-up sending available</AlertTitle>
               <AlertDescription>
                 {r.personal
-                  ? "You can activate low-volume outreach now. We'll protect your daily limits and sender reputation."
-                  : r.friendlyLine}
+                  ? `You can activate low-volume outreach now. Today's warm-up cap: ${cap} sends. Replies return to this inbox.`
+                  : `${r.friendlyLine} Today's warm-up cap: ${cap} sends.`}
               </AlertDescription>
             </Alert>
           );
@@ -393,6 +400,9 @@ export default function AppActivation() {
         </Card>
 
         <SenderStatusCard
+          connection={defaultConn}
+          usedToday={usedToday}
+          warmupCap={warmupCap((planConfig.id as PlanId) || "starter")}
           state={sender}
           health={safety.health}
           scheduledToday={scheduledToday}
