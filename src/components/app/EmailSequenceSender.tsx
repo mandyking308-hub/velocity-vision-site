@@ -21,9 +21,11 @@ interface SequenceEmail {
   preview?: string;
 }
 
-interface Connection {
+interface Connection extends ConnectionShape {
   id: string; from_email: string; from_name: string | null; is_default: boolean;
-  status: string; sending_enabled?: boolean | null; auth_type?: string | null;
+  status: string; sending_enabled?: boolean | null; auth_type?: "smtp" | "nylas" | null;
+  nylas_grant_id?: string | null; nylas_provider?: string | null;
+  domain?: string | null;
 }
 
 interface Lead { id: string; name: string | null; email: string | null; }
