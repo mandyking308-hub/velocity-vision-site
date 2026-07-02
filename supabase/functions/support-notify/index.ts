@@ -3,7 +3,10 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const CONTACT_NOTIFY_TO = Deno.env.get("CONTACT_NOTIFY_TO");
-const EMAIL_FROM = Deno.env.get("EMAIL_FROM") ?? "Velocity Vision <notifications@velocity-outreach.com>";
+// Expected production value once Resend domain is verified:
+//   Velocity Vision <support@mail.velocity-outreach.com>
+// No silent fallback — ticket still saves; email skipped if EMAIL_FROM missing.
+const EMAIL_FROM = Deno.env.get("EMAIL_FROM");
 
 const esc = (s: unknown) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c] as string));
