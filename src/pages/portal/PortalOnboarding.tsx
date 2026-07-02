@@ -304,7 +304,7 @@ const PortalOnboarding = () => {
             <div className="flex items-start gap-2 p-4 rounded-xl bg-muted/30 border border-border/50">
               <Checkbox id="legal-accept" checked={legalAccepted} onCheckedChange={(v) => setLegalAccepted(v === true)} className="mt-0.5" />
               <label htmlFor="legal-accept" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
-                I agree to the <Link to="/legal/terms-of-service" target="_blank" className="text-accent underline">Terms of Service</Link> and confirm that I have read the <Link to="/legal/privacy-policy" target="_blank" className="text-accent underline">Privacy Policy</Link> and other applicable <Link to="/legal" target="_blank" className="text-accent underline">legal documents</Link>.
+                I agree to the <Link to="/legal/terms-of-service" target="_blank" rel="noopener noreferrer" className="text-accent underline">Terms of Service</Link> and confirm that I have read the <Link to="/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-accent underline">Privacy Policy</Link> and other applicable <Link to="/legal" target="_blank" rel="noopener noreferrer" className="text-accent underline">legal documents</Link>.
               </label>
             </div>
             <Button variant="cta" onClick={() => setCurrentStep(1)} disabled={!legalAccepted} className="gap-1.5">Continue <ArrowRight size={14} /></Button>
