@@ -148,8 +148,21 @@ export default function AppActivation() {
         const { data: pooled } = await (supabase as any).rpc("agency_pooled_sends_today");
         if (typeof pooled === "number") setAgencyPooled(pooled);
       }
+
+      // Load selectable campaigns in this workspace (draft/scheduled first).
+      const campQ = supabase.from("campaigns").select("id, name, status").order("created_at", { ascending: false }).limit(50);
+      const { data: camps } = currentId ? await campQ.eq("workspace_id", currentId) : await campQ;
+      const list = (camps || []) as Array<{ id: string; name: string; status: string | null }>;
+      setCampaigns(list);
+      if (!selectedCampaign && list.length > 0) {
+        // Prefer the one the user came in with, else the most recent draft/scheduled, else first.
+        const prefer = campaignId && list.find((c) => c.id === campaignId);
+        const draft = list.find((c) => c.status === "draft" || c.status === "scheduled");
+        setSelectedCampaign((prefer || draft || list[0]).id);
+      }
     })();
   }, [user, planConfig.id, currentId]);
+
 
   const plan = (planConfig.id as PlanId) || "starter";
   const safety = useMemo(() => computeSafety({
