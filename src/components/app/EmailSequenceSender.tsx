@@ -274,8 +274,8 @@ function SendStatusBadge({ status }: { status: string }) {
   return <Badge className={map[status] || ""}>{status}</Badge>;
 }
 
-function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspaceId, allowSchedule = true, onLegalRequired, onClose }:
-  { email: SequenceEmail; stepIndex: number; leads: Lead[]; connectionId?: string; campaignId: string; workspaceId?: string | null; allowSchedule?: boolean; onLegalRequired?: () => void; onClose: () => void; }) {
+function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspaceId, allowSchedule = true, warmupMode = false, onLegalRequired, onClose }:
+  { email: SequenceEmail; stepIndex: number; leads: Lead[]; connectionId?: string; campaignId: string; workspaceId?: string | null; allowSchedule?: boolean; warmupMode?: boolean; onLegalRequired?: () => void; onClose: () => void; }) {
   const { t } = useTranslation("app");
   const [subject, setSubject] = useState(email.subject);
   const [body, setBody] = useState(email.body);
@@ -284,10 +284,16 @@ function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspa
     const d = new Date(); d.setDate(d.getDate() + 1); d.setHours(9, 0, 0, 0);
     return d.toISOString().slice(0, 16);
   });
-  const [selected, setSelected] = useState<Set<string>>(new Set(leads.filter(l => l.email).map(l => l.id)));
+  // Safety: never pre-select recipients. Customer must deliberately tick.
+  const [selected, setSelected] = useState<Set<string>>(new Set());
   const [sending, setSending] = useState(false);
 
+  const eligible = leads.filter(l => l.email);
+  const selectFirst = () => { const first = eligible[0]; setSelected(new Set(first ? [first.id] : [])); };
+  const selectAllVisible = () => setSelected(new Set(eligible.map(l => l.id)));
+  const clearSelection = () => setSelected(new Set());
   const toggle = (id: string) => { const s = new Set(selected); s.has(id) ? s.delete(id) : s.add(id); setSelected(s); };
+
 
   const submit = async () => {
     if (!connectionId) { toast.error(t("email.toasts.connectFirst")); return; }
