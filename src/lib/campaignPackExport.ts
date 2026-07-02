@@ -162,8 +162,8 @@ export function buildCampaignMarkdown(opts: {
     const extraLaunch = extra?.launchPosts || [];
     const extraFollow = extra?.followUps || [];
     if (hasSelection && (extraLaunch.length || extraFollow.length)) {
-      md += heading(2, "Optional Additional Channels");
-      md += `_Not part of your selected pack — included only as extras you can choose to use._\n\n`;
+      md += heading(2, "Optional Additional Channel Ideas — not part of the selected campaign");
+      md += `_These platforms were not selected in your brief. Included only as optional ideas you can choose to use later._\n\n`;
       [...extraLaunch, ...extraFollow].forEach((p: any, i: number) => {
         md += `### ${clean(p.platform) || "Post"} — ${i < extraLaunch.length ? "Launch" : "Follow-up"}\n\n`;
         md += line("Platform", p.platform);
