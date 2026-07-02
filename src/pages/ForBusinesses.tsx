@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import EmailIntegrationsStrip from "@/components/EmailIntegrationsStrip";
 import SEO from "@/components/SEO";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -189,6 +190,7 @@ const ForBusinesses = () => (
         </div>
       </section>
     </main>
+    <EmailIntegrationsStrip variant="compact" />
     <Footer />
   </>
 );
