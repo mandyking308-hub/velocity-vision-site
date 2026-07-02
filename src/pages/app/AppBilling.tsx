@@ -138,7 +138,7 @@ export default function AppBilling() {
             {country && <> · Detected region <strong className="text-foreground">{country}</strong></>}
           </p>
         </div>
-        <PricingCurrencySelector align="right" className="md:max-w-md" />
+        <PricingCurrencySelector align="right" className="md:max-w-md" currency={currency} onCurrencyChange={setCurrency} />
       </div>
       <p className="text-xs text-muted-foreground -mt-4">{taxNotice(currency)}</p>
 
