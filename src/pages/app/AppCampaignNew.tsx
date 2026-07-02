@@ -116,9 +116,12 @@ export default function AppCampaignNew() {
     }
     setSaving(true);
     try {
-      // 1) Try AI generation first (customer-facing quality path).
+      // 1) Server-side credit gate + AI generation (credits are reserved
+      // inside the edge function BEFORE the AI call, and auto-refunded
+      // if generation fails). No client-side consume() needed.
       let pack: CampaignPack | null = null;
       let usedFallback = false;
+      let ledgerId: string | null = null;
       try {
         const { data: aiData, error: aiErr } = await supabase.functions.invoke("generate-campaign-pack", {
           body: { brief },
@@ -126,8 +129,19 @@ export default function AppCampaignNew() {
         if (aiErr) throw aiErr;
         if (aiData?.pack) {
           pack = mergeGeneratedPack(brief, aiData.pack, aiData.generatedAs) as CampaignPack;
+          ledgerId = (aiData as any)?.ledgerId ?? null;
         }
-      } catch (aiErr) {
+      } catch (aiErr: any) {
+        const status = aiErr?.status ?? aiErr?.context?.status;
+        const code = aiErr?.context?.body ? String(aiErr.context.body) : String(aiErr?.message || "");
+        if (status === 402 || /insufficient_credits|starter_expired|no_plan/.test(code)) {
+          toast.error("You don't have enough Campaign Credits", {
+            description: `Generating a full campaign pack costs ${CREDIT_COSTS.full_campaign_pack} credits. Top up or upgrade to continue.`,
+          });
+          setSaving(false);
+          await refreshCredits();
+          return;
+        }
         console.warn("AI generation failed, using deterministic fallback", aiErr);
       }
       if (!pack) {
@@ -135,16 +149,20 @@ export default function AppCampaignNew() {
         usedFallback = true;
       }
 
-      // 2) Quality guard. If it fails, DO NOT save and DO NOT deduct credits.
+      // 2) Quality guard. Refund the server-side reservation if the guard fails.
       const quality = checkPackQuality(pack, brief);
       if (!quality.ok) {
         const { title, description } = formatQualityFailure(quality, qualityDebug);
         toast.error(title, { description });
+        if (ledgerId) {
+          try { await supabase.rpc("refund_campaign_credits", { _ledger_id: ledgerId }); } catch (_e) { /* noop */ }
+          await refreshCredits();
+        }
         setSaving(false);
         return;
       }
 
-      // 3) Persist and deduct credits atomically-ish (consume runs after insert).
+      // 3) Persist campaign.
       const slug = makeSlug(brief.name || "campaign");
       const nextRun = computeNextRun(cadence);
       const startIsFuture = cadence.start_at && new Date(cadence.start_at) > new Date();
@@ -179,11 +197,19 @@ export default function AppCampaignNew() {
         .insert(insertRow)
         .select("id")
         .single();
-      if (error) throw error;
-      const ok = await consume("full_campaign_pack", data.id, brief.name);
-      if (!ok) {
-        toast.message(t("campaigns.toasts.draftSaved"), { description: t("campaigns.toasts.draftSavedDesc") });
-      } else if (usedFallback) {
+      if (error) {
+        if (ledgerId) {
+          try { await supabase.rpc("refund_campaign_credits", { _ledger_id: ledgerId }); } catch (_e) { /* noop */ }
+        }
+        throw error;
+      }
+      if (ledgerId) {
+        try {
+          await supabase.rpc("finalise_campaign_credits", { _ledger_id: ledgerId, _ref_id: data.id, _label: brief.name });
+        } catch (_e) { /* noop — spend row is already recorded */ }
+      }
+      await refreshCredits();
+      if (usedFallback) {
         toast.success("Campaign pack ready (fallback template used)");
       } else {
         toast.success(t("campaigns.toasts.packGenerated"));
