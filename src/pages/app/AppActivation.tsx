@@ -473,27 +473,51 @@ export default function AppActivation() {
               )}
             </div>
 
-            <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 space-y-2">
+            <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 space-y-3">
               <div className="text-sm font-medium">Pre-flight summary</div>
+
+              <div className="space-y-1">
+                <Label className="text-xs">Target campaign</Label>
+                {campaigns.length === 0 ? (
+                  <div className="flex items-center justify-between gap-2 rounded border border-dashed border-border p-3">
+                    <div className="text-xs text-muted-foreground">You don't have a campaign yet. Create one to activate leads into.</div>
+                    <Button size="sm" variant="outline" onClick={() => navigate("/app/campaigns/new")}>
+                      <Plus className="h-3.5 w-3.5 mr-1" /> New campaign
+                    </Button>
+                  </div>
+                ) : (
+                  <Select value={selectedCampaign} onValueChange={setSelectedCampaign}>
+                    <SelectTrigger><SelectValue placeholder="Choose a campaign" /></SelectTrigger>
+                    <SelectContent>
+                      {campaigns.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>{c.name}{c.status ? ` · ${c.status}` : ""}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+                <p className="text-[11px] text-muted-foreground">Leads are added to this campaign. No emails are sent from this screen.</p>
+              </div>
+
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
                 <Tile label="Audience selected" value={totalSelected} />
-                <Tile label="Will send now" value={sendNow} tone="good" />
-                <Tile label="Send credits used" value={sendNow} />
+                <Tile label="Leads to create" value={totalSelected} tone="good" />
+                <Tile label="Can send today" value={sendNow} />
                 <Tile label="Today's safe cap" value={safety.safeAllowance} />
               </div>
               {sendNow < totalSelected && (
                 <div className="text-xs text-amber-700 dark:text-amber-400">
-                  {totalSelected - sendNow} contact(s) will be queued for upcoming days — today's safe cap reached.
+                  All {totalSelected} contact(s) will be prepared as leads. Only {sendNow} can go out today under your current safe cap — the rest wait in the campaign until you send them.
                 </div>
               )}
               {blocked && (
-                <div className="text-xs text-rose-600 flex items-center gap-1"><Pause className="h-3.5 w-3.5" /> Sending is paused — resolve the reasons in the panel above.</div>
+                <div className="text-xs text-rose-600 flex items-center gap-1"><Pause className="h-3.5 w-3.5" /> Sending is paused — resolve the reasons in the panel above. You can still prepare leads.</div>
               )}
               <Button className="w-full mt-1" size="lg" disabled={!canActivate} onClick={handleActivate}>
-                <Send className="h-4 w-4 mr-2" /> Confirm safe activation
+                <Send className="h-4 w-4 mr-2" /> {activating ? "Activating…" : "Confirm safe activation"}
               </Button>
-              <p className="text-xs text-muted-foreground text-center">Storing contacts is free. Activating outreach consumes send credits.</p>
+              <p className="text-xs text-muted-foreground text-center">Storing contacts is free. Sending consumes credits — and stays a separate click in the campaign.</p>
             </div>
+
           </CardContent>
         </Card>
 
