@@ -90,6 +90,7 @@ export default function SupportWidget() {
   const [urgency, setUrgency] = useState<string>("normal");
   const [submitting, setSubmitting] = useState(false);
   const [ticketRef, setTicketRef] = useState<string | null>(null);
+  const [notifyResult, setNotifyResult] = useState<"sent" | "not_sent" | null>(null);
   const [nudgeVisible, setNudgeVisible] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
