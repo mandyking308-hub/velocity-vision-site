@@ -380,7 +380,7 @@ export default function AppCampaignWorkspace() {
 
           {channelCfg.includeEmail && (
             <TabsContent value="emails" className="space-y-3 mt-4">
-              <EmailSequenceSender emails={pack.emails} campaignId={c.id} leads={leads} />
+              <EmailSequenceSender emails={pack.emails} campaignId={c.id} workspaceId={workspaceId} leads={leads} />
             </TabsContent>
           )}
 
