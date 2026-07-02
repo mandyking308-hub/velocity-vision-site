@@ -224,6 +224,10 @@ export default function AppCampaignNew() {
 
 
   const blocked = remaining < CREDIT_COSTS.full_campaign_pack || starterExpired;
+  const schedulePastError =
+    cadence.cadence_type === "one_off" &&
+    !!cadence.start_at &&
+    new Date(cadence.start_at).getTime() <= Date.now();
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
