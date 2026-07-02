@@ -331,17 +331,6 @@ export default function AppActivation() {
             { to: "/app/data-vault/upload", label: "Upload cleaner list", icon: Upload },
           ]}
         />
-        <JourneyEmptyState
-          icon={ShieldCheck}
-          flow={`Step 2 of the journey — ${totalContacts} contacts uploaded but none are safe yet`}
-          title="No safe contacts in your segment"
-          description="Your uploads have records flagged as needs-review, risky or blocked. Review them in the Data Vault to graduate contacts into the safe pool."
-          steps={[
-            { to: "/app/data-vault?quality=needs_review", label: "Review flagged contacts", icon: ShieldCheck },
-            { to: "/app/data-vault/upload", label: "Upload cleaner list", icon: Upload },
-            { to: "/app/campaigns/new", label: "Create assets meanwhile", icon: Wand2, variant: "ghost" },
-          ]}
-        />
       ) : (
       <>
       {!legal.loading && !legal.isCompliant && (
