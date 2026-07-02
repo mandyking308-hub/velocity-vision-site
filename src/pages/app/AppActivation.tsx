@@ -207,16 +207,6 @@ export default function AppActivation() {
             { to: "/app/data-vault", label: "Review data first" },
           ]}
         />
-      ) : sender.connected && !sender.domain_authenticated ? (
-        <JourneyEmptyState
-          icon={Mail}
-          flow={`Step 3 of the journey — sender connected, setup pending`}
-          title="Sender setup needed before activation"
-          description="Your mailbox is connected. Sending is not enabled yet. Complete sender setup before activation."
-          steps={[
-            { to: "/app/settings/email", label: "Finish sender setup", icon: Mail },
-          ]}
-        />
       ) : counts.valid === 0 ? (
         <JourneyEmptyState
           icon={ShieldCheck}
