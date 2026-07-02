@@ -1,4 +1,4 @@
-import { getCampaignChannelConfig, normaliseCampaignChannel, type CampaignBrief, type CampaignPack } from "./campaignPack";
+import { getCampaignChannelConfig, normaliseCampaignChannel, filterSupportedChannels, type CampaignBrief, type CampaignPack } from "./campaignPack";
 
 const clean = (v: any): string => {
   if (v === null || v === undefined) return "";
@@ -68,7 +68,7 @@ export function buildCampaignMarkdown(opts: {
   md += line("Offer", brief?.offer);
   md += line("Audience", brief?.audience);
   md += line("Goal", brief?.goal);
-  md += line("Channels", brief?.channels?.join(", "));
+  md += line("Channels", filterSupportedChannels(brief?.channels).join(", "));
   md += line("CTA", brief?.cta || pack.landing?.cta);
   md += line("Timing", cadenceSummary || brief?.deadline);
   md += "\n";
