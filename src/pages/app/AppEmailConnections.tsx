@@ -272,7 +272,7 @@ export default function AppEmailConnections() {
 
           <Collapsible open={showSmtp} onOpenChange={setShowSmtp}>
             <CollapsibleTrigger asChild>
-              <Button variant="ghost" size="sm" className="text-muted-foreground">
+              <Button variant="ghost" size="sm" className="text-muted-foreground" id="advanced-smtp">
                 <ChevronDown className={`h-4 w-4 mr-1 transition-transform ${showSmtp ? "rotate-180" : ""}`} />
                 Advanced SMTP setup
               </Button>
@@ -280,7 +280,7 @@ export default function AppEmailConnections() {
             <CollapsibleContent className="pt-3">
               <div className="rounded-md border p-3 text-sm space-y-2">
                 <p className="text-muted-foreground">
-                  For any provider that supports SMTP with an app password (Yahoo, iCloud, Fastmail, Zoho, IMAP hosts, or your own server).
+                  Fallback for providers without a native connector — enter host, port, and an app password. Yahoo, Fastmail, Zoho, IMAP hosts, or your own server all work here.
                 </p>
                 <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setEditing(null); }}>
                   <DialogTrigger asChild>
@@ -381,11 +381,19 @@ const VER_LABEL: Record<string, { label: string; cls: string }> = {
 };
 
 function providerLabel(c: Connection) {
+  const np = (c.nylas_provider || "").toLowerCase();
   if (c.auth_type === "nylas") {
-    return c.nylas_provider === "microsoft" ? "Microsoft" : "Google";
+    if (np.includes("microsoft") || np === "outlook") return "Microsoft";
+    if (np.includes("icloud")) return "iCloud";
+    if (np === "ews" || np.includes("exchange")) return "Exchange";
+    if (np.includes("imap")) return "IMAP";
+    return "Google";
   }
   if (c.provider === "gmail") return "Google";
   if (c.provider === "outlook") return "Microsoft";
+  if (c.provider === "icloud") return "iCloud";
+  if (c.provider === "ews") return "Exchange";
+  if (c.provider === "imap") return "IMAP";
   return "SMTP";
 }
 
@@ -421,28 +429,13 @@ function ConnectionRow({
     !hasConfiguredSelector &&
     (c.verification_status === "failed" || c.verification_status === "needs_dns_setup");
 
-  // Customer-facing send readiness derived from backend state. Personal Nylas
-  // mailboxes stay in "setup_needed" (with reassuring copy) until Phase 2
-  // sending is wired; custom domains follow the DNS verification signal.
-  const sendReady = c.sending_enabled === true && c.verification_status === "verified";
-  const readinessLabel = sendReady
-    ? "Ready to send"
-    : c.status === "reconnect_required"
-    ? "Reconnect required"
-    : "Setup needed";
-  const readinessTone = sendReady
-    ? "bg-emerald-600 text-white"
-    : c.status === "reconnect_required"
-    ? "bg-rose-600 text-white"
-    : "bg-amber-100 text-amber-800";
-
-  const friendlyStatusLine = c.auth_type === "nylas" && isPersonalMailbox
-    ? "Mailbox connected. Sending will be available when campaign activation is enabled."
-    : c.auth_type === "nylas"
-    ? "Mailbox connected. We'll guide you through a sender setup check before high-volume sending."
-    : sendReady
-    ? "Advanced SMTP sender verified and ready."
-    : "Advanced SMTP sender connected. Complete sender setup to enable sending.";
+  // Customer-facing send readiness — derived from the shared helper so this
+  // stays in lockstep with /app/activate and the send dialog.
+  const readiness = computeReadiness(c as ConnectionShape);
+  const badge = READINESS_BADGE[readiness.state];
+  const readinessLabel = badge.label;
+  const readinessTone = badge.cls;
+  const friendlyStatusLine = readiness.friendlyLine;
 
   async function verifyDns(persistSelector?: string) {
     setChecking(true);
