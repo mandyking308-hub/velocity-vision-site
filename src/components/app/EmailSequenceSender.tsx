@@ -46,7 +46,7 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
 
   const load = async () => {
     const [{ data: c }, { data: h }, userRes] = await Promise.all([
-      supabase.from("email_connections").select("id, from_email, from_name, is_default, status, sending_enabled, auth_type").order("is_default", { ascending: false }),
+      supabase.from("email_connections").select("id, from_email, from_name, is_default, status, sending_enabled, auth_type, nylas_grant_id, nylas_provider, domain").order("is_default", { ascending: false }),
       supabase.from("email_sends").select("id, recipient_email, subject, status, scheduled_for, sent_at, error, sequence_step").eq("campaign_id", campaignId).order("created_at", { ascending: false }).limit(20),
       supabase.auth.getUser(),
     ]);
