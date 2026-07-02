@@ -40,12 +40,14 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
   const [history, setHistory] = useState<any[]>([]);
 
   const load = async () => {
-    const [{ data: c }, { data: h }] = await Promise.all([
-      supabase.from("email_connections").select("id, from_email, from_name, is_default, status").order("is_default", { ascending: false }),
+    const [{ data: c }, { data: h }, userRes] = await Promise.all([
+      supabase.from("email_connections").select("id, from_email, from_name, is_default, status, sending_enabled, auth_type").order("is_default", { ascending: false }),
       supabase.from("email_sends").select("id, recipient_email, subject, status, scheduled_for, sent_at, error, sequence_step").eq("campaign_id", campaignId).order("created_at", { ascending: false }).limit(20),
+      supabase.auth.getUser(),
     ]);
     setConnections((c || []) as Connection[]);
     setHistory(h || []);
+    setUserEmail(userRes.data.user?.email ?? null);
   };
 
   useEffect(() => { load(); }, [campaignId]);
@@ -53,6 +55,8 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
   const defaultConn = connections.find((c) => c.is_default) || connections[0];
   const noConnection = connections.length === 0;
   const connectionIssue = defaultConn && defaultConn.status !== "connected" && defaultConn.status !== "pending";
+  const sendReady = !!defaultConn?.sending_enabled && defaultConn?.status === "connected";
+  const canTestOnly = !!defaultConn && !sendReady && !connectionIssue;
 
   const exportAll = () => {
     const text = emails.map((e, i) => `--- Email ${i + 1} ---\nSubject: ${e.subject}\n\n${e.body}`).join("\n\n");
