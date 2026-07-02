@@ -346,6 +346,7 @@ function ConnectionDialog({ editing, workspaceId, onDone }: { editing: Connectio
         smtp_host: smtpHost || helpConfig.host,
         smtp_port: smtpPort || helpConfig.port,
         is_default: isDefault,
+        workspace_id: workspaceId || undefined,
       },
     });
     setSaving(false);
