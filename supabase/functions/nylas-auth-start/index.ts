@@ -67,8 +67,9 @@ Deno.serve(async (req) => {
     const redirect_to = typeof body?.redirect_to === "string" ? body.redirect_to : null;
     const region = (body?.region || "us").toString().toLowerCase();
 
-    // Providers enabled on Nylas dashboard (US Sandbox). Yahoo/EWS/etc. are
-    // added here only when the corresponding Nylas connector is enabled.
+    // Providers must be enabled on the active Nylas application (dev or
+    // production) for the region being used. Yahoo/EWS/etc. are added here
+    // only when the corresponding Nylas connector is enabled.
     if (!["google", "microsoft", "icloud", "imap", "ews"].includes(provider)) {
       return json({ error: "invalid_provider" }, 400);
     }
