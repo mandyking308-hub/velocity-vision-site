@@ -179,10 +179,42 @@ Deno.serve(async (req) => {
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
   if (!LOVABLE_API_KEY) return json({ error: "ai_not_configured" }, 503);
 
+  // Auth: require a valid JWT and scope the Supabase client to the caller.
+  const authHeader = req.headers.get("Authorization") || "";
+  if (!authHeader.toLowerCase().startsWith("bearer ")) {
+    return json({ error: "unauthorized" }, 401);
+  }
+  const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    global: { headers: { Authorization: authHeader } },
+  });
+  const token = authHeader.slice(7);
+  const { data: claimsData, error: claimsErr } = await userClient.auth.getClaims(token);
+  if (claimsErr || !claimsData?.claims?.sub) {
+    return json({ error: "unauthorized" }, 401);
+  }
+
   let payload: { brief: Brief };
   try { payload = await req.json(); } catch { return json({ error: "invalid_json" }, 400); }
   const brief = payload?.brief;
   if (!brief || typeof brief !== "object") return json({ error: "brief required" }, 400);
+
+  // Server-side credit gate — reserve BEFORE the paid AI call. Refund on any
+  // failure below so users are never charged for a failed generation.
+  const { data: reservedId, error: reserveErr } = await userClient.rpc(
+    "reserve_campaign_credits",
+    { _cost: CAMPAIGN_PACK_COST, _action: CAMPAIGN_PACK_ACTION },
+  );
+  if (reserveErr || !reservedId) {
+    const msg = String(reserveErr?.message || "");
+    if (msg.includes("insufficient_credits")) return json({ error: "insufficient_credits" }, 402);
+    if (msg.includes("starter_expired")) return json({ error: "starter_expired" }, 402);
+    if (msg.includes("no_plan")) return json({ error: "no_plan" }, 402);
+    return json({ error: "credit_reservation_failed", detail: msg.slice(0, 200) }, 402);
+  }
+  const ledgerId = reservedId as string;
+  const refund = async () => {
+    try { await userClient.rpc("refund_campaign_credits", { _ledger_id: ledgerId }); } catch (_e) { /* best-effort */ }
+  };
 
   const normalisedChannels = (brief.channels || []).map(normaliseChannel);
   const selectedSocial = SOCIAL_PLATFORMS.filter((p) => normalisedChannels.includes(p));
@@ -192,6 +224,7 @@ Deno.serve(async (req) => {
 
   const language = brief.language || "en";
   const SYSTEM = buildSystemPrompt(selectedSocial, includeEmail, includePress, includeVideo);
+
 
   const userMsg = `Generate the campaign pack.
 
