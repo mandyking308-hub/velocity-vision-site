@@ -181,10 +181,15 @@ export default function AppActivation() {
   const riskyClamped = Math.min(riskyOverride, riskyMax, counts.risky);
   const totalSelected = safeSelected + reviewSelected + riskyClamped;
   const sendNow = Math.min(totalSelected, safety.remainingToday);
-  const blocked = safety.pauseReasons.length > 0 || !legal.isCompliant;
+  // Activation only prepares leads inside the campaign. It never sends.
+  // Send-time gates (sender, warm-up caps, legal at send, etc.) are enforced
+  // separately by the send engine. Blocking activation on those would
+  // contradict the "activation ≠ send" promise.
   const wantsRisky = riskyClamped > 0;
   const targetCampaignId = selectedCampaign || campaignId || null;
-  const canActivate = totalSelected > 0 && !blocked && (!wantsRisky || riskAck) && !!targetCampaignId && !activating;
+  const sendPaused = safety.pauseReasons.length > 0;
+  const activationBlocked = !legal.isCompliant;
+  const canActivate = totalSelected > 0 && !activationBlocked && (!wantsRisky || riskAck) && !!targetCampaignId && !activating;
 
   async function audit(action: string, details: any) {
     try {
@@ -289,15 +294,14 @@ export default function AppActivation() {
 
   const totalContacts = counts.valid + counts.needs_review + counts.risky + counts.blocked + counts.suppressed;
   const noData = totalContacts === 0;
-  const noSender = !sender.connected;
 
   return (
     <div className="max-w-6xl space-y-6">
       <div className="flex items-center justify-between gap-3">
         <div>
           <Button variant="ghost" size="sm" onClick={() => navigate(-1)}><ArrowLeft className="h-4 w-4 mr-1" /> Back</Button>
-          <h1 className="text-3xl font-bold tracking-tight mt-2">Activate: turn safe data into outreach</h1>
-          <p className="text-muted-foreground mt-1">Storage is free. Activation is the governed action that moves contacts into your campaign.</p>
+          <h1 className="text-3xl font-bold tracking-tight mt-2">Activate: prepare safe contacts as campaign leads</h1>
+          <p className="text-muted-foreground mt-1">Activation moves safe contacts into a campaign as leads. It does not send emails. Sending is a separate, governed action inside the campaign.</p>
         </div>
         <Badge className={`border-0 ${SENDER_HEALTH_TONE[safety.health]}`}>
           Sender: {SENDER_HEALTH_LABEL[safety.health]}
