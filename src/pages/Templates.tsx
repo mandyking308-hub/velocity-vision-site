@@ -7,9 +7,9 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Target, Rocket, Heart, Tag, RefreshCw } from "lucide-react";
 
 const templates = [
-  { icon: Target, name: "Outbound lead generation", desc: "Safe segment + multi-step outreach + reply queue + pipeline promotion. A repeatable template you can run every week." },
+  { icon: Target, name: "Outbound lead generation", desc: "Safe segment + multi-step outreach + follow-up queue + pipeline promotion. A repeatable template you can run every week." },
   { icon: Rocket, name: "Launch template", desc: "Coordinated outreach, social pack, press release and video pack — activated together for a product or offer launch." },
-  { icon: Heart, name: "Nurture & re-warm", desc: "Multi-step educational sequence for warm contacts, with reply tracking and follow-up states built in." },
+  { icon: Heart, name: "Nurture & re-warm", desc: "Multi-step educational sequence for warm contacts, with follow-up tracking and reply states built in." },
   { icon: Tag, name: "Promo & offer push", desc: "Short-window activation with urgency-led copy, safe segment limits and pipeline tracking for converted interest." },
   { icon: RefreshCw, name: "Dormant re-engagement", desc: "Re-surface lapsed customers and cold contacts with a refreshed offer, tailored follow-up and stuck-deal alerts." },
 ];
@@ -18,7 +18,7 @@ const Templates = () => (
   <>
     <SEO
       title="Templates — Reusable commercial templates | Velocity Vision"
-      description="Templates aren't starter packs — they're repeatable commercial workflows that connect data, activation, cadence, replies and pipeline."
+      description="Templates aren't starter packs — they're repeatable commercial workflows that connect data, activation, cadence, follow-up and pipeline."
       path="/templates"
     />
     <Navbar />
@@ -57,7 +57,7 @@ const Templates = () => (
             ))}
           </div>
           <p className="text-muted-foreground text-sm mt-10 max-w-3xl">
-            Every template connects directly to your Data Vault, AI-drafted asset generation, governed activation, cadence scheduler, replies inbox and pipeline — so the workflow runs end-to-end inside the workspace, with you in control of what is activated.
+            Every template connects directly to your Data Vault, AI-drafted asset generation, governed activation, cadence scheduler, follow-up inbox and pipeline — so the workflow runs end-to-end inside the workspace, with you in control of what is activated.
           </p>
         </div>
       </section>

@@ -9,7 +9,7 @@ const plans = [
     price: "£149",
     unit: "one-off",
     desc: "Test the full workflow on one campaign.",
-    bullets: ["1 activated campaign", "Data Vault + quality review", "Email + social + press pack", "Replies & pipeline access", "30 days workspace access"],
+    bullets: ["1 activated campaign", "Data Vault + quality review", "Email + social + press pack", "Follow-up & pipeline access", "30 days workspace access"],
   },
   {
     name: "Growth",
@@ -43,7 +43,7 @@ const PricingTeaser = () => (
           One workspace for marketing-led growth and early pipeline
         </h2>
         <p className="text-muted-foreground text-lg leading-relaxed">
-          Outreach, follow-up and early pipeline together — for less than most teams spend on disconnected tools and lost replies.
+          Outreach, follow-up and early pipeline together — for less than most teams spend on disconnected tools and lost follow-up.
         </p>
       </motion.div>
 

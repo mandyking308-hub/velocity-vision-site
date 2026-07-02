@@ -4,13 +4,13 @@ import { Database, Mail, Inbox, GitBranch } from "lucide-react";
 const stats = [
   { stat: "6+", desc: "tools the average lean team stitches together to run outreach, follow-up and pipeline" },
   { stat: "40%+", desc: "of imported B2B contact data is duplicated, invalid or unsafe to send without review" },
-  { stat: "70%", desc: "of inbound replies go cold because nobody owns follow-up across systems" },
+  { stat: "70%", desc: "of warm conversations go cold because nobody owns follow-up across systems" },
 ];
 
 const pains = [
   { icon: Database, title: "Messy contact data", desc: "Spreadsheets full of duplicates, missing emails and unsafe records — no clear view of who you can actually contact." },
   { icon: Mail, title: "Outreach takes forever to build", desc: "Email sequences, social posts and press releases written from scratch each campaign — across docs, tools and freelancers." },
-  { icon: Inbox, title: "Follow-up gets dropped", desc: "Replies sit in inboxes, snooze never happens, warm contacts cool down before anyone moves them forward." },
+  { icon: Inbox, title: "Follow-up gets dropped", desc: "Follow-up tasks sit in inboxes, snooze never happens, warm contacts cool down before anyone moves them forward." },
   { icon: GitBranch, title: "Pipeline lives nowhere", desc: "Opportunities tracked in someone's head or a half-built CRM. Nobody knows what's actually live." },
 ];
 
@@ -29,7 +29,7 @@ const ProblemProof = () => (
           Marketing-led outreach, follow-up and early pipeline are scattered across too many tools
         </h2>
         <p className="text-muted-foreground text-lg leading-relaxed">
-          Founders, agencies and lean growth teams hit the same wall: data in one place, outreach assets in another, replies in inboxes, early pipeline in someone's head. Marketing-led growth breaks at the joins.
+          Founders, agencies and lean growth teams hit the same wall: data in one place, outreach assets in another, follow-up tasks in inboxes, early pipeline in someone's head. Marketing-led growth breaks at the joins.
         </p>
       </motion.div>
 
@@ -79,7 +79,7 @@ const ProblemProof = () => (
           Velocity Vision pulls marketing-led outreach into one workspace.
         </p>
         <p className="text-muted-foreground text-lg leading-relaxed">
-          Data in. Quality reviewed. Outreach assets generated — email sequences, social media, press releases. Sending governed. Replies worked. Early pipeline moved. Without juggling six apps.
+          Data in. Quality reviewed. Outreach assets generated — email sequences, social media, press releases. Sending governed. Follow-up worked. Early pipeline moved. Without juggling six apps.
         </p>
       </motion.div>
     </div>

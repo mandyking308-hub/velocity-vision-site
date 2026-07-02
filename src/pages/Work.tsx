@@ -8,7 +8,7 @@ const useCases = [
     tag: "Category launch",
     title: "Launching into a new category from a cold start",
     objective: "Stand up outreach and PR around a new product narrative without hiring an agency.",
-    workflow: "Upload prospect and press list → review quality → activate safe segments → ship press release, social pack, and email sequence → work replies into pipeline.",
+    workflow: "Upload prospect and press list → review quality → activate safe segments → ship press release, social pack, and email sequence → work follow-up into pipeline.",
     outcome: "Structured launch cadence the team can run again next quarter.",
   },
   {
@@ -22,7 +22,7 @@ const useCases = [
     tag: "Market entry",
     title: "Entering a new geography or vertical",
     objective: "Test demand in a new region with localized assets and billing.",
-    workflow: "Workspace per region → multilingual asset generation (EN/ES) → local currency billing → tracked replies and pipeline by market.",
+    workflow: "Workspace per region → multilingual asset generation (EN/ES) → local currency billing → tracked follow-up and pipeline by market.",
     outcome: "Clean read on which markets are worth doubling down on.",
   },
   {
@@ -36,7 +36,7 @@ const useCases = [
     tag: "Reactivation",
     title: "Reactivating dormant contacts safely",
     objective: "Re-engage old customers without burning the sender reputation.",
-    workflow: "Mark dormant segments → governed safe-send caps → reply queue surfaces who came back warm → move warm leads into pipeline.",
+    workflow: "Mark dormant segments → governed safe-send caps → follow-up queue lets you mark warm contacts and move them into pipeline.",
     outcome: "Recovered revenue without compliance or deliverability risk.",
   },
   {
@@ -50,7 +50,7 @@ const useCases = [
 
 const Work = () => (
   <>
-    <SEO title="Use Cases & Example Plays | Velocity Vision" description="How founders, lean teams, and agencies use Velocity Vision to organise data, activate safely, work replies, and move opportunities into pipeline." path="/work" />
+    <SEO title="Use Cases & Example Plays | Velocity Vision" description="How founders, lean teams, and agencies use Velocity Vision to organise data, activate safely, work follow-up, and move opportunities into pipeline." path="/work" />
     <Navbar />
     <main className="pt-20">
       <section className="section-padding bg-hero">

@@ -17,7 +17,7 @@ const FinalCTA = () => (
           Stop running outreach, follow-up and pipeline across six tools
         </h2>
         <p className="text-primary-foreground/75 text-lg mb-10 max-w-xl mx-auto">
-          Bring data, assets, activation, replies and early pipeline into one governed workspace.
+          Bring data, assets, activation, follow-up and early pipeline into one governed workspace.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button variant="hero" size="lg" asChild>

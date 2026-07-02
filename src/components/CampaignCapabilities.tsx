@@ -11,7 +11,7 @@ const cards = [
   { icon: Share2, title: "Social pack", desc: "Launch posts, hooks and platform variants ready to schedule alongside outreach." },
   { icon: Newspaper, title: "Press release", desc: "Distribution-ready announcement for launches and milestones — generated from the same brief." },
   { icon: Video, title: "Video pack", desc: "Scripts, hooks, shot list, storyboard outline and captions for short-form video." },
-  { icon: Inbox, title: "Replies & follow-up", desc: "Action queue for inbound replies with snooze, follow-up states and stuck-deal alerts." },
+  { icon: Inbox, title: "Follow-up & action queue", desc: "Action queue for follow-up actions, snooze, reply states and stuck-deal alerts." },
   { icon: GitBranch, title: "Pipeline movement", desc: "Move warm contacts into early pipeline, track value and prepare for sales handoff — pipeline visibility, not CRM bloat." },
   { icon: BarChart3, title: "Performance review", desc: "Reply rates, pipeline value and activation health summarised every cycle." },
   { icon: Users, title: "Agency workspaces", desc: "One account, multiple isolated client workspaces with pooled governance and credits." },
@@ -32,7 +32,7 @@ const CampaignCapabilities = () => (
           Everything you need for marketing-led growth, outreach and early pipeline
         </h2>
         <p className="text-muted-foreground text-lg leading-relaxed">
-          Data Vault, quality review, email sequences, social pack, press releases, video pack, replies inbox, early pipeline movement — all in one workspace for founders, agencies and lean growth teams.
+          Data Vault, quality review, email sequences, social pack, press releases, video pack, follow-up inbox, early pipeline movement — all in one workspace for founders, agencies and lean growth teams.
         </p>
       </motion.div>
 

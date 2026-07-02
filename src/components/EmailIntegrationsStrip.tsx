@@ -76,7 +76,7 @@ export default function EmailIntegrationsStrip({ variant = "full" }: Props) {
             Connect your mailbox, send safely, and keep replies in your own inbox.
           </h2>
           <p className="text-muted-foreground">
-            Velocity connects through Nylas and SMTP so campaigns can send from the mailbox your team already uses — with warm-up controls, legal gates and reply tracking built in.
+            Velocity connects through Nylas and SMTP so campaigns can send from the mailbox your team already uses — with warm-up controls, legal gates and follow-up tracking built in. Replies return to your connected inbox.
           </p>
         </div>
 

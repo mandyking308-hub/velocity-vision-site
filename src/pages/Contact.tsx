@@ -13,7 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const routes = [
   { icon: Building2, title: "Enterprise & agency volume", desc: "Multi-workspace rollouts, agency-scale send governance, custom commercial terms.", action: "Send a volume enquiry", to: "#contact-form" },
-  { icon: LifeBuoy, title: "Product support", desc: "Help using the workspace — uploads, activation, sender setup, replies, pipeline.", action: "Open in-app support", to: "/app" },
+  { icon: LifeBuoy, title: "Product support", desc: "Help using the workspace — uploads, activation, sender setup, follow-up, pipeline.", action: "Open in-app support", to: "/app" },
   { icon: CreditCard, title: "Billing & account help", desc: "Plan changes, currency, invoices, top-ups, tax queries.", action: "Open billing help", to: "/app/billing" },
   { icon: Scale, title: "Legal & compliance", desc: "Terms, privacy, data processing, security and compliance questions.", action: "Open legal route", to: "#contact-form" },
   { icon: Handshake, title: "Partnerships & integrations", desc: "Integration partners, resellers, embedded use cases.", action: "Send a message", to: "#contact-form" },
