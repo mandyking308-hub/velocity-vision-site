@@ -38,6 +38,8 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
   const [connections, setConnections] = useState<Connection[]>([]);
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   const [history, setHistory] = useState<any[]>([]);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [testing, setTesting] = useState(false);
 
   const load = async () => {
     const [{ data: c }, { data: h }, userRes] = await Promise.all([
