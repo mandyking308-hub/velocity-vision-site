@@ -148,7 +148,7 @@ export default function AppEmailConnections() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const startOAuth = async (provider: "google" | "microsoft") => {
+  const startOAuth = async (provider: NylasProviderKey) => {
     setOauthLoading(provider);
     try {
       const { data, error } = await supabase.functions.invoke("nylas-auth-start", {
@@ -160,7 +160,7 @@ export default function AppEmailConnections() {
         },
       });
       if (error || !data?.auth_url) {
-        throw new Error((data as any)?.error || error?.message || "Failed to start OAuth");
+        throw new Error((data as any)?.error || error?.message || "Failed to start connection");
       }
       window.location.href = data.auth_url;
     } catch (e: any) {
@@ -191,11 +191,27 @@ export default function AppEmailConnections() {
 
   const reverify = async (c: Connection) => {
     if (c.auth_type === "nylas") {
-      startOAuth(c.nylas_provider === "microsoft" ? "microsoft" : "google");
+      const np = (c.nylas_provider || "").toLowerCase();
+      const key: NylasProviderKey =
+        np.includes("microsoft") || np === "outlook" ? "microsoft"
+        : np.includes("icloud") ? "icloud"
+        : np === "ews" || np.includes("exchange") ? "ews"
+        : np.includes("imap") ? "imap"
+        : "google";
+      startOAuth(key);
       return;
     }
     setEditing(c);
     setOpen(true);
+  };
+
+  const handleProviderCard = (card: ProviderCard) => {
+    if (card.action === "oauth") startOAuth(card.key as NylasProviderKey);
+    else if (card.action === "yahoo" || card.action === "smtp") {
+      setShowSmtp(true);
+      // Scroll advanced section into view for discoverability.
+      setTimeout(() => document.getElementById("advanced-smtp")?.scrollIntoView({ behavior: "smooth", block: "center" }), 60);
+    }
   };
 
   return (
