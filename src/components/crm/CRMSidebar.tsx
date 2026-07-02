@@ -22,6 +22,7 @@ const navItems = [
   { label: "QA Testing", path: "/crm/qa", icon: Shield },
   { label: "Legal Compliance", path: "/crm/legal-compliance", icon: Scale },
   { label: "Support Queue", path: "/crm/support", icon: LifeBuoy },
+  { label: "Feedback", path: "/crm/feedback", icon: MessageSquare },
 ];
 
 const CRMSidebar = () => {
