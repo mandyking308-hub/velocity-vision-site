@@ -14,6 +14,10 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import i18n from "@/i18n";
 import { computeReadiness, READINESS_BADGE, type ConnectionShape } from "@/lib/senderReadiness";
+import { useLegalStatus } from "@/lib/legalCompliance";
+import LegalComplianceGate from "@/components/LegalComplianceGate";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 
 interface SequenceEmail {
   subject: string;
