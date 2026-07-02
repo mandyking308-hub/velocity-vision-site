@@ -2,7 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
 function nylasConfig(region: string) {
-  const r = (region || "eu").toLowerCase() === "us" ? "US" : "EU";
+  const r = (region || "us").toLowerCase() === "eu" ? "EU" : "US";
   const defaultUri = r === "US" ? "https://api.us.nylas.com" : "https://api.eu.nylas.com";
   return {
     apiKey: Deno.env.get(`NYLAS_${r}_API_KEY`) ?? Deno.env.get("NYLAS_API_KEY"),
