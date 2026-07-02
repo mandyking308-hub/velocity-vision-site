@@ -364,6 +364,11 @@ function ConnectionRow({
               <span className="font-semibold">{c.from_name ? `${c.from_name} <${c.from_email}>` : c.from_email}</span>
               {c.is_default && <Badge variant="default"><Star className="h-3 w-3 mr-1" /> Default</Badge>}
               <StatusBadge status={c.status} />
+              {c.auth_type === "nylas" && (
+                <Badge variant="secondary" className="capitalize">
+                  OAuth · {c.nylas_provider || "google"}
+                </Badge>
+              )}
               <span className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${ver.cls}`}>{ver.label}</span>
               {c.sending_enabled ? (
                 <Badge variant="default" className="bg-emerald-600 hover:bg-emerald-700">Sending enabled</Badge>
@@ -371,7 +376,11 @@ function ConnectionRow({
                 <Badge variant="outline">Sending disabled</Badge>
               )}
             </div>
-            <p className="text-xs text-muted-foreground">{PROVIDER_HELP[c.provider]?.label} · {c.smtp_host}:{c.smtp_port}</p>
+            <p className="text-xs text-muted-foreground">
+              {c.auth_type === "nylas"
+                ? `${c.nylas_provider === "microsoft" ? "Microsoft" : "Google"} OAuth (via Nylas)`
+                : `${PROVIDER_HELP[c.provider]?.label} · ${c.smtp_host || "?"}:${c.smtp_port ?? ""}`}
+            </p>
             {c.last_error && <p className="text-xs text-destructive mt-1">{c.last_error}</p>}
           </div>
           <div className="flex gap-2 flex-wrap">
