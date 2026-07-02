@@ -94,6 +94,7 @@ export default function AppBilling() {
     const flag = params.get("checkout");
     if (!flag) return;
     (async () => {
+      setShowCheckoutFeedback(true);
       toast.success(tc("toasts.paymentReceived"));
       // Webhook normally writes within 1-3s; refresh credits + tables a couple times
       for (let i = 0; i < 4; i++) {
