@@ -266,7 +266,7 @@ export default function AppActivation() {
                     try {
                       await recordLegalAcceptance({
                         userId: user.id, email: user.email ?? null,
-                        source: "activation" as any, workspaceId: currentId,
+                        source: "founder_qa_activation", workspaceId: currentId,
                       });
                       toast.success("Founder QA acceptance recorded");
                       await legal.refresh();
