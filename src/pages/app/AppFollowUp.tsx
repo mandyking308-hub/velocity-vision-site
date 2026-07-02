@@ -36,7 +36,7 @@ export default function AppFollowUp() {
 
   const load = async () => {
     setLoading(true);
-    const leadsQ = supabase.from("leads").select("id, name, email, phone, status, follow_up_at, follow_up_state, replied_at, snoozed_until, last_email_sent_at, last_email_subject, last_contacted_at, last_interaction_at, opportunity_id, owner_id, campaign_id, company_id, contact_id, last_action, created_at").order("created_at", { ascending: false });
+    const leadsQ = supabase.from("leads").select("id, name, email, phone, status, follow_up_at, follow_up_state, replied_at, snoozed_until, last_email_sent_at, last_email_subject, last_contacted_at, last_interaction_at, opportunity_id, owner_id, campaign_id, company_id, contact_id, workspace_id, last_action, created_at").order("created_at", { ascending: false });
     const campsQ = supabase.from("campaigns").select("id, name");
     const [{ data: l }, { data: c }] = await Promise.all([
       currentId ? leadsQ.eq("workspace_id", currentId) : leadsQ,
