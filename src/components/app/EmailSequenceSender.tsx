@@ -118,16 +118,19 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
 
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="text-sm text-muted-foreground">
-          {defaultConn ? <>Sending from <strong>{defaultConn.from_email}</strong></> : "No inbox connected"}
+          {defaultConn ? <>Sending from <strong>{defaultConn.from_email}</strong> · {readiness.provider}</> : "No inbox connected"}
           {defaultConn && (
-            <> · <Badge variant={sendReady ? "default" : "outline"} className={sendReady ? "bg-emerald-600 hover:bg-emerald-700" : ""}>
-              {sendReady ? "Ready to send" : canTestOnly ? "Test send only" : "Setup needed"}
-            </Badge></>
+            <> · <Badge variant="outline" className={badge.cls}>{badge.label}</Badge></>
           )}
           {" · "}{leads.length} lead{leads.length === 1 ? "" : "s"} on this campaign
         </div>
         <Button variant="outline" size="sm" onClick={exportAll}><Download className="h-4 w-4 mr-1" /> Export sequence</Button>
       </div>
+
+      {defaultConn && (
+        <p className="text-xs text-muted-foreground -mt-2">{readiness.friendlyLine}</p>
+      )}
+
 
       {emails.map((e, i) => {
         const canTest = canTestOnly && !!defaultConn && !!userEmail;
