@@ -137,6 +137,13 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
         </Card>
       )}
 
+      <Card className="border-primary/20 bg-primary/5">
+        <CardContent className="p-3 text-xs text-muted-foreground space-y-1">
+          <p><strong className="text-foreground">Activated leads are ready for review.</strong> Nothing sends until you choose recipients.</p>
+          <p>Start with one lead or a small warm-up batch. Sending remains governed by legal, sender and daily safety checks. Replies return to your connected inbox.</p>
+        </CardContent>
+      </Card>
+
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="text-sm text-muted-foreground">
           {defaultConn ? <>Sending from <strong>{defaultConn.from_email}</strong> · {readiness.provider}</> : "No inbox connected"}
@@ -147,6 +154,14 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
         </div>
         <Button variant="outline" size="sm" onClick={exportAll}><Download className="h-4 w-4 mr-1" /> Export sequence</Button>
       </div>
+
+      {leads.length === 0 && (
+        <Card className="border-dashed">
+          <CardContent className="p-4 text-sm text-muted-foreground">
+            No leads on this campaign yet. Head to the <Link to="/app/data-vault" className="text-primary hover:underline">Data Vault</Link> to activate safe contacts into this campaign — activation prepares leads only, it does not send.
+          </CardContent>
+        </Card>
+      )}
 
       {defaultConn && (
         <p className="text-xs text-muted-foreground -mt-2">{readiness.friendlyLine}</p>
