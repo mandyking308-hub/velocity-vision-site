@@ -303,6 +303,11 @@ Return the JSON object only.`;
       if (!includeEmail) pack.emails = [];
       if (!includePress) pack.press = null;
       if (!includeVideo) pack.video = null;
+      if (!includePaidAds) {
+        pack.paidAds = null;
+      } else {
+        pack.paidAds = normalisePaidAds(pack.paidAds, brief);
+      }
 
       if (pack.social && typeof pack.social === "object") {
         const filterBy = (arr: any[]) =>
