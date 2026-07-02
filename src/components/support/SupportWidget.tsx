@@ -145,6 +145,47 @@ export default function SupportWidget() {
     setNotifyResult(null);
     setProblem("");
     setTicketMessage("");
+    setFbRating(0);
+    setFbType("");
+    setFbMessage("");
+    setFbContactPermission(false);
+  };
+
+  const submitFeedback = async () => {
+    if (!fbType) { toast.error("Please pick a feedback type"); return; }
+    if (!fbMessage.trim()) { toast.error("Please add a short message"); return; }
+    if (fbContactPermission && !isValidEmail(fbEmail.trim())) {
+      toast.error("Add a valid email or turn off 'contact me'");
+      return;
+    }
+    setFbSubmitting(true);
+    try {
+      const wsId = currentWorkspaceId();
+      const payload = {
+        user_id: user?.id ?? null,
+        workspace_id: wsId,
+        email: fbContactPermission ? fbEmail.trim() : (user?.email ?? null),
+        rating: fbRating > 0 ? fbRating : null,
+        feedback_type: fbType,
+        message: fbMessage.trim().slice(0, 4000),
+        route: location.pathname,
+        source,
+        contact_permission: fbContactPermission,
+        browser_info: typeof navigator !== "undefined" ? navigator.userAgent.slice(0, 500) : null,
+        metadata: {
+          search: location.search,
+          timestamp: new Date().toISOString(),
+        },
+      };
+      const { error } = await supabase.from("customer_feedback").insert(payload);
+      if (error) throw error;
+      setMode("feedback_success");
+    } catch (e: any) {
+      console.error("feedback error", e);
+      toast.error("Could not send feedback", { description: e?.message ?? "Please try again shortly." });
+    } finally {
+      setFbSubmitting(false);
+    }
   };
 
   const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
