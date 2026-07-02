@@ -49,7 +49,7 @@ const groups = [
     ],
   },
   {
-    label: "Replies & Follow-Up",
+    label: "Follow-Up & Reply States",
     features: [
       { title: "Action queue inbox", value: "Replies return to your connected inbox; follow-up actions and next steps surface in one queue with clear owner and next action." },
       { title: "Follow-up states & snooze", value: "Mark replied, snooze (3d/7d/custom), flag stuck after 14 days." },
@@ -141,7 +141,7 @@ const Features = () => (
               { title: "AI-assisted outreach assets", value: "Email sequences, social posts, press releases and video packs drafted from one brief — fully editable before you use them." },
               { title: "AI quality review", value: "Duplicates, risky records and missing fields surfaced automatically. You decide what stays in the segment." },
               { title: "AI-generated templates", value: "Start from AI-drafted templates for launch, nurture, promo and re-engagement workflows — adapt to your tone and offer." },
-              { title: "AI-supported follow-up", value: "Suggested next-step drafts for replies and stuck conversations. You approve every send." },
+              { title: "AI-supported follow-up", value: "Suggested next-step drafts for follow-up and stuck conversations. You approve every send." },
               { title: "Governed AI activation", value: "Sender verification, tiered daily caps and risky-record limits gate every activation — no autonomous sending." },
               { title: "Human-controlled by design", value: "AI drafts; you review, edit, approve, activate. Velocity Vision does not guarantee replies, sales, deliverability or legal compliance." },
             ].map((f) => (

@@ -9,7 +9,7 @@ const articles = [
   { tag: "Follow-up handling", title: "Follow-up queues beat inboxes for outbound teams", excerpt: "Why a structured follow-up queue with snooze, warm, dormant, and stuck-deal states outperforms a shared inbox.", date: "May 2026", readTime: "7 min" },
   { tag: "Cadence", title: "Weekly, monthly, quarterly: choosing a cadence that compounds", excerpt: "A practical model for choosing send cadence based on list size, sender reputation, and offer maturity.", date: "Apr 2026", readTime: "6 min" },
   { tag: "Pipeline discipline", title: "Moving conversations into pipeline without losing the thread", excerpt: "Why every follow-up should resolve to one of four states — and how that single decision protects pipeline integrity.", date: "Apr 2026", readTime: "5 min" },
-  { tag: "Operator workflows", title: "30 minutes a day: a founder-led outreach workflow", excerpt: "A repeatable daily loop for founders running their own outreach: queue, replies, follow-ups, pipeline movement.", date: "Mar 2026", readTime: "6 min" },
+  { tag: "Operator workflows", title: "30 minutes a day: a founder-led outreach workflow", excerpt: "A repeatable daily loop for founders running their own outreach: queue, follow-up actions, pipeline movement.", date: "Mar 2026", readTime: "6 min" },
 ];
 
 const Insights = () => (

@@ -29,7 +29,7 @@ const outputs = [
   "Press release",
   "Video pack",
   "Cadence scheduler",
-  "Replies & follow-up",
+  "Follow-up & reply states",
   "Pipeline",
   "Performance review",
 ];
