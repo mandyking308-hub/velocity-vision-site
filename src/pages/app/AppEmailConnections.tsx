@@ -182,7 +182,7 @@ export default function AppEmailConnections() {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Connect a mailbox</CardTitle>
-          <CardDescription>Recommended: sign in with Google or Microsoft. Sending only turns on after your sender domain is verified.</CardDescription>
+          <CardDescription>Recommended: sign in with Google or Microsoft. Google and Microsoft can send in warm-up mode after secure connection and terms acceptance. Custom domains and SMTP may need additional sender setup before higher-volume sending.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="grid sm:grid-cols-2 gap-3">
