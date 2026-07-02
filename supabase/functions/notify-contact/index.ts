@@ -58,24 +58,6 @@ const esc = (s: string) =>
 const admin = () =>
   createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
 
-Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
-
-  let payload: Record<string, any> = {};
-  try {
-    payload = await req.json();
-  } catch {
-    return json({ ok: false, error: 'invalid_json' }, 400);
-  }
-
-  const name = String(payload.name ?? '').trim();
-  const email = String(payload.email ?? '').trim();
-  const company = String(payload.company ?? '').trim();
-  const message = String(payload.message ?? '').trim();
-  const rawRoute = String(payload.route ?? 'general_support').slice(0, 64);
-  const route = ROUTE_LABELS[rawRoute] ? rawRoute : 'other';
-  const routeLabel = ROUTE_LABELS[route] ?? 'Other';
-  const source = route === 'demo_booking' ? 'demo_booking' : 'website_contact';
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
