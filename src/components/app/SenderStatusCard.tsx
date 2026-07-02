@@ -71,6 +71,8 @@ export default function SenderStatusCard({
   const domain = fromEmail?.split("@")[1] ?? null;
 
   const status = (detail?.verification_status || (state.connected ? "needs_dns_setup" : "not_connected")) as string;
+  const readiness = connection ? computeReadiness(connection) : null;
+  const simplified = !!readiness && readiness.personal && readiness.inboxConnected && (connection?.auth_type === "nylas");
 
   async function verifyNow() {
     if (!connectionId && !domain) {
