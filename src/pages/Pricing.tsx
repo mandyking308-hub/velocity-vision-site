@@ -90,6 +90,7 @@ const faqs = [
   { q: "What happens if I run out of credits?", a: "The workspace stays fully usable — data, follow-up, pipeline and reports remain live. Only new AI generations pause. Top up in seconds or upgrade your plan." },
   { q: "Are outputs AI-generated?", a: "Yes. Velocity Vision uses AI to help draft and structure outreach assets, run quality checks and suggest follow-ups. Every output is a draft — you review, edit and control what is activated or sent. We don't guarantee replies, sales, deliverability or legal compliance." },
   { q: "Can agencies share credits across clients?", a: "Yes — Agency Workspace pools monthly credits and sending governance across every client workspace in the account." },
+  { q: "Why don't you publish customer case studies or logos?", a: "We do not publish customer names, campaign data, account details or results without explicit written permission. Velocity Vision is built for confidential commercial work — your strategy, targeting, pipeline activity and customer data stay private by default." },
 ];
 
 const Pricing = () => {

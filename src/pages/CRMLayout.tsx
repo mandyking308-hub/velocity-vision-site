@@ -1,4 +1,5 @@
 import { Outlet, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import CRMSidebar from "@/components/crm/CRMSidebar";
 import { GTranslateSlot } from "@/components/GTranslate";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,9 @@ const CRMLayout = () => {
 
   return (
     <div className="flex min-h-screen w-full bg-background">
+      <Helmet>
+        <meta name="robots" content="noindex,nofollow" />
+      </Helmet>
       {/* Desktop sidebar */}
       <div className="hidden lg:block">
         <CRMSidebar />

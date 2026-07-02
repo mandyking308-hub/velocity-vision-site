@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import EmailIntegrationsStrip from "@/components/EmailIntegrationsStrip";
+import ConfidentialityNote from "@/components/ConfidentialityNote";
 import SEO from "@/components/SEO";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -187,6 +188,11 @@ const ForBusinesses = () => (
               <Link to="/how-it-works">See how it works</Link>
             </Button>
           </div>
+        </div>
+      </section>
+      <section className="bg-background px-6 md:px-12 lg:px-20 pb-16 md:pb-20">
+        <div className="max-w-4xl mx-auto">
+          <ConfidentialityNote />
         </div>
       </section>
     </main>

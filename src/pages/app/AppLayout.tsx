@@ -1,4 +1,5 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
 import { LayoutDashboard, Rocket, Users, BarChart3, LayoutTemplate, Settings, Briefcase, LogOut, Plus, CreditCard, Database, MessageSquare, TrendingUp, Send, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -86,6 +87,9 @@ function Shell() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   return (
     <div className="min-h-screen flex w-full bg-background">
+      <Helmet>
+        <meta name="robots" content="noindex,nofollow" />
+      </Helmet>
       {/* Desktop sidebar */}
       <aside className="hidden lg:flex w-60 border-r border-border bg-card flex-col">
         <NavList t={t} signOut={signOut} navigate={navigate} />

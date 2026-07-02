@@ -78,6 +78,7 @@ const PortalLegal = () => {
               <Link
                 to={doc.path}
                 target="_blank"
+                rel="noopener noreferrer"
                 className="group flex items-start gap-3 p-4 bg-card border border-border/50 rounded-xl shadow-card hover:border-accent/30 hover:shadow-elevated transition-all"
               >
                 <FileText size={18} className="text-accent shrink-0 mt-0.5" />
