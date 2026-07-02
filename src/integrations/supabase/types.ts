@@ -1066,6 +1066,8 @@ export type Database = {
       }
       email_connections: {
         Row: {
+          auth_type: string
+          connected_via: string | null
           created_at: string
           display_name: string | null
           dkim_selector: string | null
@@ -1083,14 +1085,19 @@ export type Database = {
           last_error: string | null
           last_verified_at: string | null
           mx_status: string
+          nylas_connected_at: string | null
+          nylas_disconnected_at: string | null
+          nylas_grant_id: string | null
+          nylas_provider: string | null
           provider: string
           rate_limit_per_hour: number
           sending_enabled: boolean
-          smtp_host: string
+          smtp_host: string | null
           smtp_port: number
-          smtp_username: string
+          smtp_username: string | null
           spf_status: string | null
           status: string
+          token_status: string | null
           updated_at: string
           user_id: string
           verification_errors: Json | null
@@ -1098,6 +1105,8 @@ export type Database = {
           workspace_id: string | null
         }
         Insert: {
+          auth_type?: string
+          connected_via?: string | null
           created_at?: string
           display_name?: string | null
           dkim_selector?: string | null
@@ -1115,14 +1124,19 @@ export type Database = {
           last_error?: string | null
           last_verified_at?: string | null
           mx_status?: string
+          nylas_connected_at?: string | null
+          nylas_disconnected_at?: string | null
+          nylas_grant_id?: string | null
+          nylas_provider?: string | null
           provider: string
           rate_limit_per_hour?: number
           sending_enabled?: boolean
-          smtp_host: string
+          smtp_host?: string | null
           smtp_port?: number
-          smtp_username: string
+          smtp_username?: string | null
           spf_status?: string | null
           status?: string
+          token_status?: string | null
           updated_at?: string
           user_id: string
           verification_errors?: Json | null
@@ -1130,6 +1144,8 @@ export type Database = {
           workspace_id?: string | null
         }
         Update: {
+          auth_type?: string
+          connected_via?: string | null
           created_at?: string
           display_name?: string | null
           dkim_selector?: string | null
@@ -1147,14 +1163,19 @@ export type Database = {
           last_error?: string | null
           last_verified_at?: string | null
           mx_status?: string
+          nylas_connected_at?: string | null
+          nylas_disconnected_at?: string | null
+          nylas_grant_id?: string | null
+          nylas_provider?: string | null
           provider?: string
           rate_limit_per_hour?: number
           sending_enabled?: boolean
-          smtp_host?: string
+          smtp_host?: string | null
           smtp_port?: number
-          smtp_username?: string
+          smtp_username?: string | null
           spf_status?: string | null
           status?: string
+          token_status?: string | null
           updated_at?: string
           user_id?: string
           verification_errors?: Json | null
@@ -1719,6 +1740,53 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      nylas_oauth_states: {
+        Row: {
+          consumed_at: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          nonce: string
+          provider: string
+          redirect_to: string | null
+          state: string
+          user_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          nonce: string
+          provider: string
+          redirect_to?: string | null
+          state: string
+          user_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          nonce?: string
+          provider?: string
+          redirect_to?: string | null
+          state?: string
+          user_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nylas_oauth_states_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "client_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       opportunities: {
         Row: {

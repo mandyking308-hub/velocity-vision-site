@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Mail, Plug, AlertCircle, CheckCircle2, ArrowLeft, Trash2, Star } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Mail, Plug, AlertCircle, CheckCircle2, ArrowLeft, Trash2, Star, ChevronDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
@@ -19,9 +20,9 @@ interface Connection {
   display_name: string | null;
   from_email: string;
   from_name: string | null;
-  smtp_host: string;
-  smtp_port: number;
-  smtp_username: string;
+  smtp_host: string | null;
+  smtp_port: number | null;
+  smtp_username: string | null;
   is_default: boolean;
   status: "pending" | "connected" | "error" | "reconnect_required";
   last_error: string | null;
@@ -36,6 +37,10 @@ interface Connection {
   dns_checked_at: string | null;
   dkim_selector: string | null;
   dkim_selectors: string[] | null;
+  auth_type: "smtp" | "nylas" | null;
+  nylas_grant_id: string | null;
+  nylas_provider: string | null;
+  token_status: string | null;
 }
 
 // Providers we consider "known" for DKIM selectors on the client. Kept in sync
@@ -72,11 +77,13 @@ export default function AppEmailConnections() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Connection | null>(null);
   const [loading, setLoading] = useState(true);
+  const [oauthLoading, setOauthLoading] = useState<null | "google" | "microsoft">(null);
+  const [showSmtp, setShowSmtp] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const load = async () => {
     setLoading(true);
     if (currentId) {
-      // Backfill legacy rows that were saved before workspace scoping existed.
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         await supabase
@@ -94,6 +101,44 @@ export default function AppEmailConnections() {
 
   useEffect(() => { load(); }, [currentId]);
 
+  // Handle redirect back from Nylas hosted auth.
+  useEffect(() => {
+    const nylas = searchParams.get("nylas");
+    if (!nylas) return;
+    if (nylas === "connected") {
+      const email = searchParams.get("email");
+      toast.success("Inbox connected", { description: email || undefined });
+    } else if (nylas === "error") {
+      const reason = searchParams.get("reason") || "unknown_error";
+      toast.error("Couldn't connect inbox", { description: reason });
+    }
+    const next = new URLSearchParams(searchParams);
+    next.delete("nylas"); next.delete("email"); next.delete("reason");
+    setSearchParams(next, { replace: true });
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const startOAuth = async (provider: "google" | "microsoft") => {
+    setOauthLoading(provider);
+    try {
+      const { data, error } = await supabase.functions.invoke("nylas-auth-start", {
+        body: {
+          provider,
+          workspace_id: currentId,
+          redirect_to: window.location.origin + "/app/settings/email",
+        },
+      });
+      if (error || !data?.auth_url) {
+        throw new Error((data as any)?.error || error?.message || "Failed to start OAuth");
+      }
+      window.location.href = data.auth_url;
+    } catch (e: any) {
+      toast.error("Couldn't start connection", { description: e.message });
+      setOauthLoading(null);
+    }
+  };
+
   const setDefault = async (id: string) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
@@ -103,14 +148,22 @@ export default function AppEmailConnections() {
     load();
   };
 
-  const remove = async (id: string) => {
+  const remove = async (c: Connection) => {
     if (!confirm("Disconnect this email account?")) return;
-    await supabase.from("email_connections").delete().eq("id", id);
+    if (c.auth_type === "nylas" && c.nylas_grant_id) {
+      const { error } = await supabase.functions.invoke("nylas-disconnect", { body: { connection_id: c.id } });
+      if (error) toast.warning("Revoke may have failed", { description: error.message });
+    }
+    await supabase.from("email_connections").delete().eq("id", c.id);
     toast.success(tc("toasts.disconnected"));
     load();
   };
 
   const reverify = async (c: Connection) => {
+    if (c.auth_type === "nylas") {
+      startOAuth(c.nylas_provider === "microsoft" ? "microsoft" : "google");
+      return;
+    }
     setEditing(c);
     setOpen(true);
   };
@@ -120,18 +173,65 @@ export default function AppEmailConnections() {
       <Link to="/app/settings" className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-1">
         <ArrowLeft className="h-3 w-3" /> Settings
       </Link>
-      <div className="flex items-start justify-between gap-4 flex-wrap">
-        <div>
-          <h1 className="text-3xl font-bold">Email connections</h1>
-          <p className="text-muted-foreground">Connect the inbox you want campaign follow-ups to send from.</p>
-        </div>
-        <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setEditing(null); }}>
-          <DialogTrigger asChild>
-            <Button><Plug className="h-4 w-4 mr-2" /> Connect email</Button>
-          </DialogTrigger>
-          <ConnectionDialog editing={editing} workspaceId={currentId} onDone={() => { setOpen(false); setEditing(null); load(); }} />
-        </Dialog>
+      <div>
+        <h1 className="text-3xl font-bold">Email connections</h1>
+        <p className="text-muted-foreground">Connect the inbox you want campaign follow-ups to send from. We never store your password — Google and Microsoft use secure OAuth.</p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Connect a mailbox</CardTitle>
+          <CardDescription>Recommended: sign in with Google or Microsoft. Sending only turns on after your sender domain is verified.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid sm:grid-cols-2 gap-3">
+            <Button
+              variant="outline"
+              className="h-12 justify-start gap-3"
+              onClick={() => startOAuth("google")}
+              disabled={oauthLoading !== null}
+            >
+              <GoogleGlyph />
+              <span className="font-medium">
+                {oauthLoading === "google" ? "Redirecting…" : "Connect with Google"}
+              </span>
+            </Button>
+            <Button
+              variant="outline"
+              className="h-12 justify-start gap-3"
+              onClick={() => startOAuth("microsoft")}
+              disabled={oauthLoading !== null}
+            >
+              <MicrosoftGlyph />
+              <span className="font-medium">
+                {oauthLoading === "microsoft" ? "Redirecting…" : "Connect with Microsoft"}
+              </span>
+            </Button>
+          </div>
+
+          <Collapsible open={showSmtp} onOpenChange={setShowSmtp}>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" size="sm" className="text-muted-foreground">
+                <ChevronDown className={`h-4 w-4 mr-1 transition-transform ${showSmtp ? "rotate-180" : ""}`} />
+                Advanced SMTP setup
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="pt-3">
+              <div className="rounded-md border p-3 text-sm space-y-2">
+                <p className="text-muted-foreground">
+                  Only needed for custom SMTP providers (Fastmail, Zoho, your own server) or if you can't use OAuth. Requires an app password.
+                </p>
+                <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setEditing(null); }}>
+                  <DialogTrigger asChild>
+                    <Button size="sm" variant="outline"><Plug className="h-4 w-4 mr-2" /> Add SMTP connection</Button>
+                  </DialogTrigger>
+                  <ConnectionDialog editing={editing} workspaceId={currentId} onDone={() => { setOpen(false); setEditing(null); load(); }} />
+                </Dialog>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        </CardContent>
+      </Card>
 
       {loading ? (
         <p className="text-muted-foreground">Loading…</p>
@@ -140,8 +240,7 @@ export default function AppEmailConnections() {
           <CardContent className="p-10 text-center space-y-3">
             <Mail className="h-10 w-10 mx-auto text-muted-foreground" />
             <h3 className="font-semibold text-lg">No inbox connected yet</h3>
-            <p className="text-muted-foreground max-w-md mx-auto">Connect Gmail or Outlook so you can send campaign follow-ups straight from your own address.</p>
-            <Button onClick={() => setOpen(true)}><Plug className="h-4 w-4 mr-2" /> Connect your first email</Button>
+            <p className="text-muted-foreground max-w-md mx-auto">Sign in with Google or Microsoft above to get started.</p>
           </CardContent>
         </Card>
       ) : (
@@ -153,7 +252,7 @@ export default function AppEmailConnections() {
               workspaceId={currentId}
               onDefault={() => setDefault(c.id)}
               onReconnect={() => reverify(c)}
-              onRemove={() => remove(c.id)}
+              onRemove={() => remove(c)}
               onVerified={load}
             />
           ))}
@@ -162,9 +261,9 @@ export default function AppEmailConnections() {
 
       <Card className="bg-muted/30">
         <CardHeader>
-          <CardTitle className="text-base">Why your own inbox?</CardTitle>
+          <CardTitle className="text-base">Why connect via OAuth?</CardTitle>
           <CardDescription>
-            Sending from your own Gmail or Outlook keeps replies, deliverability and sender reputation in your control. We never store your password in plain text — it's encrypted at rest.
+            Google and Microsoft OAuth keeps your password out of our system entirely — we get a scoped token that only allows sending mail on your behalf, and you can revoke it any time. Sending stays disabled until your domain's DNS records verify.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -172,8 +271,30 @@ export default function AppEmailConnections() {
   );
 }
 
+function GoogleGlyph() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+      <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.3-.4-3.5z"/>
+      <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3 0 5.8 1.1 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.4 6.3 14.7z"/>
+      <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.5-5.2l-6.2-5.2c-2 1.4-4.6 2.4-7.3 2.4-5.2 0-9.7-3.3-11.3-8l-6.5 5C9.5 39.5 16.2 44 24 44z"/>
+      <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4 5.6l6.2 5.2C41.6 35.1 44 30 44 24c0-1.2-.1-2.3-.4-3.5z"/>
+    </svg>
+  );
+}
+
+function MicrosoftGlyph() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 23 23" aria-hidden="true">
+      <rect x="1" y="1" width="10" height="10" fill="#F25022"/>
+      <rect x="12" y="1" width="10" height="10" fill="#7FBA00"/>
+      <rect x="1" y="12" width="10" height="10" fill="#00A4EF"/>
+      <rect x="12" y="12" width="10" height="10" fill="#FFB900"/>
+    </svg>
+  );
+}
+
 function StatusBadge({ status }: { status: string }) {
-  if (status === "connected") return <Badge variant="secondary"><CheckCircle2 className="h-3 w-3 mr-1" /> SMTP connected</Badge>;
+  if (status === "connected") return <Badge variant="secondary"><CheckCircle2 className="h-3 w-3 mr-1" /> Connected</Badge>;
   if (status === "error") return <Badge variant="destructive"><AlertCircle className="h-3 w-3 mr-1" /> Connection issue</Badge>;
   if (status === "reconnect_required") return <Badge variant="destructive">Reconnect required</Badge>;
   return <Badge variant="outline">Pending</Badge>;
@@ -208,7 +329,7 @@ function ConnectionRow({
   const [selectorInput, setSelectorInput] = useState(c.dkim_selector || "");
   const ver = VER_LABEL[c.verification_status || "unknown"] || VER_LABEL.unknown;
   const domain = c.domain || c.from_email?.split("@")[1] || "";
-  const providerKnown = KNOWN_DKIM_HOSTS.has(c.smtp_host);
+  const providerKnown = KNOWN_DKIM_HOSTS.has(c.smtp_host || "") || c.auth_type === "nylas";
   const hasConfiguredSelector = !!(c.dkim_selector || (c.dkim_selectors && c.dkim_selectors.length > 0));
   const dkimSelectorRequired = !providerKnown && !hasConfiguredSelector;
 
@@ -243,6 +364,11 @@ function ConnectionRow({
               <span className="font-semibold">{c.from_name ? `${c.from_name} <${c.from_email}>` : c.from_email}</span>
               {c.is_default && <Badge variant="default"><Star className="h-3 w-3 mr-1" /> Default</Badge>}
               <StatusBadge status={c.status} />
+              {c.auth_type === "nylas" && (
+                <Badge variant="secondary" className="capitalize">
+                  OAuth · {c.nylas_provider || "google"}
+                </Badge>
+              )}
               <span className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${ver.cls}`}>{ver.label}</span>
               {c.sending_enabled ? (
                 <Badge variant="default" className="bg-emerald-600 hover:bg-emerald-700">Sending enabled</Badge>
@@ -250,7 +376,11 @@ function ConnectionRow({
                 <Badge variant="outline">Sending disabled</Badge>
               )}
             </div>
-            <p className="text-xs text-muted-foreground">{PROVIDER_HELP[c.provider]?.label} · {c.smtp_host}:{c.smtp_port}</p>
+            <p className="text-xs text-muted-foreground">
+              {c.auth_type === "nylas"
+                ? `${c.nylas_provider === "microsoft" ? "Microsoft" : "Google"} OAuth (via Nylas)`
+                : `${PROVIDER_HELP[c.provider]?.label} · ${c.smtp_host || "?"}:${c.smtp_port ?? ""}`}
+            </p>
             {c.last_error && <p className="text-xs text-destructive mt-1">{c.last_error}</p>}
           </div>
           <div className="flex gap-2 flex-wrap">
