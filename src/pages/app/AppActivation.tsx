@@ -283,18 +283,19 @@ export default function AppActivation() {
         </Alert>
       )}
       {(() => {
-        const r = computeReadiness(defaultConn);
+        const r = computeReadiness(defaultConn as any);
         if (!defaultConn) return null;
         if (r.canSendFull) return null;
         if (r.canSendWarmup) {
+          const cap = warmupCap((planConfig.id as PlanId) || "starter");
           return (
             <Alert>
               <Mail className="h-4 w-4" />
               <AlertTitle>Mailbox connected — warm-up sending available</AlertTitle>
               <AlertDescription>
                 {r.personal
-                  ? "You can activate low-volume outreach now. We'll protect your daily limits and sender reputation."
-                  : r.friendlyLine}
+                  ? `You can activate low-volume outreach now. Today's warm-up cap: ${cap} sends. Replies return to this inbox.`
+                  : `${r.friendlyLine} Today's warm-up cap: ${cap} sends.`}
               </AlertDescription>
             </Alert>
           );
