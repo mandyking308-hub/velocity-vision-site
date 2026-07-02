@@ -70,13 +70,15 @@ export type SenderHealth = "healthy" | "warming" | "needs_attention" | "paused" 
 
 export interface SenderState {
   connected: boolean;
-  domain_authenticated: boolean;        // SPF + DKIM
+  domain_authenticated: boolean;        // SPF + DKIM (or provider-managed for Nylas warm-up)
   reconnect_required: boolean;
   newly_connected: boolean;             // < 7 days
   last_send_at: string | null;
   bounce_rate: number;                  // 0..1
   unsubscribe_rate: number;             // 0..1
   complaint_rate?: number;              // optional
+  /** When set, sender is warm-up-eligible; caps the daily safeAllowance. */
+  warmup_daily_cap?: number | null;
 }
 
 export function senderHealth(s: SenderState): SenderHealth {
