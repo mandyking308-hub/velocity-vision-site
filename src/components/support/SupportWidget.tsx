@@ -24,8 +24,17 @@ const MAX_INPUT_CHARS = 1000;
 const ANON_AI_CAP = 8;
 const SIGNED_AI_CAP = 20;
 
-type Mode = "chat" | "ticket" | "success";
+type Mode = "chat" | "ticket" | "success" | "feedback" | "feedback_success";
 type Msg = { role: "user" | "assistant" | "system"; content: string; links?: { label: string; to: string }[] };
+
+const FEEDBACK_TYPES: { id: string; label: string }[] = [
+  { id: "confusing", label: "Confusing" },
+  { id: "missing_feature", label: "Missing feature" },
+  { id: "bug", label: "Bug / rough edge" },
+  { id: "loved", label: "Loved this" },
+  { id: "pricing_billing", label: "Pricing / billing feedback" },
+  { id: "other", label: "Other" },
+];
 
 const WELCOME: Msg = {
   role: "assistant",
