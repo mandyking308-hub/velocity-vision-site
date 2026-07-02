@@ -93,7 +93,29 @@
   }
 
   .section-padding {
-    @apply px-6 py-20 md:px-12 lg:px-20 lg:py-28;
+    @apply px-4 py-14 sm:px-6 sm:py-20 md:px-12 lg:px-20 lg:py-28;
+  }
+}
+
+/* --- Mobile hardening: prevent horizontal overflow and iOS input zoom --- */
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+@media (max-width: 640px) {
+  input, textarea, select {
+    font-size: 16px; /* prevents iOS auto-zoom on focus */
+  }
+  /* Shrink GTranslate floating widget on small screens so it doesn't dominate */
+  .gt_float_switcher {
+    transform: scale(0.85);
+    transform-origin: bottom right;
+  }
+  /* Ensure floating widgets don't cover full width on small screens */
+  .gt_float_switcher,
+  .gtranslate_wrapper {
+    max-width: 90vw;
   }
 }
 
