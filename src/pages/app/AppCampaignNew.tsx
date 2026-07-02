@@ -52,7 +52,8 @@ const OUTPUTS = [
   { id: "video", label: "Video pack" },
 ];
 
-const CHANNELS = ["LinkedIn", "Instagram", "X", "Facebook", "TikTok", "Email", "PR", "Paid ads"];
+// Paid ads intentionally excluded — not yet supported by generation. Roadmap.
+const CHANNELS = ["LinkedIn", "Instagram", "X", "Facebook", "TikTok", "Email", "PR"];
 
 export default function AppCampaignNew() {
   const navigate = useNavigate();
