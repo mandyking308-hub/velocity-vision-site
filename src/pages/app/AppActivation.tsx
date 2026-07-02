@@ -320,18 +320,17 @@ export default function AppActivation() {
             { to: "/app/data-vault", label: "View Data Vault" },
           ]}
         />
-      ) : noSender ? (
+      ) : counts.valid === 0 && counts.needs_review === 0 && counts.risky === 0 ? (
         <JourneyEmptyState
-          icon={Mail}
-          flow={`Step 3 of the journey — you have ${counts.valid} safe contacts ready`}
-          title="Connect a sender to activate"
-          description="Connect a sender before activating campaigns. We'll check that it is safe to send from before anything goes out."
+          icon={ShieldCheck}
+          flow={`Step 2 of the journey — ${totalContacts} contacts uploaded but none are eligible`}
+          title="No eligible contacts to activate"
+          description="Every uploaded record is currently blocked or suppressed. Review or import cleaner data to prepare leads."
           steps={[
-            { to: "/app/settings/email", label: "Connect sender", icon: Mail },
-            { to: "/app/data-vault", label: "Review data first" },
+            { to: "/app/data-vault", label: "Open Data Vault", icon: ShieldCheck },
+            { to: "/app/data-vault/upload", label: "Upload cleaner list", icon: Upload },
           ]}
         />
-      ) : counts.valid === 0 ? (
         <JourneyEmptyState
           icon={ShieldCheck}
           flow={`Step 2 of the journey — ${totalContacts} contacts uploaded but none are safe yet`}
@@ -513,8 +512,8 @@ export default function AppActivation() {
                   All {totalSelected} contact(s) will be prepared as leads. Only {sendNow} can go out today under your current safe cap — the rest wait in the campaign until you send them.
                 </div>
               )}
-              {blocked && (
-                <div className="text-xs text-rose-600 flex items-center gap-1"><Pause className="h-3.5 w-3.5" /> Sending is paused — resolve the reasons in the panel above. You can still prepare leads.</div>
+              {sendPaused && (
+                <div className="text-xs text-amber-700 dark:text-amber-400 flex items-start gap-1"><Pause className="h-3.5 w-3.5 mt-0.5 shrink-0" /> Sending is paused (see reasons above). You can still activate — leads are prepared inside the campaign and wait until sending is resumed.</div>
               )}
               <Button className="w-full mt-1" size="lg" disabled={!canActivate} onClick={handleActivate}>
                 <Send className="h-4 w-4 mr-2" /> {activating ? "Activating…" : "Confirm safe activation"}
