@@ -55,6 +55,10 @@ export interface CampaignPack {
 
 const PLATFORMS = ["LinkedIn", "Instagram", "X", "Facebook", "TikTok"];
 
+// Channels not yet supported by generation. Filtered out of display + export
+// so old saved packs never show them as active. Roadmap: Paid ads.
+const UNSUPPORTED_CHANNELS = new Set(["Paid ads"]);
+
 export function normaliseCampaignChannel(c: string): string {
   const s = (c || "").toLowerCase().trim();
   if (s === "linkedin") return "LinkedIn";
@@ -67,6 +71,10 @@ export function normaliseCampaignChannel(c: string): string {
   if (s === "paid ads" || s === "paid" || s === "ads") return "Paid ads";
   if (s === "video") return "Video";
   return c;
+}
+
+export function filterSupportedChannels(channels: string[] | null | undefined): string[] {
+  return (channels || []).map(normaliseCampaignChannel).filter((c) => !UNSUPPORTED_CHANNELS.has(c));
 }
 
 export function getCampaignChannelConfig(brief: Pick<CampaignBrief, "channels" | "outputs"> | null | undefined) {
