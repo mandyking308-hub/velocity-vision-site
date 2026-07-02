@@ -165,6 +165,7 @@ const AnimatedRoutes = () => {
           <Route path="monetisation" element={<FounderMonetisation />} />
           <Route path="intelligence" element={<FounderIntelligence />} />
           <Route path="support" element={<SupportQueue />} />
+          <Route path="feedback" element={<FeedbackQueue />} />
         </Route>
 
         {/* Self-serve customer app (protected) */}
