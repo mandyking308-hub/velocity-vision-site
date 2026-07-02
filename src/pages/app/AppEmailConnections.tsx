@@ -20,9 +20,9 @@ interface Connection {
   display_name: string | null;
   from_email: string;
   from_name: string | null;
-  smtp_host: string;
-  smtp_port: number;
-  smtp_username: string;
+  smtp_host: string | null;
+  smtp_port: number | null;
+  smtp_username: string | null;
   is_default: boolean;
   status: "pending" | "connected" | "error" | "reconnect_required";
   last_error: string | null;
@@ -37,6 +37,10 @@ interface Connection {
   dns_checked_at: string | null;
   dkim_selector: string | null;
   dkim_selectors: string[] | null;
+  auth_type: "smtp" | "nylas" | null;
+  nylas_grant_id: string | null;
+  nylas_provider: string | null;
+  token_status: string | null;
 }
 
 // Providers we consider "known" for DKIM selectors on the client. Kept in sync
