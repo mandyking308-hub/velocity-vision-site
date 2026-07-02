@@ -9,7 +9,7 @@ const steps = [
   { n: "03", icon: Mail, title: "Generate AI-assisted outreach assets", desc: "Email sequences, social posts, press release and video pack — drafted by AI from one brief, fully editable before use." },
   { n: "04", icon: Send, title: "Verify sender & activate safely", desc: "Governed AI activation: verify sender, set cadence, and let daily caps and risky-record limits gate what goes out." },
   { n: "05", icon: Inbox, title: "Track follow-up with AI support", desc: "Action queue for follow-up actions with AI-supported suggestions and snooze — you approve every send." },
-  { n: "06", icon: GitBranch, title: "Move warm contacts into early pipeline", desc: "Promote replies into early pipeline, track value and prepare for sales handoff — pipeline visibility, not CRM bloat." },
+  { n: "06", icon: GitBranch, title: "Move warm contacts into early pipeline", desc: "Promote warm contacts into early pipeline, track value and prepare for sales handoff — pipeline visibility, not CRM bloat." },
 ];
 
 const HowItWorksPreview = () => (
@@ -27,7 +27,7 @@ const HowItWorksPreview = () => (
           From upload to early pipeline — one marketing-led workflow
         </h2>
         <p className="text-muted-foreground text-lg leading-relaxed">
-          The same flow that creates your outreach also captures replies and moves early pipeline. No exports, no handoffs.
+          The same flow that creates your outreach also manages follow-up and moves early pipeline. No exports, no handoffs.
         </p>
       </motion.div>
 

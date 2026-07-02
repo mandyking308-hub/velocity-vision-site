@@ -13,7 +13,7 @@ const cases = [
   { icon: Inbox, title: "Own follow-up", desc: "Replies return to your connected inbox. Add follow-up actions, snooze, mark stuck and follow up — nothing disappears into a task list." },
   { icon: GitBranch, title: "Move pipeline", desc: "Promote warm contacts into opportunities, track value and progress without buying a separate CRM." },
   { icon: RefreshCw, title: "Repeat what works", desc: "Recurring cadence, reusable segments and templates. The next run starts from the last winner, not a blank page." },
-  { icon: Eye, title: "See the whole picture", desc: "Data, sending, replies and pipeline in one workspace. No more guessing which tool holds the truth." },
+  { icon: Eye, title: "See the whole picture", desc: "Data, sending, follow-up and pipeline in one workspace. No more guessing which tool holds the truth." },
 ];
 
 const capabilities = [
@@ -27,7 +27,7 @@ const capabilities = [
 
 const replaces = [
   { icon: Layers, title: "Spreadsheets for contact data", desc: "Replaced by the Data Vault — field-mapped, deduped, quality-scored." },
-  { icon: XCircle, title: "Six disconnected tools", desc: "One workspace covers outreach, social, PR, replies and pipeline." },
+  { icon: XCircle, title: "Six disconnected tools", desc: "One workspace covers outreach, social, PR, follow-up and pipeline." },
   { icon: Clock, title: "Freelancer & agency overhead", desc: "Generate the assets in-house in minutes instead of waiting on a retainer." },
   { icon: Inbox, title: "Missed follow-up in inboxes", desc: "Every follow-up action lands in a shared action queue with snooze and stuck-deal flags." },
   { icon: RefreshCw, title: "Manual coordination", desc: "Recurring cadence and reusable segments mean the next run runs itself." },

@@ -18,7 +18,7 @@ const Index = () => (
   <>
     <SEO
       title={"Velocity Vision — Marketing outreach, follow-up and pipeline in one workspace"}
-      description={"Upload your data, generate marketing outreach assets — email sequences, social media, press releases — activate safely, work replies and move leads into pipeline. For businesses and agencies."}
+      description={"Upload your data, generate marketing outreach assets — email sequences, social media, press releases — activate safely, work follow-up and move leads into pipeline. For businesses and agencies."}
       path="/"
       jsonLd={{
         "@context": "https://schema.org",
@@ -27,7 +27,7 @@ const Index = () => (
             "@type": "Organization",
             "name": "Velocity Vision",
             "url": "https://velocity-outreach.com",
-            "description": "One workspace for marketing outreach, replies and pipeline. Self-serve, multilingual, multi-currency.",
+            "description": "One workspace for marketing outreach, follow-up and pipeline. Self-serve, multilingual, multi-currency.",
           },
           {
             "@type": "WebSite",

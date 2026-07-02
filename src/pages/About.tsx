@@ -113,7 +113,7 @@ const About = () => (
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
             <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-6">Why Velocity Vision exists</h2>
             <p className="text-muted-foreground text-lg leading-relaxed max-w-3xl mb-12">
-              Growth teams often work across spreadsheets, disconnected tools, agencies, inboxes and manual follow-up. That creates risk, delay and lost opportunities. Velocity Vision turns that activity into a repeatable operating loop: upload data, review quality, generate assets, activate safely, work replies and move real opportunities into pipeline.
+              Growth teams often work across spreadsheets, disconnected tools, agencies, inboxes and manual follow-up. That creates risk, delay and lost opportunities. Velocity Vision turns that activity into a repeatable operating loop: upload data, review quality, generate assets, activate safely, work follow-up and move real opportunities into pipeline.
             </p>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
