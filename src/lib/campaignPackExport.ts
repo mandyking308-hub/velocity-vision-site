@@ -1,4 +1,4 @@
-import { getCampaignChannelConfig, normaliseCampaignChannel, type CampaignBrief, type CampaignPack } from "./campaignPack";
+import { getCampaignChannelConfig, normaliseCampaignChannel, filterSupportedChannels, type CampaignBrief, type CampaignPack } from "./campaignPack";
 
 const clean = (v: any): string => {
   if (v === null || v === undefined) return "";
