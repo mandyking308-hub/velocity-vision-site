@@ -71,6 +71,15 @@ export default function AppDataVaultImport() {
 
       <ImportReport s={s} />
 
+      {u.status === "imported" && (
+        <FeedbackPrompt
+          promptKey={`data_vault_import_${u.id}`}
+          question="Was this import experience clear?"
+          feedbackType="confusing"
+        />
+      )}
+
+
       <Card>
         <CardHeader><CardTitle className="text-base">Rows in this import</CardTitle></CardHeader>
         <CardContent>
