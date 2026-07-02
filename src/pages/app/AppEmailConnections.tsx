@@ -182,7 +182,7 @@ export default function AppEmailConnections() {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Connect a mailbox</CardTitle>
-          <CardDescription>Recommended: sign in with Google or Microsoft. Sending only turns on after your sender domain is verified.</CardDescription>
+          <CardDescription>Recommended: sign in with Google or Microsoft. Google and Microsoft can send in warm-up mode after secure connection and terms acceptance. Custom domains and SMTP may need additional sender setup before higher-volume sending.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="grid sm:grid-cols-2 gap-3">
@@ -269,7 +269,7 @@ export default function AppEmailConnections() {
         <CardHeader>
           <CardTitle className="text-base">Why connect via OAuth?</CardTitle>
           <CardDescription>
-            Google and Microsoft OAuth keeps your password out of our system entirely — we get a scoped token that only allows sending mail on your behalf, and you can revoke it any time. Sending stays disabled until your domain's DNS records verify.
+            Google and Microsoft OAuth keeps your password out of our system entirely — we get a scoped token that only allows sending mail on your behalf, and you can revoke it any time. Google and Microsoft mailboxes can send in warm-up mode as soon as they're connected and terms are accepted. Custom domains and SMTP may need additional sender setup (SPF / DKIM) before higher-volume sending. Replies return to the connected inbox.
           </CardDescription>
         </CardHeader>
       </Card>

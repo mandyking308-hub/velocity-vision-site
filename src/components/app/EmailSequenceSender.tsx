@@ -248,10 +248,12 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
           campaignId={campaignId}
           workspaceId={workspaceId}
           allowSchedule={!isNylas}
+          warmupMode={readiness.canSendWarmup && !readiness.canSendFull}
           onLegalRequired={() => setLegalGateOpen(true)}
           onClose={() => { setOpenIdx(null); load(); }}
         />
       )}
+
       <LegalComplianceGate
         open={legalGateOpen}
         onOpenChange={setLegalGateOpen}
@@ -272,8 +274,8 @@ function SendStatusBadge({ status }: { status: string }) {
   return <Badge className={map[status] || ""}>{status}</Badge>;
 }
 
-function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspaceId, allowSchedule = true, onLegalRequired, onClose }:
-  { email: SequenceEmail; stepIndex: number; leads: Lead[]; connectionId?: string; campaignId: string; workspaceId?: string | null; allowSchedule?: boolean; onLegalRequired?: () => void; onClose: () => void; }) {
+function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspaceId, allowSchedule = true, warmupMode = false, onLegalRequired, onClose }:
+  { email: SequenceEmail; stepIndex: number; leads: Lead[]; connectionId?: string; campaignId: string; workspaceId?: string | null; allowSchedule?: boolean; warmupMode?: boolean; onLegalRequired?: () => void; onClose: () => void; }) {
   const { t } = useTranslation("app");
   const [subject, setSubject] = useState(email.subject);
   const [body, setBody] = useState(email.body);
@@ -282,10 +284,16 @@ function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspa
     const d = new Date(); d.setDate(d.getDate() + 1); d.setHours(9, 0, 0, 0);
     return d.toISOString().slice(0, 16);
   });
-  const [selected, setSelected] = useState<Set<string>>(new Set(leads.filter(l => l.email).map(l => l.id)));
+  // Safety: never pre-select recipients. Customer must deliberately tick.
+  const [selected, setSelected] = useState<Set<string>>(new Set());
   const [sending, setSending] = useState(false);
 
+  const eligible = leads.filter(l => l.email);
+  const selectFirst = () => { const first = eligible[0]; setSelected(new Set(first ? [first.id] : [])); };
+  const selectAllVisible = () => setSelected(new Set(eligible.map(l => l.id)));
+  const clearSelection = () => setSelected(new Set());
   const toggle = (id: string) => { const s = new Set(selected); s.has(id) ? s.delete(id) : s.add(id); setSelected(s); };
+
 
   const submit = async () => {
     if (!connectionId) { toast.error(t("email.toasts.connectFirst")); return; }
@@ -347,9 +355,21 @@ function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspa
             )}
           </div>
           <div>
-            <Label>Send to ({selected.size}/{leads.filter(l => l.email).length})</Label>
-            <div className="max-h-40 overflow-auto border border-border rounded-md p-2 space-y-1">
-              {leads.filter(l => l.email).map(l => (
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <Label>Send to ({selected.size}/{eligible.length})</Label>
+              <div className="flex gap-1">
+                <Button type="button" size="sm" variant="outline" onClick={selectFirst} disabled={eligible.length === 0}>Select first safe lead</Button>
+                <Button type="button" size="sm" variant="outline" onClick={selectAllVisible} disabled={eligible.length === 0}>Select all visible safe leads</Button>
+                <Button type="button" size="sm" variant="ghost" onClick={clearSelection} disabled={selected.size === 0}>Clear selection</Button>
+              </div>
+            </div>
+            {warmupMode && (
+              <p className="text-xs text-amber-700 dark:text-amber-400 mt-1">
+                Start with one or a small batch. Your sender is in warm-up mode.
+              </p>
+            )}
+            <div className="max-h-40 overflow-auto border border-border rounded-md p-2 space-y-1 mt-2">
+              {eligible.map(l => (
                 <label key={l.id} className="flex items-center gap-2 text-sm">
                   <input type="checkbox" checked={selected.has(l.id)} onChange={() => toggle(l.id)} />
                   <Mail className="h-3 w-3 text-muted-foreground" />
@@ -357,9 +377,10 @@ function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspa
                   <span className="text-muted-foreground text-xs">{l.email}</span>
                 </label>
               ))}
-              {leads.filter(l => l.email).length === 0 && <p className="text-xs text-muted-foreground">No leads with email addresses yet.</p>}
+              {eligible.length === 0 && <p className="text-xs text-muted-foreground">No leads with email addresses yet.</p>}
             </div>
           </div>
+
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>Cancel</Button>
