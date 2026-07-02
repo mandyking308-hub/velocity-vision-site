@@ -145,6 +145,16 @@ export default function AppBilling() {
       </div>
       <p className="text-xs text-muted-foreground -mt-4">{taxNotice(currency)}</p>
 
+      {showCheckoutFeedback && (
+        <FeedbackPrompt
+          promptKey="checkout_success"
+          question="Was checkout clear?"
+          feedbackType="pricing_billing"
+        />
+      )}
+
+
+
 
       {stripeSub?.status === "past_due" && (
         <Card className="border-destructive">
