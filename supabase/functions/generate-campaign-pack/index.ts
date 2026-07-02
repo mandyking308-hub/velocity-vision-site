@@ -85,6 +85,50 @@ function normaliseObjections(pack: any, brief: Brief) {
   });
 }
 
+function normalisePaidAds(input: any, brief: Brief) {
+  const audience = (brief.audience || "your audience").trim();
+  const offer = (brief.offer || brief.name || "our workspace").trim();
+  const cta = (brief.cta || "Learn more").trim();
+  const fallback = {
+    campaignAngle: `A clear, review-first introduction to ${offer} for ${audience}.`,
+    headlines: [
+      `${offer} — a clearer way forward`,
+      `Built with ${audience} in mind`,
+      `See how ${offer} could fit your team`,
+    ],
+    primaryText: [
+      `${offer} is designed for ${audience} who want a review-first way to move faster. Nothing goes live without your approval.`,
+      `A short, honest look at ${offer}. No promises about results — just a clear view of what it does and who it fits.`,
+      `If you're exploring ${offer.toLowerCase()}, this is a straightforward starting point. Review the draft, then decide what to use.`,
+    ],
+    descriptions: [
+      `${cta} to see the draft pack.`,
+      `Customer-controlled. No auto-send.`,
+      `Draft ad copy — review before use.`,
+    ],
+    audienceNote: `Suggested audience: ${audience}${brief.geography ? ` in ${brief.geography}` : ""}${brief.industry ? `, working in ${brief.industry}` : ""}. Refine targeting inside your ad platform.`,
+    complianceNote: `Draft copy only. Review against the ad platform's policies (Meta, Google, LinkedIn, TikTok, X) and your local advertising rules before launch. No claim of platform approval, deliverability, ROAS, CPC, conversions or leads is made or implied.`,
+  };
+  const src = (input && typeof input === "object") ? input : {};
+  const pickList = (v: any, fb: string[]): string[] => {
+    const arr = Array.isArray(v) ? v.map((x: any) => stripInvisible(x).trim()).filter(Boolean) : [];
+    while (arr.length < 3) arr.push(fb[arr.length % fb.length]);
+    return arr.slice(0, Math.max(3, arr.length));
+  };
+  const pickStr = (v: any, fb: string): string => {
+    const s = hasMeaningfulText(v, 8) ? stripInvisible(v).trim() : fb;
+    return s;
+  };
+  return {
+    campaignAngle: pickStr(src.campaignAngle, fallback.campaignAngle),
+    headlines: pickList(src.headlines, fallback.headlines),
+    primaryText: pickList(src.primaryText, fallback.primaryText),
+    descriptions: pickList(src.descriptions, fallback.descriptions),
+    audienceNote: pickStr(src.audienceNote, fallback.audienceNote),
+    complianceNote: pickStr(src.complianceNote, fallback.complianceNote),
+  };
+}
+
 function ensureEmailCtaBeforeSignoff(body: string, chosenCta: string): string {
   const cta = stripInvisible(chosenCta).trim();
   if (!body || !cta) return body || "";
@@ -114,7 +158,7 @@ function normaliseChannel(c: string): string {
   return c;
 }
 
-function buildSystemPrompt(selectedSocial: string[], includeEmail: boolean, includePress: boolean, includeVideo: boolean): string {
+function buildSystemPrompt(selectedSocial: string[], includeEmail: boolean, includePress: boolean, includeVideo: boolean, includePaidAds: boolean): string {
   const socialLines = selectedSocial.length
     ? `- Generate ONE launch post AND ONE follow-up post for EACH of these platforms ONLY: ${selectedSocial.join(", ")}. Do NOT generate posts for any other platform.`
     : `- The user did not select any social channels. Return "social": { "launchPosts": [], "followUps": [], "hooks": [], "ctas": [], "launchWeek": [], "repostIdeas": [] }.`;
@@ -128,6 +172,9 @@ function buildSystemPrompt(selectedSocial: string[], includeEmail: boolean, incl
   const videoLine = includeVideo
     ? `- Generate a full video pack.`
     : `- The user did not select Video. Return "video": null.`;
+  const paidAdsLine = includePaidAds
+    ? `- Generate a Paid Ads section as draft ad copy for the user to review before use. It must contain: 1 campaignAngle, exactly 3 headlines, exactly 3 primaryText options, exactly 3 descriptions, an audienceNote and a complianceNote. Use ONLY the user's chosen CTA. Do NOT promise ROAS, leads, conversions, low CPC, platform approval, or ad compliance. Do NOT invent free guides, trials, discounts, urgency, guarantees, statistics or case studies. The complianceNote must state clearly that the copy is a draft for review against the ad platform's policies (Meta, Google, LinkedIn, TikTok, X) and local advertising rules, with no promises made.`
+    : `- The user did not select Paid ads. Return "paidAds": null.`;
 
   return `You are a senior direct-response copywriter for Velocity Vision.
 You are producing a commercial-grade multi-asset campaign pack from a short brief.
@@ -138,7 +185,7 @@ STRICT RULES (breaking any of these makes the output unusable):
 3. Headlines must be under 12 words. Email subject lines must be under 70 characters. Social hooks must be under 20 words.
 4. USE ONLY the customer's chosen CTA (provided as "cta"). Do not invent alternative CTAs unless that exact CTA is what the user chose.
 5. Do NOT invent: free guides, trials, discounts, case studies, customer results, specific timeframes, guarantees, or closing deadlines the user did not provide.
-6. Do NOT promise: sales, replies, revenue, deliverability, inbox placement, media coverage, or legal compliance.
+6. Do NOT promise: sales, replies, revenue, deliverability, inbox placement, media coverage, ad approval, ROAS, CPC, leads, or legal compliance.
 7. Do NOT use words like "fastest", "guaranteed", "proven", "hit their goal", "faster than ever", "launch in days not quarters".
 8. Every sentence must be grammatical. Never produce broken fragments.
 9. Press release must read like a genuine business announcement — no hype, no unverifiable claims, no fabricated quotes attributed to specific people. Use "a company spokesperson" if a quote is included.
@@ -152,6 +199,7 @@ ${socialLines}
 ${emailLine}
 ${pressLine}
 ${videoLine}
+${paidAdsLine}
 
 Output JSON schema:
 {
@@ -169,6 +217,7 @@ Output JSON schema:
   },
   "press":       { "headline": string, "subheadline": string, "opening": string, "body": [string x3], "quote": string, "boilerplate": string, "contactLine": string } OR null,
   "video":       { "hooks": [string x3], "script30": string, "script60": string, "talkingHead": string, "bRoll": string, "shotList": [string x5], "storyboard": [string x5], "onScreenText": [string x4], "captionText": string, "ctaEndings": [string x3] } OR null,
+  "paidAds":     { "campaignAngle": string, "headlines": [string x3], "primaryText": [string x3], "descriptions": [string x3], "audienceNote": string, "complianceNote": string } OR null,
   "leadCapture": { "formTitle": string, "fields": [ {"label": string, "type": "text"|"email"|"textarea", "required": boolean } ] (4 items), "ctaLabel": string, "thankYou": string }
 }
 The "cta" field on landing/offer and the "ctaLabel" on leadCapture MUST equal the user's chosen CTA verbatim.`;
@@ -221,9 +270,10 @@ Deno.serve(async (req) => {
   const includeEmail = normalisedChannels.includes("Email");
   const includePress = normalisedChannels.includes("PR");
   const includeVideo = normalisedChannels.includes("Video") || (brief.outputs || []).includes("video");
+  const includePaidAds = normalisedChannels.includes("Paid ads") || (brief.outputs || []).includes("ads");
 
   const language = brief.language || "en";
-  const SYSTEM = buildSystemPrompt(selectedSocial, includeEmail, includePress, includeVideo);
+  const SYSTEM = buildSystemPrompt(selectedSocial, includeEmail, includePress, includeVideo, includePaidAds);
 
 
   const userMsg = `Generate the campaign pack.
@@ -244,6 +294,7 @@ Brief:
 - Email selected: ${includeEmail ? "YES" : "NO"}
 - PR selected: ${includePress ? "YES" : "NO"}
 - Video selected: ${includeVideo ? "YES" : "NO"}
+- Paid ads selected: ${includePaidAds ? "YES" : "NO"}
 - Deadline / timing: ${brief.deadline || "(not provided — do not invent one)"}
 - Extra notes: ${brief.notes || "(none)"}
 
@@ -296,6 +347,11 @@ Return the JSON object only.`;
       if (!includeEmail) pack.emails = [];
       if (!includePress) pack.press = null;
       if (!includeVideo) pack.video = null;
+      if (!includePaidAds) {
+        pack.paidAds = null;
+      } else {
+        pack.paidAds = normalisePaidAds(pack.paidAds, brief);
+      }
 
       if (pack.social && typeof pack.social === "object") {
         const filterBy = (arr: any[]) =>

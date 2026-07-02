@@ -40,6 +40,15 @@ export interface CampaignBrief {
 
 export interface SocialPost { platform: string; hook: string; short: string; long: string; cta: string; visualPrompt: string; }
 
+export interface PaidAdsPack {
+  campaignAngle: string;
+  headlines: string[];
+  primaryText: string[];
+  descriptions: string[];
+  audienceNote: string;
+  complianceNote: string;
+}
+
 export interface CampaignPack {
   language: CampaignLanguage;
   generatedAs: CampaignLanguage; // actual rendered language (after fallback)
@@ -50,14 +59,14 @@ export interface CampaignPack {
   social: { launchPosts: SocialPost[]; followUps: SocialPost[]; hooks: string[]; ctas: string[]; launchWeek: { day: string; theme: string; post: string }[]; repostIdeas: string[]; };
   press: { headline: string; subheadline: string; opening: string; body: string[]; quote: string; boilerplate: string; contactLine: string; } | null;
   video: { hooks: string[]; script30: string; script60: string; talkingHead: string; bRoll: string; shotList: string[]; storyboard: string[]; onScreenText: string[]; captionText: string; ctaEndings: string[]; } | null;
+  paidAds: PaidAdsPack | null;
   leadCapture: { formTitle: string; fields: { label: string; type: string; required: boolean }[]; ctaLabel: string; thankYou: string; };
 }
 
 const PLATFORMS = ["LinkedIn", "Instagram", "X", "Facebook", "TikTok"];
 
-// Channels not yet supported by generation. Filtered out of display + export
-// so old saved packs never show them as active. Roadmap: Paid ads.
-const UNSUPPORTED_CHANNELS = new Set(["Paid ads"]);
+// Channels not yet supported by generation. Empty for now — Paid ads is now supported.
+const UNSUPPORTED_CHANNELS = new Set<string>([]);
 
 export function normaliseCampaignChannel(c: string): string {
   const s = (c || "").toLowerCase().trim();
@@ -90,6 +99,7 @@ export function getCampaignChannelConfig(brief: Pick<CampaignBrief, "channels" |
     includeEmail: (!hasSelection && !outputs.length) || channels.includes("Email") || outputs.includes("email"),
     includePress: (!hasSelection && !outputs.length) || channels.includes("PR") || outputs.includes("press"),
     includeVideo: channels.includes("Video") || outputs.includes("video"),
+    includePaidAds: channels.includes("Paid ads") || outputs.includes("paid ads") || outputs.includes("ads"),
   };
 }
 
@@ -172,8 +182,59 @@ export function enforceCampaignChannels(pack: CampaignPack, brief: CampaignBrief
     } : { launchPosts: [], followUps: [], hooks: [], ctas: [], launchWeek: [], repostIdeas: [] },
     press: cfg.includePress ? pack.press : null,
     video: cfg.includeVideo ? pack.video : null,
+    paidAds: cfg.includePaidAds ? pack.paidAds : null,
   };
 }
+
+export function buildFallbackPaidAds(brief: CampaignBrief): PaidAdsPack {
+  const audience = (brief.audience || "your audience").trim();
+  const offer = (brief.offer || brief.name || "our workspace").trim();
+  const cta = (brief.cta || "Learn more").trim();
+  return {
+    campaignAngle: `A clear, review-first introduction to ${offer} for ${audience}.`,
+    headlines: [
+      `${offer} — a clearer way forward`,
+      `Built with ${audience} in mind`,
+      `See how ${offer} could fit your team`,
+    ],
+    primaryText: [
+      `${offer} is designed for ${audience} who want a review-first way to move faster. Nothing goes live without your approval.`,
+      `A short, honest look at ${offer}. No promises about results — just a clear view of what it does and who it fits.`,
+      `If you're exploring ${offer.toLowerCase()}, this is a straightforward starting point. Review the draft, then decide what to use.`,
+    ],
+    descriptions: [
+      `${cta} to see the draft pack.`,
+      `Customer-controlled. No auto-send.`,
+      `Draft ad copy — review before use.`,
+    ],
+    audienceNote: `Suggested audience: ${audience}${brief.geography ? ` in ${brief.geography}` : ""}${brief.industry ? `, working in ${brief.industry}` : ""}. Refine targeting inside your ad platform.`,
+    complianceNote: `Draft copy only. Review against the ad platform's policies (Meta, Google, LinkedIn, TikTok, X) and your local advertising rules before launch. No claim of platform approval, deliverability, ROAS, CPC, conversions or leads is made or implied.`,
+  };
+}
+
+function mergePaidAds(base: PaidAdsPack | null, aiPaidAds: any, brief: CampaignBrief): PaidAdsPack {
+  const fallback = base || buildFallbackPaidAds(brief);
+  const src = (aiPaidAds && typeof aiPaidAds === "object") ? aiPaidAds : {};
+  const pickList = (v: any, min: number, fb: string[]): string[] => {
+    const arr = Array.isArray(v) ? v.map((x) => String(x || "").trim()).filter(Boolean) : [];
+    const out = arr.length >= min ? arr : [...arr, ...fb].slice(0, Math.max(min, arr.length || min));
+    return out.slice(0, Math.max(min, out.length));
+  };
+  const pickStr = (v: any, fb: string): string => {
+    const s = typeof v === "string" ? v.trim() : "";
+    return s.length >= 8 ? s : fb;
+  };
+  return {
+    campaignAngle: pickStr(src.campaignAngle, fallback.campaignAngle),
+    headlines: pickList(src.headlines, 3, fallback.headlines),
+    primaryText: pickList(src.primaryText, 3, fallback.primaryText),
+    descriptions: pickList(src.descriptions, 3, fallback.descriptions),
+    audienceNote: pickStr(src.audienceNote, fallback.audienceNote),
+    complianceNote: pickStr(src.complianceNote, fallback.complianceNote),
+  };
+}
+
+
 
 export function mergeGeneratedPack(brief: CampaignBrief, aiPack: Partial<CampaignPack> | any, generatedAs?: string): CampaignPack {
   const base = generatePack(brief);
@@ -202,6 +263,9 @@ export function mergeGeneratedPack(brief: CampaignBrief, aiPack: Partial<Campaig
       : null,
     video: cfg.includeVideo
       ? (aiPack?.video === null ? null : { ...(base.video || {}), ...(aiPack?.video || {}) })
+      : null,
+    paidAds: cfg.includePaidAds
+      ? mergePaidAds(base.paidAds, aiPack?.paidAds, brief)
       : null,
     leadCapture: { ...base.leadCapture, ...(aiPack?.leadCapture || {}), ctaLabel: brief.cta },
   } as CampaignPack;
@@ -482,6 +546,7 @@ export function generatePack(brief: CampaignBrief): CampaignPack {
       captionText: `${brief.offer} — ${strings === ES ? "hecho para" : "built for"} ${brief.audience}. ${brief.cta}.`,
       ctaEndings: strings.ctaEndings(brief),
     } : null,
+    paidAds: channelCfg.includePaidAds ? buildFallbackPaidAds(brief) : null,
     leadCapture: strings.leadForm(brief),
   };
 }
