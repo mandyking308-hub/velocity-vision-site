@@ -347,7 +347,7 @@ export default function AppCampaignWorkspace() {
               <p><strong>Audience:</strong> {brief?.audience}</p>
               <p><strong>Goal:</strong> {brief?.goal}</p>
               <p><strong>Deadline:</strong> {brief?.deadline || "—"}</p>
-              <p><strong>Channels:</strong> {brief?.channels.join(", ")}</p>
+              <p><strong>Channels:</strong> {filterSupportedChannels(brief?.channels).join(", ")}</p>
             </Section>
           </TabsContent>
 
