@@ -127,6 +127,7 @@ export default function AppEmailConnections() {
           provider,
           workspace_id: currentId,
           redirect_to: window.location.origin + "/app/settings/email",
+          region: "us",
         },
       });
       if (error || !data?.auth_url) {
