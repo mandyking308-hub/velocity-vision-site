@@ -226,39 +226,49 @@ export default function AppEmailConnections() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Connect a mailbox</CardTitle>
-          <CardDescription>Recommended: sign in with Google or Microsoft. Google and Microsoft can send in warm-up mode after secure connection and terms acceptance. Custom domains and SMTP may need additional sender setup before higher-volume sending.</CardDescription>
+          <CardTitle className="text-lg">Choose your mailbox</CardTitle>
+          <CardDescription>
+            Google, Microsoft, iCloud, IMAP and Exchange connect via secure OAuth — we never see your password. All connected mailboxes can send in warm-up mode after terms acceptance. Custom domains may need additional sender setup (SPF / DKIM) before higher-volume sending.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="grid sm:grid-cols-2 gap-3">
-            <Button
-              variant="outline"
-              className="h-12 justify-start gap-3"
-              onClick={() => startOAuth("google")}
-              disabled={oauthLoading !== null}
-            >
-              <GoogleGlyph />
-              <span className="font-medium">
-                {oauthLoading === "google" ? "Redirecting…" : "Connect with Google"}
-              </span>
-            </Button>
-            <Button
-              variant="outline"
-              className="h-12 justify-start gap-3"
-              onClick={() => startOAuth("microsoft")}
-              disabled={oauthLoading !== null}
-            >
-              <MicrosoftGlyph />
-              <span className="font-medium">
-                {oauthLoading === "microsoft" ? "Redirecting…" : "Connect with Microsoft"}
-              </span>
-            </Button>
+            {PROVIDER_CARDS.filter((p) => p.action !== "smtp").map((card) => {
+              const isOAuth = card.action === "oauth";
+              const isYahoo = card.action === "yahoo";
+              const loading = isOAuth && oauthLoading === (card.key as NylasProviderKey);
+              return (
+                <button
+                  key={card.key}
+                  type="button"
+                  onClick={() => handleProviderCard(card)}
+                  disabled={oauthLoading !== null && !loading}
+                  className="text-left rounded-lg border bg-card hover:bg-accent/40 transition p-4 flex items-start gap-3 disabled:opacity-60"
+                  data-testid={`provider-card-${card.key}`}
+                >
+                  <div className="mt-0.5">
+                    {card.key === "google" ? <GoogleGlyph />
+                      : card.key === "microsoft" ? <MicrosoftGlyph />
+                      : isYahoo ? <Clock className="h-4 w-4 text-amber-600" />
+                      : <Mail className="h-4 w-4 text-muted-foreground" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-medium text-sm">{card.title}</span>
+                      <span className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium ${card.badgeTone}`}>{card.badge}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">{card.note}</p>
+                    <p className="text-xs mt-2 font-medium text-primary">
+                      {isOAuth ? (loading ? "Redirecting…" : OAUTH_BUTTON_LABEL[card.key as NylasProviderKey])
+                        : isYahoo ? "Use SMTP for now →"
+                        : ""}
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
           </div>
 
-          <div className="rounded-md border border-dashed p-3 text-xs text-muted-foreground">
-            <p className="font-medium text-foreground mb-1">Other mailboxes (Yahoo, iCloud, IMAP and more)</p>
-            <p>Native one-click connect for other providers is coming next. In the meantime, connect them via <b>Advanced SMTP setup</b> below using an app password from your provider.</p>
-          </div>
 
           <Collapsible open={showSmtp} onOpenChange={setShowSmtp}>
             <CollapsibleTrigger asChild>
