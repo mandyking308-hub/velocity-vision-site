@@ -14,6 +14,10 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import i18n from "@/i18n";
 import { computeReadiness, READINESS_BADGE, type ConnectionShape } from "@/lib/senderReadiness";
+import { useLegalStatus } from "@/lib/legalCompliance";
+import LegalComplianceGate from "@/components/LegalComplianceGate";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 
 interface SequenceEmail {
   subject: string;
@@ -43,6 +47,9 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
   const [history, setHistory] = useState<any[]>([]);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [testing, setTesting] = useState(false);
+  const legal = useLegalStatus();
+  const [legalGateOpen, setLegalGateOpen] = useState(false);
+  const { currentId } = useWorkspace();
 
   const load = async () => {
     const [{ data: c }, { data: h }, userRes] = await Promise.all([
@@ -76,8 +83,22 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
 
   return (
     <div className="space-y-4">
+      {!legal.loading && !legal.isCompliant && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Review and accept the current platform terms before sending</AlertTitle>
+          <AlertDescription>
+            <div className="mt-2">
+              <Button size="sm" variant="secondary" onClick={() => setLegalGateOpen(true)}>
+                Review and accept terms
+              </Button>
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
       {noConnection && (
         <Card className="border-amber-500/40 bg-amber-50/40 dark:bg-amber-950/20">
+
           <CardContent className="p-4 flex items-center gap-3 flex-wrap">
             <AlertCircle className="h-5 w-5 text-amber-600" />
             <div className="flex-1">
@@ -172,8 +193,15 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
                         },
                       });
                       setTesting(false);
-                      if (error || (data as any)?.error) {
-                        toast.error("Test send failed", { description: (data as any)?.error || error?.message });
+                      const errCode = (data as any)?.error;
+                      if (error || errCode) {
+                        if (errCode === "legal_not_current") {
+                          toast.error("Please review and accept the current platform terms before sending.", {
+                            action: { label: "Review terms", onClick: () => setLegalGateOpen(true) },
+                          });
+                        } else {
+                          toast.error("Test send failed", { description: errCode || error?.message });
+                        }
                       } else {
                         toast.success("Test sent to your inbox");
                       }
@@ -220,20 +248,32 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
           campaignId={campaignId}
           workspaceId={workspaceId}
           allowSchedule={!isNylas}
+          onLegalRequired={() => setLegalGateOpen(true)}
           onClose={() => { setOpenIdx(null); load(); }}
         />
       )}
+      <LegalComplianceGate
+        open={legalGateOpen}
+        onOpenChange={setLegalGateOpen}
+        source="campaign_send"
+        workspaceId={currentId}
+        title="Accept current terms before sending"
+        description="Sending on your behalf requires up-to-date acceptance of our platform legal stack."
+        confirmLabel="Accept and continue"
+        onConfirm={async () => { await legal.refresh(); }}
+      />
     </div>
   );
 }
+
 
 function SendStatusBadge({ status }: { status: string }) {
   const map: Record<string, string> = { sent: "bg-green-600", scheduled: "bg-blue-600", sending: "bg-amber-600", failed: "bg-destructive", draft: "bg-muted-foreground", cancelled: "bg-muted-foreground" };
   return <Badge className={map[status] || ""}>{status}</Badge>;
 }
 
-function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspaceId, allowSchedule = true, onClose }:
-  { email: SequenceEmail; stepIndex: number; leads: Lead[]; connectionId?: string; campaignId: string; workspaceId?: string | null; allowSchedule?: boolean; onClose: () => void; }) {
+function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspaceId, allowSchedule = true, onLegalRequired, onClose }:
+  { email: SequenceEmail; stepIndex: number; leads: Lead[]; connectionId?: string; campaignId: string; workspaceId?: string | null; allowSchedule?: boolean; onLegalRequired?: () => void; onClose: () => void; }) {
   const { t } = useTranslation("app");
   const [subject, setSubject] = useState(email.subject);
   const [body, setBody] = useState(email.body);
@@ -253,6 +293,7 @@ function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspa
     if (targets.length === 0) { toast.error(t("email.toasts.pickLead")); return; }
     setSending(true);
     let ok = 0, fail = 0;
+    let legalBlocked = false;
     for (const lead of targets) {
       const { data, error } = await supabase.functions.invoke("email-send", {
         body: {
@@ -262,11 +303,17 @@ function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspa
           scheduled_for: mode === "schedule" ? new Date(scheduledFor).toISOString() : null,
         },
       });
-      if (error || (data as any)?.error) fail++; else ok++;
+      const errCode = (data as any)?.error;
+      if (errCode === "legal_not_current") { legalBlocked = true; fail++; break; }
+      if (error || errCode) fail++; else ok++;
     }
     setSending(false);
     if (ok) toast.success(mode === "schedule" ? t("email.toasts.scheduled", { count: ok }) : t("email.toasts.sent", { count: ok }));
-    if (fail) toast.error(t("email.toasts.failed", { count: fail }));
+    if (legalBlocked) {
+      toast.error("Please review and accept the current platform terms before sending.", {
+        action: onLegalRequired ? { label: "Review terms", onClick: onLegalRequired } : undefined,
+      });
+    } else if (fail) toast.error(t("email.toasts.failed", { count: fail }));
     onClose();
   };
 
