@@ -103,6 +103,16 @@ export default function AppCampaignNew() {
 
   const generate = async () => {
     if (!user) return;
+    // Schedule guard — never accept a past-dated one-off schedule.
+    if (
+      cadence.cadence_type === "one_off" &&
+      cadence.start_at &&
+      new Date(cadence.start_at).getTime() <= Date.now()
+    ) {
+      toast.error("Choose a future campaign date and time.");
+      setStep(5);
+      return;
+    }
     // Hard credit gate — never insert a campaign if the user cannot pay for it.
     if (remaining < CREDIT_COSTS.full_campaign_pack) {
       toast.error("You don't have enough Campaign Credits", {
@@ -224,6 +234,10 @@ export default function AppCampaignNew() {
 
 
   const blocked = remaining < CREDIT_COSTS.full_campaign_pack || starterExpired;
+  const schedulePastError =
+    cadence.cadence_type === "one_off" &&
+    !!cadence.start_at &&
+    new Date(cadence.start_at).getTime() <= Date.now();
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
@@ -452,6 +466,15 @@ export default function AppCampaignNew() {
               <div className="font-medium mb-1">Schedule preview</div>
               <div className="text-muted-foreground">{plainEnglish(cadence)}</div>
             </div>
+
+            {schedulePastError && (
+              <div
+                role="alert"
+                className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+              >
+                Choose a future campaign date and time.
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
@@ -483,13 +506,22 @@ export default function AppCampaignNew() {
         {step < totalSteps ? (
           <Button
             data-testid="campaign-next-button"
-            onClick={next}
-            disabled={step === 2 && (!brief.name || !brief.offer || !brief.audience)}
+            onClick={() => {
+              if (step === 5 && schedulePastError) {
+                toast.error("Choose a future campaign date and time.");
+                return;
+              }
+              next();
+            }}
+            disabled={
+              (step === 2 && (!brief.name || !brief.offer || !brief.audience)) ||
+              (step === 5 && schedulePastError)
+            }
           >
             Continue <ChevronRight className="h-4 w-4 ml-1" />
           </Button>
         ) : (
-          <Button data-testid="campaign-create-button" onClick={generate} disabled={saving || blocked}>
+          <Button data-testid="campaign-create-button" onClick={generate} disabled={saving || blocked || schedulePastError}>
             <Sparkles className="h-4 w-4 mr-2" /> {saving ? "Generating…" : "Generate campaign pack"}
           </Button>
         )}
