@@ -226,6 +226,9 @@ export function buildCampaignMarkdown(opts: {
     md += line("Audience note", pa.audienceNote);
     md += line("Compliance note", pa.complianceNote);
     md += "\n";
+  }
+
+
 
   // Lead capture
   if (pack.leadCapture) {
