@@ -248,10 +248,12 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
           campaignId={campaignId}
           workspaceId={workspaceId}
           allowSchedule={!isNylas}
+          warmupMode={readiness.canSendWarmup && !readiness.canSendFull}
           onLegalRequired={() => setLegalGateOpen(true)}
           onClose={() => { setOpenIdx(null); load(); }}
         />
       )}
+
       <LegalComplianceGate
         open={legalGateOpen}
         onOpenChange={setLegalGateOpen}
