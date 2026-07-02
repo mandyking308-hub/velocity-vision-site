@@ -83,8 +83,22 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
 
   return (
     <div className="space-y-4">
+      {!legal.loading && !legal.isCompliant && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Review and accept the current platform terms before sending</AlertTitle>
+          <AlertDescription>
+            <div className="mt-2">
+              <Button size="sm" variant="secondary" onClick={() => setLegalGateOpen(true)}>
+                Review and accept terms
+              </Button>
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
       {noConnection && (
         <Card className="border-amber-500/40 bg-amber-50/40 dark:bg-amber-950/20">
+
           <CardContent className="p-4 flex items-center gap-3 flex-wrap">
             <AlertCircle className="h-5 w-5 text-amber-600" />
             <div className="flex-1">
