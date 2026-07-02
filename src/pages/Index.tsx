@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import HeroSection from "@/components/HeroSection";
+import EmailIntegrationsStrip from "@/components/EmailIntegrationsStrip";
 import ProblemProof from "@/components/ProblemProof";
 import CampaignCapabilities from "@/components/CampaignCapabilities";
 import HowItWorksPreview from "@/components/HowItWorksPreview";
@@ -44,6 +45,7 @@ const Index = () => (
     <Navbar />
     <main>
       <HeroSection />
+      <EmailIntegrationsStrip />
       <ProblemProof />
       <CampaignCapabilities />
       <SecurityTrust />
