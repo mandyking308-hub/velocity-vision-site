@@ -28,6 +28,8 @@ export interface ActionLead extends LeadLike {
   campaign_id?: string | null;
   company_id?: string | null;
   contact_id?: string | null;
+  workspace_id?: string | null;
+  opportunity_id?: string | null;
 }
 
 async function logAction(leadId: string, action: string, details: any = {}) {
