@@ -51,7 +51,7 @@ const groups = [
   {
     label: "Replies & Follow-Up",
     features: [
-      { title: "Action queue inbox", value: "Inbound replies surface in one queue with clear owner and next action." },
+      { title: "Action queue inbox", value: "Replies return to your connected inbox; follow-up actions and next steps surface in one queue with clear owner and next action." },
       { title: "Follow-up states & snooze", value: "Mark replied, snooze (3d/7d/custom), flag stuck after 14 days." },
       { title: "Lead Action Panel", value: "Per-contact view of history, last touch, follow-up state and next step." },
     ],
@@ -77,7 +77,7 @@ const groups = [
     features: [
       { title: "Isolated client workspaces", value: "Run every client from one account with clean data and pipeline isolation." },
       { title: "Pooled credits & governance", value: "Credits and sending governance are pooled across the account." },
-      { title: "Cross-client visibility", value: "See activation health, replies and pipeline across the whole book in one view." },
+      { title: "Cross-client visibility", value: "See activation health, follow-up actions and pipeline across the whole book in one view." },
     ],
   },
 ];
