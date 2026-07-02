@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import EmailIntegrationsStrip from "@/components/EmailIntegrationsStrip";
+import CampaignChannelsStrip from "@/components/CampaignChannelsStrip";
 import SEO from "@/components/SEO";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -182,6 +183,7 @@ const Features = () => (
       </section>
     </main>
     <EmailIntegrationsStrip variant="compact" />
+    <CampaignChannelsStrip variant="compact" />
     <Footer />
   </>
 );

@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import EmailIntegrationsStrip from "@/components/EmailIntegrationsStrip";
+import CampaignChannelsStrip from "@/components/CampaignChannelsStrip";
 import ConfidentialityNote from "@/components/ConfidentialityNote";
 import SEO from "@/components/SEO";
 import { motion } from "framer-motion";
@@ -197,6 +198,7 @@ const ForBusinesses = () => (
       </section>
     </main>
     <EmailIntegrationsStrip variant="compact" />
+    <CampaignChannelsStrip variant="compact" />
     <Footer />
   </>
 );
