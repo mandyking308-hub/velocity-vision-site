@@ -25,6 +25,8 @@ import SenderStatusCard from "@/components/app/SenderStatusCard";
 import JourneyEmptyState from "@/components/app/JourneyEmptyState";
 import LegalComplianceGate from "@/components/LegalComplianceGate";
 import { useLegalStatus } from "@/lib/legalCompliance";
+import { recordLegalAcceptance } from "@/lib/recordLegalAcceptance";
+import { computeReadiness } from "@/lib/senderReadiness";
 
 interface Counts { valid: number; needs_review: number; risky: number; blocked: number; suppressed: number; }
 
@@ -51,6 +53,19 @@ export default function AppActivation() {
   const [senderDetail, setSenderDetail] = useState<any>(null);
   const legal = useLegalStatus();
   const [legalGateOpen, setLegalGateOpen] = useState(false);
+  const [roles, setRoles] = useState<string[]>([]);
+  const [founderAccepting, setFounderAccepting] = useState(false);
+  const [defaultConn, setDefaultConn] = useState<any>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("user_roles").select("role").eq("user_id", user.id).then(({ data }) => {
+      setRoles((data || []).map((r: any) => r.role));
+    });
+  }, [user]);
+
+  const isFounderOrAdmin = roles.some((r) => r === "founder" || r === "admin");
+
 
   useEffect(() => {
     if (!user) return;
@@ -78,6 +93,7 @@ export default function AppActivation() {
       setBatchSize(c.valid);
 
       const def = conn.data?.[0];
+      setDefaultConn(def || null);
       if (def) {
         setConnectionId(def.id);
         setFromEmail(def.from_email);
@@ -225,21 +241,68 @@ export default function AppActivation() {
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Legal terms need to be re-accepted before activation</AlertTitle>
-          <AlertDescription>
-            {legal.missing.length} document{legal.missing.length === 1 ? "" : "s"} updated since your last acceptance.
-            You'll be prompted to review and accept when you confirm activation.
+          <AlertDescription className="space-y-2">
+            <p>
+              {legal.missing.length} document{legal.missing.length === 1 ? "" : "s"} updated since your last acceptance.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <Button size="sm" variant="secondary" onClick={() => setLegalGateOpen(true)}>
+                Review and accept terms
+              </Button>
+              {isFounderOrAdmin && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={founderAccepting}
+                  onClick={async () => {
+                    if (!user) return;
+                    setFounderAccepting(true);
+                    try {
+                      await recordLegalAcceptance({
+                        userId: user.id, email: user.email ?? null,
+                        source: "activation" as any, workspaceId: currentId,
+                      });
+                      toast.success("Founder QA acceptance recorded");
+                      await legal.refresh();
+                    } catch (e: any) {
+                      toast.error("Could not record acceptance", { description: e?.message });
+                    } finally { setFounderAccepting(false); }
+                  }}
+                >
+                  {founderAccepting ? "Recording…" : "Founder QA: accept current platform terms"}
+                </Button>
+              )}
+            </div>
           </AlertDescription>
         </Alert>
       )}
-      {sender.connected && !sender.domain_authenticated && (
-        <Alert>
-          <Mail className="h-4 w-4" />
-          <AlertTitle>Sender connected — setup not finished</AlertTitle>
-          <AlertDescription>
-            Your mailbox is connected. Sending is not enabled yet. Complete sender setup on the Email settings page before activation.
-          </AlertDescription>
-        </Alert>
-      )}
+      {(() => {
+        const r = computeReadiness(defaultConn);
+        if (!defaultConn) return null;
+        if (r.canSendFull) return null;
+        if (r.canSendWarmup) {
+          return (
+            <Alert>
+              <Mail className="h-4 w-4" />
+              <AlertTitle>Mailbox connected — warm-up sending available</AlertTitle>
+              <AlertDescription>
+                {r.personal
+                  ? "You can activate low-volume outreach now. We'll protect your daily limits and sender reputation."
+                  : r.friendlyLine}
+              </AlertDescription>
+            </Alert>
+          );
+        }
+        return (
+          <Alert>
+            <Mail className="h-4 w-4" />
+            <AlertTitle>Sender setup needed</AlertTitle>
+            <AlertDescription>
+              Connect a mailbox, choose safe contacts, and activate outreach. We'll protect your daily limits and sender reputation.
+            </AlertDescription>
+          </Alert>
+        );
+      })()}
       <SendSafetyPanel s={safety} used={usedToday} scheduled={scheduledToday} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">

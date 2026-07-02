@@ -29,10 +29,20 @@ Deno.serve(async (req) => {
 
   const results: any[] = [];
   for (const s of due || []) {
-    await admin.from("email_sends").update({ status: "sending" }).eq("id", s.id);
     try {
       const { data: conn } = await admin.from("email_connections").select("*").eq("id", s.connection_id).single();
       if (!conn) throw new Error("connection missing");
+      // Phase 2C: scheduled sending for OAuth (Nylas) mailboxes is not wired
+      // into the queue worker yet. Fail truthfully rather than silently drop.
+      if (conn.auth_type === "nylas") {
+        await admin.from("email_sends").update({
+          status: "failed",
+          error: "Scheduled sending for OAuth mailboxes is coming next (Phase 2C).",
+        }).eq("id", s.id);
+        results.push({ id: s.id, ok: false, error: "nylas_scheduling_unsupported" });
+        continue;
+      }
+      await admin.from("email_sends").update({ status: "sending" }).eq("id", s.id);
       const { data: secret } = await admin.from("email_connection_secrets").select("encrypted_password").eq("connection_id", conn.id).single();
       if (!secret) throw new Error("no smtp password");
       const password = await decryptSecret(secret.encrypted_password);
@@ -52,8 +62,6 @@ Deno.serve(async (req) => {
     } catch (e) {
       const msg = (e as Error).message;
       console.error("[email-process-queue] send failed", s.id, msg);
-      // Persist full detail for the operator (status row) but don't leak the raw
-      // upstream banner back to whatever called the function.
       await admin.from("email_sends").update({ status: "failed", error: msg }).eq("id", s.id);
       results.push({ id: s.id, ok: false, error: "send_failed" });
     }

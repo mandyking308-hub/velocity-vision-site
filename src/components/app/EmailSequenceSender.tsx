@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import i18n from "@/i18n";
+import { computeReadiness, READINESS_BADGE, type ConnectionShape } from "@/lib/senderReadiness";
 
 interface SequenceEmail {
   subject: string;
@@ -20,9 +21,11 @@ interface SequenceEmail {
   preview?: string;
 }
 
-interface Connection {
+interface Connection extends ConnectionShape {
   id: string; from_email: string; from_name: string | null; is_default: boolean;
-  status: string; sending_enabled?: boolean | null; auth_type?: string | null;
+  status: string; sending_enabled?: boolean | null; auth_type?: "smtp" | "nylas" | null;
+  nylas_grant_id?: string | null; nylas_provider?: string | null;
+  domain?: string | null;
 }
 
 interface Lead { id: string; name: string | null; email: string | null; }
@@ -43,7 +46,7 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
 
   const load = async () => {
     const [{ data: c }, { data: h }, userRes] = await Promise.all([
-      supabase.from("email_connections").select("id, from_email, from_name, is_default, status, sending_enabled, auth_type").order("is_default", { ascending: false }),
+      supabase.from("email_connections").select("id, from_email, from_name, is_default, status, sending_enabled, auth_type, nylas_grant_id, nylas_provider, domain").order("is_default", { ascending: false }),
       supabase.from("email_sends").select("id, recipient_email, subject, status, scheduled_for, sent_at, error, sequence_step").eq("campaign_id", campaignId).order("created_at", { ascending: false }).limit(20),
       supabase.auth.getUser(),
     ]);
@@ -57,8 +60,11 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
   const defaultConn = connections.find((c) => c.is_default) || connections[0];
   const noConnection = connections.length === 0;
   const connectionIssue = defaultConn && defaultConn.status !== "connected" && defaultConn.status !== "pending";
-  const sendReady = !!defaultConn?.sending_enabled && defaultConn?.status === "connected";
-  const canTestOnly = !!defaultConn && !sendReady && !connectionIssue;
+  const readiness = computeReadiness(defaultConn);
+  const sendReady = readiness.canSendFull || readiness.canSendWarmup;
+  const canTestOnly = !!defaultConn && !sendReady && !connectionIssue && readiness.canTestSend;
+  const isNylas = defaultConn?.auth_type === "nylas";
+  const badge = READINESS_BADGE[readiness.state];
 
   const exportAll = () => {
     const text = emails.map((e, i) => `--- Email ${i + 1} ---\nSubject: ${e.subject}\n\n${e.body}`).join("\n\n");
@@ -112,16 +118,19 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
 
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="text-sm text-muted-foreground">
-          {defaultConn ? <>Sending from <strong>{defaultConn.from_email}</strong></> : "No inbox connected"}
+          {defaultConn ? <>Sending from <strong>{defaultConn.from_email}</strong> · {readiness.provider}</> : "No inbox connected"}
           {defaultConn && (
-            <> · <Badge variant={sendReady ? "default" : "outline"} className={sendReady ? "bg-emerald-600 hover:bg-emerald-700" : ""}>
-              {sendReady ? "Ready to send" : canTestOnly ? "Test send only" : "Setup needed"}
-            </Badge></>
+            <> · <Badge variant="outline" className={badge.cls}>{badge.label}</Badge></>
           )}
           {" · "}{leads.length} lead{leads.length === 1 ? "" : "s"} on this campaign
         </div>
         <Button variant="outline" size="sm" onClick={exportAll}><Download className="h-4 w-4 mr-1" /> Export sequence</Button>
       </div>
+
+      {defaultConn && (
+        <p className="text-xs text-muted-foreground -mt-2">{readiness.friendlyLine}</p>
+      )}
+
 
       {emails.map((e, i) => {
         const canTest = canTestOnly && !!defaultConn && !!userEmail;
@@ -210,6 +219,7 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
           connectionId={defaultConn?.id}
           campaignId={campaignId}
           workspaceId={workspaceId}
+          allowSchedule={!isNylas}
           onClose={() => { setOpenIdx(null); load(); }}
         />
       )}
@@ -222,8 +232,8 @@ function SendStatusBadge({ status }: { status: string }) {
   return <Badge className={map[status] || ""}>{status}</Badge>;
 }
 
-function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspaceId, onClose }:
-  { email: SequenceEmail; stepIndex: number; leads: Lead[]; connectionId?: string; campaignId: string; workspaceId?: string | null; onClose: () => void; }) {
+function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspaceId, allowSchedule = true, onClose }:
+  { email: SequenceEmail; stepIndex: number; leads: Lead[]; connectionId?: string; campaignId: string; workspaceId?: string | null; allowSchedule?: boolean; onClose: () => void; }) {
   const { t } = useTranslation("app");
   const [subject, setSubject] = useState(email.subject);
   const [body, setBody] = useState(email.body);
@@ -279,11 +289,14 @@ function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspa
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="now">Send now</SelectItem>
-                <SelectItem value="schedule">Schedule for later</SelectItem>
+                {allowSchedule && <SelectItem value="schedule">Schedule for later</SelectItem>}
               </SelectContent>
             </Select>
-            {mode === "schedule" && (
+            {mode === "schedule" && allowSchedule && (
               <Input type="datetime-local" className="mt-2" value={scheduledFor} onChange={(e) => setScheduledFor(e.target.value)} />
+            )}
+            {!allowSchedule && (
+              <p className="text-xs text-muted-foreground mt-1">Scheduling for OAuth mailboxes is coming next — send now for Google / Microsoft.</p>
             )}
           </div>
           <div>
