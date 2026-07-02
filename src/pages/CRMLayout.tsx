@@ -1,4 +1,5 @@
 import { Outlet, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import CRMSidebar from "@/components/crm/CRMSidebar";
 import { GTranslateSlot } from "@/components/GTranslate";
 import { Button } from "@/components/ui/button";
