@@ -4,7 +4,7 @@ import { Database, Mail, Inbox, GitBranch } from "lucide-react";
 const stats = [
   { stat: "6+", desc: "tools the average lean team stitches together to run outreach, follow-up and pipeline" },
   { stat: "40%+", desc: "of imported B2B contact data is duplicated, invalid or unsafe to send without review" },
-  { stat: "70%", desc: "of replies go cold because nobody owns follow-up across systems" },
+  { stat: "70%", desc: "of warm conversations go cold because nobody owns follow-up across systems" },
 ];
 
 const pains = [

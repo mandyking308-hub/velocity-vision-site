@@ -89,7 +89,7 @@ const sections = [
       },
       {
         q: "How do follow-up states work?",
-        a: "Follow-up states help you separate new replies, warm conversations, snoozed items, dormant contacts and stuck opportunities. The aim is to stop useful follow-up actions disappearing into a normal inbox.",
+        a: "Follow-up states help you separate new follow-up items, warm conversations, snoozed items, dormant contacts and stuck opportunities. The aim is to stop useful follow-up actions disappearing into a normal inbox.",
       },
       {
         q: "When should I move someone into pipeline?",
