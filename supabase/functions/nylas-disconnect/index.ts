@@ -41,7 +41,7 @@ Deno.serve(async (req) => {
     if (conn.user_id !== user.id) return json({ error: "forbidden" }, 403);
 
     if (conn.nylas_grant_id) {
-      const { apiKey, apiUri } = nylasConfig(conn.nylas_region || "eu");
+      const { apiKey, apiUri } = nylasConfig(conn.nylas_region || "us");
       if (apiKey) {
         const res = await fetch(`${apiUri}/v3/grants/${conn.nylas_grant_id}`, {
           method: "DELETE",
