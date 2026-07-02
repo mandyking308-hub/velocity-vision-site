@@ -100,6 +100,12 @@ export default function SupportWidget() {
   const [submitting, setSubmitting] = useState(false);
   const [ticketRef, setTicketRef] = useState<string | null>(null);
   const [notifyResult, setNotifyResult] = useState<"sent" | "not_sent" | null>(null);
+  const [fbRating, setFbRating] = useState<number>(0);
+  const [fbType, setFbType] = useState<string>("");
+  const [fbMessage, setFbMessage] = useState<string>("");
+  const [fbContactPermission, setFbContactPermission] = useState<boolean>(false);
+  const [fbEmail, setFbEmail] = useState<string>(user?.email ?? "");
+  const [fbSubmitting, setFbSubmitting] = useState<boolean>(false);
   const [nudgeVisible, setNudgeVisible] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
