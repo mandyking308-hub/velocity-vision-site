@@ -183,8 +183,6 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
           </CardContent>
         </Card>
       );})}
-        </Card>
-      ))}
 
       {history.length > 0 && (
         <div>
