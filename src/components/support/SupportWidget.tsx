@@ -493,16 +493,22 @@ export default function SupportWidget() {
               </Select>
 
               {!user && (
-                <>
-                  <Input placeholder="Your name *" value={contactName} onChange={(e) => setContactName(e.target.value.slice(0, 200))} />
-                  <Input placeholder="Your email *" type="email" value={email} onChange={(e) => setEmail(e.target.value.slice(0, 320))} />
-                </>
+                <Input placeholder="Your name *" value={contactName} onChange={(e) => setContactName(e.target.value.slice(0, 200))} />
               )}
-              {user && (
+              <div className="space-y-1">
+                <Input
+                  placeholder="Reply email *"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value.slice(0, 320))}
+                  aria-label="Reply email"
+                />
                 <div className="text-[11px] text-muted-foreground">
-                  Replying as <span className="font-medium">{user.email}</span>. Add extra contact details below if you'd like a call.
+                  {user
+                    ? "Prefilled from your account — edit if you'd like us to reply somewhere else."
+                    : "We'll only use this to reply to your ticket."}
                 </div>
-              )}
+              </div>
 
               <div className="grid grid-cols-2 gap-2">
                 <Input placeholder="Phone (optional)" value={contactPhone} onChange={(e) => setContactPhone(e.target.value.slice(0, 60))} />
