@@ -127,9 +127,12 @@ export default function SupportWidget() {
     setInput("");
     setMode("chat");
     setTicketRef(null);
+    setNotifyResult(null);
     setProblem("");
     setTicketMessage("");
   };
+
+  const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 
   const currentWorkspaceId = () => {
     try { return localStorage.getItem("vv.currentWorkspaceId"); } catch { return null; }
