@@ -93,6 +93,7 @@ export default function AppCampaignWorkspace() {
   }, []);
 
   const { remaining, starterExpired, refresh: refreshCredits } = useCredits();
+  const { currentId: workspaceId } = useWorkspace();
 
   const regenerate = async () => {
     if (!c?.brief || regenerating) return;
