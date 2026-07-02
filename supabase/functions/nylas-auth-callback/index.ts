@@ -2,7 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 
 // Region-aware Nylas config resolver — mirrors nylas-auth-start.
 function nylasConfig(region: string) {
-  const r = (region || "eu").toLowerCase() === "us" ? "US" : "EU";
+  const r = (region || "us").toLowerCase() === "eu" ? "EU" : "US";
   const defaultUri = r === "US" ? "https://api.us.nylas.com" : "https://api.eu.nylas.com";
   const apiKey = Deno.env.get(`NYLAS_${r}_API_KEY`) ?? Deno.env.get("NYLAS_API_KEY");
   const clientId = Deno.env.get(`NYLAS_${r}_CLIENT_ID`) ?? Deno.env.get("NYLAS_CLIENT_ID");
@@ -92,7 +92,7 @@ Deno.serve(async (req) => {
       return redirectBack({ nylas: "error", reason: "state_expired" });
     }
 
-    const cfg = nylasConfig(stateRow.region || "eu");
+    const cfg = nylasConfig(stateRow.region || "us");
     const { apiKey, clientId, apiUri, callback } = cfg;
     console.info("nylas-auth-callback diagnostics", {
       request_id: edgeRequestId(req),

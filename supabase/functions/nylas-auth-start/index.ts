@@ -1,10 +1,10 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
-// Region-aware Nylas config resolver. Defaults to EU; US can be added by
-// setting NYLAS_US_API_KEY / NYLAS_US_CLIENT_ID / NYLAS_US_API_URI later.
+// Region-aware Nylas config resolver. Defaults to US (active Nylas app is US
+// Sandbox). EU support is retained for a future switch.
 function nylasConfig(region: string) {
-  const r = (region || "eu").toLowerCase() === "us" ? "US" : "EU";
+  const r = (region || "us").toLowerCase() === "eu" ? "EU" : "US";
   const defaultUri = r === "US" ? "https://api.us.nylas.com" : "https://api.eu.nylas.com";
   const apiKey = Deno.env.get(`NYLAS_${r}_API_KEY`) ?? Deno.env.get("NYLAS_API_KEY");
   const clientId = Deno.env.get(`NYLAS_${r}_CLIENT_ID`) ?? Deno.env.get("NYLAS_CLIENT_ID");
@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
     const provider = (body?.provider || "google").toString();
     const workspace_id = body?.workspace_id || null;
     const redirect_to = typeof body?.redirect_to === "string" ? body.redirect_to : null;
-    const region = (body?.region || "eu").toString().toLowerCase();
+    const region = (body?.region || "us").toString().toLowerCase();
 
     if (!["google", "microsoft"].includes(provider)) {
       return json({ error: "invalid_provider" }, 400);

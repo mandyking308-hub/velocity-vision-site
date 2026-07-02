@@ -2,7 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
 function nylasConfig(region: string) {
-  const r = (region || "eu").toLowerCase() === "us" ? "US" : "EU";
+  const r = (region || "us").toLowerCase() === "eu" ? "EU" : "US";
   const defaultUri = r === "US" ? "https://api.us.nylas.com" : "https://api.eu.nylas.com";
   return {
     apiKey: Deno.env.get(`NYLAS_${r}_API_KEY`) ?? Deno.env.get("NYLAS_API_KEY"),
@@ -41,7 +41,7 @@ Deno.serve(async (req) => {
     if (conn.user_id !== user.id) return json({ error: "forbidden" }, 403);
 
     if (conn.nylas_grant_id) {
-      const { apiKey, apiUri } = nylasConfig(conn.nylas_region || "eu");
+      const { apiKey, apiUri } = nylasConfig(conn.nylas_region || "us");
       if (apiKey) {
         const res = await fetch(`${apiUri}/v3/grants/${conn.nylas_grant_id}`, {
           method: "DELETE",
