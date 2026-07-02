@@ -81,7 +81,7 @@ const sections = [
     ],
   },
   {
-    title: "Replies, follow-up & pipeline",
+    title: "Follow-up & pipeline",
     items: [
       {
         q: "Where do replies go?",
