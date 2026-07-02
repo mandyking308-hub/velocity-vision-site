@@ -85,6 +85,50 @@ function normaliseObjections(pack: any, brief: Brief) {
   });
 }
 
+function normalisePaidAds(input: any, brief: Brief) {
+  const audience = (brief.audience || "your audience").trim();
+  const offer = (brief.offer || brief.name || "our workspace").trim();
+  const cta = (brief.cta || "Learn more").trim();
+  const fallback = {
+    campaignAngle: `A clear, review-first introduction to ${offer} for ${audience}.`,
+    headlines: [
+      `${offer} — a clearer way forward`,
+      `Built with ${audience} in mind`,
+      `See how ${offer} could fit your team`,
+    ],
+    primaryText: [
+      `${offer} is designed for ${audience} who want a review-first way to move faster. Nothing goes live without your approval.`,
+      `A short, honest look at ${offer}. No promises about results — just a clear view of what it does and who it fits.`,
+      `If you're exploring ${offer.toLowerCase()}, this is a straightforward starting point. Review the draft, then decide what to use.`,
+    ],
+    descriptions: [
+      `${cta} to see the draft pack.`,
+      `Customer-controlled. No auto-send.`,
+      `Draft ad copy — review before use.`,
+    ],
+    audienceNote: `Suggested audience: ${audience}${brief.geography ? ` in ${brief.geography}` : ""}${brief.industry ? `, working in ${brief.industry}` : ""}. Refine targeting inside your ad platform.`,
+    complianceNote: `Draft copy only. Review against the ad platform's policies (Meta, Google, LinkedIn, TikTok, X) and your local advertising rules before launch. No claim of platform approval, deliverability, ROAS, CPC, conversions or leads is made or implied.`,
+  };
+  const src = (input && typeof input === "object") ? input : {};
+  const pickList = (v: any, fb: string[]): string[] => {
+    const arr = Array.isArray(v) ? v.map((x: any) => stripInvisible(x).trim()).filter(Boolean) : [];
+    while (arr.length < 3) arr.push(fb[arr.length % fb.length]);
+    return arr.slice(0, Math.max(3, arr.length));
+  };
+  const pickStr = (v: any, fb: string): string => {
+    const s = hasMeaningfulText(v, 8) ? stripInvisible(v).trim() : fb;
+    return s;
+  };
+  return {
+    campaignAngle: pickStr(src.campaignAngle, fallback.campaignAngle),
+    headlines: pickList(src.headlines, fallback.headlines),
+    primaryText: pickList(src.primaryText, fallback.primaryText),
+    descriptions: pickList(src.descriptions, fallback.descriptions),
+    audienceNote: pickStr(src.audienceNote, fallback.audienceNote),
+    complianceNote: pickStr(src.complianceNote, fallback.complianceNote),
+  };
+}
+
 function ensureEmailCtaBeforeSignoff(body: string, chosenCta: string): string {
   const cta = stripInvisible(chosenCta).trim();
   if (!body || !cta) return body || "";
