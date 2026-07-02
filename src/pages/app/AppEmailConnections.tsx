@@ -129,7 +129,7 @@ export default function AppEmailConnections() {
           <DialogTrigger asChild>
             <Button><Plug className="h-4 w-4 mr-2" /> Connect email</Button>
           </DialogTrigger>
-          <ConnectionDialog editing={editing} onDone={() => { setOpen(false); setEditing(null); load(); }} />
+          <ConnectionDialog editing={editing} workspaceId={currentId} onDone={() => { setOpen(false); setEditing(null); load(); }} />
         </Dialog>
       </div>
 
