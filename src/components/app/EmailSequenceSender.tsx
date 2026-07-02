@@ -20,7 +20,10 @@ interface SequenceEmail {
   preview?: string;
 }
 
-interface Connection { id: string; from_email: string; from_name: string | null; is_default: boolean; status: string; }
+interface Connection {
+  id: string; from_email: string; from_name: string | null; is_default: boolean;
+  status: string; sending_enabled?: boolean | null; auth_type?: string | null;
+}
 
 interface Lead { id: string; name: string | null; email: string | null; }
 
@@ -35,14 +38,18 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
   const [connections, setConnections] = useState<Connection[]>([]);
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   const [history, setHistory] = useState<any[]>([]);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [testing, setTesting] = useState(false);
 
   const load = async () => {
-    const [{ data: c }, { data: h }] = await Promise.all([
-      supabase.from("email_connections").select("id, from_email, from_name, is_default, status").order("is_default", { ascending: false }),
+    const [{ data: c }, { data: h }, userRes] = await Promise.all([
+      supabase.from("email_connections").select("id, from_email, from_name, is_default, status, sending_enabled, auth_type").order("is_default", { ascending: false }),
       supabase.from("email_sends").select("id, recipient_email, subject, status, scheduled_for, sent_at, error, sequence_step").eq("campaign_id", campaignId).order("created_at", { ascending: false }).limit(20),
+      supabase.auth.getUser(),
     ]);
     setConnections((c || []) as Connection[]);
     setHistory(h || []);
+    setUserEmail(userRes.data.user?.email ?? null);
   };
 
   useEffect(() => { load(); }, [campaignId]);
@@ -50,6 +57,8 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
   const defaultConn = connections.find((c) => c.is_default) || connections[0];
   const noConnection = connections.length === 0;
   const connectionIssue = defaultConn && defaultConn.status !== "connected" && defaultConn.status !== "pending";
+  const sendReady = !!defaultConn?.sending_enabled && defaultConn?.status === "connected";
+  const canTestOnly = !!defaultConn && !sendReady && !connectionIssue;
 
   const exportAll = () => {
     const text = emails.map((e, i) => `--- Email ${i + 1} ---\nSubject: ${e.subject}\n\n${e.body}`).join("\n\n");
@@ -86,15 +95,41 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
         </Card>
       )}
 
+      {canTestOnly && (
+        <Card className="border-amber-500/40 bg-amber-50/40 dark:bg-amber-950/20">
+          <CardContent className="p-4 flex items-center gap-3 flex-wrap">
+            <Mail className="h-5 w-5 text-amber-600" />
+            <div className="flex-1">
+              <p className="font-semibold text-sm">Inbox connected — test send only</p>
+              <p className="text-xs text-muted-foreground">
+                Full campaign sending is not enabled yet. You can send a controlled test to yourself, or complete sender setup.
+              </p>
+            </div>
+            <Link to="/app/settings/email"><Button size="sm" variant="outline">Sender setup</Button></Link>
+          </CardContent>
+        </Card>
+      )}
+
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="text-sm text-muted-foreground">
           {defaultConn ? <>Sending from <strong>{defaultConn.from_email}</strong></> : "No inbox connected"}
+          {defaultConn && (
+            <> · <Badge variant={sendReady ? "default" : "outline"} className={sendReady ? "bg-emerald-600 hover:bg-emerald-700" : ""}>
+              {sendReady ? "Ready to send" : canTestOnly ? "Test send only" : "Setup needed"}
+            </Badge></>
+          )}
           {" · "}{leads.length} lead{leads.length === 1 ? "" : "s"} on this campaign
         </div>
         <Button variant="outline" size="sm" onClick={exportAll}><Download className="h-4 w-4 mr-1" /> Export sequence</Button>
       </div>
 
-      {emails.map((e, i) => (
+      {emails.map((e, i) => {
+        const canTest = canTestOnly && !!defaultConn && !!userEmail;
+        const sendDisabled = noConnection || leads.length === 0 || !sendReady;
+        const sendTitle = !sendReady && !noConnection
+          ? "Sending not enabled yet — complete sender setup or use Send test to myself."
+          : undefined;
+        return (
         <Card key={i}>
           <CardContent className="p-4 space-y-3">
             <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -107,7 +142,39 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
                 <Button variant="ghost" size="sm" onClick={() => { navigator.clipboard.writeText(`${e.subject}\n\n${e.body}`); toast.success(i18n.t("common:toasts.copied")); }}>
                   <Copy className="h-4 w-4" />
                 </Button>
-                <Button size="sm" disabled={noConnection || leads.length === 0} onClick={() => setOpenIdx(i)}>
+                {canTest && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={testing}
+                    onClick={async () => {
+                      if (!defaultConn || !userEmail) return;
+                      setTesting(true);
+                      const { data, error } = await supabase.functions.invoke("email-send", {
+                        body: {
+                          connection_id: defaultConn.id,
+                          campaign_id: campaignId,
+                          workspace_id: workspaceId,
+                          recipient_email: userEmail,
+                          subject: `[TEST] ${e.subject}`,
+                          body: e.body,
+                          sequence_step: i + 1,
+                          test_mode: true,
+                        },
+                      });
+                      setTesting(false);
+                      if (error || (data as any)?.error) {
+                        toast.error("Test send failed", { description: (data as any)?.error || error?.message });
+                      } else {
+                        toast.success("Test sent to your inbox");
+                      }
+                      load();
+                    }}
+                  >
+                    <Send className="h-4 w-4 mr-1" /> Send test to myself
+                  </Button>
+                )}
+                <Button size="sm" disabled={sendDisabled} title={sendTitle} onClick={() => setOpenIdx(i)}>
                   <Send className="h-4 w-4 mr-1" /> Send / schedule
                 </Button>
               </div>
@@ -115,7 +182,7 @@ export default function EmailSequenceSender({ emails, campaignId, workspaceId, l
             <pre className="whitespace-pre-wrap font-sans text-sm bg-muted/30 p-3 rounded-md">{e.body}</pre>
           </CardContent>
         </Card>
-      ))}
+      );})}
 
       {history.length > 0 && (
         <div>
