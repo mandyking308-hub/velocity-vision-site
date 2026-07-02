@@ -560,7 +560,11 @@ function ConnectionRow({
 function ConnectionDialog({ editing, workspaceId, onDone }: { editing: Connection | null; workspaceId: string | null; onDone: () => void }) {
   const { t } = useTranslation("app");
   const tc = useTranslation("common").t;
-  const [provider, setProvider] = useState<"gmail" | "outlook" | "smtp">(editing?.provider || "gmail");
+  // SMTP dialog only handles the three SMTP-configurable provider values —
+  // OAuth-only providers (icloud/imap/ews) never open this dialog.
+  const initialProvider: "gmail" | "outlook" | "smtp" =
+    editing?.provider === "gmail" || editing?.provider === "outlook" ? editing.provider : "smtp";
+  const [provider, setProvider] = useState<"gmail" | "outlook" | "smtp">(initialProvider);
   const [fromEmail, setFromEmail] = useState(editing?.from_email || "");
   const [fromName, setFromName] = useState(editing?.from_name || "");
   const [smtpUser, setSmtpUser] = useState(editing?.smtp_username || "");
