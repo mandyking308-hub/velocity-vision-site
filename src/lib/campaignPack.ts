@@ -546,6 +546,7 @@ export function generatePack(brief: CampaignBrief): CampaignPack {
       captionText: `${brief.offer} — ${strings === ES ? "hecho para" : "built for"} ${brief.audience}. ${brief.cta}.`,
       ctaEndings: strings.ctaEndings(brief),
     } : null,
+    paidAds: channelCfg.includePaidAds ? buildFallbackPaidAds(brief) : null,
     leadCapture: strings.leadForm(brief),
   };
 }
