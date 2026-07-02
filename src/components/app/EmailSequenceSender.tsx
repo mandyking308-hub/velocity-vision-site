@@ -293,6 +293,7 @@ function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspa
     if (targets.length === 0) { toast.error(t("email.toasts.pickLead")); return; }
     setSending(true);
     let ok = 0, fail = 0;
+    let legalBlocked = false;
     for (const lead of targets) {
       const { data, error } = await supabase.functions.invoke("email-send", {
         body: {
@@ -302,11 +303,17 @@ function SendDialog({ email, stepIndex, leads, connectionId, campaignId, workspa
           scheduled_for: mode === "schedule" ? new Date(scheduledFor).toISOString() : null,
         },
       });
-      if (error || (data as any)?.error) fail++; else ok++;
+      const errCode = (data as any)?.error;
+      if (errCode === "legal_not_current") { legalBlocked = true; fail++; break; }
+      if (error || errCode) fail++; else ok++;
     }
     setSending(false);
     if (ok) toast.success(mode === "schedule" ? t("email.toasts.scheduled", { count: ok }) : t("email.toasts.sent", { count: ok }));
-    if (fail) toast.error(t("email.toasts.failed", { count: fail }));
+    if (legalBlocked) {
+      toast.error("Please review and accept the current platform terms before sending.", {
+        action: onLegalRequired ? { label: "Review terms", onClick: onLegalRequired } : undefined,
+      });
+    } else if (fail) toast.error(t("email.toasts.failed", { count: fail }));
     onClose();
   };
 
