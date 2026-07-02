@@ -295,21 +295,39 @@ function MicrosoftGlyph() {
 }
 
 function StatusBadge({ status }: { status: string }) {
-  if (status === "connected") return <Badge variant="secondary"><CheckCircle2 className="h-3 w-3 mr-1" /> Connected</Badge>;
+  if (status === "connected") return <Badge variant="secondary"><CheckCircle2 className="h-3 w-3 mr-1" /> Inbox connected</Badge>;
   if (status === "error") return <Badge variant="destructive"><AlertCircle className="h-3 w-3 mr-1" /> Connection issue</Badge>;
   if (status === "reconnect_required") return <Badge variant="destructive">Reconnect required</Badge>;
   return <Badge variant="outline">Pending</Badge>;
 }
 
+// Personal mailbox domains where DKIM selectors are provider-managed and users
+// should never be asked for one. Custom domains (Workspace/M365/custom) still
+// need the advanced setup flow.
+const PERSONAL_MAILBOX_DOMAINS = new Set([
+  "gmail.com", "googlemail.com",
+  "outlook.com", "hotmail.com", "live.com", "msn.com",
+  "yahoo.com", "icloud.com", "me.com",
+]);
+
 const VER_LABEL: Record<string, { label: string; cls: string }> = {
   not_connected: { label: "Not connected", cls: "bg-muted text-muted-foreground" },
-  needs_dns_setup: { label: "DNS setup required", cls: "bg-amber-100 text-amber-800" },
-  checking: { label: "Checking DNS…", cls: "bg-blue-100 text-blue-800" },
-  verified: { label: "Domain verified", cls: "bg-emerald-100 text-emerald-700" },
-  failed: { label: "Verification failed", cls: "bg-rose-100 text-rose-700" },
+  needs_dns_setup: { label: "Sender setup needed", cls: "bg-amber-100 text-amber-800" },
+  checking: { label: "Checking sender…", cls: "bg-blue-100 text-blue-800" },
+  verified: { label: "Ready to send", cls: "bg-emerald-100 text-emerald-700" },
+  failed: { label: "Sender setup needed", cls: "bg-amber-100 text-amber-800" },
   reconnect_required: { label: "Reconnect required", cls: "bg-rose-100 text-rose-700" },
-  unknown: { label: "Not checked yet", cls: "bg-muted text-muted-foreground" },
+  unknown: { label: "Sender check pending", cls: "bg-muted text-muted-foreground" },
 };
+
+function providerLabel(c: Connection) {
+  if (c.auth_type === "nylas") {
+    return c.nylas_provider === "microsoft" ? "Microsoft" : "Google";
+  }
+  if (c.provider === "gmail") return "Google";
+  if (c.provider === "outlook") return "Microsoft";
+  return "SMTP";
+}
 
 function DnsPill({ label, value }: { label: string; value: string | null }) {
   const v = value || "unknown";
@@ -328,11 +346,43 @@ function ConnectionRow({
 }) {
   const [checking, setChecking] = useState(false);
   const [selectorInput, setSelectorInput] = useState(c.dkim_selector || "");
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const ver = VER_LABEL[c.verification_status || "unknown"] || VER_LABEL.unknown;
-  const domain = c.domain || c.from_email?.split("@")[1] || "";
+  const domain = (c.domain || c.from_email?.split("@")[1] || "").toLowerCase();
+  const isPersonalMailbox = PERSONAL_MAILBOX_DOMAINS.has(domain);
   const providerKnown = KNOWN_DKIM_HOSTS.has(c.smtp_host || "") || c.auth_type === "nylas";
   const hasConfiguredSelector = !!(c.dkim_selector || (c.dkim_selectors && c.dkim_selectors.length > 0));
-  const dkimSelectorRequired = !providerKnown && !hasConfiguredSelector;
+  // Only ask for a DKIM selector when the sender is a custom domain that
+  // actually failed verification because of it. Personal mailboxes and
+  // provider-managed DKIM never see this prompt by default.
+  const dkimSelectorRequired =
+    !isPersonalMailbox &&
+    !providerKnown &&
+    !hasConfiguredSelector &&
+    (c.verification_status === "failed" || c.verification_status === "needs_dns_setup");
+
+  // Customer-facing send readiness derived from backend state. Personal Nylas
+  // mailboxes stay in "setup_needed" (with reassuring copy) until Phase 2
+  // sending is wired; custom domains follow the DNS verification signal.
+  const sendReady = c.sending_enabled === true && c.verification_status === "verified";
+  const readinessLabel = sendReady
+    ? "Ready to send"
+    : c.status === "reconnect_required"
+    ? "Reconnect required"
+    : "Setup needed";
+  const readinessTone = sendReady
+    ? "bg-emerald-600 text-white"
+    : c.status === "reconnect_required"
+    ? "bg-rose-600 text-white"
+    : "bg-amber-100 text-amber-800";
+
+  const friendlyStatusLine = c.auth_type === "nylas" && isPersonalMailbox
+    ? "Mailbox connected. Sending will be available when campaign activation is enabled."
+    : c.auth_type === "nylas"
+    ? "Mailbox connected. We'll guide you through a sender setup check before high-volume sending."
+    : sendReady
+    ? "Advanced SMTP sender verified and ready."
+    : "Advanced SMTP sender connected. Complete sender setup to enable sending.";
 
   async function verifyDns(persistSelector?: string) {
     setChecking(true);
@@ -346,13 +396,13 @@ function ConnectionRow({
         },
       });
       if (error) throw error;
-      if (data?.verified) toast.success("Domain verified", { description: domain });
-      else toast.warning("Not fully verified", {
-        description: `MX ${data?.mx_status} · SPF ${data?.spf_status} · DKIM ${data?.dkim_status} · DMARC ${data?.dmarc_status}`,
+      if (data?.verified) toast.success("Sender ready", { description: domain });
+      else toast.warning("Sender setup still needed", {
+        description: "Open Advanced deliverability details for the full report.",
       });
       onVerified();
     } catch (e: any) {
-      toast.error("DNS check failed", { description: e.message });
+      toast.error("Sender check failed", { description: e.message });
     } finally { setChecking(false); }
   }
 
@@ -365,81 +415,90 @@ function ConnectionRow({
               <span className="font-semibold">{c.from_name ? `${c.from_name} <${c.from_email}>` : c.from_email}</span>
               {c.is_default && <Badge variant="default"><Star className="h-3 w-3 mr-1" /> Default</Badge>}
               <StatusBadge status={c.status} />
-              {c.auth_type === "nylas" && (
-                <Badge variant="secondary" className="capitalize">
-                  OAuth · {c.nylas_provider || "google"}
-                </Badge>
-              )}
+              <Badge variant="secondary">Provider: {providerLabel(c)}</Badge>
+              <span className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${readinessTone}`}>{readinessLabel}</span>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">{friendlyStatusLine}</p>
+            <p className="text-xs text-muted-foreground">Replies return to this inbox.</p>
+            {c.last_error && !isPersonalMailbox && (
+              <p className="text-xs text-destructive mt-1">{c.last_error}</p>
+            )}
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            {!c.is_default && <Button variant="outline" size="sm" onClick={onDefault}>Make default</Button>}
+            <Button variant="outline" size="sm" onClick={onReconnect}>Reconnect</Button>
+            <Button variant="ghost" size="sm" onClick={onRemove}><Trash2 className="h-4 w-4" /></Button>
+          </div>
+        </div>
+
+        <Collapsible open={showAdvanced} onOpenChange={setShowAdvanced}>
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" size="sm" className="text-muted-foreground -ml-2">
+              <ChevronDown className={`h-4 w-4 mr-1 transition-transform ${showAdvanced ? "rotate-180" : ""}`} />
+              Advanced deliverability details
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="pt-2 space-y-3">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${ver.cls}`}>{ver.label}</span>
               {c.sending_enabled ? (
                 <Badge variant="default" className="bg-emerald-600 hover:bg-emerald-700">Sending enabled</Badge>
               ) : (
                 <Badge variant="outline">Sending disabled</Badge>
               )}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {c.auth_type === "nylas"
-                ? `${c.nylas_provider === "microsoft" ? "Microsoft" : "Google"} OAuth (via Nylas)`
-                : `${PROVIDER_HELP[c.provider]?.label} · ${c.smtp_host || "?"}:${c.smtp_port ?? ""}`}
-            </p>
-            {c.last_error && <p className="text-xs text-destructive mt-1">{c.last_error}</p>}
-          </div>
-          <div className="flex gap-2 flex-wrap">
-            <Button variant="outline" size="sm" onClick={() => verifyDns()} disabled={checking || !domain}>
-              {checking ? "Checking DNS…" : "Check DNS verification"}
-            </Button>
-            {!c.is_default && <Button variant="outline" size="sm" onClick={onDefault}>Make default</Button>}
-            <Button variant="outline" size="sm" onClick={onReconnect}>Reconnect</Button>
-            <Button variant="ghost" size="sm" onClick={onRemove}><Trash2 className="h-4 w-4" /></Button>
-          </div>
-        </div>
-        <div className="flex flex-wrap gap-1.5">
-          <DnsPill label="MX" value={c.mx_status} />
-          <DnsPill label="SPF" value={c.spf_status} />
-          <DnsPill label="DKIM" value={c.dkim_status} />
-          <DnsPill label="DMARC" value={c.dmarc_status} />
-          {c.dns_checked_at && (
-            <span className="text-[10px] text-muted-foreground ml-auto">Last checked {new Date(c.dns_checked_at).toLocaleString()}</span>
-          )}
-        </div>
-
-        {(dkimSelectorRequired || c.dkim_status === "unknown") && (
-          <div className="rounded-md border border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-900 p-3 text-xs space-y-2">
-            <p className="text-amber-900 dark:text-amber-200 font-medium">
-              DKIM selector required — enter the selector supplied by your email provider.
-            </p>
-            <p className="text-amber-800/80 dark:text-amber-200/80">
-              We won't guess. Any DKIM record we find at a random selector could belong to another provider, so sending stays disabled until you confirm the correct one (for example <code>s1</code>, <code>mail</code>, or a provider-specific string).
-            </p>
-            <div className="flex gap-2 items-end pt-1">
-              <div className="flex-1">
-                <Label className="text-[11px]">DKIM selector</Label>
-                <Input
-                  value={selectorInput}
-                  onChange={(e) => setSelectorInput(e.target.value)}
-                  placeholder="e.g. s1"
-                  className="h-8 text-xs"
-                  data-testid={`dkim-selector-input-${c.id}`}
-                />
-              </div>
-              <Button
-                size="sm"
-                onClick={() => verifyDns(selectorInput.trim())}
-                disabled={!selectorInput.trim() || checking}
-                data-testid={`dkim-selector-save-${c.id}`}
-              >
-                Save & re-check
+              <Button variant="outline" size="sm" onClick={() => verifyDns()} disabled={checking || !domain} className="ml-auto">
+                {checking ? "Checking…" : "Run sender check"}
               </Button>
             </div>
-            {c.dkim_selector && (
-              <p className="text-[11px] text-muted-foreground">Configured selector: <code>{c.dkim_selector}</code></p>
-            )}
-          </div>
-        )}
+            <div className="flex flex-wrap gap-1.5">
+              <DnsPill label="MX" value={c.mx_status} />
+              <DnsPill label="SPF" value={c.spf_status} />
+              <DnsPill label="DKIM" value={c.dkim_status} />
+              <DnsPill label="DMARC" value={c.dmarc_status} />
+              {c.dns_checked_at && (
+                <span className="text-[10px] text-muted-foreground ml-auto">Last checked {new Date(c.dns_checked_at).toLocaleString()}</span>
+              )}
+            </div>
 
-        {c.dkim_status === "valid" && c.dkim_selector && (
-          <p className="text-[11px] text-muted-foreground">DKIM confirmed at selector <code>{c.dkim_selector}</code>.</p>
-        )}
+            {dkimSelectorRequired && (
+              <div className="rounded-md border border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-900 p-3 text-xs space-y-2">
+                <p className="text-amber-900 dark:text-amber-200 font-medium">
+                  DKIM selector required for custom domain <code>{domain}</code>.
+                </p>
+                <p className="text-amber-800/80 dark:text-amber-200/80">
+                  Enter the selector supplied by your email provider (for example <code>s1</code>, <code>mail</code>, or a provider-specific string). We won't guess.
+                </p>
+                <div className="flex gap-2 items-end pt-1">
+                  <div className="flex-1">
+                    <Label className="text-[11px]">DKIM selector</Label>
+                    <Input
+                      value={selectorInput}
+                      onChange={(e) => setSelectorInput(e.target.value)}
+                      placeholder="e.g. s1"
+                      className="h-8 text-xs"
+                      data-testid={`dkim-selector-input-${c.id}`}
+                    />
+                  </div>
+                  <Button
+                    size="sm"
+                    onClick={() => verifyDns(selectorInput.trim())}
+                    disabled={!selectorInput.trim() || checking}
+                    data-testid={`dkim-selector-save-${c.id}`}
+                  >
+                    Save & re-check
+                  </Button>
+                </div>
+                {c.dkim_selector && (
+                  <p className="text-[11px] text-muted-foreground">Configured selector: <code>{c.dkim_selector}</code></p>
+                )}
+              </div>
+            )}
+
+            {c.dkim_status === "valid" && c.dkim_selector && (
+              <p className="text-[11px] text-muted-foreground">DKIM confirmed at selector <code>{c.dkim_selector}</code>.</p>
+            )}
+          </CollapsibleContent>
+        </Collapsible>
       </CardContent>
     </Card>
   );
