@@ -200,11 +200,21 @@ export default function AppActivation() {
         <JourneyEmptyState
           icon={Mail}
           flow={`Step 3 of the journey — you have ${counts.valid} safe contacts ready`}
-          title="Connect your sender to activate"
-          description="We need SPF/DKIM-verified email before we send on your behalf. This protects your domain reputation."
+          title="Connect a sender to activate"
+          description="Connect a sender before activating campaigns. We'll check that it is safe to send from before anything goes out."
           steps={[
             { to: "/app/settings/email", label: "Connect sender", icon: Mail },
             { to: "/app/data-vault", label: "Review data first" },
+          ]}
+        />
+      ) : sender.connected && !sender.domain_authenticated ? (
+        <JourneyEmptyState
+          icon={Mail}
+          flow={`Step 3 of the journey — sender connected, setup pending`}
+          title="Sender setup needed before activation"
+          description="Your mailbox is connected. Sending is not enabled yet. Complete sender setup before activation."
+          steps={[
+            { to: "/app/settings/email", label: "Finish sender setup", icon: Mail },
           ]}
         />
       ) : counts.valid === 0 ? (
