@@ -1089,6 +1089,7 @@ export type Database = {
           nylas_disconnected_at: string | null
           nylas_grant_id: string | null
           nylas_provider: string | null
+          nylas_region: string | null
           provider: string
           rate_limit_per_hour: number
           sending_enabled: boolean
@@ -1128,6 +1129,7 @@ export type Database = {
           nylas_disconnected_at?: string | null
           nylas_grant_id?: string | null
           nylas_provider?: string | null
+          nylas_region?: string | null
           provider: string
           rate_limit_per_hour?: number
           sending_enabled?: boolean
@@ -1167,6 +1169,7 @@ export type Database = {
           nylas_disconnected_at?: string | null
           nylas_grant_id?: string | null
           nylas_provider?: string | null
+          nylas_region?: string | null
           provider?: string
           rate_limit_per_hour?: number
           sending_enabled?: boolean
@@ -1750,6 +1753,7 @@ export type Database = {
           nonce: string
           provider: string
           redirect_to: string | null
+          region: string
           state: string
           user_id: string
           workspace_id: string | null
@@ -1762,6 +1766,7 @@ export type Database = {
           nonce: string
           provider: string
           redirect_to?: string | null
+          region?: string
           state: string
           user_id: string
           workspace_id?: string | null
@@ -1774,6 +1779,7 @@ export type Database = {
           nonce?: string
           provider?: string
           redirect_to?: string | null
+          region?: string
           state?: string
           user_id?: string
           workspace_id?: string | null
