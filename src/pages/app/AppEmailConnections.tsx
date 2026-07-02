@@ -294,7 +294,7 @@ function MicrosoftGlyph() {
 }
 
 function StatusBadge({ status }: { status: string }) {
-  if (status === "connected") return <Badge variant="secondary"><CheckCircle2 className="h-3 w-3 mr-1" /> SMTP connected</Badge>;
+  if (status === "connected") return <Badge variant="secondary"><CheckCircle2 className="h-3 w-3 mr-1" /> Connected</Badge>;
   if (status === "error") return <Badge variant="destructive"><AlertCircle className="h-3 w-3 mr-1" /> Connection issue</Badge>;
   if (status === "reconnect_required") return <Badge variant="destructive">Reconnect required</Badge>;
   return <Badge variant="outline">Pending</Badge>;
