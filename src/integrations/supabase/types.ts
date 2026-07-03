@@ -2552,6 +2552,45 @@ export type Database = {
         }
         Relationships: []
       }
+      upgrade_events: {
+        Row: {
+          created_at: string
+          event: string
+          id: string
+          is_test: boolean
+          meta: Json
+          plan: string | null
+          reason: string | null
+          route: string | null
+          user_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event: string
+          id?: string
+          is_test?: boolean
+          meta?: Json
+          plan?: string | null
+          reason?: string | null
+          route?: string | null
+          user_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event?: string
+          id?: string
+          is_test?: boolean
+          meta?: Json
+          plan?: string | null
+          reason?: string | null
+          route?: string | null
+          user_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
       user_plans: {
         Row: {
           billing_country: string | null

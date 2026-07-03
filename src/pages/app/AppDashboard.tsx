@@ -18,6 +18,7 @@ import FollowUpReminders from "@/components/app/FollowUpReminders";
 import SendSafetyPanel from "@/components/app/SendSafetyPanel";
 import SenderStatusCard from "@/components/app/SenderStatusCard";
 import OnboardingChecklist from "@/components/app/OnboardingChecklist";
+import FreePreviewStatusCard from "@/components/app/FreePreviewStatusCard";
 import PriorityStrip from "@/components/app/PriorityStrip";
 import { computeSafety, DEFAULT_SENDER_STATE, type SenderState } from "@/lib/sendSafety";
 import type { PlanId } from "@/lib/credits";
@@ -352,6 +353,9 @@ export default function AppDashboard() {
       </div>
 
 
+
+      {/* Free Preview status + expiry nudges (renders nothing for paid plans) */}
+      <FreePreviewStatusCard />
 
       {/* A2. First-time onboarding checklist (auto-hides once complete) */}
       <OnboardingChecklist

@@ -15,6 +15,7 @@ import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { CREDIT_COSTS } from "@/lib/credits";
 
 import EmailSequenceSender from "@/components/app/EmailSequenceSender";
+import UpgradeNudge from "@/components/app/UpgradeNudge";
 import FeedbackPrompt from "@/components/support/FeedbackPrompt";
 import LeadFormConfig from "@/components/app/LeadFormConfig";
 import {
@@ -93,7 +94,7 @@ export default function AppCampaignWorkspace() {
     })();
   }, []);
 
-  const { remaining, starterExpired, refresh: refreshCredits } = useCredits();
+  const { remaining, starterExpired, isFreePreview, refresh: refreshCredits } = useCredits();
   const { currentId: workspaceId } = useWorkspace();
 
   const regenerate = async () => {
@@ -282,6 +283,7 @@ export default function AppCampaignWorkspace() {
         question="Was this campaign pack useful?"
         feedbackType="loved"
       />
+      {isFreePreview && c.pack && <UpgradeNudge reason="free_preview_first_pack_ready" variant="card" /> }
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">{c.name}</h1>

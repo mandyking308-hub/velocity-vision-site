@@ -18,6 +18,7 @@ import { formatQualityFailure } from "@/lib/campaignQualityToast";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useCredits } from "@/contexts/CreditsContext";
+import UpgradeNudge from "@/components/app/UpgradeNudge";
 import { CREDIT_COSTS } from "@/lib/credits";
 import {
   CadenceConfig, CADENCE_LABELS, CadenceType, COMMON_TIMEZONES, REFRESH_LABELS,
@@ -58,7 +59,21 @@ export default function AppCampaignNew() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { currentId: workspaceId } = useWorkspace();
-  const { remaining, starterExpired, refresh: refreshCredits } = useCredits();
+  const { remaining, starterExpired, isFreePreview, refresh: refreshCredits } = useCredits();
+  const [existingPackCount, setExistingPackCount] = useState(0);
+  useEffect(() => {
+    if (!isFreePreview || !user) return;
+    supabase.from("campaigns").select("id", { count: "exact", head: true })
+      .eq("created_by", user.id).not("pack", "is", null)
+      .then(({ count }) => {
+        const n = count ?? 0;
+        setExistingPackCount(n);
+        if (n >= 1) {
+          import("@/lib/upgradeEvents").then(({ trackUpgradeEvent }) =>
+            trackUpgradeEvent("free_preview_campaign_gate_hit", { reason: "second_pack", plan: "free_preview" }));
+        }
+      });
+  }, [isFreePreview, user]);
   const [params] = useSearchParams();
   const { i18n, t } = useTranslation("app");
   const defaultLang: CampaignLanguage = (i18n.language?.startsWith("es") ? "es" : "en");
@@ -249,6 +264,9 @@ export default function AppCampaignNew() {
         <div className="rounded-md border border-accent/40 bg-accent/10 px-4 py-3 text-sm">
           <strong>{starterExpired ? "Starter access has ended." : "You don't have enough Campaign Credits."}</strong> Generating a full campaign pack costs {CREDIT_COSTS.full_campaign_pack} credits. <a href="/app/billing" className="underline">Top up or upgrade</a> to keep launching.
         </div>
+      )}
+      {isFreePreview && existingPackCount >= 1 && (
+        <UpgradeNudge reason="free_preview_second_pack_gate" variant="banner" />
       )}
       <Progress value={(step / totalSteps) * 100} />
       <div className="text-sm text-muted-foreground">Step {step} of {totalSteps} · This generation will use {CREDIT_COSTS.full_campaign_pack} Campaign Credits</div>

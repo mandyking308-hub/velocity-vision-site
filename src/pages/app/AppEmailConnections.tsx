@@ -14,6 +14,9 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { computeReadiness, READINESS_BADGE, type ConnectionShape } from "@/lib/senderReadiness";
+import { useCredits } from "@/contexts/CreditsContext";
+import UpgradeNudge from "@/components/app/UpgradeNudge";
+import { trackUpgradeEvent } from "@/lib/upgradeEvents";
 
 interface Connection {
   id: string;
@@ -107,6 +110,10 @@ export default function AppEmailConnections() {
   const [editing, setEditing] = useState<Connection | null>(null);
   const [loading, setLoading] = useState(true);
   const [oauthLoading, setOauthLoading] = useState<NylasProviderKey | null>(null);
+  const { isFreePreview } = useCredits();
+  useEffect(() => {
+    if (isFreePreview) trackUpgradeEvent("free_preview_sending_gate_hit", { reason: "sending_gate", plan: "free_preview" });
+  }, [isFreePreview]);
   const [showSmtp, setShowSmtp] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -223,6 +230,9 @@ export default function AppEmailConnections() {
         <h1 className="text-3xl font-bold">Email connections</h1>
         <p className="text-muted-foreground">Connect the inbox you want campaign follow-ups to send from. Google, Microsoft, iCloud, IMAP and Exchange connect securely through Nylas. Advanced SMTP is available for providers that require app-password setup.</p>
       </div>
+
+      {isFreePreview && <UpgradeNudge reason="free_preview_sending_gate" variant="banner" />}
+
 
       <Card>
         <CardHeader>

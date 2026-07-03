@@ -8,10 +8,17 @@ import ImportReport, { ImportSummary } from "@/components/app/datavault/ImportRe
 import FeedbackPrompt from "@/components/support/FeedbackPrompt";
 import PreviewStep, { PreviewRow } from "@/components/app/datavault/PreviewStep";
 import { format } from "date-fns";
+import UpgradeNudge from "@/components/app/UpgradeNudge";
+import { useCredits } from "@/contexts/CreditsContext";
+import { FREE_LIMITS } from "@/lib/credits";
+import { trackUpgradeEvent } from "@/lib/upgradeEvents";
+import { useEffect } from "react";
 
 export default function AppDataVaultImport() {
   const { id } = useParams();
   const navigate = useNavigate();
+
+  const { isFreePreview } = useCredits();
 
   const { data, isLoading } = useQuery({
     queryKey: ["vault-import", id],
@@ -69,7 +76,13 @@ export default function AppDataVaultImport() {
         <p className="text-muted-foreground">Uploaded {format(new Date(u.created_at), "d MMM yyyy, HH:mm")} · {u.row_count} rows · status {u.status}</p>
       </div>
 
+      <ContactLimitBanner
+        isFreePreview={isFreePreview}
+        rowCount={u.row_count ?? 0}
+      />
+
       <ImportReport s={s} />
+
 
       {u.status === "imported" && (
         <FeedbackPrompt
@@ -87,5 +100,21 @@ export default function AppDataVaultImport() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+function ContactLimitBanner({ isFreePreview, rowCount }: { isFreePreview: boolean; rowCount: number }) {
+  useEffect(() => {
+    if (isFreePreview && rowCount > FREE_LIMITS.maxContacts) {
+      trackUpgradeEvent("free_preview_contact_gate_hit", { reason: "contact_limit", plan: "free_preview", meta: { rowCount } });
+    }
+  }, [isFreePreview, rowCount]);
+  if (!isFreePreview || rowCount <= FREE_LIMITS.maxContacts) return null;
+  return (
+    <UpgradeNudge
+      reason="free_preview_contact_limit"
+      variant="banner"
+      body={`This import contains ${rowCount} contacts. Free Preview activates up to ${FREE_LIMITS.maxContacts}. Upgrade to Growth to activate the rest.`}
+    />
   );
 }

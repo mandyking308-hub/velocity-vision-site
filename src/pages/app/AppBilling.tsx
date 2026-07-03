@@ -21,6 +21,7 @@ import PricingCurrencySelector from "@/components/PricingCurrencySelector";
 import FeedbackPrompt from "@/components/support/FeedbackPrompt";
 import BillingTermsSummary from "@/components/BillingTermsSummary";
 import PaymentEnvBadge from "@/components/app/PaymentEnvBadge";
+import UpgradeNudge from "@/components/app/UpgradeNudge";
 
 const PLAN_TO_SKU: Record<PlanId, SkuId> = {
   free_preview: "vv_starter_oneoff", // Upgrade CTA points at Starter/Growth checkout.
@@ -171,6 +172,23 @@ export default function AppBilling() {
           </CardContent>
         </Card>
       )}
+
+      {/* Best next step — Free Preview conversion path */}
+      {plan === "free_preview" && (
+        <Card className="border-primary/30">
+          <CardHeader>
+            <CardTitle className="text-base">Best next step</CardTitle>
+            <CardDescription>
+              Credits are good for extra generation. Growth is better for regular commercial use, larger data and safe activation.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-3 md:grid-cols-2">
+            <UpgradeNudge reason="credits_soft" variant="card" title="Buy credits for one more sprint" body="Add credits to keep generating without changing plan. Paid credits stay usable if Free Preview ends." />
+            <UpgradeNudge reason="upgrade_for_growth" variant="card" title="Upgrade to Growth" body="Recurring campaigns, larger audiences and safe activation once sender is verified." />
+          </CardContent>
+        </Card>
+      )}
+
 
       <Card>
         <CardHeader>
