@@ -58,7 +58,14 @@ export default function AppCampaignNew() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { currentId: workspaceId } = useWorkspace();
-  const { remaining, starterExpired, refresh: refreshCredits } = useCredits();
+  const { remaining, starterExpired, isFreePreview, refresh: refreshCredits } = useCredits();
+  const [existingPackCount, setExistingPackCount] = useState(0);
+  useEffect(() => {
+    if (!isFreePreview || !user) return;
+    supabase.from("campaigns").select("id", { count: "exact", head: true })
+      .eq("created_by", user.id).not("pack", "is", null)
+      .then(({ count }) => setExistingPackCount(count ?? 0));
+  }, [isFreePreview, user]);
   const [params] = useSearchParams();
   const { i18n, t } = useTranslation("app");
   const defaultLang: CampaignLanguage = (i18n.language?.startsWith("es") ? "es" : "en");
