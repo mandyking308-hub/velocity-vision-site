@@ -65,7 +65,14 @@ export default function AppCampaignNew() {
     if (!isFreePreview || !user) return;
     supabase.from("campaigns").select("id", { count: "exact", head: true })
       .eq("created_by", user.id).not("pack", "is", null)
-      .then(({ count }) => setExistingPackCount(count ?? 0));
+      .then(({ count }) => {
+        const n = count ?? 0;
+        setExistingPackCount(n);
+        if (n >= 1) {
+          import("@/lib/upgradeEvents").then(({ trackUpgradeEvent }) =>
+            trackUpgradeEvent("free_preview_campaign_gate_hit", { reason: "second_pack", plan: "free_preview" }));
+        }
+      });
   }, [isFreePreview, user]);
   const [params] = useSearchParams();
   const { i18n, t } = useTranslation("app");
