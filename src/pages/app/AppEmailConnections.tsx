@@ -175,7 +175,7 @@ export default function AppEmailConnections() {
 
   const startOAuth = async (provider: NylasProviderKey) => {
     if (isFreePreview) {
-      trackUpgradeEvent("free_preview_sending_gate_hit", { reason: "sending_gate", plan: "free_preview", provider });
+      trackUpgradeEvent("free_preview_sending_gate_hit", { reason: "sending_gate", plan: "free_preview" });
       toast.info("Available on paid plans", {
         description: "Free Preview lets you build and review campaigns. Live mailbox connection unlocks on paid plans after verification.",
       });
