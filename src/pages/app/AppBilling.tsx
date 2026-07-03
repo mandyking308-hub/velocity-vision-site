@@ -21,6 +21,7 @@ import PricingCurrencySelector from "@/components/PricingCurrencySelector";
 import FeedbackPrompt from "@/components/support/FeedbackPrompt";
 import BillingTermsSummary from "@/components/BillingTermsSummary";
 import PaymentEnvBadge from "@/components/app/PaymentEnvBadge";
+import UpgradeNudge from "@/components/app/UpgradeNudge";
 
 const PLAN_TO_SKU: Record<PlanId, SkuId> = {
   free_preview: "vv_starter_oneoff", // Upgrade CTA points at Starter/Growth checkout.
