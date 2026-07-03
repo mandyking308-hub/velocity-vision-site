@@ -102,3 +102,19 @@ export default function AppDataVaultImport() {
     </div>
   );
 }
+
+function ContactLimitBanner({ isFreePreview, rowCount }: { isFreePreview: boolean; rowCount: number }) {
+  useEffect(() => {
+    if (isFreePreview && rowCount > FREE_LIMITS.maxContacts) {
+      trackUpgradeEvent("free_preview_contact_gate_hit", { reason: "contact_limit", plan: "free_preview", meta: { rowCount } });
+    }
+  }, [isFreePreview, rowCount]);
+  if (!isFreePreview || rowCount <= FREE_LIMITS.maxContacts) return null;
+  return (
+    <UpgradeNudge
+      reason="free_preview_contact_limit"
+      variant="banner"
+      body={`This import contains ${rowCount} contacts. Free Preview activates up to ${FREE_LIMITS.maxContacts}. Upgrade to Growth to activate the rest.`}
+    />
+  );
+}
