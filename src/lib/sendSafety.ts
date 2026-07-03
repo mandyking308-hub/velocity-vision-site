@@ -6,6 +6,7 @@ import type { PlanId } from "./credits";
 /* --------------- 1. Plan-tier daily ceilings --------------- */
 
 export const PLAN_DAILY_CEILING: Record<PlanId, number> = {
+  free_preview: 0, // Free preview cannot send outreach.
   starter: 80,
   growth: 250,
   agency: 1000, // pooled across workspaces

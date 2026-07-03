@@ -20,13 +20,16 @@ import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
 import PricingCurrencySelector from "@/components/PricingCurrencySelector";
 import FeedbackPrompt from "@/components/support/FeedbackPrompt";
 import BillingTermsSummary from "@/components/BillingTermsSummary";
+import PaymentEnvBadge from "@/components/app/PaymentEnvBadge";
 
 const PLAN_TO_SKU: Record<PlanId, SkuId> = {
+  free_preview: "vv_starter_oneoff", // Upgrade CTA points at Starter/Growth checkout.
   starter: "vv_starter_oneoff",
   growth: "vv_growth_monthly",
   agency: "vv_agency_monthly",
 };
 const PLAN_TO_PRICE: Record<PlanId, string> = {
+  free_preview: PRICE_IDS.growth, // Recommended upgrade path from Free Preview.
   starter: PRICE_IDS.starter,
   growth: PRICE_IDS.growth,
   agency: PRICE_IDS.agency,
@@ -133,6 +136,7 @@ export default function AppBilling() {
 
   return (
     <div className="space-y-8 max-w-6xl">
+      <PaymentEnvBadge />
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-3xl font-bold">Billing</h1>
