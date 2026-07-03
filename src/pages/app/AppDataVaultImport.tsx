@@ -76,7 +76,13 @@ export default function AppDataVaultImport() {
         <p className="text-muted-foreground">Uploaded {format(new Date(u.created_at), "d MMM yyyy, HH:mm")} · {u.row_count} rows · status {u.status}</p>
       </div>
 
+      <ContactLimitBanner
+        isFreePreview={isFreePreview}
+        rowCount={u.row_count ?? 0}
+      />
+
       <ImportReport s={s} />
+
 
       {u.status === "imported" && (
         <FeedbackPrompt
