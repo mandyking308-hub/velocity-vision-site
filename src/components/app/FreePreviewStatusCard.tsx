@@ -77,10 +77,10 @@ export default function FreePreviewStatusCard() {
         </CardContent>
       </Card>
 
-      {/* Expiry escalation — subtle at 7d, stronger at 3d, modal at 1d */}
+      {/* Expiry escalation — subtle at 7d, stronger at 3d, modal at 1d (but never during setup wizard) */}
       {days > 3 && days <= 7 && <UpgradeNudge reason="free_preview_expiring" variant="inline" />}
       {days > 1 && days <= 3 && <UpgradeNudge reason="free_preview_expiring" variant="banner" />}
-      {days <= 1 && (
+      {days <= 1 && typeof window !== "undefined" && localStorage.getItem("vv_setup_wizard_dismissed_v1") === "1" && (
         <UpgradeNudge reason="free_preview_expiring" variant="modal" open={oneDayModalOpen} onOpenChange={setOneDayModalOpen} />
       )}
     </>
