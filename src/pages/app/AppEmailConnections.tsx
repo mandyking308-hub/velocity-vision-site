@@ -134,6 +134,32 @@ export default function AppEmailConnections() {
   }, [isFreePreview]);
   const [showSmtp, setShowSmtp] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [isStaff, setIsStaff] = useState(false);
+  const [diag, setDiag] = useState<any>(null);
+  const [diagLoading, setDiagLoading] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase.from("user_roles").select("role").eq("user_id", user.id);
+      const roles = new Set((data || []).map((r: any) => r.role));
+      setIsStaff(roles.has("admin") || roles.has("founder"));
+    })();
+  }, []);
+
+  const loadDiagnostics = async () => {
+    setDiagLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("nylas-diagnostics");
+      if (error) throw error;
+      setDiag(data);
+    } catch (e: any) {
+      toast.error("Diagnostics failed", { description: e.message });
+    } finally {
+      setDiagLoading(false);
+    }
+  };
 
   const load = async () => {
     setLoading(true);
