@@ -136,8 +136,32 @@ const Pricing = () => {
             </p>
             <PricingCurrencySelector align="right" currency={currency} onCurrencyChange={setCurrency} />
           </div>
+          {/* Free Preview entry tier — no Stripe SKU, no auto-upgrade, no live sending. */}
+          <div className="mb-6 rounded-2xl border border-accent/40 bg-accent/5 p-6 lg:p-7 flex flex-col md:flex-row md:items-center gap-5">
+            <div className="flex-1 min-w-0">
+              <span className="inline-block text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-accent/15 text-accent font-semibold mb-2">Free preview · £0</span>
+              <h3 className="font-display font-semibold text-xl text-foreground">Free Preview</h3>
+              <p className="text-sm text-muted-foreground mt-1 max-w-2xl">
+                Start with free Campaign Credits. Build your first workspace, review your data and generate preview assets before you pay.
+              </p>
+              <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-sm text-foreground">
+                <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />10 welcome credits + 2/day (cap 10)</li>
+                <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />1 workspace, up to 25 contacts</li>
+                <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />1 full campaign pack (preview)</li>
+                <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />14-day preview window</li>
+                <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />Buy top-up credits any time</li>
+                <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />No live sending on Free Preview</li>
+              </ul>
+              <p className="text-xs text-muted-foreground mt-3">
+                No surprise bills. No automatic paid upgrade. Publishing and sending remain under your control.
+              </p>
+            </div>
+            <div className="flex flex-col gap-2 shrink-0">
+              <Button size="lg" asChild><Link to="/auth">Start Free Preview <ArrowRight size={18} /></Link></Button>
+              <Button variant="outline" size="lg" asChild><Link to="/help/getting-started">How it works</Link></Button>
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
             {plans.map((p, i) => (
               <motion.div
                 key={p.name}
