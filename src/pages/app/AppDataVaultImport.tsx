@@ -8,6 +8,11 @@ import ImportReport, { ImportSummary } from "@/components/app/datavault/ImportRe
 import FeedbackPrompt from "@/components/support/FeedbackPrompt";
 import PreviewStep, { PreviewRow } from "@/components/app/datavault/PreviewStep";
 import { format } from "date-fns";
+import UpgradeNudge from "@/components/app/UpgradeNudge";
+import { useCredits } from "@/contexts/CreditsContext";
+import { FREE_LIMITS } from "@/lib/credits";
+import { trackUpgradeEvent } from "@/lib/upgradeEvents";
+import { useEffect } from "react";
 
 export default function AppDataVaultImport() {
   const { id } = useParams();
