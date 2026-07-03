@@ -405,6 +405,38 @@ export default function AppEmailConnections() {
           </CardDescription>
         </CardHeader>
       </Card>
+
+      {isStaff && (
+        <Card className="border-amber-300 bg-amber-50/60">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Nylas configuration diagnostic · founder / admin only</CardTitle>
+            <CardDescription className="text-xs">Non-secret. Never shown to customers. Never returns API keys.</CardDescription>
+          </CardHeader>
+          <CardContent className="text-xs space-y-2">
+            <Button size="sm" variant="outline" onClick={loadDiagnostics} disabled={diagLoading}>
+              {diagLoading ? "Checking…" : diag ? "Refresh" : "Run diagnostic"}
+            </Button>
+            {diag && (
+              <div className="grid sm:grid-cols-2 gap-2 pt-2">
+                <div><strong>Mode:</strong> {diag.mode}{diag.mode === "sandbox_risk" && " ⚠"}</div>
+                <div><strong>Region:</strong> {diag.region}</div>
+                <div><strong>API URI:</strong> {diag.api_uri}</div>
+                <div><strong>Callback configured:</strong> {diag.callback_uri_configured ? "yes" : "no"}</div>
+                <div><strong>Client ID suffix:</strong> {diag.client_id_suffix ? `…${diag.client_id_suffix}` : "—"}</div>
+                <div className="sm:col-span-2">
+                  <strong>Secrets present:</strong>{" "}
+                  {Object.entries(diag.secrets_present || {}).map(([k, v]) => `${k}=${v ? "yes" : "no"}`).join(" · ")}
+                </div>
+                <div className="sm:col-span-2">
+                  <strong>Connectors:</strong>{" "}
+                  {Object.entries(diag.connectors || {}).map(([k, v]) => `${k}:${v}`).join(" · ")}
+                </div>
+                {diag.notes && <div className="sm:col-span-2 text-amber-900"><strong>Note:</strong> {diag.notes}</div>}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
