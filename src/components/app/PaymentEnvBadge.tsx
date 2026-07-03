@@ -11,19 +11,22 @@ import { getStripeEnvironment, paymentsConfigured } from "@/lib/stripe";
  */
 export default function PaymentEnvBadge() {
   const { user } = useAuth();
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [privileged, setPrivileged] = useState(false);
 
   useEffect(() => {
     let alive = true;
     (async () => {
       if (!user) return;
-      const { data } = await supabase.rpc("has_role", { _user_id: user.id, _role: "admin" as any });
-      if (alive) setIsAdmin(!!data);
+      const [adminRes, founderRes] = await Promise.all([
+        supabase.rpc("has_role", { _user_id: user.id, _role: "admin" as any }),
+        supabase.rpc("has_role", { _user_id: user.id, _role: "founder" as any }),
+      ]);
+      if (alive) setPrivileged(!!adminRes.data || !!founderRes.data);
     })();
     return () => { alive = false; };
   }, [user]);
 
-  if (!isAdmin || !paymentsConfigured()) return null;
+  if (!privileged || !paymentsConfigured()) return null;
   let env: "sandbox" | "live";
   try { env = getStripeEnvironment(); } catch { return null; }
 
