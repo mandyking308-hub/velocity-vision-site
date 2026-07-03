@@ -18,6 +18,7 @@ import FollowUpReminders from "@/components/app/FollowUpReminders";
 import SendSafetyPanel from "@/components/app/SendSafetyPanel";
 import SenderStatusCard from "@/components/app/SenderStatusCard";
 import OnboardingChecklist from "@/components/app/OnboardingChecklist";
+import FreePreviewStatusCard from "@/components/app/FreePreviewStatusCard";
 import PriorityStrip from "@/components/app/PriorityStrip";
 import { computeSafety, DEFAULT_SENDER_STATE, type SenderState } from "@/lib/sendSafety";
 import type { PlanId } from "@/lib/credits";
