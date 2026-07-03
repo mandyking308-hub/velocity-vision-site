@@ -27,10 +27,10 @@ export default function CreditMeter() {
   const state = usageState(used, total);
   const nextReset = periodEnd ? periodEnd.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) : "—";
 
-  const banner =
-    state === "exhausted" ? { tone: "bg-destructive/10 border-destructive/40 text-destructive", text: "AI generation is paused. Existing work is fully available. Buy more credits or upgrade to keep launching." } :
-    state === "strong" ? { tone: "bg-accent/15 border-accent/40 text-foreground", text: "Heads up — you've used over 90% of your credits this cycle." } :
-    state === "soft" ? { tone: "bg-muted border-border text-muted-foreground", text: "You've used 75% of your credits this cycle." } : null;
+  const nudgeReason =
+    state === "exhausted" ? "credits_exhausted" as const :
+    state === "strong" ? "credits_strong" as const :
+    state === "soft" ? "credits_soft" as const : null;
 
   return (
     <>
@@ -54,9 +54,7 @@ export default function CreditMeter() {
             <span>{used} used this cycle</span>
             <span>{topupBalance > 0 && `+${topupBalance} top-up`}</span>
           </div>
-          {banner && (
-            <div className={`text-sm border rounded-md px-3 py-2 ${banner.tone}`}>{banner.text}</div>
-          )}
+          {nudgeReason && <UpgradeNudge reason={nudgeReason} variant="inline" />}
         </CardContent>
       </Card>
       <TopUpModal open={open} onOpenChange={setOpen} />
