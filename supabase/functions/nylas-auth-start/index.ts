@@ -89,15 +89,19 @@ Deno.serve(async (req) => {
     const cfg = nylasConfig(region);
     console.info("nylas-auth-start diagnostics", {
       request_id: edgeRequestId(req),
+      mode: cfg.mode,
       selected_region: cfg.region,
       env_var_names_read: cfg.envNames,
       env_exists: cfg.exists,
-      client_id: cfg.clientId || null,
+      client_id_suffix: cfg.clientId ? cfg.clientId.slice(-6) : null,
       api_uri: cfg.apiUri,
-      callback_uri: cfg.callback || null,
+      callback_uri_configured: Boolean(cfg.callback),
       provider_requested: provider,
     });
-    if (!cfg.clientId || !cfg.callback) return json({ error: "nylas_not_configured" }, 500);
+    if (cfg.missingProductionSecrets) {
+      return json({ error: "nylas_production_not_configured", detail: "Production requires NYLAS_US_CLIENT_ID and NYLAS_US_API_KEY. Sandbox fallback disabled." }, 500);
+    }
+    if (!cfg.clientId || !cfg.apiKey || !cfg.callback) return json({ error: "nylas_not_configured" }, 500);
 
     const state = crypto.randomUUID().replace(/-/g, "") + crypto.randomUUID().replace(/-/g, "");
     const nonce = crypto.randomUUID();
