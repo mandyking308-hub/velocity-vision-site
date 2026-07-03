@@ -48,25 +48,43 @@ interface Connection {
 }
 
 // Native Nylas connection options exposed on the Choose your mailbox card.
-// Order and copy are customer-facing.
+// Availability is config-driven: connectors default to "setup_required" until
+// they are confirmed enabled on the production Nylas application. Flip a key
+// to "enabled" only after the connector is verified in the Nylas dashboard.
 type NylasProviderKey = "google" | "microsoft" | "icloud" | "imap" | "ews";
+type ConnectorAvailability = "enabled" | "setup_required";
+
+const CONNECTOR_AVAILABILITY: Record<NylasProviderKey, ConnectorAvailability> = {
+  google: "setup_required",
+  microsoft: "setup_required",
+  icloud: "setup_required",
+  imap: "setup_required",
+  ews: "setup_required",
+};
+
 interface ProviderCard {
   key: NylasProviderKey | "yahoo" | "smtp";
   title: string;
   note: string;
-  badge: string;
-  badgeTone: string;
   action: "oauth" | "smtp" | "yahoo";
 }
 const PROVIDER_CARDS: ProviderCard[] = [
-  { key: "google",    title: "Gmail / Google Workspace", note: "Personal Gmail or Google Workspace",           badge: "OAuth · Enabled",    badgeTone: "bg-emerald-100 text-emerald-700", action: "oauth" },
-  { key: "microsoft", title: "Outlook / Microsoft 365",  note: "Outlook, Hotmail, Live, or Microsoft 365",     badge: "OAuth · Enabled",    badgeTone: "bg-emerald-100 text-emerald-700", action: "oauth" },
-  { key: "icloud",    title: "iCloud Mail",              note: "Use your Apple/iCloud mail account",           badge: "Nylas · Enabled",    badgeTone: "bg-emerald-100 text-emerald-700", action: "oauth" },
-  { key: "imap",      title: "IMAP mailbox",             note: "For providers supported through IMAP",         badge: "Nylas · Enabled",    badgeTone: "bg-emerald-100 text-emerald-700", action: "oauth" },
-  { key: "ews",       title: "Exchange / EWS",           note: "For on-prem Exchange / EWS accounts",          badge: "Advanced · Enabled", badgeTone: "bg-emerald-100 text-emerald-700", action: "oauth" },
-  { key: "yahoo",     title: "Yahoo Mail",               note: "Yahoo connector is not enabled yet in Nylas. Use SMTP for now.", badge: "Coming next", badgeTone: "bg-amber-100 text-amber-800", action: "yahoo" },
-  { key: "smtp",      title: "Advanced SMTP",            note: "For any provider that supports SMTP with an app password (Fastmail, Zoho, your own server, or Yahoo for now).", badge: "Fallback", badgeTone: "bg-muted text-muted-foreground", action: "smtp" },
+  { key: "google",    title: "Gmail / Google Workspace", note: "Personal Gmail or Google Workspace",      action: "oauth" },
+  { key: "microsoft", title: "Outlook / Microsoft 365",  note: "Outlook, Hotmail, Live, or Microsoft 365",action: "oauth" },
+  { key: "icloud",    title: "iCloud Mail",              note: "Use your Apple/iCloud mail account",      action: "oauth" },
+  { key: "imap",      title: "IMAP mailbox",             note: "For providers supported through IMAP",    action: "oauth" },
+  { key: "ews",       title: "Exchange / EWS",           note: "For on-prem Exchange / EWS accounts",     action: "oauth" },
+  { key: "yahoo",     title: "Yahoo Mail",               note: "Yahoo native connector is coming next. Yahoo can be connected today through SMTP with an app password.", action: "yahoo" },
+  { key: "smtp",      title: "Advanced SMTP",            note: "For any provider that supports SMTP with an app password (Fastmail, Zoho, your own server, or Yahoo for now).", action: "smtp" },
 ];
+function badgeFor(card: ProviderCard): { text: string; tone: string } {
+  if (card.action === "yahoo") return { text: "Coming next", tone: "bg-amber-100 text-amber-800" };
+  if (card.action === "smtp")  return { text: "Fallback",    tone: "bg-muted text-muted-foreground" };
+  const status = CONNECTOR_AVAILABILITY[card.key as NylasProviderKey];
+  return status === "enabled"
+    ? { text: "OAuth · Enabled",     tone: "bg-emerald-100 text-emerald-700" }
+    : { text: "Setup in progress",   tone: "bg-amber-100 text-amber-800" };
+}
 const OAUTH_BUTTON_LABEL: Record<NylasProviderKey, string> = {
   google: "Connect with Google",
   microsoft: "Connect with Microsoft",
@@ -116,6 +134,32 @@ export default function AppEmailConnections() {
   }, [isFreePreview]);
   const [showSmtp, setShowSmtp] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [isStaff, setIsStaff] = useState(false);
+  const [diag, setDiag] = useState<any>(null);
+  const [diagLoading, setDiagLoading] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase.from("user_roles").select("role").eq("user_id", user.id);
+      const roles = new Set((data || []).map((r: any) => r.role));
+      setIsStaff(roles.has("admin") || roles.has("founder"));
+    })();
+  }, []);
+
+  const loadDiagnostics = async () => {
+    setDiagLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("nylas-diagnostics");
+      if (error) throw error;
+      setDiag(data);
+    } catch (e: any) {
+      toast.error("Diagnostics failed", { description: e.message });
+    } finally {
+      setDiagLoading(false);
+    }
+  };
 
   const load = async () => {
     setLoading(true);
@@ -156,6 +200,19 @@ export default function AppEmailConnections() {
   }, []);
 
   const startOAuth = async (provider: NylasProviderKey) => {
+    if (isFreePreview) {
+      trackUpgradeEvent("free_preview_sending_gate_hit", { reason: "sending_gate", plan: "free_preview" });
+      toast.info("Available on paid plans", {
+        description: "Free Preview lets you build and review campaigns. Live mailbox connection unlocks on paid plans after verification.",
+      });
+      return;
+    }
+    if (CONNECTOR_AVAILABILITY[provider] !== "enabled") {
+      toast.info("Connector coming shortly", {
+        description: "This connector is being enabled for production. It will unlock here as soon as it is verified.",
+      });
+      return;
+    }
     setOauthLoading(provider);
     try {
       const { data, error } = await supabase.functions.invoke("nylas-auth-start", {
@@ -167,7 +224,11 @@ export default function AppEmailConnections() {
         },
       });
       if (error || !data?.auth_url) {
-        throw new Error((data as any)?.error || error?.message || "Failed to start connection");
+        const err = (data as any)?.error || error?.message || "Failed to start connection";
+        if (err === "nylas_production_not_configured") {
+          throw new Error("Production Nylas is not yet configured. Please contact support.");
+        }
+        throw new Error(err);
       }
       window.location.href = data.auth_url;
     } catch (e: any) {
@@ -265,11 +326,17 @@ export default function AppEmailConnections() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-medium text-sm">{card.title}</span>
-                      <span className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium ${card.badgeTone}`}>{card.badge}</span>
+                      {(() => { const b = badgeFor(card); return (
+                        <span className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium ${b.tone}`}>{b.text}</span>
+                      ); })()}
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">{card.note}</p>
                     <p className="text-xs mt-2 font-medium text-primary">
-                      {isOAuth ? (loading ? "Redirecting…" : OAUTH_BUTTON_LABEL[card.key as NylasProviderKey])
+                      {isOAuth
+                        ? (isFreePreview ? "Available on paid plans"
+                          : CONNECTOR_AVAILABILITY[card.key as NylasProviderKey] !== "enabled" ? "Setup in progress"
+                          : loading ? "Redirecting…"
+                          : OAUTH_BUTTON_LABEL[card.key as NylasProviderKey])
                         : isYahoo ? "Use SMTP for now →"
                         : ""}
                     </p>
@@ -338,6 +405,38 @@ export default function AppEmailConnections() {
           </CardDescription>
         </CardHeader>
       </Card>
+
+      {isStaff && (
+        <Card className="border-amber-300 bg-amber-50/60">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Nylas configuration diagnostic · founder / admin only</CardTitle>
+            <CardDescription className="text-xs">Non-secret. Never shown to customers. Never returns API keys.</CardDescription>
+          </CardHeader>
+          <CardContent className="text-xs space-y-2">
+            <Button size="sm" variant="outline" onClick={loadDiagnostics} disabled={diagLoading}>
+              {diagLoading ? "Checking…" : diag ? "Refresh" : "Run diagnostic"}
+            </Button>
+            {diag && (
+              <div className="grid sm:grid-cols-2 gap-2 pt-2">
+                <div><strong>Mode:</strong> {diag.mode}{diag.mode === "sandbox_risk" && " ⚠"}</div>
+                <div><strong>Region:</strong> {diag.region}</div>
+                <div><strong>API URI:</strong> {diag.api_uri}</div>
+                <div><strong>Callback configured:</strong> {diag.callback_uri_configured ? "yes" : "no"}</div>
+                <div><strong>Client ID suffix:</strong> {diag.client_id_suffix ? `…${diag.client_id_suffix}` : "—"}</div>
+                <div className="sm:col-span-2">
+                  <strong>Secrets present:</strong>{" "}
+                  {Object.entries(diag.secrets_present || {}).map(([k, v]) => `${k}=${v ? "yes" : "no"}`).join(" · ")}
+                </div>
+                <div className="sm:col-span-2">
+                  <strong>Connectors:</strong>{" "}
+                  {Object.entries(diag.connectors || {}).map(([k, v]) => `${k}:${v}`).join(" · ")}
+                </div>
+                {diag.notes && <div className="sm:col-span-2 text-amber-900"><strong>Note:</strong> {diag.notes}</div>}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

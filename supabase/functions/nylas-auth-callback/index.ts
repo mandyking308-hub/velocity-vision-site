@@ -1,30 +1,36 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 // Region-aware Nylas config resolver — mirrors nylas-auth-start.
+// Production strict mode: when NYLAS_ENV !== "dev", only region-specific
+// NYLAS_US_* / NYLAS_EU_* secrets are used; generic NYLAS_CLIENT_ID /
+// NYLAS_API_KEY are ignored to prevent any sandbox fallback.
 function nylasConfig(region: string) {
   const r = (region || "us").toLowerCase() === "eu" ? "EU" : "US";
+  const isProd = (Deno.env.get("NYLAS_ENV") || "production").toLowerCase() !== "dev";
   const defaultUri = r === "US" ? "https://api.us.nylas.com" : "https://api.eu.nylas.com";
-  const apiKey = Deno.env.get(`NYLAS_${r}_API_KEY`) ?? Deno.env.get("NYLAS_API_KEY");
-  const clientId = Deno.env.get(`NYLAS_${r}_CLIENT_ID`) ?? Deno.env.get("NYLAS_CLIENT_ID");
+  const regionApiKey = Deno.env.get(`NYLAS_${r}_API_KEY`);
+  const regionClientId = Deno.env.get(`NYLAS_${r}_CLIENT_ID`);
+  const fallbackApiKey = Deno.env.get("NYLAS_API_KEY");
+  const fallbackClientId = Deno.env.get("NYLAS_CLIENT_ID");
+  const apiKey = isProd ? regionApiKey : (regionApiKey ?? fallbackApiKey);
+  const clientId = isProd ? regionClientId : (regionClientId ?? fallbackClientId);
   const apiUri = (Deno.env.get(`NYLAS_${r}_API_URI`) ?? defaultUri).replace(/\/$/, "");
   const callback = Deno.env.get("NYLAS_CALLBACK_URI");
   return {
+    mode: isProd ? "production" : "dev",
     region: r.toLowerCase(),
+    productionStrict: isProd,
+    missingProductionSecrets: isProd && (!regionApiKey || !regionClientId),
     envNames: {
       apiKey: `NYLAS_${r}_API_KEY`,
-      fallbackApiKey: "NYLAS_API_KEY",
       clientId: `NYLAS_${r}_CLIENT_ID`,
-      fallbackClientId: "NYLAS_CLIENT_ID",
       apiUri: `NYLAS_${r}_API_URI`,
       callback: "NYLAS_CALLBACK_URI",
     },
     exists: {
-      apiKey: Boolean(apiKey),
-      clientId: Boolean(clientId),
-      apiUri: Boolean(Deno.env.get(`NYLAS_${r}_API_URI`)),
+      regionApiKey: Boolean(regionApiKey),
+      regionClientId: Boolean(regionClientId),
       callback: Boolean(callback),
-      fallbackApiKey: Boolean(Deno.env.get("NYLAS_API_KEY")),
-      fallbackClientId: Boolean(Deno.env.get("NYLAS_CLIENT_ID")),
     },
     apiKey,
     clientId,
@@ -96,14 +102,18 @@ Deno.serve(async (req) => {
     const { apiKey, clientId, apiUri, callback } = cfg;
     console.info("nylas-auth-callback diagnostics", {
       request_id: edgeRequestId(req),
+      mode: cfg.mode,
       selected_region: cfg.region,
       env_var_names_read: cfg.envNames,
       env_exists: cfg.exists,
-      client_id: clientId || null,
+      client_id_suffix: clientId ? clientId.slice(-6) : null,
       api_uri: apiUri,
-      callback_uri: callback || null,
+      callback_uri_configured: Boolean(callback),
       provider_requested: stateRow.provider || null,
     });
+    if (cfg.missingProductionSecrets) {
+      return redirectBack({ nylas: "error", reason: "nylas_production_not_configured" });
+    }
     if (!apiKey || !clientId || !callback) {
       return redirectBack({ nylas: "error", reason: "nylas_not_configured" });
     }
