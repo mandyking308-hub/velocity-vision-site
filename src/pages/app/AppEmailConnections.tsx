@@ -460,6 +460,50 @@ export default function AppEmailConnections() {
           </CardContent>
         </Card>
       )}
+
+      {isStaff && (
+        <Card className="border-slate-300 bg-slate-50/60">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Nylas connector readiness · founder / admin only</CardTitle>
+            <CardDescription className="text-xs">
+              Not shown to customers. Flip <code>CONNECTOR_AVAILABILITY</code> to <code>enabled</code> only after a row here reaches <strong>tested</strong>. Sending stays disabled until per-mailbox DNS/DKIM verification passes.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-xs overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="text-left border-b">
+                  <th className="py-1 pr-3">Connector</th>
+                  <th className="py-1 pr-3">Nylas status</th>
+                  <th className="py-1 pr-3">Velocity UI</th>
+                  <th className="py-1 pr-3">Test mailbox</th>
+                  <th className="py-1 pr-3">Auth test</th>
+                  <th className="py-1 pr-3">Send gated</th>
+                  <th className="py-1 pr-3">Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {CONNECTOR_READINESS.map((r) => {
+                  const uiStatus = r.key === "yahoo"
+                    ? "hidden (SMTP fallback shown)"
+                    : CONNECTOR_AVAILABILITY[r.key as NylasProviderKey] === "enabled" ? "enabled" : "setup_required";
+                  return (
+                    <tr key={r.key} className="border-b last:border-0 align-top">
+                      <td className="py-1 pr-3 font-medium">{r.label}</td>
+                      <td className="py-1 pr-3">{r.nylas_status}</td>
+                      <td className="py-1 pr-3">{uiStatus}</td>
+                      <td className="py-1 pr-3">{r.test_mailbox_available ? "yes" : "no"}</td>
+                      <td className="py-1 pr-3">{r.controlled_auth_test_passed ? "passed" : "pending"}</td>
+                      <td className="py-1 pr-3">{r.sending_disabled_until_verified ? "yes" : "no"}</td>
+                      <td className="py-1 pr-3 text-muted-foreground">{r.notes}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
