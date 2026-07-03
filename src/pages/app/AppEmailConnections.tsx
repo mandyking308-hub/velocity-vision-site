@@ -174,6 +174,19 @@ export default function AppEmailConnections() {
   }, []);
 
   const startOAuth = async (provider: NylasProviderKey) => {
+    if (isFreePreview) {
+      trackUpgradeEvent("free_preview_sending_gate_hit", { reason: "sending_gate", plan: "free_preview", provider });
+      toast.info("Available on paid plans", {
+        description: "Free Preview lets you build and review campaigns. Live mailbox connection unlocks on paid plans after verification.",
+      });
+      return;
+    }
+    if (CONNECTOR_AVAILABILITY[provider] !== "enabled") {
+      toast.info("Connector coming shortly", {
+        description: "This connector is being enabled for production. It will unlock here as soon as it is verified.",
+      });
+      return;
+    }
     setOauthLoading(provider);
     try {
       const { data, error } = await supabase.functions.invoke("nylas-auth-start", {
@@ -185,7 +198,11 @@ export default function AppEmailConnections() {
         },
       });
       if (error || !data?.auth_url) {
-        throw new Error((data as any)?.error || error?.message || "Failed to start connection");
+        const err = (data as any)?.error || error?.message || "Failed to start connection";
+        if (err === "nylas_production_not_configured") {
+          throw new Error("Production Nylas is not yet configured. Please contact support.");
+        }
+        throw new Error(err);
       }
       window.location.href = data.auth_url;
     } catch (e: any) {
