@@ -62,6 +62,29 @@ const CONNECTOR_AVAILABILITY: Record<NylasProviderKey, ConnectorAvailability> = 
   ews: "setup_required",
 };
 
+// Founder-facing Nylas Production connector readiness matrix. Never shown to
+// customers. Update each row deliberately as connectors are configured and
+// tested against the US Production Nylas app. Flip CONNECTOR_AVAILABILITY
+// (above) to "enabled" only after "tested" here becomes true.
+type ReadinessStage = "not_added" | "setup_required" | "configured" | "verified" | "tested";
+interface ConnectorReadiness {
+  key: NylasProviderKey | "yahoo";
+  label: string;
+  nylas_status: ReadinessStage;
+  test_mailbox_available: boolean;
+  controlled_auth_test_passed: boolean;
+  sending_disabled_until_verified: boolean;
+  notes: string;
+}
+const CONNECTOR_READINESS: ConnectorReadiness[] = [
+  { key: "google",    label: "Google / Gmail",            nylas_status: "setup_required", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "Add Google connector in Nylas → complete Google OAuth verification if using restricted scopes." },
+  { key: "microsoft", label: "Microsoft / Outlook / M365", nylas_status: "setup_required", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "Add Microsoft connector in Nylas → Azure AD app registration + admin consent for tenants that require it." },
+  { key: "icloud",    label: "iCloud",                     nylas_status: "setup_required", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "iCloud requires app-specific password on Apple ID." },
+  { key: "imap",      label: "IMAP",                       nylas_status: "setup_required", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "Generic IMAP path. Test against Fastmail or similar." },
+  { key: "yahoo",     label: "Yahoo",                      nylas_status: "not_added",      test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "Yahoo native connector coming next in Nylas. Yahoo can be connected today via SMTP." },
+  { key: "ews",       label: "EWS / Exchange",             nylas_status: "setup_required", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "On-prem / hosted Exchange. Requires EWS URL + service account or user credentials." },
+];
+
 interface ProviderCard {
   key: NylasProviderKey | "yahoo" | "smtp";
   title: string;
@@ -434,6 +457,50 @@ export default function AppEmailConnections() {
                 {diag.notes && <div className="sm:col-span-2 text-amber-900"><strong>Note:</strong> {diag.notes}</div>}
               </div>
             )}
+          </CardContent>
+        </Card>
+      )}
+
+      {isStaff && (
+        <Card className="border-slate-300 bg-slate-50/60">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Nylas connector readiness · founder / admin only</CardTitle>
+            <CardDescription className="text-xs">
+              Not shown to customers. Flip <code>CONNECTOR_AVAILABILITY</code> to <code>enabled</code> only after a row here reaches <strong>tested</strong>. Sending stays disabled until per-mailbox DNS/DKIM verification passes.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-xs overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="text-left border-b">
+                  <th className="py-1 pr-3">Connector</th>
+                  <th className="py-1 pr-3">Nylas status</th>
+                  <th className="py-1 pr-3">Velocity UI</th>
+                  <th className="py-1 pr-3">Test mailbox</th>
+                  <th className="py-1 pr-3">Auth test</th>
+                  <th className="py-1 pr-3">Send gated</th>
+                  <th className="py-1 pr-3">Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {CONNECTOR_READINESS.map((r) => {
+                  const uiStatus = r.key === "yahoo"
+                    ? "hidden (SMTP fallback shown)"
+                    : CONNECTOR_AVAILABILITY[r.key as NylasProviderKey] === "enabled" ? "enabled" : "setup_required";
+                  return (
+                    <tr key={r.key} className="border-b last:border-0 align-top">
+                      <td className="py-1 pr-3 font-medium">{r.label}</td>
+                      <td className="py-1 pr-3">{r.nylas_status}</td>
+                      <td className="py-1 pr-3">{uiStatus}</td>
+                      <td className="py-1 pr-3">{r.test_mailbox_available ? "yes" : "no"}</td>
+                      <td className="py-1 pr-3">{r.controlled_auth_test_passed ? "passed" : "pending"}</td>
+                      <td className="py-1 pr-3">{r.sending_disabled_until_verified ? "yes" : "no"}</td>
+                      <td className="py-1 pr-3 text-muted-foreground">{r.notes}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </CardContent>
         </Card>
       )}
