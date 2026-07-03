@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useCredits } from "@/contexts/CreditsContext";
 import { usageState } from "@/lib/credits";
 import TopUpModal from "./TopUpModal";
+import UpgradeNudge from "./UpgradeNudge";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
