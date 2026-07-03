@@ -83,6 +83,12 @@ const plans: PlanDef[] = [
 
 
 const faqs = [
+  { q: "Is Free Preview really free?", a: "Yes. £0, no card required. You get 10 welcome Campaign Credits plus +2 per day (daily balance capped at 10) for 14 days. There is no automatic paid upgrade — you decide when, or whether, to buy credits or move to Growth." },
+  { q: "What happens when free credits run out?", a: "The workspace stays available. AI generation pauses until you top up credits or upgrade. Your data, review and pipeline remain intact." },
+  { q: "Can I buy credits without subscribing?", a: "Yes. Top-ups are available to every plan, including Free Preview. Paid top-up credits are recorded separately and become usable as soon as Stripe payment clears." },
+  { q: "Can I send outreach on Free Preview?", a: "No. Live sending, Nylas mailbox connection and third-party account activation are gated on Free Preview. Sending unlocks with a paid plan and completed compliance gates." },
+  { q: "Do free credits expire?", a: "Yes — Free Preview runs for 14 days from signup, and the daily free balance is capped at 10. Paid top-up credits do not expire while your plan is active." },
+  { q: "Are AI outputs drafts?", a: "Yes. Every AI-generated asset is a draft you review, edit and approve. Velocity Vision does not send, publish or activate anything automatically." },
   { q: "What am I actually paying for?", a: "An AI-powered commercial operating workspace: Data Vault, AI quality review, sender verification, governed activation, AI-assisted outreach asset generation, cadence, follow-up and pipeline. Storage is generous on every plan. Credits cover heavy-value AI generations." },
   { q: "What are Campaign Credits?", a: "Campaign Credits power AI-heavy actions such as outreach packs, social posts, press releases, video scripts, follow-up assets and multilingual variants. Uploading, reviewing, sending, following up, moving pipeline and exporting are always free." },
   { q: "Is storing data the same as activating it?", a: "No. You can upload and review unlimited data within plan limits. Activation is the governed step where you verify your sender, pick a safe segment and start sending — with daily caps and risky-record limits enforced. AI drafts assets; you approve activation." },
