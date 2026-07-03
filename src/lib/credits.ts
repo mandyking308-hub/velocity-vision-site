@@ -1,7 +1,17 @@
 // Campaign Credits — customer-facing AI usage allowance
 // All numbers here are placeholders the founder can edit later.
 
-export type PlanId = "starter" | "growth" | "agency";
+export type PlanId = "free_preview" | "starter" | "growth" | "agency";
+
+// Hard limits enforced for the Free Preview tier — checked in UI and by DB gates.
+export const FREE_LIMITS = {
+  welcomeCredits: 10,
+  dailyGrant: 2,
+  dailyBalanceCap: 10,
+  previewDays: 14,
+  maxContacts: 25,
+  maxCampaignPacks: 1,
+} as const;
 
 export interface PlanConfig {
   id: PlanId;
@@ -18,6 +28,28 @@ export interface PlanConfig {
 }
 
 export const PLANS: Record<PlanId, PlanConfig> = {
+  free_preview: {
+    id: "free_preview",
+    name: "Free Preview",
+    tagline: "Try the workspace, no card required",
+    price: "£0",
+    unit: "free",
+    includedCredits: FREE_LIMITS.welcomeCredits,
+    cadence: "one-off",
+    durationDays: FREE_LIMITS.previewDays,
+    workspaceLimit: 1,
+    pooledCredits: false,
+    features: [
+      "1 workspace",
+      "10 welcome Campaign Credits",
+      "+2 free credits per day (capped at 10)",
+      "Up to 25 contacts",
+      "1 full campaign pack",
+      "Preview / watermarked exports",
+      "Sending stays gated — upgrade to activate",
+      "14 days of preview access",
+    ],
+  },
   starter: {
     id: "starter",
     name: "Starter",

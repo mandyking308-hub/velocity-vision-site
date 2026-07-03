@@ -1,12 +1,13 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
-import { LayoutDashboard, Rocket, Users, BarChart3, LayoutTemplate, Settings, Briefcase, LogOut, Plus, CreditCard, Database, MessageSquare, TrendingUp, Send, Menu } from "lucide-react";
+import { LayoutDashboard, Rocket, Users, BarChart3, LayoutTemplate, Settings, Briefcase, LogOut, Plus, CreditCard, Database, MessageSquare, TrendingUp, Send, Menu, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useWorkspace, WorkspaceProvider } from "@/contexts/WorkspaceContext";
 import { CreditsProvider } from "@/contexts/CreditsContext";
 import { CreditPill } from "@/components/app/CreditMeter";
+import SetupWizard from "@/components/app/SetupWizard";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useLanguageSync } from "@/hooks/useLanguageSync";
 import { GTranslateSlot } from "@/components/GTranslate";
@@ -69,6 +70,14 @@ function NavList({ onNavigate, t, signOut, navigate }: { onNavigate?: () => void
             {t(`nav.${n.key}`)}
           </NavLink>
         ))}
+        <NavLink
+          to="/help/getting-started"
+          onClick={onNavigate}
+          className="flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:bg-muted mt-2 border-t border-border pt-3"
+        >
+          <GraduationCap className="h-4 w-4" />
+          Getting started
+        </NavLink>
       </nav>
       <div className="p-3 border-t border-border">
         <Button variant="ghost" size="sm" className="w-full justify-start" onClick={async () => { await signOut(); navigate("/"); }}>
@@ -121,6 +130,7 @@ function Shell() {
         <main className="flex-1 overflow-auto p-3 sm:p-6">
           <Outlet />
         </main>
+        <SetupWizard />
       </div>
     </div>
   );

@@ -1461,6 +1461,42 @@ export type Database = {
         }
         Relationships: []
       }
+      free_preview_accounts: {
+        Row: {
+          campaign_pack_limit: number
+          contact_limit: number
+          created_at: string
+          granted_welcome_at: string
+          last_daily_grant_at: string | null
+          preview_expires_at: string
+          preview_started_at: string
+          signup_email_hash: string | null
+          user_id: string
+        }
+        Insert: {
+          campaign_pack_limit?: number
+          contact_limit?: number
+          created_at?: string
+          granted_welcome_at?: string
+          last_daily_grant_at?: string | null
+          preview_expires_at?: string
+          preview_started_at?: string
+          signup_email_hash?: string | null
+          user_id: string
+        }
+        Update: {
+          campaign_pack_limit?: number
+          contact_limit?: number
+          created_at?: string
+          granted_welcome_at?: string
+          last_daily_grant_at?: string | null
+          preview_expires_at?: string
+          preview_started_at?: string
+          signup_email_hash?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       human_reviews: {
         Row: {
           amount: number
@@ -2591,6 +2627,27 @@ export type Database = {
       finalise_campaign_credits: {
         Args: { _label: string; _ledger_id: string; _ref_id: string }
         Returns: boolean
+      }
+      grant_free_daily_credits: { Args: never; Returns: number }
+      grant_free_preview_welcome: {
+        Args: never
+        Returns: {
+          campaign_pack_limit: number
+          contact_limit: number
+          created_at: string
+          granted_welcome_at: string
+          last_daily_grant_at: string | null
+          preview_expires_at: string
+          preview_started_at: string
+          signup_email_hash: string | null
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "free_preview_accounts"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       has_role: {
         Args: {

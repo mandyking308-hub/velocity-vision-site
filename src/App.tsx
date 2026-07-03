@@ -30,6 +30,7 @@ import HowItWorks from "./pages/HowItWorks.tsx";
 import Features from "./pages/Features.tsx";
 import Templates from "./pages/Templates.tsx";
 import Help from "./pages/Help.tsx";
+import GettingStarted from "./pages/help/GettingStarted.tsx";
 import LegalCentre from "./pages/legal/LegalCentre.tsx";
 import LegalDocumentPage from "./pages/legal/LegalDocumentPage.tsx";
 import CRMLayout from "./pages/CRMLayout.tsx";
@@ -130,6 +131,7 @@ const AnimatedRoutes = () => {
         <Route path="/features" element={<PageTransition><Features /></PageTransition>} />
         <Route path="/templates" element={<PageTransition><Templates /></PageTransition>} />
         <Route path="/help" element={<PageTransition><Help /></PageTransition>} />
+        <Route path="/help/getting-started" element={<PageTransition><GettingStarted /></PageTransition>} />
         <Route path="/legal" element={<PageTransition><LegalCentre /></PageTransition>} />
         <Route path="/legal/:slug" element={<PageTransition><LegalDocumentPage /></PageTransition>} />
         <Route path="/auth" element={<PageTransition><AuthPage /></PageTransition>} />

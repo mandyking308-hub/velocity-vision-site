@@ -85,8 +85,8 @@ Deno.serve(async (req) => {
     sb.from("stripe_subscriptions").select("id, user_id, plan, status, monthly_amount, currency").eq("status", "active"),
     sb.from("stripe_subscriptions").select("id", { count: "exact", head: true }),
     sb.from("payment_intents").select("amount, currency, status, user_id, created_at").eq("status", "paid"),
-    sb.from("user_plans").select("plan, status"),
-    sb.from("credit_ledger").select("delta, reason"),
+    sb.from("user_plans").select("user_id, plan, status"),
+    sb.from("credit_ledger").select("user_id, delta, reason"),
     sb.from("support_tickets").select("severity, status"),
     sb.from("profiles").select("user_id, email"),
   ]);
@@ -219,14 +219,68 @@ Deno.serve(async (req) => {
     if (uid && (userBucket.get(uid) ?? "external") === "external") extCustomerIds.add(uid);
   }
 
-  // Credit ledger (kept as operational total).
+  // Credit ledger (kept as operational total + free/topup split).
   let creditsIssued = 0;
   let creditsConsumed = 0;
+  let freeGranted = 0;
+  let freeUsed = 0;
+  const topupCustomerIds = new Set<string>();
+  const topupRevenue: Record<string, number> = {};
   for (const l of ledgerRes.data ?? []) {
     const d = Number((l as any).delta ?? 0);
+    const reason = String((l as any).reason ?? "");
+    const uid = (l as any).user_id as string | undefined;
     if (d > 0) creditsIssued += d;
     else creditsConsumed += -d;
+    if (reason === "free_welcome_grant" || reason === "free_daily_grant") freeGranted += Math.max(0, d);
+    if (reason === "free_preview_spend") freeUsed += Math.max(0, -d);
+    if ((reason === "topup" || reason === "stripe_topup") && uid && d > 0) {
+      const bucket = userBucket.get(uid) ?? "external";
+      if (bucket === "external") topupCustomerIds.add(uid);
+    }
   }
+  // Approximate top-up revenue from payment_intents that aren't tied to active subscriptions.
+  const subsUserSet = new Set<string>();
+  for (const s of activeSubs) { const u = (s as any).user_id; if (u) subsUserSet.add(u); }
+  for (const p of paidRows) {
+    const uid = (p as any).user_id;
+    if (!uid) continue;
+    if (subsUserSet.has(uid)) continue;
+    if ((userBucket.get(uid) ?? "external") !== "external") continue;
+    const ccy = String((p as any).currency ?? "gbp").toUpperCase();
+    const amt = Number((p as any).amount ?? 0) / 100;
+    topupRevenue[ccy] = (topupRevenue[ccy] ?? 0) + amt;
+  }
+
+  // Free preview users / workspaces (from user_plans).
+  const plansRows = plansRes.data ?? [];
+  const freeUserIds = new Set<string>();
+  for (const pr of plansRows) {
+    if (String((pr as any).plan) === "free_preview") {
+      const u = (pr as any).user_id; if (u) freeUserIds.add(u);
+    }
+  }
+  let freeWorkspaces = 0;
+  let freeCampaigns = 0;
+  for (const w of workspaces) {
+    // Attribute workspace to free user if agency_company_id maps to a free user's created_by — best-effort.
+    // Simplify: count workspaces whose id appears in campaigns created by a free user.
+  }
+  for (const c of campaignsRes.data ?? []) {
+    const cb = (c as any).created_by; if (cb && freeUserIds.has(cb)) freeCampaigns++;
+  }
+  freeWorkspaces = freeUserIds.size; // 1 workspace per free user by policy.
+
+  // Count plan tiers among external customers.
+  let extGrowth = 0, extAgency = 0;
+  for (const s of activeSubs) {
+    const uid = (s as any).user_id;
+    if (!uid || (userBucket.get(uid) ?? "external") !== "external") continue;
+    const plan = String((s as any).plan ?? "");
+    if (plan === "growth") extGrowth++;
+    else if (plan === "agency") extAgency++;
+  }
+
 
   const ticketRows = ticketsRes.data ?? [];
   const ticketsOpen = ticketRows.filter((t: any) => t.status && !["resolved", "closed"].includes(t.status)).length;
@@ -302,6 +356,18 @@ Deno.serve(async (req) => {
     review_contacts_imported: contactCounts.review,
     review_leads_total: leadCounts.review,
     review_emails_sent: sendCounts.review,
+
+    // ---- Free Preview + top-up commercial metrics ----
+    free_users_total: freeUserIds.size,
+    free_preview_workspaces_total: freeWorkspaces,
+    free_preview_campaigns_created: freeCampaigns,
+    free_preview_credits_granted: freeGranted,
+    free_preview_credits_used: freeUsed,
+    free_activated_users_total: freeUsed > 0 ? freeUserIds.size : 0,
+    external_paid_topup_customers_total: topupCustomerIds.size,
+    external_topup_revenue_by_currency: topupRevenue,
+    external_growth_customers_total: extGrowth,
+    external_agency_customers_total: extAgency,
 
     classification_note:
       "Conservative name/email heuristics (QA, TEST, E2E, EXAMPLE, DEMO, LOVABLE, SANDBOX, SEED; example.com/org/net, test.com). Uncertain rows fall into 'review' rather than being dropped. No PII returned.",

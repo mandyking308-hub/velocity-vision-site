@@ -18,6 +18,9 @@ interface CreditsContextValue {
   periodStart: Date | null;
   periodEnd: Date | null;
   starterExpired: boolean;
+  isFreePreview: boolean;
+  freePreviewExpired: boolean;
+  freePreviewDaysLeft: number | null;
   included: number;
   used: number;
   topupBalance: number;
@@ -44,10 +47,20 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
       .eq("user_id", user.id)
       .maybeSingle();
     if (data) return data as UserPlan;
-    // Lazy-provision the free Starter plan via security-definer RPC.
-    // Plan upgrades and credit grants happen exclusively in the Stripe webhook.
-    const { data: provisioned, error } = await supabase.rpc("provision_starter_plan");
-    if (error || !provisioned) return null;
+    // New account: provision Free Preview (welcome credits + 14-day preview).
+    // Idempotent — safe on repeat calls. Paid upgrades happen via Stripe webhook.
+    const { data: fp, error: fpErr } = await supabase.rpc("grant_free_preview_welcome" as any);
+    if (!fpErr && fp) {
+      return {
+        plan: "free_preview" as PlanId,
+        status: "active",
+        period_start: (fp as any).preview_started_at,
+        period_end: (fp as any).preview_expires_at,
+      };
+    }
+    // Fallback to legacy starter provisioning if the free-preview RPC is unavailable.
+    const { data: provisioned } = await supabase.rpc("provision_starter_plan");
+    if (!provisioned) return null;
     return {
       plan: (provisioned as any).plan,
       status: (provisioned as any).status,
@@ -69,28 +82,41 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => { load(); }, [load]);
 
-  const planId: PlanId = (userPlan?.plan as PlanId) || "starter";
-  const planConfig = PLANS[planId];
+  const planId: PlanId = (userPlan?.plan as PlanId) || "free_preview";
+  const planConfig = PLANS[planId] ?? PLANS.free_preview;
   const periodStart = userPlan ? new Date(userPlan.period_start) : null;
   const periodEnd = userPlan?.period_end ? new Date(userPlan.period_end) : null;
   const starterExpired = planId === "starter" && !!periodEnd && periodEnd.getTime() < Date.now();
+  const isFreePreview = planId === "free_preview";
+  const freePreviewExpired = isFreePreview && !!periodEnd && periodEnd.getTime() < Date.now();
+  const freePreviewDaysLeft = isFreePreview && periodEnd
+    ? Math.max(0, Math.ceil((periodEnd.getTime() - Date.now()) / 86400000))
+    : null;
 
-  // Compute included + used for current period
+  // Compute included + used balances. Free-preview credits (welcome + daily)
+  // count towards remaining; stripe_topup and legacy `topup` count as top-up.
   const { included, used, topupBalance, remaining } = useMemo(() => {
     const startMs = periodStart?.getTime() ?? 0;
-    let inc = 0, usedC = 0, topup = 0;
+    let inc = 0, usedC = 0, topup = 0, freeInc = 0, freeUsed = 0;
     for (const row of ledger) {
       const t = new Date(row.created_at).getTime();
       if (row.reason === "plan_grant" && t >= startMs) inc += row.delta;
       else if (row.reason.startsWith("spend_") && t >= startMs) usedC += -row.delta;
-      else if (row.reason === "topup") topup += row.delta;
+      else if (row.reason === "topup" || row.reason === "stripe_topup") topup += row.delta;
+      else if (row.reason === "free_welcome_grant" || row.reason === "free_daily_grant") freeInc += row.delta;
+      else if (row.reason === "free_preview_spend") freeUsed += -row.delta;
       // Admin / QA / manual grants — counted as positive balance so credits
       // are usable, but meta.source / meta.not_stripe let paid reporting
       // distinguish them from real Stripe top-ups.
       else if (row.reason === "qa_manual_grant" || row.reason === "manual_grant") topup += row.delta;
     }
-    const remain = inc - usedC + topup;
-    return { included: inc, used: usedC, topupBalance: topup, remaining: Math.max(remain, 0) };
+    const remain = inc - usedC + topup + freeInc - freeUsed;
+    return {
+      included: inc + freeInc,
+      used: usedC + freeUsed,
+      topupBalance: topup,
+      remaining: Math.max(remain, 0),
+    };
   }, [ledger, periodStart]);
 
   const consume = useCallback<CreditsContextValue["consume"]>(async (action, refId, label) => {
@@ -104,17 +130,22 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
       toast.error("Starter access has ended", { description: "Upgrade to Growth or buy another Starter to keep generating." });
       return false;
     }
+    if (freePreviewExpired) {
+      toast.error("Free Preview has ended", { description: "Upgrade or buy credits to continue generating." });
+      return false;
+    }
+    const reason = isFreePreview ? "free_preview_spend" : `spend_${action}`;
     const { error } = await supabase.from("credit_ledger").insert({
       user_id: user.id,
       delta: -cost,
-      reason: `spend_${action}`,
+      reason,
       ref_id: refId,
-      meta: { action, label: label ?? action, cost },
+      meta: { action, label: label ?? action, cost, tier: isFreePreview ? "free_preview" : planId },
     });
     if (error) { toast.error("Could not record credit usage"); return false; }
     await load();
     return true;
-  }, [user, remaining, starterExpired, load]);
+  }, [user, remaining, starterExpired, freePreviewExpired, isFreePreview, planId, load]);
 
   // NOTE: Human Review purchases MUST go through Stripe checkout —
   // `HumanReviewButton` calls openCheckout() and the Stripe webhook inserts
@@ -127,6 +158,7 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
 
   const value: CreditsContextValue = {
     loading, plan: planId, planConfig, periodStart, periodEnd, starterExpired,
+    isFreePreview, freePreviewExpired, freePreviewDaysLeft,
     included, used, topupBalance, remaining,
     refresh: load, consume, purchaseHumanReview,
   };
