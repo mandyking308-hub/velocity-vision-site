@@ -110,6 +110,10 @@ export default function AppEmailConnections() {
   const [editing, setEditing] = useState<Connection | null>(null);
   const [loading, setLoading] = useState(true);
   const [oauthLoading, setOauthLoading] = useState<NylasProviderKey | null>(null);
+  const { isFreePreview } = useCredits();
+  useEffect(() => {
+    if (isFreePreview) trackUpgradeEvent("free_preview_sending_gate_hit", { reason: "sending_gate", plan: "free_preview" });
+  }, [isFreePreview]);
   const [showSmtp, setShowSmtp] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
