@@ -62,6 +62,29 @@ const CONNECTOR_AVAILABILITY: Record<NylasProviderKey, ConnectorAvailability> = 
   ews: "setup_required",
 };
 
+// Founder-facing Nylas Production connector readiness matrix. Never shown to
+// customers. Update each row deliberately as connectors are configured and
+// tested against the US Production Nylas app. Flip CONNECTOR_AVAILABILITY
+// (above) to "enabled" only after "tested" here becomes true.
+type ReadinessStage = "not_added" | "setup_required" | "configured" | "verified" | "tested";
+interface ConnectorReadiness {
+  key: NylasProviderKey | "yahoo";
+  label: string;
+  nylas_status: ReadinessStage;
+  test_mailbox_available: boolean;
+  controlled_auth_test_passed: boolean;
+  sending_disabled_until_verified: boolean;
+  notes: string;
+}
+const CONNECTOR_READINESS: ConnectorReadiness[] = [
+  { key: "google",    label: "Google / Gmail",            nylas_status: "setup_required", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "Add Google connector in Nylas → complete Google OAuth verification if using restricted scopes." },
+  { key: "microsoft", label: "Microsoft / Outlook / M365", nylas_status: "setup_required", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "Add Microsoft connector in Nylas → Azure AD app registration + admin consent for tenants that require it." },
+  { key: "icloud",    label: "iCloud",                     nylas_status: "setup_required", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "iCloud requires app-specific password on Apple ID." },
+  { key: "imap",      label: "IMAP",                       nylas_status: "setup_required", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "Generic IMAP path. Test against Fastmail or similar." },
+  { key: "yahoo",     label: "Yahoo",                      nylas_status: "not_added",      test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "Yahoo native connector coming next in Nylas. Yahoo can be connected today via SMTP." },
+  { key: "ews",       label: "EWS / Exchange",             nylas_status: "setup_required", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "On-prem / hosted Exchange. Requires EWS URL + service account or user credentials." },
+];
+
 interface ProviderCard {
   key: NylasProviderKey | "yahoo" | "smtp";
   title: string;
