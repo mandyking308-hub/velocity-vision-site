@@ -93,59 +93,74 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
     ? Math.max(0, Math.ceil((periodEnd.getTime() - Date.now()) / 86400000))
     : null;
 
-  // Compute included + used balances. Free-preview credits (welcome + daily)
-  // count towards remaining; stripe_topup and legacy `topup` count as top-up.
+  // Compute included + used balances. Free credits (welcome + daily) are
+  // zeroed once the preview window ends, but paid top-ups remain usable.
   const { included, used, topupBalance, remaining } = useMemo(() => {
     const startMs = periodStart?.getTime() ?? 0;
-    let inc = 0, usedC = 0, topup = 0, freeInc = 0, freeUsed = 0;
+    let inc = 0, usedC = 0, topup = 0, topupSpent = 0, freeInc = 0, freeUsed = 0;
     for (const row of ledger) {
       const t = new Date(row.created_at).getTime();
       if (row.reason === "plan_grant" && t >= startMs) inc += row.delta;
       else if (row.reason.startsWith("spend_") && t >= startMs) usedC += -row.delta;
+      else if (row.reason === "paid_topup_spend") topupSpent += -row.delta;
       else if (row.reason === "topup" || row.reason === "stripe_topup") topup += row.delta;
       else if (row.reason === "free_welcome_grant" || row.reason === "free_daily_grant") freeInc += row.delta;
       else if (row.reason === "free_preview_spend") freeUsed += -row.delta;
-      // Admin / QA / manual grants — counted as positive balance so credits
-      // are usable, but meta.source / meta.not_stripe let paid reporting
-      // distinguish them from real Stripe top-ups.
       else if (row.reason === "qa_manual_grant" || row.reason === "manual_grant") topup += row.delta;
     }
-    const remain = inc - usedC + topup + freeInc - freeUsed;
+    // When the preview window has closed, free credits are forfeit — only paid
+    // top-up balance keeps generation alive.
+    const freeNet = freePreviewExpired ? 0 : Math.max(0, freeInc - freeUsed);
+    const paidNet = Math.max(0, topup - topupSpent);
+    const planNet = Math.max(0, inc - usedC);
     return {
-      included: inc + freeInc,
-      used: usedC + freeUsed,
-      topupBalance: topup,
-      remaining: Math.max(remain, 0),
+      included: (freePreviewExpired ? 0 : freeInc) + inc,
+      used: (freePreviewExpired ? 0 : freeUsed) + usedC,
+      topupBalance: paidNet,
+      remaining: planNet + paidNet + freeNet,
     };
-  }, [ledger, periodStart]);
+  }, [ledger, periodStart, freePreviewExpired]);
 
   const consume = useCallback<CreditsContextValue["consume"]>(async (action, refId, label) => {
     if (!user) return false;
     const cost = CREDIT_COSTS[action];
     if (remaining < cost) {
-      toast.error("You're out of Campaign Credits", { description: "Top up or upgrade to keep generating." });
+      const desc = freePreviewExpired && topupBalance <= 0
+        ? "Free Preview has ended. Buy credits or upgrade to continue generating."
+        : "Top up or upgrade to keep generating.";
+      toast.error("You're out of Campaign Credits", { description: desc });
       return false;
     }
     if (starterExpired) {
       toast.error("Starter access has ended", { description: "Upgrade to Growth or buy another Starter to keep generating." });
       return false;
     }
-    if (freePreviewExpired) {
-      toast.error("Free Preview has ended", { description: "Upgrade or buy credits to continue generating." });
-      return false;
-    }
-    const reason = isFreePreview ? "free_preview_spend" : `spend_${action}`;
+    // Route the spend to whichever bucket is actually funding it so reporting
+    // stays clean and expired free credits can't be resurrected.
+    const useFree = isFreePreview && !freePreviewExpired;
+    const usePaidTopup = !useFree && isFreePreview && topupBalance >= cost;
+    const reason = useFree
+      ? "free_preview_spend"
+      : usePaidTopup
+        ? "paid_topup_spend"
+        : `spend_${action}`;
     const { error } = await supabase.from("credit_ledger").insert({
       user_id: user.id,
       delta: -cost,
       reason,
       ref_id: refId,
-      meta: { action, label: label ?? action, cost, tier: isFreePreview ? "free_preview" : planId },
+      meta: {
+        action,
+        label: label ?? action,
+        cost,
+        tier: isFreePreview ? "free_preview" : planId,
+        bucket: useFree ? "free_preview" : usePaidTopup ? "paid_topup" : "plan",
+      },
     });
     if (error) { toast.error("Could not record credit usage"); return false; }
     await load();
     return true;
-  }, [user, remaining, starterExpired, freePreviewExpired, isFreePreview, planId, load]);
+  }, [user, remaining, topupBalance, starterExpired, freePreviewExpired, isFreePreview, planId, load]);
 
   // NOTE: Human Review purchases MUST go through Stripe checkout —
   // `HumanReviewButton` calls openCheckout() and the Stripe webhook inserts
