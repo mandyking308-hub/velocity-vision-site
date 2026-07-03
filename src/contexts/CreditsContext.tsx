@@ -138,7 +138,7 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
     // Route the spend to whichever bucket is actually funding it so reporting
     // stays clean and expired free credits can't be resurrected.
     const useFree = isFreePreview && !freePreviewExpired;
-    const usePaidTopup = !useFree && topupBalance >= cost && (isFreePreview || freePreviewExpired || planId === "free_preview");
+    const usePaidTopup = !useFree && topupBalance >= cost;
     const reason = useFree
       ? "free_preview_spend"
       : usePaidTopup
