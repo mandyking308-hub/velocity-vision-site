@@ -15,6 +15,7 @@ import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { CREDIT_COSTS } from "@/lib/credits";
 
 import EmailSequenceSender from "@/components/app/EmailSequenceSender";
+import UpgradeNudge from "@/components/app/UpgradeNudge";
 import FeedbackPrompt from "@/components/support/FeedbackPrompt";
 import LeadFormConfig from "@/components/app/LeadFormConfig";
 import {
