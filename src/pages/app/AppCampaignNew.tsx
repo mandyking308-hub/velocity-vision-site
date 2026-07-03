@@ -257,6 +257,9 @@ export default function AppCampaignNew() {
           <strong>{starterExpired ? "Starter access has ended." : "You don't have enough Campaign Credits."}</strong> Generating a full campaign pack costs {CREDIT_COSTS.full_campaign_pack} credits. <a href="/app/billing" className="underline">Top up or upgrade</a> to keep launching.
         </div>
       )}
+      {isFreePreview && existingPackCount >= 1 && (
+        <UpgradeNudge reason="free_preview_second_pack_gate" variant="banner" />
+      )}
       <Progress value={(step / totalSteps) * 100} />
       <div className="text-sm text-muted-foreground">Step {step} of {totalSteps} · This generation will use {CREDIT_COSTS.full_campaign_pack} Campaign Credits</div>
 
