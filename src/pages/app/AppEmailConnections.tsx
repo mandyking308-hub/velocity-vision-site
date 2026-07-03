@@ -14,6 +14,9 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { computeReadiness, READINESS_BADGE, type ConnectionShape } from "@/lib/senderReadiness";
+import { useCredits } from "@/contexts/CreditsContext";
+import UpgradeNudge from "@/components/app/UpgradeNudge";
+import { trackUpgradeEvent } from "@/lib/upgradeEvents";
 
 interface Connection {
   id: string;
