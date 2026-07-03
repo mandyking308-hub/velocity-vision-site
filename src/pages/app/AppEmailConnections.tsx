@@ -231,6 +231,9 @@ export default function AppEmailConnections() {
         <p className="text-muted-foreground">Connect the inbox you want campaign follow-ups to send from. Google, Microsoft, iCloud, IMAP and Exchange connect securely through Nylas. Advanced SMTP is available for providers that require app-password setup.</p>
       </div>
 
+      {isFreePreview && <UpgradeNudge reason="free_preview_sending_gate" variant="banner" />}
+
+
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Choose your mailbox</CardTitle>
