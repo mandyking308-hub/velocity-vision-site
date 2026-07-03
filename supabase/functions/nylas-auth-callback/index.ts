@@ -102,14 +102,18 @@ Deno.serve(async (req) => {
     const { apiKey, clientId, apiUri, callback } = cfg;
     console.info("nylas-auth-callback diagnostics", {
       request_id: edgeRequestId(req),
+      mode: cfg.mode,
       selected_region: cfg.region,
       env_var_names_read: cfg.envNames,
       env_exists: cfg.exists,
-      client_id: clientId || null,
+      client_id_suffix: clientId ? clientId.slice(-6) : null,
       api_uri: apiUri,
-      callback_uri: callback || null,
+      callback_uri_configured: Boolean(callback),
       provider_requested: stateRow.provider || null,
     });
+    if (cfg.missingProductionSecrets) {
+      return redirectBack({ nylas: "error", reason: "nylas_production_not_configured" });
+    }
     if (!apiKey || !clientId || !callback) {
       return redirectBack({ nylas: "error", reason: "nylas_not_configured" });
     }
