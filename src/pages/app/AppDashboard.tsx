@@ -354,6 +354,9 @@ export default function AppDashboard() {
 
 
 
+      {/* Free Preview status + expiry nudges (renders nothing for paid plans) */}
+      <FreePreviewStatusCard />
+
       {/* A2. First-time onboarding checklist (auto-hides once complete) */}
       <OnboardingChecklist
         signals={{
