@@ -18,6 +18,7 @@ import { formatQualityFailure } from "@/lib/campaignQualityToast";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useCredits } from "@/contexts/CreditsContext";
+import UpgradeNudge from "@/components/app/UpgradeNudge";
 import { CREDIT_COSTS } from "@/lib/credits";
 import {
   CadenceConfig, CADENCE_LABELS, CadenceType, COMMON_TIMEZONES, REFRESH_LABELS,
