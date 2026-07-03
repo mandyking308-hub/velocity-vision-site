@@ -18,6 +18,8 @@ export default function AppDataVaultImport() {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const { isFreePreview } = useCredits();
+
   const { data, isLoading } = useQuery({
     queryKey: ["vault-import", id],
     queryFn: async () => {
