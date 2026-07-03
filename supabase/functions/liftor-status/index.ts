@@ -85,8 +85,8 @@ Deno.serve(async (req) => {
     sb.from("stripe_subscriptions").select("id, user_id, plan, status, monthly_amount, currency").eq("status", "active"),
     sb.from("stripe_subscriptions").select("id", { count: "exact", head: true }),
     sb.from("payment_intents").select("amount, currency, status, user_id, created_at").eq("status", "paid"),
-    sb.from("user_plans").select("plan, status"),
-    sb.from("credit_ledger").select("delta, reason"),
+    sb.from("user_plans").select("user_id, plan, status"),
+    sb.from("credit_ledger").select("user_id, delta, reason"),
     sb.from("support_tickets").select("severity, status"),
     sb.from("profiles").select("user_id, email"),
   ]);
