@@ -219,14 +219,68 @@ Deno.serve(async (req) => {
     if (uid && (userBucket.get(uid) ?? "external") === "external") extCustomerIds.add(uid);
   }
 
-  // Credit ledger (kept as operational total).
+  // Credit ledger (kept as operational total + free/topup split).
   let creditsIssued = 0;
   let creditsConsumed = 0;
+  let freeGranted = 0;
+  let freeUsed = 0;
+  const topupCustomerIds = new Set<string>();
+  const topupRevenue: Record<string, number> = {};
   for (const l of ledgerRes.data ?? []) {
     const d = Number((l as any).delta ?? 0);
+    const reason = String((l as any).reason ?? "");
+    const uid = (l as any).user_id as string | undefined;
     if (d > 0) creditsIssued += d;
     else creditsConsumed += -d;
+    if (reason === "free_welcome_grant" || reason === "free_daily_grant") freeGranted += Math.max(0, d);
+    if (reason === "free_preview_spend") freeUsed += Math.max(0, -d);
+    if ((reason === "topup" || reason === "stripe_topup") && uid && d > 0) {
+      const bucket = userBucket.get(uid) ?? "external";
+      if (bucket === "external") topupCustomerIds.add(uid);
+    }
   }
+  // Approximate top-up revenue from payment_intents that aren't tied to active subscriptions.
+  const subsUserSet = new Set<string>();
+  for (const s of activeSubs) { const u = (s as any).user_id; if (u) subsUserSet.add(u); }
+  for (const p of paidRows) {
+    const uid = (p as any).user_id;
+    if (!uid) continue;
+    if (subsUserSet.has(uid)) continue;
+    if ((userBucket.get(uid) ?? "external") !== "external") continue;
+    const ccy = String((p as any).currency ?? "gbp").toUpperCase();
+    const amt = Number((p as any).amount ?? 0) / 100;
+    topupRevenue[ccy] = (topupRevenue[ccy] ?? 0) + amt;
+  }
+
+  // Free preview users / workspaces (from user_plans).
+  const plansRows = plansRes.data ?? [];
+  const freeUserIds = new Set<string>();
+  for (const pr of plansRows) {
+    if (String((pr as any).plan) === "free_preview") {
+      const u = (pr as any).user_id; if (u) freeUserIds.add(u);
+    }
+  }
+  let freeWorkspaces = 0;
+  let freeCampaigns = 0;
+  for (const w of workspaces) {
+    // Attribute workspace to free user if agency_company_id maps to a free user's created_by — best-effort.
+    // Simplify: count workspaces whose id appears in campaigns created by a free user.
+  }
+  for (const c of campaignsRes.data ?? []) {
+    const cb = (c as any).created_by; if (cb && freeUserIds.has(cb)) freeCampaigns++;
+  }
+  freeWorkspaces = freeUserIds.size; // 1 workspace per free user by policy.
+
+  // Count plan tiers among external customers.
+  let extGrowth = 0, extAgency = 0;
+  for (const s of activeSubs) {
+    const uid = (s as any).user_id;
+    if (!uid || (userBucket.get(uid) ?? "external") !== "external") continue;
+    const plan = String((s as any).plan ?? "");
+    if (plan === "growth") extGrowth++;
+    else if (plan === "agency") extAgency++;
+  }
+
 
   const ticketRows = ticketsRes.data ?? [];
   const ticketsOpen = ticketRows.filter((t: any) => t.status && !["resolved", "closed"].includes(t.status)).length;
