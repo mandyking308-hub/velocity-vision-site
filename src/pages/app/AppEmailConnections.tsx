@@ -48,25 +48,43 @@ interface Connection {
 }
 
 // Native Nylas connection options exposed on the Choose your mailbox card.
-// Order and copy are customer-facing.
+// Availability is config-driven: connectors default to "setup_required" until
+// they are confirmed enabled on the production Nylas application. Flip a key
+// to "enabled" only after the connector is verified in the Nylas dashboard.
 type NylasProviderKey = "google" | "microsoft" | "icloud" | "imap" | "ews";
+type ConnectorAvailability = "enabled" | "setup_required";
+
+const CONNECTOR_AVAILABILITY: Record<NylasProviderKey, ConnectorAvailability> = {
+  google: "setup_required",
+  microsoft: "setup_required",
+  icloud: "setup_required",
+  imap: "setup_required",
+  ews: "setup_required",
+};
+
 interface ProviderCard {
   key: NylasProviderKey | "yahoo" | "smtp";
   title: string;
   note: string;
-  badge: string;
-  badgeTone: string;
   action: "oauth" | "smtp" | "yahoo";
 }
 const PROVIDER_CARDS: ProviderCard[] = [
-  { key: "google",    title: "Gmail / Google Workspace", note: "Personal Gmail or Google Workspace",           badge: "OAuth · Enabled",    badgeTone: "bg-emerald-100 text-emerald-700", action: "oauth" },
-  { key: "microsoft", title: "Outlook / Microsoft 365",  note: "Outlook, Hotmail, Live, or Microsoft 365",     badge: "OAuth · Enabled",    badgeTone: "bg-emerald-100 text-emerald-700", action: "oauth" },
-  { key: "icloud",    title: "iCloud Mail",              note: "Use your Apple/iCloud mail account",           badge: "Nylas · Enabled",    badgeTone: "bg-emerald-100 text-emerald-700", action: "oauth" },
-  { key: "imap",      title: "IMAP mailbox",             note: "For providers supported through IMAP",         badge: "Nylas · Enabled",    badgeTone: "bg-emerald-100 text-emerald-700", action: "oauth" },
-  { key: "ews",       title: "Exchange / EWS",           note: "For on-prem Exchange / EWS accounts",          badge: "Advanced · Enabled", badgeTone: "bg-emerald-100 text-emerald-700", action: "oauth" },
-  { key: "yahoo",     title: "Yahoo Mail",               note: "Yahoo connector is not enabled yet in Nylas. Use SMTP for now.", badge: "Coming next", badgeTone: "bg-amber-100 text-amber-800", action: "yahoo" },
-  { key: "smtp",      title: "Advanced SMTP",            note: "For any provider that supports SMTP with an app password (Fastmail, Zoho, your own server, or Yahoo for now).", badge: "Fallback", badgeTone: "bg-muted text-muted-foreground", action: "smtp" },
+  { key: "google",    title: "Gmail / Google Workspace", note: "Personal Gmail or Google Workspace",      action: "oauth" },
+  { key: "microsoft", title: "Outlook / Microsoft 365",  note: "Outlook, Hotmail, Live, or Microsoft 365",action: "oauth" },
+  { key: "icloud",    title: "iCloud Mail",              note: "Use your Apple/iCloud mail account",      action: "oauth" },
+  { key: "imap",      title: "IMAP mailbox",             note: "For providers supported through IMAP",    action: "oauth" },
+  { key: "ews",       title: "Exchange / EWS",           note: "For on-prem Exchange / EWS accounts",     action: "oauth" },
+  { key: "yahoo",     title: "Yahoo Mail",               note: "Yahoo native connector is coming next. Yahoo can be connected today through SMTP with an app password.", action: "yahoo" },
+  { key: "smtp",      title: "Advanced SMTP",            note: "For any provider that supports SMTP with an app password (Fastmail, Zoho, your own server, or Yahoo for now).", action: "smtp" },
 ];
+function badgeFor(card: ProviderCard): { text: string; tone: string } {
+  if (card.action === "yahoo") return { text: "Coming next", tone: "bg-amber-100 text-amber-800" };
+  if (card.action === "smtp")  return { text: "Fallback",    tone: "bg-muted text-muted-foreground" };
+  const status = CONNECTOR_AVAILABILITY[card.key as NylasProviderKey];
+  return status === "enabled"
+    ? { text: "OAuth · Enabled",     tone: "bg-emerald-100 text-emerald-700" }
+    : { text: "Setup in progress",   tone: "bg-amber-100 text-amber-800" };
+}
 const OAUTH_BUTTON_LABEL: Record<NylasProviderKey, string> = {
   google: "Connect with Google",
   microsoft: "Connect with Microsoft",
