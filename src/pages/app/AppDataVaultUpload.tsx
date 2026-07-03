@@ -259,7 +259,25 @@ export default function AppDataVaultUpload() {
           .select("id")
           .single();
 
-        if (!cErr && contact) {
+        if (cErr) {
+          const msg = String(cErr.message || "");
+          if (msg.includes("free_preview_contact_limit_reached")) {
+            // Server-side Free Preview 25-contact limit hit. Stop the loop,
+            // report partial import, keep upgrade nudge behaviour.
+            try {
+              const { trackUpgradeEvent } = await import("@/lib/upgradeEvents");
+              trackUpgradeEvent("free_preview_contact_gate_hit", { reason: "contact_limit", plan: "free_preview" });
+            } catch { /* non-blocking */ }
+            toast({
+              title: "Free Preview limit reached",
+              description: `Imported ${created} of ${toImport.length}. Free Preview supports up to 25 contacts. Upgrade to Growth to work with larger audiences.`,
+              variant: "destructive",
+            });
+            break;
+          }
+          continue;
+        }
+        if (contact) {
           created++;
           await supabase
             .from("data_upload_rows")
@@ -295,7 +313,16 @@ export default function AppDataVaultUpload() {
       setStep("report");
       toast({ title: "Import complete", description: `${created} contacts added.` });
     } catch (e: any) {
-      toast({ title: "Import failed", description: e.message, variant: "destructive" });
+      const msg = String(e?.message || "");
+      if (msg.includes("free_preview_contact_limit_reached")) {
+        toast({
+          title: "Free Preview limit reached",
+          description: "Free Preview supports up to 25 contacts. Upgrade to Growth to work with larger audiences.",
+          variant: "destructive",
+        });
+      } else {
+        toast({ title: "Import failed", description: e.message, variant: "destructive" });
+      }
     } finally {
       setBusy(false);
     }
