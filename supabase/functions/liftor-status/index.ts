@@ -357,6 +357,18 @@ Deno.serve(async (req) => {
     review_leads_total: leadCounts.review,
     review_emails_sent: sendCounts.review,
 
+    // ---- Free Preview + top-up commercial metrics ----
+    free_users_total: freeUserIds.size,
+    free_preview_workspaces_total: freeWorkspaces,
+    free_preview_campaigns_created: freeCampaigns,
+    free_preview_credits_granted: freeGranted,
+    free_preview_credits_used: freeUsed,
+    free_activated_users_total: freeUsed > 0 ? freeUserIds.size : 0,
+    external_paid_topup_customers_total: topupCustomerIds.size,
+    external_topup_revenue_by_currency: topupRevenue,
+    external_growth_customers_total: extGrowth,
+    external_agency_customers_total: extAgency,
+
     classification_note:
       "Conservative name/email heuristics (QA, TEST, E2E, EXAMPLE, DEMO, LOVABLE, SANDBOX, SEED; example.com/org/net, test.com). Uncertain rows fall into 'review' rather than being dropped. No PII returned.",
     last_updated: new Date().toISOString(),
