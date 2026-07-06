@@ -315,6 +315,7 @@ export default function AppEmailConnections() {
         np.includes("microsoft") || np === "outlook" ? "microsoft"
         : np.includes("icloud") ? "icloud"
         : np === "ews" || np.includes("exchange") ? "ews"
+        : np.includes("yahoo") ? "yahoo"
         : np.includes("imap") ? "imap"
         : "google";
       startOAuth(key);
