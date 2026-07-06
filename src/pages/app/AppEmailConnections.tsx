@@ -82,7 +82,7 @@ const CONNECTOR_READINESS: ConnectorReadiness[] = [
   { key: "icloud",    label: "iCloud",                     nylas_status: "configured", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "iCloud connector enabled in Nylas Production. Controlled internal smoke test pending — requires app-specific password on Apple ID." },
   { key: "imap",      label: "IMAP",                       nylas_status: "configured", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "IMAP connector enabled in Nylas Production. Controlled internal smoke test pending — verify against Fastmail or similar." },
   { key: "yahoo",     label: "Yahoo",                      nylas_status: "not_added",      test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "Yahoo native connector coming next in Nylas. Yahoo can be connected today via SMTP." },
-  { key: "ews",       label: "EWS / Exchange",             nylas_status: "setup_required", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "On-prem / hosted Exchange. Requires EWS URL + service account or user credentials." },
+  { key: "ews",       label: "EWS / Exchange",             nylas_status: "configured", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "EWS / Exchange connector enabled in Nylas Production. Controlled internal smoke test pending — verify EWS URL and credentials." },
 ];
 
 interface ProviderCard {
