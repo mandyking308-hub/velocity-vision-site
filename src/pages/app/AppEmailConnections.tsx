@@ -56,7 +56,7 @@ type ConnectorAvailability = "enabled" | "setup_required";
 
 const CONNECTOR_AVAILABILITY: Record<NylasProviderKey, ConnectorAvailability> = {
   google: "setup_required",
-  microsoft: "setup_required",
+  microsoft: "enabled",
   icloud: "setup_required",
   imap: "setup_required",
   ews: "setup_required",
