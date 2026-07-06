@@ -357,7 +357,7 @@ export default function AppEmailConnections() {
           <div className="grid sm:grid-cols-2 gap-3">
             {PROVIDER_CARDS.filter((p) => p.action !== "smtp").map((card) => {
               const isOAuth = card.action === "oauth";
-              const isYahoo = card.action === "yahoo";
+              const isYahoo = card.key === "yahoo";
               const loading = isOAuth && oauthLoading === (card.key as NylasProviderKey);
               return (
                 <button
@@ -388,7 +388,6 @@ export default function AppEmailConnections() {
                           : effectiveAvailability(card.key as NylasProviderKey, isStaff) !== "enabled" ? "Setup in progress"
                           : loading ? "Redirecting…"
                           : OAUTH_BUTTON_LABEL[card.key as NylasProviderKey])
-                        : isYahoo ? "Use SMTP for now →"
                         : ""}
                     </p>
                   </div>
