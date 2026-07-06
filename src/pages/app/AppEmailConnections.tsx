@@ -88,7 +88,7 @@ interface ConnectorReadiness {
   notes: string;
 }
 const CONNECTOR_READINESS: ConnectorReadiness[] = [
-  { key: "google",    label: "Google / Gmail",            nylas_status: "setup_required", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "Add Google connector in Nylas → complete Google OAuth verification if using restricted scopes." },
+  { key: "google",    label: "Google / Gmail",            nylas_status: "configured", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "Google connector enabled in Nylas Production with broad scopes. Public customer launch HELD pending Google OAuth scope review. Founder/admin smoke path only." },
   { key: "microsoft", label: "Microsoft / Outlook / M365", nylas_status: "configured", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "Microsoft connector enabled in Nylas Production. Controlled internal smoke test pending — record consent scopes before flipping to tested." },
   { key: "icloud",    label: "iCloud",                     nylas_status: "configured", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "iCloud connector enabled in Nylas Production. Controlled internal smoke test pending — requires app-specific password on Apple ID." },
   { key: "imap",      label: "IMAP",                       nylas_status: "configured", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "IMAP connector enabled in Nylas Production. Controlled internal smoke test pending — verify against Fastmail or similar." },
