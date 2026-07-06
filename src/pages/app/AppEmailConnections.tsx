@@ -326,7 +326,7 @@ export default function AppEmailConnections() {
 
   const handleProviderCard = (card: ProviderCard) => {
     if (card.action === "oauth") startOAuth(card.key as NylasProviderKey);
-    else if (card.action === "yahoo" || card.action === "smtp") {
+    else if (card.action === "smtp") {
       setShowSmtp(true);
       // Scroll advanced section into view for discoverability.
       setTimeout(() => document.getElementById("advanced-smtp")?.scrollIntoView({ behavior: "smooth", block: "center" }), 60);
