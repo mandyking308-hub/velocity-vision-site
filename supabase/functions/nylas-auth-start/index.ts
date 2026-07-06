@@ -79,7 +79,7 @@ Deno.serve(async (req) => {
     // Providers must be enabled on the active Nylas application (dev or
     // production) for the region being used. Yahoo/EWS/etc. are added here
     // only when the corresponding Nylas connector is enabled.
-    if (!["google", "microsoft", "icloud", "imap", "ews"].includes(provider)) {
+    if (!["google", "microsoft", "icloud", "imap", "ews", "yahoo"].includes(provider)) {
       return json({ error: "invalid_provider" }, 400);
     }
     if (!["eu", "us"].includes(region)) {
