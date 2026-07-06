@@ -498,9 +498,12 @@ export default function AppEmailConnections() {
               </thead>
               <tbody>
                 {CONNECTOR_READINESS.map((r) => {
+                  const k = r.key as NylasProviderKey;
                   const uiStatus = r.key === "yahoo"
                     ? "hidden (SMTP fallback shown)"
-                    : CONNECTOR_AVAILABILITY[r.key as NylasProviderKey] === "enabled" ? "enabled" : "setup_required";
+                    : CONNECTOR_AVAILABILITY[k] === "enabled" ? "enabled"
+                    : STAFF_ONLY_UNLOCK.has(k) ? "founder/admin only (public setup_required)"
+                    : "setup_required";
                   return (
                     <tr key={r.key} className="border-b last:border-0 align-top">
                       <td className="py-1 pr-3 font-medium">{r.label}</td>
