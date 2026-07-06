@@ -69,7 +69,7 @@ const CONNECTOR_AVAILABILITY: Record<NylasProviderKey, ConnectorAvailability> = 
 // Google is currently held pending Google OAuth scope review.
 // Yahoo is NOT here yet — the Yahoo connector must first be enabled in the
 // production Nylas dashboard before we open a founder/admin smoke path.
-const STAFF_ONLY_UNLOCK: ReadonlySet<NylasProviderKey> = new Set<NylasProviderKey>(["google"]);
+const STAFF_ONLY_UNLOCK: ReadonlySet<NylasProviderKey> = new Set<NylasProviderKey>(["google", "yahoo"]);
 function effectiveAvailability(key: NylasProviderKey, isStaff: boolean): ConnectorAvailability {
   if (CONNECTOR_AVAILABILITY[key] === "enabled") return "enabled";
   if (isStaff && STAFF_ONLY_UNLOCK.has(key)) return "enabled";
@@ -315,6 +315,7 @@ export default function AppEmailConnections() {
         np.includes("microsoft") || np === "outlook" ? "microsoft"
         : np.includes("icloud") ? "icloud"
         : np === "ews" || np.includes("exchange") ? "ews"
+        : np.includes("yahoo") ? "yahoo"
         : np.includes("imap") ? "imap"
         : "google";
       startOAuth(key);
@@ -602,6 +603,7 @@ function providerLabel(c: Connection) {
     if (np.includes("microsoft") || np === "outlook") return "Microsoft";
     if (np.includes("icloud")) return "iCloud";
     if (np === "ews" || np.includes("exchange")) return "Exchange";
+    if (np.includes("yahoo")) return "Yahoo";
     if (np.includes("imap")) return "IMAP";
     return "Google";
   }
