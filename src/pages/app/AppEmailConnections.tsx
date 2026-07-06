@@ -244,7 +244,7 @@ export default function AppEmailConnections() {
       });
       return;
     }
-    if (CONNECTOR_AVAILABILITY[provider] !== "enabled") {
+    if (effectiveAvailability(provider, isStaff) !== "enabled") {
       toast.info("Connector coming shortly", {
         description: "This connector is being enabled for production. It will unlock here as soon as it is verified.",
       });
