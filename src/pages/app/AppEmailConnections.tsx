@@ -62,6 +62,17 @@ const CONNECTOR_AVAILABILITY: Record<NylasProviderKey, ConnectorAvailability> = 
   ews: "enabled",
 };
 
+// Connectors that are configured on the production Nylas app but held back
+// from public customer launch. Staff (founder/admin) get an internal smoke
+// path so they can validate the OAuth flow without exposing it to customers.
+// Google is currently held pending Google OAuth scope review.
+const STAFF_ONLY_UNLOCK: ReadonlySet<NylasProviderKey> = new Set<NylasProviderKey>(["google"]);
+function effectiveAvailability(key: NylasProviderKey, isStaff: boolean): ConnectorAvailability {
+  if (CONNECTOR_AVAILABILITY[key] === "enabled") return "enabled";
+  if (isStaff && STAFF_ONLY_UNLOCK.has(key)) return "enabled";
+  return "setup_required";
+}
+
 // Founder-facing Nylas Production connector readiness matrix. Never shown to
 // customers. Update each row deliberately as connectors are configured and
 // tested against the US Production Nylas app. Flip CONNECTOR_AVAILABILITY
