@@ -524,9 +524,7 @@ export default function AppEmailConnections() {
               <tbody>
                 {CONNECTOR_READINESS.map((r) => {
                   const k = r.key as NylasProviderKey;
-                  const uiStatus = r.key === "yahoo"
-                    ? "hidden (SMTP fallback shown)"
-                    : CONNECTOR_AVAILABILITY[k] === "enabled" ? "enabled"
+                  const uiStatus = CONNECTOR_AVAILABILITY[k] === "enabled" ? "enabled"
                     : STAFF_ONLY_UNLOCK.has(k) ? "founder/admin only (public setup_required)"
                     : "setup_required";
                   return (
