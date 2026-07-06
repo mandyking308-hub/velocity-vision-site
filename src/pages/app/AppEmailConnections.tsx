@@ -111,13 +111,16 @@ const PROVIDER_CARDS: ProviderCard[] = [
   { key: "yahoo",     title: "Yahoo Mail",               note: "Yahoo native connector is coming next. Yahoo can be connected today through SMTP with an app password.", action: "yahoo" },
   { key: "smtp",      title: "Advanced SMTP",            note: "For any provider that supports SMTP with an app password (Fastmail, Zoho, your own server, or Yahoo for now).", action: "smtp" },
 ];
-function badgeFor(card: ProviderCard): { text: string; tone: string } {
+function badgeFor(card: ProviderCard, isStaff: boolean): { text: string; tone: string } {
   if (card.action === "yahoo") return { text: "Coming next", tone: "bg-amber-100 text-amber-800" };
   if (card.action === "smtp")  return { text: "Fallback",    tone: "bg-muted text-muted-foreground" };
-  const status = CONNECTOR_AVAILABILITY[card.key as NylasProviderKey];
-  return status === "enabled"
-    ? { text: "OAuth · Enabled",     tone: "bg-emerald-100 text-emerald-700" }
-    : { text: "Setup in progress",   tone: "bg-amber-100 text-amber-800" };
+  const key = card.key as NylasProviderKey;
+  const publiclyEnabled = CONNECTOR_AVAILABILITY[key] === "enabled";
+  if (publiclyEnabled) return { text: "OAuth · Enabled", tone: "bg-emerald-100 text-emerald-700" };
+  if (isStaff && STAFF_ONLY_UNLOCK.has(key)) {
+    return { text: "OAuth · Admin smoke", tone: "bg-sky-100 text-sky-800" };
+  }
+  return { text: "Setup in progress", tone: "bg-amber-100 text-amber-800" };
 }
 const OAUTH_BUTTON_LABEL: Record<NylasProviderKey, string> = {
   google: "Connect with Google",
