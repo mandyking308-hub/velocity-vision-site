@@ -165,11 +165,16 @@ Deno.serve(async (req) => {
     const domain = fromEmail.split("@")[1] || null;
     // Map Nylas provider name -> local provider column value.
     // Allowed by CHECK: gmail | outlook | icloud | imap | ews | smtp.
+    // Yahoo has no dedicated local column value; store as `imap` (Nylas
+    // fulfils Yahoo via IMAP under the hood) while preserving the real
+    // Nylas provider ("yahoo") in `nylas_provider` so the UI badges it
+    // correctly.
     const np = (providerFromNylas || "").toLowerCase();
     const localProvider =
       np === "microsoft" || np === "outlook" ? "outlook"
       : np === "icloud" ? "icloud"
       : np === "imap" ? "imap"
+      : np === "yahoo" ? "imap"
       : np === "ews" || np === "exchange" ? "ews"
       : "gmail"; // google / gmail / unknown default
 
