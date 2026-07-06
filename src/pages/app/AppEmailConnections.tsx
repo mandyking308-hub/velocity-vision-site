@@ -405,10 +405,22 @@ export default function AppEmailConnections() {
               </Button>
             </CollapsibleTrigger>
             <CollapsibleContent className="pt-3">
-              <div className="rounded-md border p-3 text-sm space-y-2">
+              <div className="rounded-md border p-3 text-sm space-y-3">
                 <p className="text-muted-foreground">
-                  Fallback for providers without a native connector, or where you prefer SMTP — enter host, port and an app password. Yahoo, Fastmail, Zoho, your own server, or custom SMTP providers can work here.
+                  Fallback for providers without a native connector, or where you prefer SMTP — enter host, port and an app password.
                 </p>
+                <div className="grid sm:grid-cols-2 gap-2">
+                  {SMTP_FALLBACK_PROVIDERS.map((p) => (
+                    <div key={p.key} className="rounded-md border bg-card p-2 flex items-start gap-2">
+                      <Mail className="h-4 w-4 text-muted-foreground mt-0.5" />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs font-medium">{p.title}</div>
+                        <div className="text-[11px] text-muted-foreground">{p.note}</div>
+                      </div>
+                      <span className="inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium bg-muted text-muted-foreground">SMTP</span>
+                    </div>
+                  ))}
+                </div>
                 <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setEditing(null); }}>
                   <DialogTrigger asChild>
                     <Button size="sm" variant="outline"><Plug className="h-4 w-4 mr-2" /> Add SMTP connection</Button>
