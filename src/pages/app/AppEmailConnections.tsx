@@ -603,6 +603,7 @@ function providerLabel(c: Connection) {
     if (np.includes("microsoft") || np === "outlook") return "Microsoft";
     if (np.includes("icloud")) return "iCloud";
     if (np === "ews" || np.includes("exchange")) return "Exchange";
+    if (np.includes("yahoo")) return "Yahoo";
     if (np.includes("imap")) return "IMAP";
     return "Google";
   }
