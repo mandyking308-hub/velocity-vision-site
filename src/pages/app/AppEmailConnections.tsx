@@ -62,6 +62,17 @@ const CONNECTOR_AVAILABILITY: Record<NylasProviderKey, ConnectorAvailability> = 
   ews: "enabled",
 };
 
+// Connectors that are configured on the production Nylas app but held back
+// from public customer launch. Staff (founder/admin) get an internal smoke
+// path so they can validate the OAuth flow without exposing it to customers.
+// Google is currently held pending Google OAuth scope review.
+const STAFF_ONLY_UNLOCK: ReadonlySet<NylasProviderKey> = new Set<NylasProviderKey>(["google"]);
+function effectiveAvailability(key: NylasProviderKey, isStaff: boolean): ConnectorAvailability {
+  if (CONNECTOR_AVAILABILITY[key] === "enabled") return "enabled";
+  if (isStaff && STAFF_ONLY_UNLOCK.has(key)) return "enabled";
+  return "setup_required";
+}
+
 // Founder-facing Nylas Production connector readiness matrix. Never shown to
 // customers. Update each row deliberately as connectors are configured and
 // tested against the US Production Nylas app. Flip CONNECTOR_AVAILABILITY
@@ -77,7 +88,7 @@ interface ConnectorReadiness {
   notes: string;
 }
 const CONNECTOR_READINESS: ConnectorReadiness[] = [
-  { key: "google",    label: "Google / Gmail",            nylas_status: "setup_required", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "Add Google connector in Nylas → complete Google OAuth verification if using restricted scopes." },
+  { key: "google",    label: "Google / Gmail",            nylas_status: "configured", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "Google connector enabled in Nylas Production with broad scopes. Public customer launch HELD pending Google OAuth scope review. Founder/admin smoke path only." },
   { key: "microsoft", label: "Microsoft / Outlook / M365", nylas_status: "configured", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "Microsoft connector enabled in Nylas Production. Controlled internal smoke test pending — record consent scopes before flipping to tested." },
   { key: "icloud",    label: "iCloud",                     nylas_status: "configured", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "iCloud connector enabled in Nylas Production. Controlled internal smoke test pending — requires app-specific password on Apple ID." },
   { key: "imap",      label: "IMAP",                       nylas_status: "configured", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "IMAP connector enabled in Nylas Production. Controlled internal smoke test pending — verify against Fastmail or similar." },
@@ -100,13 +111,16 @@ const PROVIDER_CARDS: ProviderCard[] = [
   { key: "yahoo",     title: "Yahoo Mail",               note: "Yahoo native connector is coming next. Yahoo can be connected today through SMTP with an app password.", action: "yahoo" },
   { key: "smtp",      title: "Advanced SMTP",            note: "For any provider that supports SMTP with an app password (Fastmail, Zoho, your own server, or Yahoo for now).", action: "smtp" },
 ];
-function badgeFor(card: ProviderCard): { text: string; tone: string } {
+function badgeFor(card: ProviderCard, isStaff: boolean): { text: string; tone: string } {
   if (card.action === "yahoo") return { text: "Coming next", tone: "bg-amber-100 text-amber-800" };
   if (card.action === "smtp")  return { text: "Fallback",    tone: "bg-muted text-muted-foreground" };
-  const status = CONNECTOR_AVAILABILITY[card.key as NylasProviderKey];
-  return status === "enabled"
-    ? { text: "OAuth · Enabled",     tone: "bg-emerald-100 text-emerald-700" }
-    : { text: "Setup in progress",   tone: "bg-amber-100 text-amber-800" };
+  const key = card.key as NylasProviderKey;
+  const publiclyEnabled = CONNECTOR_AVAILABILITY[key] === "enabled";
+  if (publiclyEnabled) return { text: "OAuth · Enabled", tone: "bg-emerald-100 text-emerald-700" };
+  if (isStaff && STAFF_ONLY_UNLOCK.has(key)) {
+    return { text: "OAuth · Admin smoke", tone: "bg-sky-100 text-sky-800" };
+  }
+  return { text: "Setup in progress", tone: "bg-amber-100 text-amber-800" };
 }
 const OAUTH_BUTTON_LABEL: Record<NylasProviderKey, string> = {
   google: "Connect with Google",
@@ -230,7 +244,7 @@ export default function AppEmailConnections() {
       });
       return;
     }
-    if (CONNECTOR_AVAILABILITY[provider] !== "enabled") {
+    if (effectiveAvailability(provider, isStaff) !== "enabled") {
       toast.info("Connector coming shortly", {
         description: "This connector is being enabled for production. It will unlock here as soon as it is verified.",
       });
@@ -349,7 +363,7 @@ export default function AppEmailConnections() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-medium text-sm">{card.title}</span>
-                      {(() => { const b = badgeFor(card); return (
+                      {(() => { const b = badgeFor(card, isStaff); return (
                         <span className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium ${b.tone}`}>{b.text}</span>
                       ); })()}
                     </div>
@@ -357,7 +371,7 @@ export default function AppEmailConnections() {
                     <p className="text-xs mt-2 font-medium text-primary">
                       {isOAuth
                         ? (isFreePreview ? "Available on paid plans"
-                          : CONNECTOR_AVAILABILITY[card.key as NylasProviderKey] !== "enabled" ? "Setup in progress"
+                          : effectiveAvailability(card.key as NylasProviderKey, isStaff) !== "enabled" ? "Setup in progress"
                           : loading ? "Redirecting…"
                           : OAUTH_BUTTON_LABEL[card.key as NylasProviderKey])
                         : isYahoo ? "Use SMTP for now →"
@@ -484,9 +498,12 @@ export default function AppEmailConnections() {
               </thead>
               <tbody>
                 {CONNECTOR_READINESS.map((r) => {
+                  const k = r.key as NylasProviderKey;
                   const uiStatus = r.key === "yahoo"
                     ? "hidden (SMTP fallback shown)"
-                    : CONNECTOR_AVAILABILITY[r.key as NylasProviderKey] === "enabled" ? "enabled" : "setup_required";
+                    : CONNECTOR_AVAILABILITY[k] === "enabled" ? "enabled"
+                    : STAFF_ONLY_UNLOCK.has(k) ? "founder/admin only (public setup_required)"
+                    : "setup_required";
                   return (
                     <tr key={r.key} className="border-b last:border-0 align-top">
                       <td className="py-1 pr-3 font-medium">{r.label}</td>
