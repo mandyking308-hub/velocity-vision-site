@@ -59,7 +59,7 @@ const CONNECTOR_AVAILABILITY: Record<NylasProviderKey, ConnectorAvailability> = 
   microsoft: "enabled",
   icloud: "enabled",
   imap: "enabled",
-  ews: "setup_required",
+  ews: "enabled",
 };
 
 // Founder-facing Nylas Production connector readiness matrix. Never shown to
