@@ -51,7 +51,7 @@ interface Connection {
 // Availability is config-driven: connectors default to "setup_required" until
 // they are confirmed enabled on the production Nylas application. Flip a key
 // to "enabled" only after the connector is verified in the Nylas dashboard.
-type NylasProviderKey = "google" | "microsoft" | "icloud" | "imap" | "ews";
+type NylasProviderKey = "google" | "microsoft" | "icloud" | "imap" | "ews" | "yahoo";
 type ConnectorAvailability = "enabled" | "setup_required";
 
 const CONNECTOR_AVAILABILITY: Record<NylasProviderKey, ConnectorAvailability> = {
@@ -60,12 +60,15 @@ const CONNECTOR_AVAILABILITY: Record<NylasProviderKey, ConnectorAvailability> = 
   icloud: "enabled",
   imap: "enabled",
   ews: "enabled",
+  yahoo: "setup_required",
 };
 
 // Connectors that are configured on the production Nylas app but held back
 // from public customer launch. Staff (founder/admin) get an internal smoke
 // path so they can validate the OAuth flow without exposing it to customers.
 // Google is currently held pending Google OAuth scope review.
+// Yahoo is NOT here yet — the Yahoo connector must first be enabled in the
+// production Nylas dashboard before we open a founder/admin smoke path.
 const STAFF_ONLY_UNLOCK: ReadonlySet<NylasProviderKey> = new Set<NylasProviderKey>(["google"]);
 function effectiveAvailability(key: NylasProviderKey, isStaff: boolean): ConnectorAvailability {
   if (CONNECTOR_AVAILABILITY[key] === "enabled") return "enabled";
@@ -79,7 +82,7 @@ function effectiveAvailability(key: NylasProviderKey, isStaff: boolean): Connect
 // (above) to "enabled" only after "tested" here becomes true.
 type ReadinessStage = "not_added" | "setup_required" | "configured" | "verified" | "tested";
 interface ConnectorReadiness {
-  key: NylasProviderKey | "yahoo";
+  key: NylasProviderKey;
   label: string;
   nylas_status: ReadinessStage;
   test_mailbox_available: boolean;
@@ -92,15 +95,26 @@ const CONNECTOR_READINESS: ConnectorReadiness[] = [
   { key: "microsoft", label: "Microsoft / Outlook / M365", nylas_status: "configured", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "Microsoft connector enabled in Nylas Production. Controlled internal smoke test pending — record consent scopes before flipping to tested." },
   { key: "icloud",    label: "iCloud",                     nylas_status: "configured", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "iCloud connector enabled in Nylas Production. Controlled internal smoke test pending — requires app-specific password on Apple ID." },
   { key: "imap",      label: "IMAP",                       nylas_status: "configured", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "IMAP connector enabled in Nylas Production. Controlled internal smoke test pending — verify against Fastmail or similar." },
-  { key: "yahoo",     label: "Yahoo",                      nylas_status: "not_added",      test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "Yahoo native connector coming next in Nylas. Yahoo can be connected today via SMTP." },
   { key: "ews",       label: "EWS / Exchange",             nylas_status: "configured", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "EWS / Exchange connector enabled in Nylas Production. Controlled internal smoke test pending — verify EWS URL and credentials." },
+  { key: "yahoo",     label: "Yahoo Mail",                 nylas_status: "setup_required", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "Yahoo is a supported Nylas v3 provider (provider=yahoo). Card is wired but held as setup_required until the Yahoo connector is enabled in the production Nylas dashboard and a controlled smoke test passes. Customers currently see the SMTP fallback." },
+];
+
+// SMTP fallback board — providers where we do not (yet) offer native OAuth.
+// All route through the Advanced SMTP dialog with app-password guidance.
+type SmtpFallback = { key: string; title: string; note: string };
+const SMTP_FALLBACK_PROVIDERS: SmtpFallback[] = [
+  { key: "zoho",     title: "Zoho Mail",              note: "Connect via SMTP with a Zoho app password." },
+  { key: "fastmail", title: "Fastmail",               note: "Connect via SMTP with a Fastmail app password." },
+  { key: "aol",      title: "AOL Mail",               note: "Connect via SMTP with an AOL app password." },
+  { key: "proton",   title: "Proton Mail (Bridge)",   note: "Requires Proton Mail Bridge running locally, then SMTP." },
+  { key: "other",    title: "Other business mailbox", note: "Any provider that supports SMTP with an app password." },
 ];
 
 interface ProviderCard {
-  key: NylasProviderKey | "yahoo" | "smtp";
+  key: NylasProviderKey | "smtp";
   title: string;
   note: string;
-  action: "oauth" | "smtp" | "yahoo";
+  action: "oauth" | "smtp";
 }
 const PROVIDER_CARDS: ProviderCard[] = [
   { key: "google",    title: "Gmail / Google Workspace", note: "Personal Gmail or Google Workspace",      action: "oauth" },
@@ -108,11 +122,10 @@ const PROVIDER_CARDS: ProviderCard[] = [
   { key: "icloud",    title: "iCloud Mail",              note: "Use your Apple/iCloud mail account",      action: "oauth" },
   { key: "imap",      title: "IMAP mailbox",             note: "For providers supported through IMAP",    action: "oauth" },
   { key: "ews",       title: "Exchange / EWS",           note: "For on-prem Exchange / EWS accounts",     action: "oauth" },
-  { key: "yahoo",     title: "Yahoo Mail",               note: "Yahoo native connector is coming next. Yahoo can be connected today through SMTP with an app password.", action: "yahoo" },
-  { key: "smtp",      title: "Advanced SMTP",            note: "For any provider that supports SMTP with an app password (Fastmail, Zoho, your own server, or Yahoo for now).", action: "smtp" },
+  { key: "yahoo",     title: "Yahoo Mail",               note: "Yahoo native OAuth via Nylas. Held until the Yahoo connector is enabled in production. Use SMTP fallback for now.", action: "oauth" },
+  { key: "smtp",      title: "Advanced SMTP",            note: "For any provider that supports SMTP with an app password (Fastmail, Zoho, AOL, Proton Bridge, your own server).", action: "smtp" },
 ];
 function badgeFor(card: ProviderCard, isStaff: boolean): { text: string; tone: string } {
-  if (card.action === "yahoo") return { text: "Coming next", tone: "bg-amber-100 text-amber-800" };
   if (card.action === "smtp")  return { text: "Fallback",    tone: "bg-muted text-muted-foreground" };
   const key = card.key as NylasProviderKey;
   const publiclyEnabled = CONNECTOR_AVAILABILITY[key] === "enabled";
@@ -128,6 +141,7 @@ const OAUTH_BUTTON_LABEL: Record<NylasProviderKey, string> = {
   icloud: "Connect with iCloud",
   imap: "Connect IMAP mailbox",
   ews: "Connect Exchange",
+  yahoo: "Connect with Yahoo",
 };
 
 // Providers we consider "known" for DKIM selectors on the client. Kept in sync
