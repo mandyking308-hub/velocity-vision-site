@@ -363,7 +363,7 @@ export default function AppEmailConnections() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-medium text-sm">{card.title}</span>
-                      {(() => { const b = badgeFor(card); return (
+                      {(() => { const b = badgeFor(card, isStaff); return (
                         <span className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium ${b.tone}`}>{b.text}</span>
                       ); })()}
                     </div>
@@ -371,7 +371,7 @@ export default function AppEmailConnections() {
                     <p className="text-xs mt-2 font-medium text-primary">
                       {isOAuth
                         ? (isFreePreview ? "Available on paid plans"
-                          : CONNECTOR_AVAILABILITY[card.key as NylasProviderKey] !== "enabled" ? "Setup in progress"
+                          : effectiveAvailability(card.key as NylasProviderKey, isStaff) !== "enabled" ? "Setup in progress"
                           : loading ? "Redirecting…"
                           : OAUTH_BUTTON_LABEL[card.key as NylasProviderKey])
                         : isYahoo ? "Use SMTP for now →"
