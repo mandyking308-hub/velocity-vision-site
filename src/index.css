@@ -97,6 +97,47 @@
   .section-padding {
     @apply px-4 py-14 sm:px-6 sm:py-20 md:px-12 lg:px-20 lg:py-28;
   }
+
+  /* --- Brand splash utilities: blue + pink energy --- */
+  .bg-splash-blue {
+    background:
+      radial-gradient(60% 60% at 10% 10%, hsl(232 100% 57% / 0.10) 0%, transparent 60%),
+      radial-gradient(50% 50% at 90% 90%, hsl(335 100% 54% / 0.08) 0%, transparent 60%),
+      hsl(0 0% 100%);
+  }
+  .bg-splash-pink {
+    background:
+      radial-gradient(55% 55% at 90% 10%, hsl(335 100% 54% / 0.12) 0%, transparent 60%),
+      radial-gradient(55% 55% at 10% 90%, hsl(232 100% 57% / 0.10) 0%, transparent 60%),
+      hsl(0 0% 100%);
+  }
+  .bg-splash-duo {
+    background: linear-gradient(135deg, hsl(232 100% 97%) 0%, hsl(0 0% 100%) 40%, hsl(335 100% 97%) 100%);
+  }
+  .blob {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(60px);
+    pointer-events: none;
+    will-change: transform;
+  }
+  .blob-blue { background: hsl(232 100% 57% / 0.35); }
+  .blob-pink { background: hsl(335 100% 54% / 0.35); }
+
+  @keyframes floaty {
+    0%,100% { transform: translate3d(0,0,0) scale(1); }
+    50%     { transform: translate3d(0,-24px,0) scale(1.06); }
+  }
+  @keyframes drifty {
+    0%,100% { transform: translate3d(0,0,0); }
+    50%     { transform: translate3d(20px,-14px,0); }
+  }
+  .animate-floaty { animation: floaty 9s ease-in-out infinite; }
+  .animate-drifty { animation: drifty 12s ease-in-out infinite; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-floaty, .animate-drifty { animation: none; }
+  }
 }
 
 /* --- Mobile hardening: prevent horizontal overflow and iOS input zoom --- */

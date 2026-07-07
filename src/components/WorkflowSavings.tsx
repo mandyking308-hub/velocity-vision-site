@@ -53,7 +53,8 @@ const WorkflowSavings = () => {
   const positive = netVsVelocity > 0;
 
   return (
-    <section id="savings" className="section-padding bg-background">
+    <section id="savings" className="section-padding bg-splash-pink relative overflow-hidden">
+    <div aria-hidden className="blob blob-blue w-80 h-80 -top-20 -left-24 animate-floaty" /><div aria-hidden className="blob blob-pink w-72 h-72 -bottom-28 -right-16 animate-drifty" />
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
