@@ -67,14 +67,13 @@ const CONNECTOR_AVAILABILITY: Record<NylasProviderKey, ConnectorAvailability> = 
 // from public customer launch. Staff (founder/admin) get an internal smoke
 // path so they can validate the OAuth flow without exposing it to customers.
 // Google is currently held pending Google OAuth scope review.
-// Yahoo is NOT here yet — the Yahoo connector must first be enabled in the
-// production Nylas dashboard before we open a founder/admin smoke path.
-// Yahoo is intentionally NOT in STAFF_ONLY_UNLOCK. Yahoo native OAuth is parked
-// pending Yahoo Mail API access approval (mail-r / mail-w scopes are not yet
-// visible in the Yahoo Developer console). Founder/admin Yahoo smoke tests
-// must be run through the existing IMAP + Yahoo app-password flow, not
-// through Yahoo hosted OAuth.
-const STAFF_ONLY_UNLOCK: ReadonlySet<NylasProviderKey> = new Set<NylasProviderKey>(["google"]);
+// Yahoo connector is now enabled in the Nylas Production dashboard. Public
+// launch is still HELD pending (a) rotation of the Yahoo client secret that
+// was exposed during setup, (b) a founder/admin smoke test pass, and (c)
+// consent/permission screen review. Until then Yahoo hosted OAuth is
+// available to staff only via STAFF_ONLY_UNLOCK; public users continue to
+// see setup_required and the IMAP + Yahoo app-password fallback.
+const STAFF_ONLY_UNLOCK: ReadonlySet<NylasProviderKey> = new Set<NylasProviderKey>(["google", "yahoo"]);
 function effectiveAvailability(key: NylasProviderKey, isStaff: boolean): ConnectorAvailability {
   if (CONNECTOR_AVAILABILITY[key] === "enabled") return "enabled";
   if (isStaff && STAFF_ONLY_UNLOCK.has(key)) return "enabled";
@@ -101,7 +100,7 @@ const CONNECTOR_READINESS: ConnectorReadiness[] = [
   { key: "icloud",    label: "iCloud",                     nylas_status: "configured", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "iCloud connector enabled in Nylas Production. Controlled internal smoke test pending — requires app-specific password on Apple ID." },
   { key: "imap",      label: "IMAP",                       nylas_status: "configured", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "IMAP connector enabled in Nylas Production. Controlled internal smoke test pending — verify against Fastmail or similar." },
   { key: "ews",       label: "EWS / Exchange",             nylas_status: "configured", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "EWS / Exchange connector enabled in Nylas Production. Controlled internal smoke test pending — verify EWS URL and credentials." },
-  { key: "yahoo",     label: "Yahoo Mail — available via secure mailbox setup", nylas_status: "setup_required", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "Yahoo native OAuth parked — pending Yahoo Mail API access approval (mail-r / mail-w scopes not yet available in Yahoo Developer console). Yahoo mailboxes are supported today via the existing IMAP + Yahoo app-password flow. No public Yahoo OAuth exposure; founder/admin Yahoo smoke tests run through IMAP." },
+  { key: "yahoo",     label: "Yahoo Mail",                 nylas_status: "configured", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "Yahoo connector enabled in Nylas Production. Public launch HELD pending (a) rotation of the Yahoo client secret exposed during setup (treat as compromised), (b) founder/admin controlled smoke test pass, (c) consent/permission screen review. Founder/admin hosted-OAuth smoke path available via STAFF_ONLY_UNLOCK; IMAP + app-password remains supported." },
 ];
 
 
@@ -129,7 +128,7 @@ const PROVIDER_CARDS: ProviderCard[] = [
   { key: "icloud",    title: "iCloud Mail",              note: "Use your Apple/iCloud mail account",      action: "oauth" },
   { key: "imap",      title: "IMAP mailbox",             note: "For providers supported through IMAP (including Yahoo Mail with an app password)", action: "oauth" },
   { key: "ews",       title: "Exchange / EWS",           note: "For on-prem Exchange / EWS accounts",     action: "oauth" },
-  { key: "yahoo",     title: "Yahoo Mail",               note: "Available via secure mailbox setup. Yahoo native OAuth is pending Yahoo Mail API access — connect today through IMAP with a Yahoo app password.", action: "smtp" },
+  { key: "yahoo",     title: "Yahoo Mail",               note: "Yahoo hosted OAuth is in controlled rollout — public launch is held pending secret rotation and smoke-test sign-off. In the meantime, connect via IMAP with a Yahoo app password.", action: "oauth" },
   { key: "smtp",      title: "Advanced SMTP",            note: "For any provider that supports SMTP with an app password (Fastmail, Zoho, AOL, Proton Bridge, your own server).", action: "smtp" },
 ];
 function badgeFor(card: ProviderCard, isStaff: boolean): { text: string; tone: string } {
