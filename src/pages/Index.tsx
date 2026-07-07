@@ -47,18 +47,19 @@ const Index = () => (
     <main>
       <HeroSection />
       <EmailIntegrationsStrip />
-      <ProblemProof />
+      <div className="panel-wrap"><div className="panel-blue [&_*]:!text-white [&_a]:!text-white"><ProblemProof /></div></div>
       <CampaignChannelsStrip />
-      <CampaignCapabilities />
+      <div className="panel-wrap"><div className="panel-pink [&_*]:!text-white [&_a]:!text-white"><CampaignCapabilities /></div></div>
       <SecurityTrust />
       <GlobalStrip />
-      <HowItWorksPreview />
+      <div className="panel-wrap"><div className="panel-blue [&_*]:!text-white [&_a]:!text-white"><HowItWorksPreview /></div></div>
       <WorkflowSavings />
-      <PricingTeaser />
+      <div className="panel-wrap"><div className="panel-pink [&_*]:!text-white [&_a]:!text-white"><PricingTeaser /></div></div>
       <AudienceSplit />
       <HomeFAQ />
       <FinalCTA />
     </main>
+
     <Footer />
   </>
 );
