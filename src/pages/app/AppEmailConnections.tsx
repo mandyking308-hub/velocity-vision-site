@@ -106,8 +106,14 @@ const CONNECTOR_READINESS: ConnectorReadiness[] = [
 
 // SMTP fallback board — providers where we do not (yet) offer native OAuth.
 // All route through the Advanced SMTP dialog with app-password guidance.
+  { key: "yahoo",     label: "Yahoo Mail — available via secure mailbox setup", nylas_status: "setup_required", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "Yahoo native OAuth is parked pending Yahoo Mail API access (mail-r / mail-w scopes are not yet granted by Yahoo). Yahoo mailboxes can be connected today via IMAP + a Yahoo app password through the IMAP / Advanced SMTP flow." },
+];
+
+// SMTP fallback board — providers where we do not (yet) offer native OAuth.
+// All route through the Advanced SMTP dialog with app-password guidance.
 type SmtpFallback = { key: string; title: string; note: string };
 const SMTP_FALLBACK_PROVIDERS: SmtpFallback[] = [
+  { key: "yahoo",    title: "Yahoo Mail (IMAP / app password)", note: "Yahoo native OAuth is pending Yahoo Mail API access. Connect today via IMAP with a Yahoo app password." },
   { key: "zoho",     title: "Zoho Mail",              note: "Connect via SMTP with a Zoho app password." },
   { key: "fastmail", title: "Fastmail",               note: "Connect via SMTP with a Fastmail app password." },
   { key: "aol",      title: "AOL Mail",               note: "Connect via SMTP with an AOL app password." },
@@ -125,13 +131,13 @@ const PROVIDER_CARDS: ProviderCard[] = [
   { key: "google",    title: "Gmail / Google Workspace", note: "Personal Gmail or Google Workspace",      action: "oauth" },
   { key: "microsoft", title: "Outlook / Microsoft 365",  note: "Outlook, Hotmail, Live, or Microsoft 365",action: "oauth" },
   { key: "icloud",    title: "iCloud Mail",              note: "Use your Apple/iCloud mail account",      action: "oauth" },
-  { key: "imap",      title: "IMAP mailbox",             note: "For providers supported through IMAP",    action: "oauth" },
+  { key: "imap",      title: "IMAP mailbox",             note: "For providers supported through IMAP (including Yahoo Mail with an app password)", action: "oauth" },
   { key: "ews",       title: "Exchange / EWS",           note: "For on-prem Exchange / EWS accounts",     action: "oauth" },
-  { key: "yahoo",     title: "Yahoo Mail",               note: "Yahoo native OAuth via Nylas. Held until the Yahoo connector is enabled in production. Use SMTP fallback for now.", action: "oauth" },
+  { key: "yahoo",     title: "Yahoo Mail",               note: "Available via secure mailbox setup. Yahoo native OAuth is pending Yahoo Mail API access — connect today through IMAP with a Yahoo app password.", action: "smtp" },
   { key: "smtp",      title: "Advanced SMTP",            note: "For any provider that supports SMTP with an app password (Fastmail, Zoho, AOL, Proton Bridge, your own server).", action: "smtp" },
 ];
 function badgeFor(card: ProviderCard, isStaff: boolean): { text: string; tone: string } {
-  if (card.action === "smtp")  return { text: "Fallback",    tone: "bg-muted text-muted-foreground" };
+  if (card.action === "smtp")  return { text: "Secure setup",    tone: "bg-muted text-muted-foreground" };
   const key = card.key as NylasProviderKey;
   const publiclyEnabled = CONNECTOR_AVAILABILITY[key] === "enabled";
   if (publiclyEnabled) return { text: "OAuth · Enabled", tone: "bg-emerald-100 text-emerald-700" };
