@@ -20,16 +20,17 @@ const STEPS: Array<{ title: string; body: string; cta: string; href: string }> =
 ];
 
 export default function SetupWizard() {
-  const { isFreePreview } = useCredits();
+  const { isFreePreview, loading } = useCredits();
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (loading) return;
     if (!isFreePreview) return;
     if (localStorage.getItem(STORAGE_KEY)) return;
     setOpen(true);
-  }, [isFreePreview]);
+  }, [isFreePreview, loading]);
 
   const dismiss = () => {
     try { localStorage.setItem(STORAGE_KEY, "1"); } catch { /* ignore */ }
