@@ -128,7 +128,7 @@ const PROVIDER_CARDS: ProviderCard[] = [
   { key: "icloud",    title: "iCloud Mail",              note: "Use your Apple/iCloud mail account",      action: "oauth" },
   { key: "imap",      title: "IMAP mailbox",             note: "For providers supported through IMAP (including Yahoo Mail with an app password)", action: "oauth" },
   { key: "ews",       title: "Exchange / EWS",           note: "For on-prem Exchange / EWS accounts",     action: "oauth" },
-  { key: "yahoo",     title: "Yahoo Mail",               note: "Available via secure mailbox setup. Yahoo native OAuth is pending Yahoo Mail API access — connect today through IMAP with a Yahoo app password.", action: "smtp" },
+  { key: "yahoo",     title: "Yahoo Mail",               note: "Yahoo hosted OAuth is in controlled rollout — public launch is held pending secret rotation and smoke-test sign-off. In the meantime, connect via IMAP with a Yahoo app password.", action: "oauth" },
   { key: "smtp",      title: "Advanced SMTP",            note: "For any provider that supports SMTP with an app password (Fastmail, Zoho, AOL, Proton Bridge, your own server).", action: "smtp" },
 ];
 function badgeFor(card: ProviderCard, isStaff: boolean): { text: string; tone: string } {
