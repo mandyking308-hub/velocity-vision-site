@@ -69,7 +69,12 @@ const CONNECTOR_AVAILABILITY: Record<NylasProviderKey, ConnectorAvailability> = 
 // Google is currently held pending Google OAuth scope review.
 // Yahoo is NOT here yet — the Yahoo connector must first be enabled in the
 // production Nylas dashboard before we open a founder/admin smoke path.
-const STAFF_ONLY_UNLOCK: ReadonlySet<NylasProviderKey> = new Set<NylasProviderKey>(["google", "yahoo"]);
+// Yahoo is intentionally NOT in STAFF_ONLY_UNLOCK. Yahoo native OAuth is parked
+// pending Yahoo Mail API access approval (mail-r / mail-w scopes are not yet
+// visible in the Yahoo Developer console). Founder/admin Yahoo smoke tests
+// must be run through the existing IMAP + Yahoo app-password flow, not
+// through Yahoo hosted OAuth.
+const STAFF_ONLY_UNLOCK: ReadonlySet<NylasProviderKey> = new Set<NylasProviderKey>(["google"]);
 function effectiveAvailability(key: NylasProviderKey, isStaff: boolean): ConnectorAvailability {
   if (CONNECTOR_AVAILABILITY[key] === "enabled") return "enabled";
   if (isStaff && STAFF_ONLY_UNLOCK.has(key)) return "enabled";
