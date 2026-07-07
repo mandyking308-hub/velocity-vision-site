@@ -18,7 +18,7 @@ const cards = [
 ];
 
 const CampaignCapabilities = () => (
-  <section className="section-padding bg-background">
+  <section className="section-padding bg-splash-duo relative overflow-hidden">
     <div className="max-w-7xl mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 30 }}

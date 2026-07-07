@@ -23,7 +23,7 @@ const cards = [
 ];
 
 const AudienceSplit = () => (
-  <section className="section-padding bg-secondary">
+  <section className="section-padding bg-splash-blue relative overflow-hidden">
     <div className="max-w-7xl mx-auto">
       <div className="grid md:grid-cols-2 gap-6">
         {cards.map((c, i) => (

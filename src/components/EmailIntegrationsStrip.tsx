@@ -40,7 +40,7 @@ interface Props {
 export default function EmailIntegrationsStrip({ variant = "full" }: Props) {
   if (variant === "compact") {
     return (
-      <section className="py-10 border-y border-border/50 bg-background">
+      <section className="py-10 border-y border-border/50 bg-splash-blue relative overflow-hidden">
         <div className="max-w-6xl mx-auto px-4">
           <p className="text-center text-xs uppercase tracking-widest text-muted-foreground mb-5">
             Connects with Google, Microsoft, iCloud, IMAP, Exchange and SMTP

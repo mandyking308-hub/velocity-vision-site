@@ -13,7 +13,7 @@ const steps = [
 ];
 
 const HowItWorksPreview = () => (
-  <section className="section-padding bg-secondary">
+  <section className="section-padding bg-splash-blue relative overflow-hidden">
     <div className="max-w-7xl mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 30 }}

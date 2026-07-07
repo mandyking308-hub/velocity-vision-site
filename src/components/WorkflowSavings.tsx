@@ -53,7 +53,7 @@ const WorkflowSavings = () => {
   const positive = netVsVelocity > 0;
 
   return (
-    <section id="savings" className="section-padding bg-background">
+    <section id="savings" className="section-padding bg-splash-pink relative overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
