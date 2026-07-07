@@ -147,6 +147,13 @@
     filter: blur(30px);
     pointer-events: none;
   }
+  /* Default text inside panels is white, but restore colour inside light cards */
+  .panel-blue, .panel-pink { color: #fff; }
+  .panel-blue :is(h1,h2,h3,h4,h5,h6,p,span,li,a,strong,em,small,label,div) { color: inherit; }
+  .panel-pink :is(h1,h2,h3,h4,h5,h6,p,span,li,a,strong,em,small,label,div) { color: inherit; }
+  .panel-blue :is(.bg-white,.bg-card,[class*="bg-white"]),
+  .panel-pink :is(.bg-white,.bg-card,[class*="bg-white"]) { color: hsl(var(--foreground)); }
+
 
 
   .blob {
