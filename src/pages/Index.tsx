@@ -47,14 +47,14 @@ const Index = () => (
     <main>
       <HeroSection />
       <EmailIntegrationsStrip />
-      <div className="panel-wrap"><div className="panel-blue [&_*]:!text-white [&_a]:!text-white"><ProblemProof /></div></div>
+      <div className="panel-wrap"><div className="panel-blue"><ProblemProof /></div></div>
       <CampaignChannelsStrip />
-      <div className="panel-wrap"><div className="panel-pink [&_*]:!text-white [&_a]:!text-white"><CampaignCapabilities /></div></div>
+      <div className="panel-wrap"><div className="panel-pink"><CampaignCapabilities /></div></div>
       <SecurityTrust />
       <GlobalStrip />
-      <div className="panel-wrap"><div className="panel-blue [&_*]:!text-white [&_a]:!text-white"><HowItWorksPreview /></div></div>
+      <div className="panel-wrap"><div className="panel-blue"><HowItWorksPreview /></div></div>
       <WorkflowSavings />
-      <div className="panel-wrap"><div className="panel-pink [&_*]:!text-white [&_a]:!text-white"><PricingTeaser /></div></div>
+      <div className="panel-wrap"><div className="panel-pink"><PricingTeaser /></div></div>
       <AudienceSplit />
       <HomeFAQ />
       <FinalCTA />
