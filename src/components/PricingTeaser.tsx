@@ -30,6 +30,7 @@ const plans = [
 
 const PricingTeaser = () => (
   <section className="section-padding bg-splash-duo relative overflow-hidden">
+    <div aria-hidden className="blob blob-blue w-80 h-80 -top-24 -left-20 animate-floaty" /><div aria-hidden className="blob blob-pink w-96 h-96 -bottom-32 -right-24 animate-drifty" />
     <div className="max-w-7xl mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
