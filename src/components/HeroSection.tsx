@@ -22,13 +22,13 @@ const HeroSection = () => (
           className="lg:col-span-7"
         >
           <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-6 inline-flex items-center gap-2">
-            <Sparkles size={14} /> AI-powered outreach · Human-controlled activation
+            <Sparkles size={14} /> Velocity Vision · AI-powered outreach · Human-controlled activation
           </p>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-primary-foreground leading-[1.05] mb-6">
-            Turn messy data into outreach, follow-up and <span className="text-gradient">live pipeline</span>.
+            Velocity Vision turns messy data into outreach, follow-up and <span className="text-gradient">live pipeline</span>.
           </h1>
           <p className="text-lg md:text-xl text-primary-foreground/75 max-w-xl mb-10 leading-relaxed">
-            The AI-powered commercial workspace for turning messy contact data into governed outreach, follow-up and pipeline. AI drafts the assets and quality-reviews your data — you review, edit and control what gets activated.
+            Velocity Vision is the AI-powered commercial workspace for turning messy contact data into governed outreach, follow-up and pipeline. AI drafts the assets and quality-reviews your data — you review, edit and control what gets activated.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button variant="hero" size="lg" asChild>
@@ -56,7 +56,7 @@ const HeroSection = () => (
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Database className="text-accent" size={18} />
-                  <span className="text-sm font-semibold text-foreground">Your workspace</span>
+                  <span className="text-sm font-semibold text-foreground">Your Velocity Vision workspace</span>
                 </div>
                 <span className="text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-accent/10 text-accent font-semibold">Live</span>
               </div>
