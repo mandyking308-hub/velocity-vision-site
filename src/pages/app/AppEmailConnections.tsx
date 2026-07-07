@@ -104,10 +104,6 @@ const CONNECTOR_READINESS: ConnectorReadiness[] = [
   { key: "yahoo",     label: "Yahoo Mail",                 nylas_status: "setup_required", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "Yahoo is a supported Nylas v3 provider (provider=yahoo). Card is wired but held as setup_required until the Yahoo connector is enabled in the production Nylas dashboard and a controlled smoke test passes. Customers currently see the SMTP fallback." },
 ];
 
-// SMTP fallback board — providers where we do not (yet) offer native OAuth.
-// All route through the Advanced SMTP dialog with app-password guidance.
-  { key: "yahoo",     label: "Yahoo Mail — available via secure mailbox setup", nylas_status: "setup_required", test_mailbox_available: false, controlled_auth_test_passed: false, sending_disabled_until_verified: true, notes: "Yahoo native OAuth is parked pending Yahoo Mail API access (mail-r / mail-w scopes are not yet granted by Yahoo). Yahoo mailboxes can be connected today via IMAP + a Yahoo app password through the IMAP / Advanced SMTP flow." },
-];
 
 // SMTP fallback board — providers where we do not (yet) offer native OAuth.
 // All route through the Advanced SMTP dialog with app-password guidance.
