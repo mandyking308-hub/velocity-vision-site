@@ -46,13 +46,13 @@ const Index = () => (
     <Navbar />
     <main>
       <HeroSection />
-      <EmailIntegrationsStrip />
+      <div className="panel-wrap"><div className="panel-blue"><EmailIntegrationsStrip /></div></div>
       <AudienceSplit />
       <div className="panel-wrap"><div className="panel-blue"><ProblemProof /></div></div>
-      <CampaignChannelsStrip />
+      <div className="panel-wrap"><div className="panel-pink"><CampaignChannelsStrip /></div></div>
       <div className="panel-wrap"><div className="panel-pink"><CampaignCapabilities /></div></div>
-      <SecurityTrust />
-      <GlobalStrip />
+      <div className="panel-wrap"><div className="panel-blue"><SecurityTrust /></div></div>
+      <div className="panel-wrap"><div className="panel-pink"><GlobalStrip /></div></div>
       <div className="panel-wrap"><div className="panel-blue"><HowItWorksPreview /></div></div>
       <WorkflowSavings />
       <div className="panel-wrap"><div className="panel-pink"><PricingTeaser /></div></div>
