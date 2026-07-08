@@ -40,28 +40,30 @@ interface Props {
 export default function EmailIntegrationsStrip({ variant = "full" }: Props) {
   if (variant === "compact") {
     return (
-      <section className="py-10 border-y border-border/50 bg-splash-blue relative overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4">
-          <p className="text-center text-xs uppercase tracking-widest text-muted-foreground mb-5">
-            Connects with Google, Microsoft, iCloud, IMAP, Exchange and SMTP
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
-            {providers.map((p) => (
-              <div
-                key={p.label}
-                className="flex items-center gap-2 opacity-90 hover:opacity-100 transition"
-                title={p.label}
-              >
-                <div className="flex items-center justify-center h-6 w-6 shrink-0">{p.icon}</div>
-                <span className="text-xs font-medium text-foreground/80">{p.label}</span>
-              </div>
-            ))}
+      <div className="panel-wrap"><div className="panel-blue">
+        <section className="section-padding">
+          <div className="max-w-6xl mx-auto px-4">
+            <p className="text-center text-xs uppercase tracking-widest mb-5 opacity-90">
+              Connects with Google, Microsoft, iCloud, IMAP, Exchange and SMTP
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              {providers.map((p) => (
+                <div
+                  key={p.label}
+                  className="flex items-center gap-2 rounded-xl border border-white/40 bg-white px-4 py-2 shadow-card"
+                  title={p.label}
+                >
+                  <div className="flex items-center justify-center h-6 w-6 shrink-0">{p.icon}</div>
+                  <span className="text-xs font-medium text-foreground/90">{p.label}</span>
+                </div>
+              ))}
+            </div>
+            <p className="text-[11px] text-white/80 mt-5 text-center">
+              Yahoo via SMTP today; native Yahoo connector coming next. Replies return to your connected inbox.
+            </p>
           </div>
-          <p className="text-[11px] text-muted-foreground mt-4 text-center">
-            Yahoo via SMTP today; native Yahoo connector coming next. Replies return to your connected inbox.
-          </p>
-        </div>
-      </section>
+        </section>
+      </div></div>
     );
   }
 
