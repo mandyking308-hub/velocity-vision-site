@@ -29,7 +29,7 @@ const GlobalStrip = ({ variant = "home" }: Props) => {
   }
 
   return (
-    <section className="bg-secondary/50 border-y border-border/50 px-6 md:px-12 lg:px-20 py-16 md:py-24 lg:py-28 relative overflow-hidden">
+    <section className="section-padding bg-splash-pink relative overflow-hidden">
       <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-accent/5 blur-3xl -translate-y-1/2 translate-x-1/4" />
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-accent-warm/5 blur-3xl translate-y-1/2 -translate-x-1/4" />
       <div className="max-w-6xl mx-auto relative">

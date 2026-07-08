@@ -67,7 +67,7 @@ export default function CampaignChannelsStrip({ variant = "full" }: Props) {
   }
 
   return (
-    <section className="section-padding bg-background border-b border-border/50">
+    <section className="section-padding bg-splash-pink relative overflow-hidden">
       <div className="max-w-6xl mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-10">
           <p className="text-accent font-semibold text-xs uppercase tracking-widest mb-3">

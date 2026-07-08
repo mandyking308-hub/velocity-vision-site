@@ -66,7 +66,7 @@ const badges = [
 ];
 
 const SecurityTrust = () => (
-  <section className="bg-splash-pink border-t border-border px-6 md:px-12 lg:px-20 py-16 md:py-20 lg:py-24 relative overflow-hidden">
+  <section className="section-padding bg-splash-blue relative overflow-hidden">
     <div className="max-w-7xl mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
