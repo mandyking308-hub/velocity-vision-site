@@ -1,7 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
-import { Card, CardContent } from "@/components/ui/card";
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Sparkles, Upload, Rocket, Send, ShieldCheck, TrendingUp, Coins } from "lucide-react";
 
@@ -20,38 +20,53 @@ export default function GettingStarted() {
     <>
       <SEO title="Getting started — Velocity Vision" description="Short guides for your first workspace, first upload, first campaign, and understanding Campaign Credits." path="/help/getting-started" />
       <Navbar />
-      <main className="pt-24 pb-16 px-6 md:px-12 lg:px-20 bg-background">
-        <div className="max-w-4xl mx-auto">
-          <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Training centre</p>
-          <h1 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">Getting started with Velocity Vision</h1>
-          <p className="text-muted-foreground text-lg mb-10 max-w-2xl">
-            Practical guides for your first session. Start with Free Preview, upload a small dataset, generate a campaign pack, then decide whether to top up credits or upgrade.
-          </p>
+      <main className="pt-24">
+        <section className="section-padding bg-hero">
+          <div className="max-w-4xl mx-auto">
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+              <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Training centre</p>
+              <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">Getting started with Velocity Vision</h1>
+              <p className="text-primary-foreground/75 text-lg max-w-2xl">
+                Practical guides for your first session. Start with Free Preview, upload a small dataset, generate a campaign pack, then decide whether to top up credits or upgrade.
+              </p>
+            </motion.div>
+          </div>
+        </section>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            {topics.map(({ icon: Icon, title, body }) => (
-              <Card key={title}>
-                <CardContent className="p-5">
+        <div className="panel-wrap"><div className="panel-blue">
+        <section className="section-padding">
+          <div className="max-w-5xl mx-auto">
+            <div className="grid gap-4 md:grid-cols-2">
+              {topics.map(({ icon: Icon, title, body }, i) => (
+                <motion.div
+                  key={title}
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.04 }}
+                  className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground"
+                >
                   <div className="flex items-center gap-2 mb-2">
                     <Icon className="h-5 w-5 text-accent" />
-                    <div className="font-semibold">{title}</div>
+                    <div className="font-display font-semibold">{title}</div>
                   </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{body}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  <p className="text-sm text-foreground/75 leading-relaxed">{body}</p>
+                </motion.div>
+              ))}
+            </div>
 
-          <div className="mt-10 p-5 rounded-xl border border-border bg-card">
-            <div className="font-semibold mb-1">Need more help?</div>
-            <p className="text-sm text-muted-foreground">
-              Use the Help widget at the bottom-right of any page to send a question or share feedback. Real replies come back to the email you provide — usually within one business day.
-            </p>
-            <p className="text-sm text-muted-foreground mt-2">
-              Want a walkthrough? <Link to="/contact" className="text-accent underline">Contact us</Link>.
-            </p>
+            <div className="mt-10 p-6 rounded-xl bg-white border border-white/40 shadow-card text-foreground">
+              <div className="font-display font-semibold mb-1">Need more help?</div>
+              <p className="text-sm text-foreground/75">
+                Use the Help widget at the bottom-right of any page to send a question or share feedback. Real replies come back to the email you provide — usually within one business day.
+              </p>
+              <p className="text-sm text-foreground/75 mt-2">
+                Want a walkthrough? <Link to="/contact" className="text-accent underline">Contact us</Link>.
+              </p>
+            </div>
           </div>
-        </div>
+        </section>
+        </div></div>
       </main>
       <Footer />
     </>
