@@ -74,100 +74,108 @@ const ForBusinesses = () => (
         </div>
       </section>
 
-      <section className="section-padding bg-background">
+      <div className="panel-wrap"><div className="panel-pink">
+      <section className="section-padding">
         <div className="max-w-7xl mx-auto">
           <div className="max-w-2xl mb-10">
-            <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">The essentials</p>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">What lean teams actually need</h2>
-            <p className="text-muted-foreground text-lg">
+            <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">The essentials</p>
+            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">What lean teams actually need</h2>
+            <p className="text-lg opacity-90">
               Clean data, safe outreach, faster output, follow-up that doesn't get missed, visible pipeline — and one system instead of six.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {cases.map((c, i) => (
-              <motion.div key={c.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="bg-card border border-border/50 rounded-xl p-6 shadow-card">
-                <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
-                  <c.icon className="text-accent" size={20} />
+              <motion.div key={c.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6">
+                <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center mb-4">
+                  <c.icon size={20} />
                 </div>
-                <h3 className="font-display font-semibold text-foreground mb-2">{c.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{c.desc}</p>
+                <h3 className="font-display font-semibold mb-2">{c.title}</h3>
+                <p className="text-sm leading-relaxed opacity-90">{c.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
+      </div></div>
 
       {/* Practical capabilities */}
-      <section className="section-padding bg-secondary/40">
+      <div className="panel-wrap"><div className="panel-blue">
+      <section className="section-padding">
         <div className="max-w-7xl mx-auto">
           <div className="max-w-2xl mb-10">
-            <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Inside the workspace</p>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">What your team can actually do</h2>
-            <p className="text-muted-foreground text-lg">
+            <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">Inside the workspace</p>
+            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">What your team can actually do</h2>
+            <p className="text-lg opacity-90">
               Real outputs your buyers recognise — generated, sent and tracked from one place.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {capabilities.map((c, i) => (
-              <motion.div key={c.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="bg-card border border-border/50 rounded-xl p-6 shadow-card">
-                <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
-                  <c.icon className="text-accent" size={20} />
+              <motion.div key={c.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6">
+                <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center mb-4">
+                  <c.icon size={20} />
                 </div>
-                <h3 className="font-display font-semibold text-foreground mb-2">{c.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{c.desc}</p>
+                <h3 className="font-display font-semibold mb-2">{c.title}</h3>
+                <p className="text-sm leading-relaxed opacity-90">{c.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
+      </div></div>
 
       {/* What this replaces */}
-      <section className="section-padding bg-background">
+      <div className="panel-wrap"><div className="panel-pink">
+      <section className="section-padding">
         <div className="max-w-7xl mx-auto">
           <div className="max-w-2xl mb-10">
-            <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Why teams choose this</p>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">What you stop paying for and patching together</h2>
-            <p className="text-muted-foreground text-lg">
+            <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">Why teams choose this</p>
+            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">What you stop paying for and patching together</h2>
+            <p className="text-lg opacity-90">
               One workspace replaces the spreadsheet stack, the disconnected tools and the freelancer dependency.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {replaces.map((r, i) => (
-              <motion.div key={r.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="bg-card border border-border/50 rounded-xl p-6 shadow-card">
-                <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
-                  <r.icon className="text-accent" size={20} />
+              <motion.div key={r.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6">
+                <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center mb-4">
+                  <r.icon size={20} />
                 </div>
-                <h3 className="font-display font-semibold text-foreground mb-2">{r.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{r.desc}</p>
+                <h3 className="font-display font-semibold mb-2">{r.title}</h3>
+                <p className="text-sm leading-relaxed opacity-90">{r.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
+      </div></div>
 
       {/* Outcomes */}
-      <section className="section-padding bg-secondary/40">
+      <div className="panel-wrap"><div className="panel-blue">
+      <section className="section-padding">
         <div className="max-w-7xl mx-auto">
           <div className="max-w-2xl mb-10">
-            <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Outcomes</p>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">What lean teams get out of it</h2>
-            <p className="text-muted-foreground text-lg">
+            <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">Outcomes</p>
+            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">What lean teams get out of it</h2>
+            <p className="text-lg opacity-90">
               Less admin. Cleaner execution. Pipeline that actually moves.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {outcomes.map((o, i) => (
-              <motion.div key={o.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="bg-card border border-border/50 rounded-xl p-6 shadow-card">
-                <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
-                  <o.icon className="text-accent" size={20} />
+              <motion.div key={o.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6">
+                <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center mb-4">
+                  <o.icon size={20} />
                 </div>
-                <h3 className="font-display font-semibold text-foreground mb-2">{o.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{o.desc}</p>
+                <h3 className="font-display font-semibold mb-2">{o.title}</h3>
+                <p className="text-sm leading-relaxed opacity-90">{o.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
+      </div></div>
 
       {/* Final CTA */}
       <section className="section-padding bg-hero">
