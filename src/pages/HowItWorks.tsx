@@ -64,48 +64,68 @@ const HowItWorks = () => (
         </div>
       </section>
 
-      <section className="section-padding bg-background">
+      <div className="panel-wrap"><div className="panel-pink">
+      <section className="section-padding">
         <div className="max-w-7xl mx-auto">
+          <div className="max-w-2xl mb-10">
+            <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">The flow</p>
+            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">Ten steps from raw data to repeatable pipeline</h2>
+            <p className="text-lg opacity-90">
+              Upload, review, generate, activate, follow up and repeat — all inside one workspace.
+            </p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
-            {steps.map((s) => (
-              <div
+            {steps.map((s, i) => (
+              <motion.div
                 key={s.n}
-                className="bg-card border border-border/50 rounded-xl p-6 shadow-card"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.05 }}
+                className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground"
               >
                 <p className="text-accent font-display font-bold text-2xl mb-3">{s.n}</p>
-                <h3 className="font-display font-semibold text-foreground mb-2">{s.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{s.desc}</p>
-              </div>
+                <h3 className="font-display font-semibold mb-2">{s.title}</h3>
+                <p className="text-sm leading-relaxed opacity-90">{s.desc}</p>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
+      </div></div>
 
-      <section className="section-padding bg-secondary">
+      <div className="panel-wrap"><div className="panel-blue">
+      <section className="section-padding">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">What's in the workspace</h2>
-          <p className="text-muted-foreground mb-10 max-w-2xl">The same login covers the whole loop — from data review through to opportunity movement.</p>
+          <div className="max-w-2xl mb-10">
+            <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">What's inside</p>
+            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">The same login covers the whole loop</h2>
+            <p className="text-lg opacity-90">
+              From data review through to opportunity movement — every practical output lives in one workspace.
+            </p>
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {outputs.map((o) => (
-              <div key={o} className="flex items-center gap-2 bg-card border border-border/50 rounded-lg px-4 py-3">
+              <div key={o} className="flex items-center gap-2 bg-white border border-white/40 rounded-lg px-4 py-3 shadow-card text-foreground">
                 <Check className="text-accent shrink-0" size={16} />
-                <span className="text-sm text-foreground">{o}</span>
+                <span className="text-sm font-medium">{o}</span>
               </div>
             ))}
           </div>
-          <p className="text-sm text-muted-foreground mt-8 max-w-2xl">
+          <p className="text-sm mt-8 max-w-2xl opacity-90">
             From email sequences and social media content to press releases and follow-up, every practical output is generated inside the same workspace.
           </p>
         </div>
       </section>
+      </div></div>
 
-      <section className="section-padding bg-background">
+      <section className="section-padding bg-hero">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">Self-serve, end to end</h2>
-          <p className="text-muted-foreground text-lg mb-6">
+          <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground mb-4">Self-serve, end to end</h2>
+          <p className="text-primary-foreground/75 text-lg mb-6">
             Everything runs from your own workspace — upload, generate, activate, follow up and report. No call required to get started.
           </p>
-          <Button variant="cta" asChild>
+          <Button variant="hero" size="lg" asChild>
             <Link to="/auth">Start your workspace <ArrowRight size={16} /></Link>
           </Button>
         </div>

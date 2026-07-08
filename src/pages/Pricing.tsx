@@ -133,24 +133,24 @@ const Pricing = () => {
         </div>
       </section>
 
-
-      <section className="relative z-10 bg-background px-6 md:px-12 lg:px-20 -mt-16 md:-mt-20 lg:-mt-28 pt-0 pb-16 md:pb-20 lg:pb-24">
+      <div className="panel-wrap"><div className="panel-pink">
+      <section className="section-padding">
         <div className="max-w-7xl mx-auto">
           <div className="mb-6 md:mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-            <p className="text-xs md:text-sm text-muted-foreground max-w-xl leading-relaxed">
+            <p className="text-xs md:text-sm max-w-xl leading-relaxed opacity-90">
               Choose your display currency. Velocity Vision is built for international buyers, agencies and teams working across markets.
             </p>
             <PricingCurrencySelector align="right" currency={currency} onCurrencyChange={setCurrency} />
           </div>
           {/* Free Preview entry tier — no Stripe SKU, no auto-upgrade, no live sending. */}
-          <div className="mb-6 rounded-2xl border border-accent/40 bg-accent/5 p-6 lg:p-7 flex flex-col md:flex-row md:items-center gap-5">
+          <div className="mb-6 rounded-2xl border border-white/40 bg-white p-6 lg:p-7 flex flex-col md:flex-row md:items-center gap-5 shadow-card text-foreground">
             <div className="flex-1 min-w-0">
               <span className="inline-block text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-accent/15 text-accent font-semibold mb-2">Free preview · £0</span>
-              <h3 className="font-display font-semibold text-xl text-foreground">Free Preview</h3>
-              <p className="text-sm text-muted-foreground mt-1 max-w-2xl">
+              <h3 className="font-display font-semibold text-xl">Free Preview</h3>
+              <p className="text-sm opacity-80 mt-1 max-w-2xl">
                 Start with free Campaign Credits. Build your first workspace, review your data and generate preview assets before you pay.
               </p>
-              <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-sm text-foreground">
+              <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-sm">
                 <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />10 welcome credits + 2/day (cap 10)</li>
                 <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />1 workspace, up to 25 contacts</li>
                 <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />1 full campaign pack (preview)</li>
@@ -158,7 +158,7 @@ const Pricing = () => {
                 <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />Buy top-up credits any time</li>
                 <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />No live sending on Free Preview</li>
               </ul>
-              <p className="text-xs text-muted-foreground mt-3">
+              <p className="text-xs opacity-70 mt-3">
                 No surprise bills. No automatic paid upgrade. Publishing and sending remain under your control.
               </p>
             </div>
@@ -175,7 +175,7 @@ const Pricing = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.4, delay: i * 0.06 }}
-                className={`rounded-2xl p-6 lg:p-7 shadow-elevated border flex flex-col ${p.highlight ? "bg-card border-accent/60 ring-1 ring-accent/30" : p.addon ? "bg-secondary border-border/50" : "bg-card border-border/50"}`}
+                className={`rounded-2xl p-6 lg:p-7 shadow-card border flex flex-col bg-white border-white/40 text-foreground ${p.highlight ? "ring-1 ring-accent/30" : ""}`}
               >
                 {p.highlight && (
                   <span className="inline-block self-start text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-accent/15 text-accent font-semibold mb-3">Most popular</span>
@@ -183,21 +183,21 @@ const Pricing = () => {
                 {p.addon && (
                   <span className="inline-block self-start text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-foreground/10 text-foreground font-semibold mb-3">Optional add-on</span>
                 )}
-                <h3 className="font-display font-semibold text-xl text-foreground">{p.name}</h3>
-                <p className="text-muted-foreground text-sm mb-3">{p.tagline}</p>
+                <h3 className="font-display font-semibold text-xl">{p.name}</h3>
+                <p className="text-sm opacity-80 mb-3">{p.tagline}</p>
                 <p className="mb-1">
-                  <span className="text-3xl md:text-4xl font-display font-bold text-foreground">{priceFor(p.sku, currency).formatted}</span>
-                  <span className="text-muted-foreground text-sm ml-1">{p.unit}</span>
+                  <span className="text-3xl md:text-4xl font-display font-bold">{priceFor(p.sku, currency).formatted}</span>
+                  <span className="text-sm opacity-80 ml-1">{p.unit}</span>
                 </p>
-                <p className="text-[11px] text-muted-foreground mb-3">{taxNotice(currency)}</p>
-                <p className="text-xs text-muted-foreground mb-4">Best for: <span className="text-foreground font-medium">{p.best}</span></p>
+                <p className="text-[11px] opacity-70 mb-3">{taxNotice(currency)}</p>
+                <p className="text-xs mb-4">Best for: <span className="font-medium">{p.best}</span></p>
 
                 <p className="text-xs font-semibold text-accent mb-4">{p.credits}</p>
                 <ul className="space-y-2 mb-6 flex-1">
                   {p.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-sm text-foreground">
+                    <li key={f} className="flex items-start gap-2 text-sm">
                       <Check size={16} className="text-accent shrink-0 mt-0.5" />
-                      <span className="text-muted-foreground">{f}</span>
+                      <span className="opacity-80">{f}</span>
                     </li>
                   ))}
                 </ul>
@@ -212,44 +212,51 @@ const Pricing = () => {
           </div>
         </div>
       </section>
+      </div></div>
 
 
-
-
-
-      <section className="bg-background border-t border-border px-6 md:px-12 lg:px-20 py-14 md:py-16 lg:py-20">
+      <div className="panel-wrap"><div className="panel-blue">
+      <section className="section-padding">
         <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
-          <div>
+          <div className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground">
             <h3 className="font-display font-semibold text-lg mb-2">Generous data, governed action</h3>
-            <p className="text-muted-foreground text-sm">Store companies, contacts and segments without per-record fees. Heavy-value actions — full outreach packs, social packs, press releases, video packs — draw on Campaign Credits.</p>
+            <p className="text-sm opacity-90">Store companies, contacts and segments without per-record fees. Heavy-value actions — full outreach packs, social packs, press releases, video packs — draw on Campaign Credits.</p>
           </div>
-          <div>
+          <div className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground">
             <h3 className="font-display font-semibold text-lg mb-2">Safe scaling, no surprise bills</h3>
-            <p className="text-muted-foreground text-sm">Tiered daily caps protect deliverability. Top up credits when a month gets busy — Small, Medium or Large. Top-ups never expire while your plan is active.</p>
+            <p className="text-sm opacity-90">Tiered daily caps protect deliverability. Top up credits when a month gets busy — Small, Medium or Large. Top-ups never expire while your plan is active.</p>
           </div>
-          <div>
+          <div className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground">
             <h3 className="font-display font-semibold text-lg mb-2">International by default</h3>
-            <p className="text-muted-foreground text-sm">Multi-currency pricing (GBP, USD, EUR and more), localised tax at checkout, multilingual outreach. Built for distributed teams from day one.</p>
+            <p className="text-sm opacity-90">Multi-currency pricing (GBP, USD, EUR and more), localised tax at checkout, multilingual outreach. Built for distributed teams from day one.</p>
           </div>
         </div>
         <div className="max-w-5xl mx-auto mt-10 md:mt-12">
           <TrustStrip variant="pricing" />
         </div>
       </section>
+      </div></div>
 
-      <section className="bg-secondary px-6 md:px-12 lg:px-20 py-14 md:py-16 lg:py-20">
+      <div className="panel-wrap"><div className="panel-pink">
+      <section className="section-padding">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-8">Pricing FAQ</h2>
-          <Accordion type="single" collapsible>
-            {faqs.map((f, i) => (
-              <AccordionItem key={i} value={`f-${i}`}>
-                <AccordionTrigger className="text-left font-display">{f.q}</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">{f.a}</AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+          <div className="max-w-2xl mb-8">
+            <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">Pricing FAQ</p>
+            <h2 className="text-3xl md:text-4xl font-display font-bold">Questions about plans, credits and billing</h2>
+          </div>
+          <div className="bg-white border border-white/40 rounded-2xl p-6 md:p-8 shadow-card text-foreground">
+            <Accordion type="single" collapsible>
+              {faqs.map((f, i) => (
+                <AccordionItem key={i} value={`f-${i}`}>
+                  <AccordionTrigger className="text-left font-display">{f.q}</AccordionTrigger>
+                  <AccordionContent className="leading-relaxed opacity-80">{f.a}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
         </div>
       </section>
+      </div></div>
     </main>
     <EmailIntegrationsStrip variant="compact" />
     <Footer />
