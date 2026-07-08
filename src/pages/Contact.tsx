@@ -1,7 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
-import ConfidentialityNote from "@/components/ConfidentialityNote";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -154,11 +153,6 @@ const Contact = () => {
                 </div>
               </motion.div>
             </div>
-          </div>
-        </section>
-        <section className="bg-background px-6 md:px-12 lg:px-20 pb-16 md:pb-20">
-          <div className="max-w-4xl mx-auto">
-            <ConfidentialityNote />
           </div>
         </section>
       </main>
