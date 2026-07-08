@@ -86,9 +86,9 @@ const ForBusinesses = () => (
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {cases.map((c, i) => (
-              <motion.div key={c.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6">
-                <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center mb-4">
-                  <c.icon size={20} />
+              <motion.div key={c.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground">
+                <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
+                  <c.icon className="text-accent" size={20} />
                 </div>
                 <h3 className="font-display font-semibold mb-2">{c.title}</h3>
                 <p className="text-sm leading-relaxed opacity-90">{c.desc}</p>
@@ -112,9 +112,9 @@ const ForBusinesses = () => (
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {capabilities.map((c, i) => (
-              <motion.div key={c.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6">
-                <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center mb-4">
-                  <c.icon size={20} />
+              <motion.div key={c.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground">
+                <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
+                  <c.icon className="text-accent" size={20} />
                 </div>
                 <h3 className="font-display font-semibold mb-2">{c.title}</h3>
                 <p className="text-sm leading-relaxed opacity-90">{c.desc}</p>
@@ -138,9 +138,9 @@ const ForBusinesses = () => (
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {replaces.map((r, i) => (
-              <motion.div key={r.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6">
-                <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center mb-4">
-                  <r.icon size={20} />
+              <motion.div key={r.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground">
+                <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
+                  <r.icon className="text-accent" size={20} />
                 </div>
                 <h3 className="font-display font-semibold mb-2">{r.title}</h3>
                 <p className="text-sm leading-relaxed opacity-90">{r.desc}</p>
@@ -164,9 +164,9 @@ const ForBusinesses = () => (
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {outcomes.map((o, i) => (
-              <motion.div key={o.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6">
-                <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center mb-4">
-                  <o.icon size={20} />
+              <motion.div key={o.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground">
+                <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
+                  <o.icon className="text-accent" size={20} />
                 </div>
                 <h3 className="font-display font-semibold mb-2">{o.title}</h3>
                 <p className="text-sm leading-relaxed opacity-90">{o.desc}</p>
