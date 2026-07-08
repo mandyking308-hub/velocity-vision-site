@@ -198,11 +198,6 @@ const ForBusinesses = () => (
           </div>
         </div>
       </section>
-      <section className="bg-background px-6 md:px-12 lg:px-20 pb-16 md:pb-20">
-        <div className="max-w-4xl mx-auto">
-          <ConfidentialityNote />
-        </div>
-      </section>
     </main>
     <EmailIntegrationsStrip variant="compact" />
     <CampaignChannelsStrip variant="compact" />
