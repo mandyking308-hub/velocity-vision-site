@@ -41,28 +41,30 @@ interface Props {
 export default function CampaignChannelsStrip({ variant = "full" }: Props) {
   if (variant === "compact") {
     return (
-      <section className="py-10 border-y border-border/50 bg-splash-pink relative overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4">
-          <p className="text-center text-xs uppercase tracking-widest text-muted-foreground mb-5">
-            Campaign-ready assets for email, social, PR and paid channels
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
-            {channels.map((c) => (
-              <div
-                key={c.label}
-                className="flex items-center gap-2 opacity-90 hover:opacity-100 transition"
-                title={c.label}
-              >
-                <div className="flex items-center justify-center h-6 w-6 shrink-0">{c.icon}</div>
-                <span className="text-xs font-medium text-foreground/80">{c.label}</span>
-              </div>
-            ))}
+      <div className="panel-wrap"><div className="panel-pink">
+        <section className="section-padding">
+          <div className="max-w-6xl mx-auto px-4">
+            <p className="text-center text-xs uppercase tracking-widest mb-5 opacity-90">
+              Campaign-ready assets for email, social, PR and paid channels
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              {channels.map((c) => (
+                <div
+                  key={c.label}
+                  className="flex items-center gap-2 rounded-xl border border-white/40 bg-white px-4 py-2 shadow-card"
+                  title={c.label}
+                >
+                  <div className="flex items-center justify-center h-6 w-6 shrink-0">{c.icon}</div>
+                  <span className="text-xs font-medium text-foreground/90">{c.label}</span>
+                </div>
+              ))}
+            </div>
+            <p className="text-[11px] text-white/80 mt-5 text-center">
+              Velocity Vision prepares social and paid-channel content. Publishing remains under your control.
+            </p>
           </div>
-          <p className="text-[11px] text-muted-foreground mt-4 text-center">
-            Velocity Vision prepares social and paid-channel content. Publishing remains under your control.
-          </p>
-        </div>
-      </section>
+        </section>
+      </div></div>
     );
   }
 
