@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Briefcase, Building2, Sparkles } from "lucide-react";
+import { ArrowRight, Briefcase, Building2 } from "lucide-react";
 import laughingMarketer from "@/assets/laughing-marketer.jpg";
 
 const BLUE = "#2440FF";
@@ -44,15 +44,13 @@ const AudienceSplit = () => (
         <div className="md:col-span-2 relative min-h-[380px]">
           <img
             src={laughingMarketer}
-            alt="Marketer laughing while running her campaigns in Velocity Vision"
+            alt="Founder laughing while her team runs outreach in Velocity Vision"
             className="absolute inset-0 w-full h-full object-cover"
             loading="lazy"
             width={1024}
             height={1280}
           />
-          <div className="absolute top-4 left-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-widest text-white shadow-lg" style={{ backgroundColor: PINK }}>
-            <Sparkles size={12} /> Made for marketers
-          </div>
+        
         </div>
         <div
           className="md:col-span-3 p-8 md:p-12 flex flex-col justify-center text-white relative"
@@ -60,13 +58,13 @@ const AudienceSplit = () => (
         >
           <div aria-hidden className="absolute -top-16 -right-16 w-60 h-60 rounded-full" style={{ backgroundColor: PINK, opacity: 0.35, filter: "blur(30px)" }} />
           <div aria-hidden className="absolute bottom-6 right-8 w-24 h-24 rounded-full" style={{ backgroundColor: PINK }} />
-          <p className="relative font-semibold text-[11px] uppercase tracking-[0.25em] text-white/80 mb-4">Marketing, minus the grind</p>
+          <p className="relative font-semibold text-[11px] uppercase tracking-[0.25em] text-white/80 mb-4">Built for the whole go-to-market team</p>
           <h2 className="relative font-display font-bold text-3xl md:text-5xl leading-[1.05] mb-4">
             Real people. Real pipeline.{" "}
             <span style={{ color: "#FFD6E7" }}>Zero busywork.</span>
           </h2>
           <p className="relative text-white/85 text-base md:text-lg max-w-xl leading-relaxed">
-            Velocity Vision gives marketers back the fun bits — the strategy, the stories, the wins — and quietly handles the data, the drafts and the follow-up.
+            Founders, sales teams, marketers and agencies use Velocity Vision to turn scattered data into outreach, follow-up and pipeline — without the tool sprawl.
           </p>
         </div>
       </motion.div>
