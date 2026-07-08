@@ -44,7 +44,7 @@ const AudienceSplit = () => (
         <div className="md:col-span-2 relative min-h-[380px]">
           <img
             src={laughingMarketer}
-            alt="Marketer laughing while running her campaigns in Velocity Vision"
+            alt="Founder laughing while her team runs outreach in Velocity Vision"
             className="absolute inset-0 w-full h-full object-cover"
             loading="lazy"
             width={1024}
