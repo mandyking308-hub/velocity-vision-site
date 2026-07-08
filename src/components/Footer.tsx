@@ -61,7 +61,10 @@ const Footer = () => (
         </div>
       </div>
       <div className="border-t border-primary-foreground/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-        <p className="text-xs text-primary-foreground/70">© 2026 Global Solutions Management LLC — operator of the Velocity Vision platform. Delaware, United States.</p>
+        <div className="text-center md:text-left">
+          <p className="text-xs text-primary-foreground/70">© 2026 Global Solutions Management LLC — operator of the Velocity Vision platform. Delaware, United States.</p>
+          <p className="text-xs text-primary-foreground/50 mt-1">Confidential by default. We do not publish customer data or results without written permission.</p>
+        </div>
         <div className="flex gap-6">
           <Link to="/legal/privacy-policy" className="text-xs text-primary-foreground/70 hover:text-accent transition-colors">Privacy</Link>
           <Link to="/legal/terms-of-service" className="text-xs text-primary-foreground/70 hover:text-accent transition-colors">Terms</Link>
