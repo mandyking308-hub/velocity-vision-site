@@ -171,11 +171,12 @@ const Help = () => (
         </div>
       </section>
 
-      <section className="section-padding bg-background">
-        <div className="max-w-3xl mx-auto space-y-12">
+      <div className="panel-wrap"><div className="panel-pink">
+      <section className="section-padding">
+        <div className="max-w-4xl mx-auto space-y-6">
           {sections.map((s) => (
-            <div key={s.title}>
-              <h2 className="text-2xl font-display font-bold text-foreground mb-4">{s.title}</h2>
+            <div key={s.title} className="bg-white rounded-xl border border-white/40 shadow-card p-6 md:p-8 text-foreground">
+              <h2 className="text-2xl font-display font-bold mb-2">{s.title}</h2>
               <Accordion type="single" collapsible>
                 {s.items.map((it, i) => (
                   <AccordionItem key={i} value={`${s.title}-${i}`}>
@@ -188,6 +189,8 @@ const Help = () => (
           ))}
         </div>
       </section>
+      </div></div>
+
 
       <section className="section-padding bg-hero">
         <div className="max-w-3xl mx-auto text-center">
