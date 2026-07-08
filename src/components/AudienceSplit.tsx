@@ -50,9 +50,7 @@ const AudienceSplit = () => (
             width={1024}
             height={1280}
           />
-          <div className="absolute top-4 left-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-widest text-white shadow-lg" style={{ backgroundColor: PINK }}>
-            <Sparkles size={12} /> Made for marketers
-          </div>
+        
         </div>
         <div
           className="md:col-span-3 p-8 md:p-12 flex flex-col justify-center text-white relative"
