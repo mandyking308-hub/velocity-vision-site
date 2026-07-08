@@ -49,8 +49,9 @@ const PortalSidebar = () => {
     )}>
       <div className="p-4 flex items-center justify-between border-b border-primary-foreground/10">
         {!collapsed && (
-          <Link to="/portal" className="font-display text-lg font-bold text-primary-foreground">
-            Velocity<span className="text-accent">.</span> Portal
+          <Link to="/portal" className="font-display text-lg font-bold text-primary-foreground flex items-center gap-1 notranslate" translate="no">
+            <span>Velocity</span>
+            <span className="bg-clip-text text-transparent" style={{ backgroundImage: "linear-gradient(135deg, hsl(232 100% 65%) 0%, hsl(335 100% 60%) 100%)" }}>Vision</span>
           </Link>
         )}
         <button onClick={() => setCollapsed(!collapsed)} className="text-primary-foreground/60 hover:text-primary-foreground p-1">
