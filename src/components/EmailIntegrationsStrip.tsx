@@ -82,22 +82,28 @@ export default function EmailIntegrationsStrip({ variant = "full" }: Props) {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-w-4xl mx-auto">
-          {providers.map((p) => (
-            <div
-              key={p.label}
-              className="flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 shadow-card"
-            >
-              <div className="flex items-center justify-center h-9 w-9 shrink-0 rounded-lg bg-muted/40">
-                {p.icon}
+        <div
+          className="relative overflow-hidden max-w-5xl mx-auto"
+          style={{ maskImage: "linear-gradient(90deg, transparent, black 8%, black 92%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, black 8%, black 92%, transparent)" }}
+        >
+          <div className="flex gap-3 w-max animate-[providers-marquee_34s_linear_infinite] hover:[animation-play-state:paused]">
+            {[...providers, ...providers].map((p, i) => (
+              <div
+                key={`${p.label}-${i}`}
+                className="flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 shadow-card shrink-0 w-[230px]"
+              >
+                <div className="flex items-center justify-center h-9 w-9 shrink-0 rounded-lg bg-muted/40">
+                  {p.icon}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">{p.label}</p>
+                  <p className="text-[10px] text-muted-foreground truncate">{p.note}</p>
+                </div>
               </div>
-              <div className="min-w-0">
-                <p className="text-sm font-medium text-foreground truncate">{p.label}</p>
-                <p className="text-[10px] text-muted-foreground">{p.note}</p>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
+        <style>{`@keyframes providers-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
 
         <p className="text-xs text-muted-foreground mt-6 max-w-2xl mx-auto text-center">
           Yahoo native connector is coming next; Yahoo can be connected through SMTP/app-password setup today.
