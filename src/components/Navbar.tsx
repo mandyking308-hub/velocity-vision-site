@@ -25,7 +25,7 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-glass border-b border-border/50">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
         <Link to="/" className="font-display text-xl font-bold tracking-tight text-foreground notranslate" translate="no">
-          Velocity<span className="text-accent">.</span>
+          Velocity<span className="text-accent"> Vision</span>
         </Link>
 
         {/* Desktop links */}
