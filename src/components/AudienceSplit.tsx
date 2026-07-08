@@ -58,13 +58,13 @@ const AudienceSplit = () => (
         >
           <div aria-hidden className="absolute -top-16 -right-16 w-60 h-60 rounded-full" style={{ backgroundColor: PINK, opacity: 0.35, filter: "blur(30px)" }} />
           <div aria-hidden className="absolute bottom-6 right-8 w-24 h-24 rounded-full" style={{ backgroundColor: PINK }} />
-          <p className="relative font-semibold text-[11px] uppercase tracking-[0.25em] text-white/80 mb-4">Marketing, minus the grind</p>
+          <p className="relative font-semibold text-[11px] uppercase tracking-[0.25em] text-white/80 mb-4">Built for the whole go-to-market team</p>
           <h2 className="relative font-display font-bold text-3xl md:text-5xl leading-[1.05] mb-4">
             Real people. Real pipeline.{" "}
             <span style={{ color: "#FFD6E7" }}>Zero busywork.</span>
           </h2>
           <p className="relative text-white/85 text-base md:text-lg max-w-xl leading-relaxed">
-            Velocity Vision gives marketers back the fun bits — the strategy, the stories, the wins — and quietly handles the data, the drafts and the follow-up.
+            Founders, sales teams, marketers and agencies use Velocity Vision to turn scattered data into outreach, follow-up and pipeline — without the tool sprawl.
           </p>
         </div>
       </motion.div>
