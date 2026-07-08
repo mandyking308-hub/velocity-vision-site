@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom";
 import { openCookiePreferences } from "@/components/CookieBanner";
+import logoMark from "@/assets/velocity-vision-logo.png";
 
 const Footer = () => (
   <footer className="bg-primary text-primary-foreground">
     <div className="max-w-7xl mx-auto section-padding">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
         <div className="lg:col-span-2">
-          <h3 className="text-2xl font-display font-bold mb-4">Velocity<span className="text-accent"> Vision</span></h3>
+          <h3 className="text-2xl font-display font-bold mb-4 flex items-center gap-2"><img src={logoMark} alt="Velocity Vision" width={36} height={36} className="h-9 w-9 shrink-0" loading="lazy" /><span>Velocity<span className="text-accent"> Vision</span></span></h3>
           <p className="text-primary-foreground/70 text-sm leading-relaxed max-w-xs">
             A self-serve workspace for Data Vault, quality review, governed activation, follow-up and pipeline. Built for founders, lean teams and agencies.
           </p>
