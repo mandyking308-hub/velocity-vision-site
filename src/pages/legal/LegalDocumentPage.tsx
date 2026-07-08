@@ -7316,26 +7316,31 @@ const LegalDocumentPage = () => {
         <meta name="description" content={`${doc.title} for the Velocity Vision platform, operated by Global Solutions Management LLC.`} />
       </Helmet>
       <Navbar />
-      <main className="pt-24 pb-20">
-        <div className="max-w-6xl mx-auto px-6 lg:px-8">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
-            <Link to="/legal" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-accent transition-colors mb-6">
-              <ArrowLeft size={14} /> Back to Legal Centre
-            </Link>
-            <h1 className="text-3xl lg:text-4xl font-display font-bold text-foreground">{doc.title}</h1>
-            <div className="flex flex-wrap gap-x-6 gap-y-1 mt-3">
-              <p className="text-sm text-muted-foreground"><span className="font-medium text-foreground/70">Effective Date:</span> {doc.effectiveDate}</p>
-              <p className="text-sm text-muted-foreground"><span className="font-medium text-foreground/70">Last Updated:</span> {doc.lastUpdated}</p>
-              <p className="text-sm text-muted-foreground"><span className="font-medium text-foreground/70">Version:</span> {doc.version}</p>
-            </div>
-            <p className="text-xs text-muted-foreground mt-2">Global Solutions Management LLC — Delaware, United States — operator of Velocity Vision</p>
-            <p className="text-xs text-muted-foreground mt-2 max-w-3xl">These terms govern access to and use of Velocity Vision from their stated effective date.</p>
-            <p className="text-xs text-muted-foreground mt-2 max-w-3xl italic">
-              This document may be displayed in your browser's preferred language using an automated
-              machine-translation layer (GTranslate / Google Translate). Translations are provided for
-              convenience only. The English version controls if there is any conflict between translations.
-            </p>
-          </motion.div>
+      <main className="pt-24">
+        <section className="section-padding bg-hero">
+          <div className="max-w-6xl mx-auto">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <Link to="/legal" className="inline-flex items-center gap-1.5 text-sm text-primary-foreground/70 hover:text-accent transition-colors mb-6">
+                <ArrowLeft size={14} /> Back to Legal Centre
+              </Link>
+              <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Legal document</p>
+              <h1 className="text-3xl md:text-5xl font-display font-bold text-primary-foreground">{doc.title}</h1>
+              <div className="flex flex-wrap gap-x-6 gap-y-1 mt-4">
+                <p className="text-sm text-primary-foreground/70"><span className="font-medium text-primary-foreground/90">Effective Date:</span> {doc.effectiveDate}</p>
+                <p className="text-sm text-primary-foreground/70"><span className="font-medium text-primary-foreground/90">Last Updated:</span> {doc.lastUpdated}</p>
+                <p className="text-sm text-primary-foreground/70"><span className="font-medium text-primary-foreground/90">Version:</span> {doc.version}</p>
+              </div>
+              <p className="text-xs text-primary-foreground/60 mt-3">Global Solutions Management LLC — Delaware, United States — operator of Velocity Vision</p>
+              <p className="text-xs text-primary-foreground/60 mt-1 max-w-3xl">These terms govern access to and use of Velocity Vision from their stated effective date.</p>
+              <p className="text-xs text-primary-foreground/60 mt-1 max-w-3xl italic">
+                This document may be displayed in your browser's preferred language using an automated
+                machine-translation layer (GTranslate / Google Translate). Translations are provided for
+                convenience only. The English version controls if there is any conflict between translations.
+              </p>
+            </motion.div>
+          </div>
+        </section>
+        <div className="max-w-6xl mx-auto px-6 lg:px-8 py-16">
 
           <div className="flex gap-10">
             <aside className="hidden lg:block w-64 shrink-0">
