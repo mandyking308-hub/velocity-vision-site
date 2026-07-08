@@ -99,20 +99,25 @@ const AuthPage = () => {
       <meta name="description" content="Sign in to your Velocity Vision workspace or create a new account to start planning, generating and safely activating campaigns." />
       <meta name="robots" content="noindex,nofollow" />
     </Helmet>
-    <div className="min-h-screen bg-primary flex items-center justify-center px-4">
+    <div className="min-h-screen bg-primary flex items-center justify-center px-4 relative overflow-hidden">
+      {/* Brand gradient flourishes */}
+      <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full opacity-40 blur-3xl pointer-events-none" style={{ background: "hsl(232 100% 57%)" }} />
+      <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full opacity-40 blur-3xl pointer-events-none" style={{ background: "hsl(335 100% 54%)" }} />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
+        className="w-full max-w-md relative z-10"
       >
         <div className="text-center mb-8">
-          <h1 className="font-display text-3xl font-bold text-primary-foreground">
-            Velocity<span className="text-accent">.</span>
+          <h1 className="font-display text-3xl font-bold text-primary-foreground flex items-center justify-center gap-2 notranslate" translate="no">
+            <span>Velocity</span>
+            <span className="bg-clip-text text-transparent" style={{ backgroundImage: "linear-gradient(135deg, hsl(232 100% 65%) 0%, hsl(335 100% 60%) 100%)" }}>Vision</span>
           </h1>
           <p className="text-primary-foreground/60 mt-2 text-sm">
             {isLogin ? "Sign in to your account" : "Create your account"}
           </p>
         </div>
+
 
         <div className="bg-card rounded-xl p-8 shadow-elevated border border-border/50">
           <form onSubmit={handleSubmit} className="space-y-4">
