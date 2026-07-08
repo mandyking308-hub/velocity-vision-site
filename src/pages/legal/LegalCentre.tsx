@@ -26,49 +26,62 @@ const LegalCentre = () => (
       <meta name="description" content="Terms, policies and agreements governing use of the Velocity Vision platform, including privacy, DPA, acceptable use, marketing compliance, security and SLA." />
     </Helmet>
     <Navbar />
-    <main className="pt-24 pb-20">
-      <div className="max-w-4xl mx-auto px-6 lg:px-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <div className="flex items-center gap-3 mb-2">
-            <Scale size={28} className="text-accent" />
-            <h1 className="text-3xl lg:text-4xl font-display font-bold text-foreground">Legal Centre</h1>
-          </div>
-          <p className="text-muted-foreground leading-relaxed mt-4 max-w-3xl">
-            This Legal Centre contains the terms, policies and agreements that govern use of the Velocity Vision software platform. Together, these documents cover workspace access, customer responsibilities, Data Vault processing, safe activation, outreach compliance, privacy, security, billing, service standards and agency workspace use.
-          </p>
-          <div className="mt-4 p-4 bg-muted/40 rounded-xl border border-border/50 text-sm text-muted-foreground space-y-2">
+    <main className="pt-24">
+      <section className="section-padding bg-hero">
+        <div className="max-w-5xl mx-auto">
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+            <div className="flex items-center gap-3 mb-4">
+              <Scale size={28} className="text-accent" />
+              <p className="text-accent font-semibold text-sm uppercase tracking-widest">Legal Centre</p>
+            </div>
+            <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">
+              Terms, policies and agreements
+            </h1>
+            <p className="text-primary-foreground/75 text-lg max-w-3xl">
+              The documents that govern use of the Velocity Vision software platform — workspace access, customer responsibilities, Data Vault processing, safe activation, outreach compliance, privacy, security, billing, service standards and agency workspace use.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      <div className="panel-wrap"><div className="panel-blue">
+      <section className="section-padding">
+        <div className="max-w-5xl mx-auto">
+          <div className="bg-white rounded-xl border border-white/40 shadow-card p-6 text-foreground/85 text-sm space-y-2 mb-10">
             <p><strong className="text-foreground">Operating entity:</strong> Global Solutions Management LLC — incorporated in the State of Delaware, United States — operator of the Velocity Vision platform.</p>
             <p><strong className="text-foreground">Document stack:</strong> The Platform Terms govern general use. The Customer Agreement governs paid plans, credits and subscriptions. The Data Processing Agreement governs customer-uploaded personal data. Product policies apply to all customers and workspaces.</p>
             <p><strong className="text-foreground">Legal status:</strong> These documents govern access to and use of the Velocity Vision software platform from their stated effective dates. They form part of the Velocity Vision legal document stack and apply according to their stated scope, incorporated terms and applicable plan or workspace use.</p>
             <p><strong className="text-foreground">Multilingual access:</strong> This Legal Centre may be viewed in multiple languages using automated translation. Automated translations are provided for convenience only. The English version controls if there is any conflict, ambiguity, inconsistency, error or difference between versions.</p>
           </div>
 
-        </motion.div>
-
-        <div className="mt-12 space-y-4">
-          {legalDocs.map((doc, i) => (
-            <motion.div key={doc.path} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-              <Link
-                to={doc.path}
-                className="group flex items-start gap-4 p-5 bg-card border border-border/50 rounded-xl shadow-card hover:border-accent/30 hover:shadow-elevated transition-all"
-              >
-                <div className="mt-0.5 shrink-0">
-                  <FileText size={20} className="text-accent" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-display font-semibold text-foreground group-hover:text-accent transition-colors">{doc.title}</h3>
-                  <p className="text-sm text-muted-foreground mt-1">{doc.description}</p>
-                </div>
-                <Shield size={16} className="text-muted-foreground/40 shrink-0 mt-1" />
-              </Link>
-            </motion.div>
-          ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {legalDocs.map((doc, i) => (
+              <motion.div key={doc.path} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.03 }}>
+                <Link
+                  to={doc.path}
+                  className="group flex items-start gap-4 p-5 bg-white border border-white/40 rounded-xl shadow-card hover:shadow-elevated transition-all h-full text-foreground"
+                >
+                  <div className="mt-0.5 shrink-0">
+                    <FileText size={20} className="text-accent" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-display font-semibold group-hover:text-accent transition-colors">{doc.title}</h3>
+                    <p className="text-sm text-foreground/70 mt-1">{doc.description}</p>
+                  </div>
+                  <Shield size={16} className="text-foreground/30 shrink-0 mt-1" />
+                </Link>
+              </motion.div>
+            ))}
+          </div>
         </div>
+      </section>
+      </div></div>
 
-        <div className="mt-12">
+      <section className="section-padding bg-background">
+        <div className="max-w-5xl mx-auto">
           <TrustStrip variant="legal" />
         </div>
-      </div>
+      </section>
     </main>
     <Footer />
   </div>
