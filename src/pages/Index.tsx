@@ -47,6 +47,7 @@ const Index = () => (
     <main>
       <HeroSection />
       <EmailIntegrationsStrip />
+      <AudienceSplit />
       <div className="panel-wrap"><div className="panel-blue"><ProblemProof /></div></div>
       <CampaignChannelsStrip />
       <div className="panel-wrap"><div className="panel-pink"><CampaignCapabilities /></div></div>
@@ -55,7 +56,6 @@ const Index = () => (
       <div className="panel-wrap"><div className="panel-blue"><HowItWorksPreview /></div></div>
       <WorkflowSavings />
       <div className="panel-wrap"><div className="panel-pink"><PricingTeaser /></div></div>
-      <AudienceSplit />
       <HomeFAQ />
       <FinalCTA />
     </main>
