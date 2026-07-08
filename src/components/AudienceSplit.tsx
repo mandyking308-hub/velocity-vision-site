@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Briefcase, Building2, Sparkles } from "lucide-react";
+import { ArrowRight, Briefcase, Building2 } from "lucide-react";
 import laughingMarketer from "@/assets/laughing-marketer.jpg";
 
 const BLUE = "#2440FF";
