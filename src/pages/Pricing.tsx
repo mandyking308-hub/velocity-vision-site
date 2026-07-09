@@ -85,7 +85,7 @@ const plans: PlanDef[] = [
 const faqs = [
   { q: "Is Free Preview really free?", a: "Yes. £0, no card required. You get 10 welcome Campaign Credits plus +2 per day (daily balance capped at 10) for 14 days. There is no automatic paid upgrade — you decide when, or whether, to buy credits or move to Growth." },
   { q: "What happens when free credits run out?", a: "The workspace stays available. AI generation pauses until you top up credits or upgrade. Your data, review and pipeline remain intact." },
-  { q: "Can I buy credits without subscribing?", a: "Yes. Top-ups are available to every plan, including Free Preview. Paid top-up credits are recorded separately and become usable as soon as Stripe payment clears." },
+  { q: "Can I buy credits without subscribing?", a: "Top-ups and paid upgrades are available by manual onboarding while automated checkout is being finalised. Contact us to arrange top-up credits or a paid plan." },
   { q: "Can I send outreach on Free Preview?", a: "No. Live sending, Nylas mailbox connection and third-party account activation are gated on Free Preview. Sending unlocks with a paid plan and completed compliance gates." },
   { q: "Do free credits expire?", a: "Yes — Free Preview runs for 14 days from signup, and the daily free balance is capped at 10. Paid top-up credits do not expire while your plan is active." },
   { q: "Are AI outputs drafts?", a: "Yes. Every AI-generated asset is a draft you review, edit and approve. Velocity Vision does not send, publish or activate anything automatically." },
