@@ -10,6 +10,7 @@ const plans = [
     unit: "one-off",
     desc: "Test the full workflow on one campaign.",
     bullets: ["1 activated campaign", "Data Vault + quality review", "Email + social + press pack", "Follow-up & pipeline access", "30 days workspace access"],
+    cta: "Request Starter onboarding",
   },
   {
     name: "Growth",
@@ -18,6 +19,7 @@ const plans = [
     desc: "Run outreach and pipeline as your main workflow.",
     bullets: ["Recurring campaigns & cadence", "Larger sending caps", "Follow-up automation", "Pipeline tracking", "Monthly review"],
     highlight: true,
+    cta: "Request Growth onboarding",
   },
   {
     name: "Agency",
@@ -25,6 +27,7 @@ const plans = [
     unit: "per month",
     desc: "Manage multiple clients in one account.",
     bullets: ["Multiple client workspaces", "Pooled credits", "Pooled sending governance", "Per-client reporting", "Agency-level controls"],
+    cta: "Request Agency onboarding",
   },
 ];
 
@@ -47,6 +50,10 @@ const PricingTeaser = () => (
           Outreach, follow-up and early pipeline together — for less than most teams spend on disconnected tools and lost follow-up.
         </p>
       </motion.div>
+
+      <div className="mb-6 rounded-xl border border-accent/40 bg-accent/5 px-4 py-3 text-sm text-foreground/90 max-w-3xl">
+        Velocity Vision is currently opening in controlled Free Preview mode. Paid Starter, Growth and Agency workspaces are being onboarded manually while automated checkout is being finalised.
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
         {plans.map((p, i) => (
@@ -76,7 +83,7 @@ const PricingTeaser = () => (
               ))}
             </ul>
             <Button variant={p.highlight ? "cta" : "outline"} asChild className="self-stretch">
-              <Link to="/auth">Start with {p.name} <ArrowRight size={16} /></Link>
+              <Link to="/contact">{p.cta} <ArrowRight size={16} /></Link>
             </Button>
           </motion.div>
         ))}

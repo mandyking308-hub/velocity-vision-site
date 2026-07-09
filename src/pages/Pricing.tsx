@@ -42,7 +42,7 @@ const plans: PlanDef[] = [
       "Follow-up & pipeline",
       "30 days workspace access",
     ],
-    cta: "Start your workspace",
+    cta: "Request Starter onboarding",
   },
   {
     sku: "vv_growth_monthly",
@@ -60,7 +60,7 @@ const plans: PlanDef[] = [
       "Follow-up inbox with reply states",
       "Monthly performance review",
     ],
-    cta: "Choose Growth",
+    cta: "Request Growth onboarding",
   },
   {
     sku: "vv_agency_monthly",
@@ -77,7 +77,7 @@ const plans: PlanDef[] = [
       "Reusable templates & branded reports",
       "Seat management",
     ],
-    cta: "Start Agency Workspace",
+    cta: "Request Agency onboarding",
   },
 ];
 
@@ -85,7 +85,7 @@ const plans: PlanDef[] = [
 const faqs = [
   { q: "Is Free Preview really free?", a: "Yes. £0, no card required. You get 10 welcome Campaign Credits plus +2 per day (daily balance capped at 10) for 14 days. There is no automatic paid upgrade — you decide when, or whether, to buy credits or move to Growth." },
   { q: "What happens when free credits run out?", a: "The workspace stays available. AI generation pauses until you top up credits or upgrade. Your data, review and pipeline remain intact." },
-  { q: "Can I buy credits without subscribing?", a: "Yes. Top-ups are available to every plan, including Free Preview. Paid top-up credits are recorded separately and become usable as soon as Stripe payment clears." },
+  { q: "Can I buy credits without subscribing?", a: "Top-ups and paid upgrades are available by manual onboarding while automated checkout is being finalised. Contact us to arrange top-up credits or a paid plan." },
   { q: "Can I send outreach on Free Preview?", a: "No. Live sending, Nylas mailbox connection and third-party account activation are gated on Free Preview. Sending unlocks with a paid plan and completed compliance gates." },
   { q: "Do free credits expire?", a: "Yes — Free Preview runs for 14 days from signup, and the daily free balance is capped at 10. Paid top-up credits do not expire while your plan is active." },
   { q: "Are AI outputs drafts?", a: "Yes. Every AI-generated asset is a draft you review, edit and approve. Velocity Vision does not send, publish or activate anything automatically." },
@@ -126,7 +126,7 @@ const Pricing = () => {
                 <Link to="/auth">Start your workspace <ArrowRight size={18} /></Link>
               </Button>
               <Button variant="hero-outline" size="lg" asChild>
-                <Link to="/app/billing">View agency workspace</Link>
+                <Link to="/contact">Talk to us about onboarding</Link>
               </Button>
             </div>
           </motion.div>
@@ -155,7 +155,7 @@ const Pricing = () => {
                 <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />1 workspace, up to 25 contacts</li>
                 <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />1 full campaign pack (preview)</li>
                 <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />14-day preview window</li>
-                <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />Buy top-up credits any time</li>
+                <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />Top-ups & paid upgrades via manual onboarding</li>
                 <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />No live sending on Free Preview</li>
               </ul>
               <p className="text-xs opacity-70 mt-3">
@@ -166,6 +166,9 @@ const Pricing = () => {
               <Button size="lg" asChild><Link to="/auth">Start Free Preview <ArrowRight size={18} /></Link></Button>
               <Button variant="outline" size="lg" asChild><Link to="/help/getting-started">How it works</Link></Button>
             </div>
+          </div>
+          <div className="mb-6 rounded-xl border border-accent/40 bg-accent/5 px-4 py-3 text-sm text-foreground/90">
+            Velocity Vision is currently opening in controlled Free Preview mode. Paid Starter, Growth and Agency workspaces are being onboarded manually while automated checkout is being finalised.
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {plans.map((p, i) => (
@@ -202,7 +205,7 @@ const Pricing = () => {
                   ))}
                 </ul>
                 <Button variant={p.addon ? "outline" : "cta"} asChild>
-                  <Link to="/app/billing">{p.cta}</Link>
+                  <Link to="/contact">{p.cta}</Link>
                 </Button>
               </motion.div>
             ))}
