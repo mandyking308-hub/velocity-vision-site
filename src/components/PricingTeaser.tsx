@@ -51,6 +51,10 @@ const PricingTeaser = () => (
         </p>
       </motion.div>
 
+      <div className="mb-6 rounded-xl border border-accent/40 bg-accent/5 px-4 py-3 text-sm text-foreground/90 max-w-3xl">
+        Velocity Vision is currently opening in controlled Free Preview mode. Paid Starter, Growth and Agency workspaces are being onboarded manually while automated checkout is being finalised.
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
         {plans.map((p, i) => (
           <motion.div
