@@ -155,7 +155,7 @@ const Pricing = () => {
                 <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />1 workspace, up to 25 contacts</li>
                 <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />1 full campaign pack (preview)</li>
                 <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />14-day preview window</li>
-                <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />Buy top-up credits any time</li>
+                <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />Top-ups & paid upgrades via manual onboarding</li>
                 <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />No live sending on Free Preview</li>
               </ul>
               <p className="text-xs opacity-70 mt-3">
