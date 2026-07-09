@@ -41,16 +41,15 @@ const AudienceSplit = () => (
         transition={{ duration: 0.6 }}
         className="relative grid md:grid-cols-5 gap-0 rounded-[32px] overflow-hidden shadow-2xl mb-12"
       >
-        <div className="md:col-span-2 relative min-h-[380px]">
+        <div className="md:col-span-2 relative aspect-[4/5] sm:aspect-[16/10] md:aspect-auto md:min-h-[460px] bg-muted">
           <img
             src={laughingMarketer}
             alt="Founder laughing while her team runs outreach in Velocity Vision"
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover object-[50%_20%]"
             loading="lazy"
             width={1024}
             height={1280}
           />
-        
         </div>
         <div
           className="md:col-span-3 p-8 md:p-12 flex flex-col justify-center text-white relative"
