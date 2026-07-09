@@ -60,7 +60,7 @@ const plans: PlanDef[] = [
       "Follow-up inbox with reply states",
       "Monthly performance review",
     ],
-    cta: "Choose Growth",
+    cta: "Request Growth onboarding",
   },
   {
     sku: "vv_agency_monthly",
