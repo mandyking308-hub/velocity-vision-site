@@ -77,7 +77,7 @@ const plans: PlanDef[] = [
       "Reusable templates & branded reports",
       "Seat management",
     ],
-    cta: "Start Agency Workspace",
+    cta: "Request Agency onboarding",
   },
 ];
 
