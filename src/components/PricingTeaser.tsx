@@ -10,6 +10,7 @@ const plans = [
     unit: "one-off",
     desc: "Test the full workflow on one campaign.",
     bullets: ["1 activated campaign", "Data Vault + quality review", "Email + social + press pack", "Follow-up & pipeline access", "30 days workspace access"],
+    cta: "Request Starter onboarding",
   },
   {
     name: "Growth",
@@ -18,6 +19,7 @@ const plans = [
     desc: "Run outreach and pipeline as your main workflow.",
     bullets: ["Recurring campaigns & cadence", "Larger sending caps", "Follow-up automation", "Pipeline tracking", "Monthly review"],
     highlight: true,
+    cta: "Request Growth onboarding",
   },
   {
     name: "Agency",
@@ -25,6 +27,7 @@ const plans = [
     unit: "per month",
     desc: "Manage multiple clients in one account.",
     bullets: ["Multiple client workspaces", "Pooled credits", "Pooled sending governance", "Per-client reporting", "Agency-level controls"],
+    cta: "Request Agency onboarding",
   },
 ];
 
