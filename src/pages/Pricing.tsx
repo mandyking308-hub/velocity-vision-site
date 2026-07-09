@@ -202,7 +202,7 @@ const Pricing = () => {
                   ))}
                 </ul>
                 <Button variant={p.addon ? "outline" : "cta"} asChild>
-                  <Link to="/app/billing">{p.cta}</Link>
+                  <Link to="/contact">{p.cta}</Link>
                 </Button>
               </motion.div>
             ))}
