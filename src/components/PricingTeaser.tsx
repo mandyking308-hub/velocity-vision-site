@@ -79,7 +79,7 @@ const PricingTeaser = () => (
               ))}
             </ul>
             <Button variant={p.highlight ? "cta" : "outline"} asChild className="self-stretch">
-              <Link to="/auth">Start with {p.name} <ArrowRight size={16} /></Link>
+              <Link to="/contact">{p.cta} <ArrowRight size={16} /></Link>
             </Button>
           </motion.div>
         ))}
