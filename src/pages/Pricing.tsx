@@ -167,6 +167,9 @@ const Pricing = () => {
               <Button variant="outline" size="lg" asChild><Link to="/help/getting-started">How it works</Link></Button>
             </div>
           </div>
+          <div className="mb-6 rounded-xl border border-accent/40 bg-accent/5 px-4 py-3 text-sm text-foreground/90">
+            Velocity Vision is currently opening in controlled Free Preview mode. Paid Starter, Growth and Agency workspaces are being onboarded manually while automated checkout is being finalised.
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {plans.map((p, i) => (
               <motion.div
