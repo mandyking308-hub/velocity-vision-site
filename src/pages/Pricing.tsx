@@ -126,7 +126,7 @@ const Pricing = () => {
                 <Link to="/auth">Start your workspace <ArrowRight size={18} /></Link>
               </Button>
               <Button variant="hero-outline" size="lg" asChild>
-                <Link to="/app/billing">View agency workspace</Link>
+                <Link to="/contact">Talk to us about onboarding</Link>
               </Button>
             </div>
           </motion.div>
