@@ -42,7 +42,7 @@ const plans: PlanDef[] = [
       "Follow-up & pipeline",
       "30 days workspace access",
     ],
-    cta: "Start your workspace",
+    cta: "Request Starter onboarding",
   },
   {
     sku: "vv_growth_monthly",
