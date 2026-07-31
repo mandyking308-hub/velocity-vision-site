@@ -48,22 +48,25 @@ const Contact = () => {
 
     setLoading(true);
     try {
-      await supabase.functions.invoke("notify-contact", {
+      const { error } = await supabase.functions.invoke("notify-contact", {
         body: {
-          name: form.name,
-          email: form.email,
-          company: form.company,
-          message: form.message,
+          name: form.name.trim().slice(0, 200),
+          email: form.email.trim().slice(0, 320),
+          company: form.company.trim().slice(0, 200),
+          message: form.message.trim().slice(0, 5000),
           route: form.topic,
         },
       });
-      toast.success("Message sent. We'll respond within one business day.");
+
+      if (error) throw error;
+
+      toast.success("Message sent. We'll normally acknowledge it within one business day.");
       setForm({ name: "", email: "", company: "", message: "", topic: "general_support" });
     } catch {
-      toast.success("Message sent. We'll respond within one business day.");
-      setForm({ name: "", email: "", company: "", message: "", topic: "general_support" });
+      toast.error("We could not send your message. Please try again shortly.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -109,17 +112,18 @@ const Contact = () => {
             <div id="contact-form" className="grid grid-cols-1 lg:grid-cols-2 gap-16">
               <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
                 <h2 className="text-2xl font-display font-bold text-foreground mb-2">Send us a message</h2>
-                <p className="text-sm text-muted-foreground mb-8">For everything that doesn't fit a route above. Structured response within one business day.</p>
+                <p className="text-sm text-muted-foreground mb-8">For everything that doesn't fit a route above. Enquiries are normally acknowledged within one business day.</p>
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <Input placeholder="Your name *" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-                    <Input placeholder="Email *" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+                    <Input name="name" aria-label="Your name" placeholder="Your name *" required maxLength={200} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                    <Input name="email" aria-label="Email" placeholder="Email *" type="email" required maxLength={320} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
                   </div>
-                  <Input placeholder="Company" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
+                  <Input name="company" aria-label="Company" placeholder="Company" maxLength={200} value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
                   <div>
                     <label htmlFor="contact-topic" className="block text-xs font-medium text-muted-foreground mb-1">Topic</label>
                     <select
                       id="contact-topic"
+                      name="topic"
                       value={form.topic}
                       onChange={(e) => setForm({ ...form, topic: e.target.value })}
                       className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground"
@@ -129,10 +133,13 @@ const Contact = () => {
                       ))}
                     </select>
                   </div>
-                  <Textarea placeholder="How can we help? *" rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} />
+                  <Textarea name="message" aria-label="How can we help?" placeholder="How can we help? *" rows={5} required maxLength={5000} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} />
                   <Button variant="cta" size="lg" type="submit" disabled={loading}>
                     {loading ? "Sending..." : "Send message"} <ArrowRight size={18} />
                   </Button>
+                  <p className="text-xs text-muted-foreground">
+                    Your information is used to respond to this enquiry as described in the <Link to="/legal/privacy-policy" className="underline underline-offset-4 hover:text-accent">Privacy Policy</Link>.
+                  </p>
                 </form>
               </motion.div>
 
@@ -143,7 +150,7 @@ const Contact = () => {
                     <p>Global Solutions Management LLC</p>
                     <p>Delaware, United States</p>
                     <p>Velocity Vision operates at velocity-outreach.com</p>
-                    <p>Used internationally · multi-currency · multilingual (EN/ES)</p>
+                    <p>Used internationally · multi-currency · multilingual</p>
                   </div>
                 </div>
                 <div className="bg-card border border-border/50 rounded-xl p-6 shadow-card">
