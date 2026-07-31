@@ -25,8 +25,11 @@ const HeroSection = () => (
             Velocity Vision turns messy data into outreach, follow-up and{" "}
             <span style={{ color: PINK }}>live pipeline</span>.
           </h1>
-          <p className="relative text-base md:text-lg text-white/85 max-w-xl mb-8 leading-relaxed">
+          <p className="relative text-base md:text-lg text-white/85 max-w-xl mb-5 leading-relaxed">
             Velocity Vision is the AI-powered commercial workspace for turning messy contact data into governed outreach, follow-up and pipeline. AI drafts the assets and quality-reviews your data — you review, edit and control what gets activated.
+          </p>
+          <p className="relative text-sm text-white/75 max-w-xl mb-8 leading-relaxed">
+            Velocity Vision does not scrape contact data, sell lists or send or publish automatically. Customers provide lawfully obtained business data, verify their sender and approve every activation.
           </p>
           <div className="relative flex flex-col sm:flex-row gap-3">
             <Link
@@ -48,7 +51,7 @@ const HeroSection = () => (
           </p>
         </motion.div>
 
-        {/* Right: hot pink — workspace card */}
+        {/* Right: hot pink — illustrative workspace card */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -63,20 +66,20 @@ const HeroSection = () => (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Database size={18} style={{ color: BLUE }} />
-                <span className="text-sm font-semibold text-slate-900">Your Velocity Vision workspace</span>
+                <span className="text-sm font-semibold text-slate-900">Illustrative workspace</span>
               </div>
               <span
                 className="text-[10px] uppercase tracking-wider px-2 py-1 rounded-full font-bold text-white"
                 style={{ backgroundColor: PINK }}
               >
-                Live
+                Demo
               </span>
             </div>
             <div className="grid grid-cols-3 gap-3">
               {[
-                { label: "Usable contacts", val: "1,284" },
-                { label: "Reply rate", val: "6.2%" },
-                { label: "Pipeline", val: "£47k" },
+                { label: "Contacts reviewed", val: "1,284" },
+                { label: "Needs review", val: "92" },
+                { label: "Warm follow-ups", val: "8" },
               ].map((s) => (
                 <div key={s.label} className="rounded-lg bg-slate-50 p-3">
                   <p className="text-[10px] text-slate-500 uppercase tracking-wider">{s.label}</p>
@@ -86,9 +89,9 @@ const HeroSection = () => (
             </div>
             <div className="space-y-2">
               {[
-                { i: Database, label: "Data Vault — quality reviewed", val: "92% clean", c: BLUE },
-                { i: ShieldCheck, label: "Email sequence + social pack live", val: "Sending", c: PINK },
-                { i: GitBranch, label: "Follow-up worked → pipeline", val: "8 warm", c: BLUE },
+                { i: Database, label: "Data Vault — quality reviewed", val: "Sample data", c: BLUE },
+                { i: ShieldCheck, label: "Email sequence + social pack", val: "Drafts ready", c: PINK },
+                { i: GitBranch, label: "Follow-up → pipeline", val: "Illustrative", c: BLUE },
               ].map((row) => (
                 <div key={row.label} className="flex items-center justify-between bg-slate-50 rounded-md px-3 py-2">
                   <span className="flex items-center gap-2 text-xs text-slate-800">
@@ -98,6 +101,9 @@ const HeroSection = () => (
                 </div>
               ))}
             </div>
+            <p className="text-[10px] leading-relaxed text-slate-500">
+              Illustrative interface data only. These figures are not customer results or performance claims.
+            </p>
           </div>
         </motion.div>
 
