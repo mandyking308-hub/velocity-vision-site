@@ -1,10 +1,19 @@
 import { motion } from "framer-motion";
 import { Database, Mail, Inbox, GitBranch } from "lucide-react";
 
-const stats = [
-  { stat: "6+", desc: "tools the average lean team stitches together to run outreach, follow-up and pipeline" },
-  { stat: "40%+", desc: "of imported B2B contact data is duplicated, invalid or unsafe to send without review" },
-  { stat: "70%", desc: "of warm conversations go cold because nobody owns follow-up across systems" },
+const workflowChanges = [
+  {
+    title: "One operating loop",
+    desc: "Contact data, outreach assets, follow-up and early pipeline stay connected instead of being split across unrelated tools.",
+  },
+  {
+    title: "Review before activation",
+    desc: "Customers review data quality, sender status, audience selection and generated drafts before any activation decision.",
+  },
+  {
+    title: "Follow-up has an owner",
+    desc: "Reply states, tasks and pipeline movement remain visible inside the workspace so warm conversations are less likely to be overlooked.",
+  },
 ];
 
 const pains = [
@@ -54,17 +63,17 @@ const ProblemProof = () => (
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        {stats.map((s, i) => (
+        {workflowChanges.map((item, i) => (
           <motion.div
-            key={s.stat}
+            key={item.title}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: i * 0.1 }}
             className="bg-secondary/60 border border-border/50 rounded-xl p-7"
           >
-            <p className="text-4xl md:text-5xl font-display font-bold text-accent mb-2">{s.stat}</p>
-            <p className="text-muted-foreground text-sm md:text-base leading-relaxed">{s.desc}</p>
+            <p className="text-xl md:text-2xl font-display font-bold text-accent mb-2">{item.title}</p>
+            <p className="text-muted-foreground text-sm md:text-base leading-relaxed">{item.desc}</p>
           </motion.div>
         ))}
       </div>
@@ -80,7 +89,7 @@ const ProblemProof = () => (
           Velocity Vision pulls marketing-led outreach into one workspace.
         </p>
         <p className="text-muted-foreground text-lg leading-relaxed">
-          Data in. Quality reviewed. Outreach assets generated — email sequences, social media, press releases. Sending governed. Follow-up worked. Early pipeline moved. Without juggling six apps.
+          Data in. Quality reviewed. Outreach assets generated — email sequences, social media, press releases. Sending governed. Follow-up worked. Early pipeline moved. Without juggling a disconnected stack.
         </p>
       </motion.div>
     </div>

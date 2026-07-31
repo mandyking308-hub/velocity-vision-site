@@ -58,7 +58,7 @@ const plans: PlanDef[] = [
       "Larger daily send caps",
       "Reusable templates & segments",
       "Follow-up inbox with reply states",
-      "Monthly performance review",
+      "Automated monthly performance summary",
     ],
     cta: "Request Growth onboarding",
   },
@@ -81,19 +81,19 @@ const plans: PlanDef[] = [
   },
 ];
 
-
 const faqs = [
   { q: "Is Free Preview really free?", a: "Yes. £0, no card required. You get 10 welcome Campaign Credits plus +2 per day (daily balance capped at 10) for 14 days. There is no automatic paid upgrade — you decide when, or whether, to buy credits or move to Growth." },
-  { q: "What happens when free credits run out?", a: "The workspace stays available. AI generation pauses until you top up credits or upgrade. Your data, review and pipeline remain intact." },
-  { q: "Can I buy credits without subscribing?", a: "Top-ups and paid upgrades are available by manual onboarding while automated checkout is being finalised. Contact us to arrange top-up credits or a paid plan." },
+  { q: "What happens when free credits run out?", a: "The workspace stays available. AI generation pauses until you request a top-up or upgrade. Your data, review and pipeline remain intact." },
+  { q: "Can I buy credits without subscribing?", a: "Top-ups and paid upgrades are arranged during onboarding. The price, currency, tax treatment and payment provider are confirmed before purchase." },
   { q: "Can I send outreach on Free Preview?", a: "No. Live sending, Nylas mailbox connection and third-party account activation are gated on Free Preview. Sending unlocks with a paid plan and completed compliance gates." },
   { q: "Do free credits expire?", a: "Yes — Free Preview runs for 14 days from signup, and the daily free balance is capped at 10. Paid top-up credits do not expire while your plan is active." },
   { q: "Are AI outputs drafts?", a: "Yes. Every AI-generated asset is a draft you review, edit and approve. Velocity Vision does not send, publish or activate anything automatically." },
-  { q: "What am I actually paying for?", a: "An AI-powered commercial operating workspace: Data Vault, AI quality review, sender verification, governed activation, AI-assisted outreach asset generation, cadence, follow-up and pipeline. Storage is generous on every plan. Credits cover heavy-value AI generations." },
-  { q: "What are Campaign Credits?", a: "Campaign Credits power AI-heavy actions such as outreach packs, social posts, press releases, video scripts, follow-up assets and multilingual variants. Uploading, reviewing, sending, following up, moving pipeline and exporting are always free." },
-  { q: "Is storing data the same as activating it?", a: "No. You can upload and review unlimited data within plan limits. Activation is the governed step where you verify your sender, pick a safe segment and start sending — with daily caps and risky-record limits enforced. AI drafts assets; you approve activation." },
+  { q: "Does Velocity Vision scrape contacts or sell lists?", a: "No. Velocity Vision does not scrape contact data, sell lists or supply prospect databases. Customers provide their own lawfully obtained business data and remain responsible for lawful basis, sender identity, suppression handling and every activation decision." },
+  { q: "What am I actually paying for?", a: "A self-serve AI-powered commercial operating workspace: Data Vault, AI quality review, sender verification, governed activation, AI-assisted outreach asset generation, cadence, follow-up and pipeline. Storage is generous on every plan. Credits cover heavy-value AI generations." },
+  { q: "What are Campaign Credits?", a: "Campaign Credits power AI-heavy actions such as outreach packs, social posts, press releases, video scripts, follow-up assets and multilingual variants. Uploading, reviewing, sending, following up, moving pipeline and exporting do not consume Campaign Credits." },
+  { q: "Is storing data the same as activating it?", a: "No. You can upload and review data within plan limits. Activation is the governed step where you verify your sender, pick a safe segment and start sending — with daily caps and risky-record limits enforced. AI drafts assets; you approve activation." },
   { q: "What sending limits apply?", a: "Tiered daily caps protect deliverability. Starter and Growth have per-workspace limits; Agency has pooled sending governance across client workspaces. Risky records are limited within each batch." },
-  { q: "What happens if I run out of credits?", a: "The workspace stays fully usable — data, follow-up, pipeline and reports remain live. Only new AI generations pause. Top up in seconds or upgrade your plan." },
+  { q: "What happens if I run out of credits?", a: "The workspace stays usable — data, follow-up, pipeline and reports remain available. Only new AI generations pause. Request a top-up or upgrade through the contact route." },
   { q: "Are outputs AI-generated?", a: "Yes. Velocity Vision uses AI to help draft and structure outreach assets, run quality checks and suggest follow-ups. Every output is a draft — you review, edit and control what is activated or sent. We don't guarantee replies, sales, deliverability or legal compliance." },
   { q: "Can agencies share credits across clients?", a: "Yes — Agency Workspace pools monthly credits and sending governance across every client workspace in the account." },
   { q: "Why don't you publish customer case studies or logos?", a: "We do not publish customer names, campaign data, account details or results without explicit written permission. Velocity Vision is built for confidential commercial work — your strategy, targeting, pipeline activity and customer data stay private by default." },
@@ -103,10 +103,9 @@ const Pricing = () => {
   const { currency, setCurrency } = useCurrency();
   return (
   <>
-
     <SEO
       title="Pricing — Velocity Vision commercial workspace"
-      description="Self-serve pricing for businesses and agencies. Generous data storage, governed sending, and credits for heavy-value actions."
+      description="Published multi-currency pricing for a self-serve B2B software workspace with data review, governed activation, follow-up and pipeline."
       path="/pricing"
     />
     <Navbar />
@@ -142,7 +141,7 @@ const Pricing = () => {
             </p>
             <PricingCurrencySelector align="right" currency={currency} onCurrencyChange={setCurrency} />
           </div>
-          {/* Free Preview entry tier — no Stripe SKU, no auto-upgrade, no live sending. */}
+          {/* Free Preview entry tier — no automatic paid upgrade and no live sending. */}
           <div className="mb-6 rounded-2xl border border-white/40 bg-white p-6 lg:p-7 flex flex-col md:flex-row md:items-center gap-5 shadow-card text-foreground">
             <div className="flex-1 min-w-0">
               <span className="inline-block text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-accent/15 text-accent font-semibold mb-2">Free preview · £0</span>
@@ -155,7 +154,7 @@ const Pricing = () => {
                 <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />1 workspace, up to 25 contacts</li>
                 <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />1 full campaign pack (preview)</li>
                 <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />14-day preview window</li>
-                <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />Top-ups & paid upgrades via manual onboarding</li>
+                <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />Paid activation and top-ups arranged through onboarding</li>
                 <li className="flex gap-2"><Check size={16} className="text-accent mt-0.5" />No live sending on Free Preview</li>
               </ul>
               <p className="text-xs opacity-70 mt-3">
@@ -168,7 +167,7 @@ const Pricing = () => {
             </div>
           </div>
           <div className="mb-6 rounded-xl border border-accent/40 bg-accent/5 px-4 py-3 text-sm text-foreground/90">
-            Velocity Vision is currently opening in controlled Free Preview mode. Paid Starter, Growth and Agency workspaces are being onboarded manually while automated checkout is being finalised.
+            Free Preview is available now. Paid plans are activated after onboarding and compliance checks; the price, currency, tax treatment and payment provider are confirmed before purchase.
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {plans.map((p, i) => (
@@ -194,7 +193,6 @@ const Pricing = () => {
                 </p>
                 <p className="text-[11px] opacity-70 mb-3">{taxNotice(currency)}</p>
                 <p className="text-xs mb-4">Best for: <span className="font-medium">{p.best}</span></p>
-
                 <p className="text-xs font-semibold text-accent mb-4">{p.credits}</p>
                 <ul className="space-y-2 mb-6 flex-1">
                   {p.features.map((f) => (
@@ -217,7 +215,6 @@ const Pricing = () => {
       </section>
       </div></div>
 
-
       <div className="panel-wrap"><div className="panel-blue">
       <section className="section-padding">
         <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
@@ -227,11 +224,11 @@ const Pricing = () => {
           </div>
           <div className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground">
             <h3 className="font-display font-semibold text-lg mb-2">Safe scaling, no surprise bills</h3>
-            <p className="text-sm opacity-90">Tiered daily caps protect deliverability. Top up credits when a month gets busy — Small, Medium or Large. Top-ups never expire while your plan is active.</p>
+            <p className="text-sm opacity-90">Tiered daily caps protect deliverability. Request additional credits when a month gets busy. Top-ups do not expire while your plan is active.</p>
           </div>
           <div className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground">
             <h3 className="font-display font-semibold text-lg mb-2">International by default</h3>
-            <p className="text-sm opacity-90">Multi-currency pricing (GBP, USD, EUR and more), localised tax at checkout, multilingual outreach. Built for distributed teams from day one.</p>
+            <p className="text-sm opacity-90">Multi-currency pricing (GBP, USD, EUR and more), tax treatment shown before payment and multilingual outreach. Built for distributed teams from day one.</p>
           </div>
         </div>
         <div className="max-w-5xl mx-auto mt-10 md:mt-12">

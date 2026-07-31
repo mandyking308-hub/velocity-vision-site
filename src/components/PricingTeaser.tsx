@@ -17,7 +17,7 @@ const plans = [
     price: "£249",
     unit: "per month",
     desc: "Run outreach and pipeline as your main workflow.",
-    bullets: ["Recurring campaigns & cadence", "Larger sending caps", "Follow-up automation", "Pipeline tracking", "Monthly review"],
+    bullets: ["Recurring campaigns & cadence", "Larger sending caps", "Follow-up automation", "Pipeline tracking", "Automated monthly performance summary"],
     highlight: true,
     cta: "Request Growth onboarding",
   },
@@ -52,7 +52,7 @@ const PricingTeaser = () => (
       </motion.div>
 
       <div className="mb-6 rounded-xl border border-accent/40 bg-accent/5 px-4 py-3 text-sm text-foreground/90 max-w-3xl">
-        Velocity Vision is currently opening in controlled Free Preview mode. Paid Starter, Growth and Agency workspaces are being onboarded manually while automated checkout is being finalised.
+        Free Preview is available now. Paid plans are activated after onboarding and compliance checks; the price, currency, tax treatment and payment provider are confirmed before purchase.
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
@@ -94,7 +94,7 @@ const PricingTeaser = () => (
           <Link to="/pricing">See full pricing <ArrowRight size={18} /></Link>
         </Button>
         <p className="text-xs text-muted-foreground self-center">
-          Multi-currency checkout supported. Self-serve from day one.
+          Multi-currency pricing supported. Product use is self-serve; paid activation is currently assisted.
         </p>
       </div>
     </div>
