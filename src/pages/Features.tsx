@@ -12,330 +12,195 @@ const groups = [
   {
     label: "Data Vault",
     features: [
-      {
-        title: "Upload and field mapping",
-        value: "Upload customer-authorised CSV or spreadsheet records, map fields and reuse saved mapping structures.",
-      },
-      {
-        title: "Companies and contacts",
-        value: "Organise business records and relationships inside a structured workspace rather than a flat spreadsheet copy.",
-      },
-      {
-        title: "Saved segments",
-        value: "Create customer-reviewed segments for later use without treating segmentation as legal or compliance approval.",
-      },
+      { title: "Upload & field mapping", value: "CSV import or paste rows. Map once, reuse the mapping for next time." },
+      { title: "Companies & contacts", value: "Structured records with the relationships intact — not a flat dump in a spreadsheet." },
+      { title: "Saved segments", value: "Filter to the records that matter, save the segment, reuse it across campaigns." },
     ],
   },
   {
-    label: "Record Review",
+    label: "Quality Review",
     features: [
-      {
-        title: "Duplicate detection",
-        value: "Surface duplicated or conflicting records for customer review before any activation decision.",
-      },
-      {
-        title: "Completeness and risk flags",
-        value: "Flag missing fields, invalid formats and records requiring additional review.",
-      },
-      {
-        title: "Review-status filters",
-        value: "Filter records by review status. Software flags support customer assessment and are not legal approval.",
-      },
+      { title: "Duplicate detection", value: "Surfaces duplicated and conflicting records before they get sent to." },
+      { title: "Risk & completeness flags", value: "Missing fields, invalid emails and risky records are flagged for review." },
+      { title: "Safe-to-activate view", value: "Filter directly to records that meet the safety bar — no guessing." },
     ],
   },
   {
-    label: "Governed Activation Controls",
+    label: "Safe Activation",
     features: [
-      {
-        title: "Sender verification",
-        value: "Require the customer's sender connection and applicable verification steps before activation.",
-      },
-      {
-        title: "Plan-level limits",
-        value: "Apply per-workspace or pooled account-level limits according to the applicable paid plan.",
-      },
-      {
-        title: "Authorised-user approval",
-        value: "Keep activation separate from draft generation and require an authorised-user decision.",
-      },
+      { title: "Sender verification", value: "DNS-based SPF/DKIM verification before any activation can proceed." },
+      { title: "Tiered daily caps", value: "Per-workspace daily limits scale with your plan; agencies use pooled sending governance across client workspaces." },
+      { title: "Risky-record limits", value: "Risky records are limited within each batch and reviewed before activation." },
     ],
   },
   {
-    label: "Editable AI-Assisted Drafts",
+    label: "Outreach Assets",
     features: [
-      {
-        title: "Email drafts",
-        value: "Prepare editable multi-step email and follow-up drafts from a customer brief.",
-      },
-      {
-        title: "Social drafts",
-        value: "Generate editable posts, hooks and platform variants for customer review before scheduling or publishing.",
-      },
-      {
-        title: "Press and video drafts",
-        value: "Prepare announcement drafts, video scripts, shot-list ideas and captions for customer review.",
-      },
+      { title: "Email sequence", value: "Multi-step outbound and follow-up generated from your brief, editable in the workspace." },
+      { title: "Social pack", value: "Launch posts, hooks and platform variants ready to schedule alongside outreach." },
+      { title: "Press & video pack", value: "Distribution-ready press release plus video scripts, shot lists and captions for short-form video." },
     ],
   },
   {
-    label: "Cadence and Activity Settings",
+    label: "Cadence & Scheduling",
     features: [
-      {
-        title: "One-off and recurring settings",
-        value: "Configure one-off, weekly, monthly or custom timing subject to the customer's plan and activation controls.",
-      },
-      {
-        title: "Draft refresh choices",
-        value: "Choose whether reviewed draft structures are reused, regenerated or edited for a later workflow.",
-      },
-      {
-        title: "Visible lifecycle states",
-        value: "Record draft, scheduled, active, paused and expired states for customer-managed workflows.",
-      },
+      { title: "One-off & recurring runs", value: "Weekly, monthly or custom cadence with clear next-run visibility." },
+      { title: "Asset refresh strategies", value: "Choose whether assets are reused, regenerated or refreshed each cycle." },
+      { title: "Lifecycle states", value: "Draft, Scheduled, Active, Paused, Expired — clearly visible per campaign." },
     ],
   },
   {
-    label: "Follow-Up Records",
+    label: "Follow-Up & Reply States",
     features: [
-      {
-        title: "Action queue",
-        value: "Record reply and follow-up actions, ownership and next steps in one customer-controlled queue.",
-      },
-      {
-        title: "Follow-up states and snooze",
-        value: "Record replied, snoozed, warm, dormant and other operational states selected by the customer.",
-      },
-      {
-        title: "Per-contact history",
-        value: "Review recorded activity, last touch, follow-up state and next action for each contact.",
-      },
+      { title: "Action queue inbox", value: "Replies return to your connected inbox; follow-up actions and next steps surface in one queue with clear owner and next action." },
+      { title: "Follow-up states & snooze", value: "Mark replied, snooze (3d/7d/custom), flag stuck after 14 days." },
+      { title: "Lead Action Panel", value: "Per-contact view of history, last touch, follow-up state and next step." },
     ],
   },
   {
-    label: "Early Opportunity Records",
+    label: "Pipeline Movement",
     features: [
-      {
-        title: "Create an opportunity record",
-        value: "Move a customer-selected warm contact into an early opportunity record with stage, value and owner fields.",
-      },
-      {
-        title: "Inactivity reminders",
-        value: "Surface opportunity records with no recent recorded activity for customer review.",
-      },
-      {
-        title: "Export options",
-        value: "Export records when a broader CRM or sales process is required.",
-      },
+      { title: "Promote to opportunity", value: "Move warm contacts into pipeline with one click — value, stage, owner." },
+      { title: "Stuck-deal alerts", value: "Opportunities idle for 14+ days surface in the dashboard for action." },
+      { title: "Warm & dormant intelligence", value: "Re-surface warm contacts that went quiet so nothing dies in an inbox." },
     ],
   },
   {
-    label: "Billing and Campaign Credits",
+    label: "Billing, Credits & Scaling",
     features: [
-      {
-        title: "Published plan pricing",
-        value: "Review one-off and monthly prices, access periods and included Campaign Credits before purchase.",
-      },
-      {
-        title: "Credit requests",
-        value: "Request additional Campaign Credits through the published onboarding or contact route subject to the applicable terms.",
-      },
-      {
-        title: "Currency and tax disclosure",
-        value: "The final currency, tax treatment, payment provider and product terms are confirmed before payment.",
-      },
+      { title: "Generous data storage", value: "Storage is included on every plan — credits only apply to heavy-value AI generations." },
+      { title: "Credit top-ups", value: "Add Small / Medium / Large packs instantly; top-ups never expire while your plan is active." },
+      { title: "Multi-currency & tax", value: "GBP, USD, EUR and more, with localised tax handled at checkout." },
     ],
   },
   {
     label: "Agency Workspaces",
     features: [
-      {
-        title: "Isolated client workspaces",
-        value: "Keep authorised client data, sender settings, drafts and activation decisions separated by workspace.",
-      },
-      {
-        title: "Pooled credits and limits",
-        value: "Use pooled Campaign Credits and account-level governance under the Agency Workspace plan.",
-      },
-      {
-        title: "Cross-workspace activity view",
-        value: "Review recorded activation, follow-up and early opportunity information across the agency account.",
-      },
+      { title: "Isolated client workspaces", value: "Run every client from one account with clean data and pipeline isolation." },
+      { title: "Pooled credits & governance", value: "Credits and sending governance are pooled across the account." },
+      { title: "Cross-client visibility", value: "See activation health, follow-up actions and pipeline across the whole book in one view." },
     ],
   },
 ];
 
 const aiFeatures = [
-  {
-    title: "AI-assisted draft preparation",
-    value: "Email, social, press, video and follow-up outputs remain editable drafts until reviewed by the customer.",
-  },
-  {
-    title: "AI-supported record review",
-    value: "Software can surface duplicates, missing fields and records requiring review. The customer decides how records are classified and used.",
-  },
-  {
-    title: "AI-assisted template structures",
-    value: "Customers can adapt generated structures to their own proposition, tone, recipients and legal requirements.",
-  },
-  {
-    title: "AI-supported follow-up drafts",
-    value: "Suggested next-step copy remains a draft and is not sent without customer review and approval.",
-  },
-  {
-    title: "Separate activation controls",
-    value: "Draft generation does not activate or send content. Sender verification, segment review and authorised-user approval remain separate steps.",
-  },
-  {
-    title: "No guaranteed outcomes",
-    value: "Velocity Vision does not guarantee compliance, deliverability, replies, sales, pipeline, revenue or suitability for a particular campaign.",
-  },
+  { title: "AI-assisted outreach assets", value: "Email sequences, social posts, press releases and video packs drafted from one brief — fully editable before you use them." },
+  { title: "AI quality review", value: "Duplicates, risky records and missing fields surfaced automatically. You decide what stays in the segment." },
+  { title: "AI-generated templates", value: "Start from AI-drafted templates for launch, nurture, promo and re-engagement workflows — adapt to your tone and offer." },
+  { title: "AI-supported follow-up", value: "Suggested next-step drafts for follow-up and stuck conversations. You approve every send." },
+  { title: "Governed AI activation", value: "Sender verification, tiered daily caps and risky-record limits gate every activation — no autonomous sending." },
+  { title: "Human-controlled by design", value: "AI drafts; you review, edit, approve, activate. Velocity Vision does not guarantee replies, sales, deliverability or legal compliance." },
+];
+
+const scaleCards = [
+  { label: "Billing & Credits", title: "Scale without billing surprises", value: "Plan credits, instant top-ups, multi-currency checkout and tax handled locally. Pay for what you activate, not for data sitting in the vault." },
+  { label: "Agency Workspaces", title: "One account, every client", value: "Isolated client workspaces, pooled credits and pooled governance, with cross-client visibility across the whole book." },
 ];
 
 const Features = () => (
   <>
     <SEO
-      title="Features — Customer-controlled B2B software | Velocity Vision"
-      description="Features for customer-provided data, record review, editable AI-assisted drafts, governed activation controls, follow-up records, early opportunity administration and agency workspaces."
+      title="Features — Commercial operating workspace | Velocity Vision"
+      description="Data Vault, quality review, safe activation, outreach assets, cadence, follow-up, pipeline, credits and agency workspaces — connected end to end."
       path="/features"
     />
     <Navbar />
     <main className="pt-24">
       <section className="section-padding bg-hero">
         <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-          >
-            <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">
-              Features
-            </p>
-            <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">
-              A self-serve workspace with clear customer control
-            </h1>
-            <p className="text-primary-foreground/75 text-lg mb-5 max-w-3xl">
-              Organise authorised business data, prepare editable AI-assisted drafts, verify the customer's sender, approve activation and record follow-up and early opportunity activity.
-            </p>
-            <p className="text-primary-foreground/70 text-sm mb-8 max-w-3xl">
-              Velocity Vision does not scrape contacts, sell lists, provide managed campaigns, send automatically or guarantee legal compliance, deliverability, replies, sales, pipeline or revenue.
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+            <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Features</p>
+            <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">AI-powered workspace, pillar by pillar</h1>
+            <p className="text-primary-foreground/75 text-lg mb-8 max-w-2xl">
+              Every feature exists to take you from messy data to live pipeline. AI drafts and reviews; you approve, activate and send.
             </p>
             <Button variant="hero" size="lg" asChild>
-              <Link to="/auth">
-                Start Free Preview <ArrowRight size={18} />
-              </Link>
+              <Link to="/auth">Start your workspace <ArrowRight size={18} /></Link>
             </Button>
           </motion.div>
         </div>
       </section>
 
-      <div className="panel-wrap">
-        <div className="panel-blue">
-          <section className="section-padding">
-            <div className="max-w-7xl mx-auto space-y-16">
-              <div className="max-w-3xl mb-10">
-                <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">
-                  Workspace functions
-                </p>
-                <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
-                  Product functions from data review to operational records
-                </h2>
-                <p className="text-lg opacity-90">
-                  Each function supports a customer-controlled workflow and remains subject to the applicable plan, legal documents and third-party provider requirements.
-                </p>
-              </div>
-
-              {groups.map((group, index) => (
-                <motion.div
-                  key={group.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.03 }}
-                >
-                  <p className="font-semibold text-sm uppercase tracking-widest mb-4 opacity-90">
-                    {group.label}
-                  </p>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                    {group.features.map((feature) => (
-                      <div
-                        key={feature.title}
-                        className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground"
-                      >
-                        <h3 className="font-display font-semibold mb-2">
-                          {feature.title}
-                        </h3>
-                        <p className="text-sm leading-relaxed opacity-90">
-                          {feature.value}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </section>
-        </div>
-      </div>
-
-      <div className="panel-wrap">
-        <div className="panel-pink">
-          <section className="section-padding">
-            <div className="max-w-7xl mx-auto">
-              <div className="max-w-3xl mb-10">
-                <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">
-                  AI-assisted functions
-                </p>
-                <h2 className="text-3xl md:text-5xl font-display font-bold mb-4">
-                  Draft assistance without autonomous sending
-                </h2>
-                <p className="text-lg opacity-90 leading-relaxed">
-                  AI supports drafting and record review. Customers remain responsible for data source, recipients, lawful basis, content, suppression handling, sender identity and every activation decision.
-                </p>
-              </div>
+      <div className="panel-wrap"><div className="panel-blue">
+      <section className="section-padding">
+        <div className="max-w-7xl mx-auto space-y-16">
+          <div className="max-w-2xl mb-10">
+            <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">Workspace pillars</p>
+            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">Everything that moves data into pipeline</h2>
+            <p className="text-lg opacity-90">
+              Nine connected pillars, from upload and quality review through to follow-up, pipeline and agency scale.
+            </p>
+          </div>
+          {groups.map((g, i) => (
+            <motion.div key={g.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.05 }}>
+              <p className="font-semibold text-sm uppercase tracking-widest mb-4 opacity-90">{g.label}</p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                {aiFeatures.map((feature, index) => (
-                  <motion.div
-                    key={feature.title}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: index * 0.05 }}
-                    className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground"
-                  >
-                    <h3 className="font-display font-semibold mb-2">
-                      {feature.title}
-                    </h3>
-                    <p className="text-sm leading-relaxed opacity-90">
-                      {feature.value}
-                    </p>
-                  </motion.div>
+                {g.features.map((f) => (
+                  <div key={f.title} className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground">
+                    <h3 className="font-display font-semibold mb-2">{f.title}</h3>
+                    <p className="text-sm leading-relaxed opacity-90">{f.value}</p>
+                  </div>
                 ))}
               </div>
-            </div>
-          </section>
+            </motion.div>
+          ))}
         </div>
-      </div>
+      </section>
+      </div></div>
 
-      <section className="section-padding bg-hero text-center">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl md:text-5xl font-display font-bold text-primary-foreground mb-5">
-            Review the plans and product terms before purchase
-          </h2>
-          <p className="text-primary-foreground/75 text-lg mb-8">
-            Published pricing explains the billing cadence, access period, included Campaign Credits, activation requirements and refund route.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+      {/* AI where it helps. Governance where it matters. */}
+      <div className="panel-wrap"><div className="panel-pink">
+      <section className="section-padding">
+        <div className="max-w-7xl mx-auto">
+          <div className="max-w-3xl mb-10">
+            <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">AI, safely applied</p>
+            <h2 className="text-3xl md:text-5xl font-display font-bold mb-4">
+              AI where it helps. Governance where it matters.
+            </h2>
+            <p className="text-lg opacity-90 leading-relaxed">
+              Velocity Vision uses AI to turn messy contact data into ready-to-review outreach — email sequences, social packs, press releases, video scripts, follow-up drafts and summaries. Every AI output is a draft you review, edit and control. Activation, sending and pipeline movement stay in your hands, with sender verification and daily caps enforced by the platform.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {aiFeatures.map((f, i) => (
+              <motion.div key={f.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground">
+                <h3 className="font-display font-semibold mb-2">{f.title}</h3>
+                <p className="text-sm leading-relaxed opacity-90">{f.value}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+      </div></div>
+
+      {/* Commercial control & agency scale strip */}
+      <div className="panel-wrap"><div className="panel-blue">
+      <section className="section-padding">
+        <div className="max-w-7xl mx-auto">
+          <div className="max-w-2xl mb-10">
+            <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">Scale & control</p>
+            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">Built to scale without surprises</h2>
+            <p className="text-lg opacity-90">
+              Clear billing, isolated client workspaces and governance that grows with your team.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {scaleCards.map((c, i) => (
+              <motion.div key={c.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }} className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground">
+                <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">{c.label}</p>
+                <h3 className="text-xl font-display font-semibold mb-2">{c.title}</h3>
+                <p className="text-sm leading-relaxed opacity-90">{c.value}</p>
+              </motion.div>
+            ))}
+          </div>
+          <div className="mt-10 text-center">
             <Button variant="hero" size="lg" asChild>
-              <Link to="/pricing">
-                Review pricing <ArrowRight size={18} />
-              </Link>
-            </Button>
-            <Button variant="hero-outline" size="lg" asChild>
-              <Link to="/legal">Review legal documents</Link>
+              <Link to="/auth">Start your workspace <ArrowRight size={18} /></Link>
             </Button>
           </div>
         </div>
       </section>
+      </div></div>
     </main>
     <EmailIntegrationsStrip variant="compact" />
     <CampaignChannelsStrip variant="compact" />
