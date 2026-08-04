@@ -1,13 +1,7 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
-const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 const CONTACT_NOTIFY_TO = Deno.env.get('CONTACT_NOTIFY_TO');
-// Expected production value once Resend domain is verified:
-//   Velocity Vision <support@mail.velocity-outreach.com>
-// No silent fallback: if EMAIL_FROM is not set, notification email is skipped
-// and we log missing_email_from. CRM insert still happens.
-const EMAIL_FROM = Deno.env.get('EMAIL_FROM');
 
 // Strong-enough email format check + disposable/test domain filter.
 const EMAIL_RE = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
