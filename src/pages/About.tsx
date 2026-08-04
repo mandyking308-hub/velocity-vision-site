@@ -21,7 +21,7 @@ import aboutHero from "@/assets/about-hero.jpg";
 
 const heroBadges = [
   { icon: Globe2, label: "Global workspace" },
-  { icon: Languages, label: "100+ language options" },
+  { icon: Languages, label: "Multilingual site access" },
   { icon: CreditCard, label: "Multi-currency pricing" },
   { icon: ShieldCheck, label: "Governed activation" },
   { icon: Scale, label: "Legal stack live" },
@@ -48,7 +48,7 @@ const loopCards = [
 
 const globalCards = [
   { icon: Languages, label: "Multilingual site access" },
-  { icon: Globe2, label: "100+ language options where supported by the translation layer" },
+  { icon: Globe2, label: "Automated translation where supported by the translation layer" },
   { icon: CreditCard, label: "Multi-currency pricing" },
   { icon: Scale, label: "International legal document stack" },
   { icon: FileCheck, label: "Delaware operating company" },
@@ -66,7 +66,7 @@ const trustBadges = [
   { icon: Lock, label: "Workspace separation" },
   { icon: Lock, label: "Encrypted secret handling" },
   { icon: ShieldCheck, label: "Security scanning" },
-  { icon: ShieldCheck, label: "WAF-style protection" },
+  { icon: ShieldCheck, label: "Hosting-layer request filtering" },
   { icon: FileCheck, label: "DPA available" },
   { icon: FileCheck, label: "Subprocessor List" },
   { icon: Scale, label: "Contact-page security reporting" },
@@ -188,7 +188,7 @@ const About = () => (
             </div>
             <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-5">A framework designed for commercial use</h2>
             <p className="text-muted-foreground leading-relaxed">
-              Velocity Vision is supported by managed cloud infrastructure, authentication controls, workspace separation, encrypted secret handling, security scanning, WAF-style protections, privacy terms, data processing terms, a Subprocessor List, Cookie Policy, Platform Security Policy and Service Level Agreement.
+              Velocity Vision is supported by managed cloud infrastructure, authentication controls, workspace separation, encrypted secret handling, security scanning, hosting-layer request filtering, privacy terms, data processing terms, a Subprocessor List, Cookie Policy, Platform Security Policy and Service Level Agreement.
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">

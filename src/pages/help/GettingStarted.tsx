@@ -12,7 +12,7 @@ const topics = [
   { icon: ShieldCheck, title: "How to review AI outputs", body: "Every asset is a draft. Read for tone, factual accuracy and compliance. Edit freely — you control what is activated or sent." },
   { icon: Send, title: "Why sending is gated", body: "Live sending is only enabled once your plan, mailbox connection and compliance gates are ready. This protects deliverability and your legal position." },
   { icon: TrendingUp, title: "Moving from Free Preview to Growth", body: "When credits run low or you're ready for continuous outreach, top up credits or upgrade to Growth for recurring cadence, larger caps and follow-up automation." },
-  { icon: Coins, title: "Buying credits without subscribing", body: "You can top up credits at any time — no subscription required. Top-up credits are usable as soon as your Stripe payment clears." },
+  { icon: Coins, title: "Buying credits without subscribing", body: "You can top up credits at any time — no subscription required. Top-up credits are usable as soon as the payment clears with the payment provider identified at checkout." },
 ];
 
 export default function GettingStarted() {

@@ -50,11 +50,16 @@ const Footer = () => (
             <Link to="/legal/privacy-policy" className="text-sm text-primary-foreground/70 hover:text-accent transition-colors">Privacy Policy</Link>
             <Link to="/legal/platform-security-policy" className="text-sm text-primary-foreground/70 hover:text-accent transition-colors">Security</Link>
             <Link to="/legal/cookie-policy" className="text-sm text-primary-foreground/70 hover:text-accent transition-colors">Cookie Policy</Link>
+            <Link to="/legal/acceptable-use-policy" className="text-sm text-primary-foreground/70 hover:text-accent transition-colors">Acceptable Use & Anti-Spam</Link>
+            <a href="https://globalsolutions.management/refunds" target="_blank" rel="noopener noreferrer" className="text-sm text-primary-foreground/70 hover:text-accent transition-colors">Refund & Cancellation Policy</a>
           </div>
           <div className="mt-6 flex flex-col gap-2">
             <Link to="/contact" className="text-sm text-primary-foreground/70 hover:text-accent transition-colors">
               Contact us →
             </Link>
+            <a href="mailto:contact@velocity-outreach.com" className="text-sm text-primary-foreground/70 hover:text-accent transition-colors">
+              contact@velocity-outreach.com
+            </a>
             <Link to="/auth" className="text-sm font-semibold text-accent hover:text-accent-warm transition-colors">
               Start your workspace →
             </Link>
