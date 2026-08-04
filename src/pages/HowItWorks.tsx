@@ -9,125 +9,205 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Check } from "lucide-react";
 
 const steps = [
-  { n: "01", title: "Upload your messy data", desc: "Import CSVs or paste rows. Map your fields once. Companies and contacts land in the Data Vault." },
-  { n: "02", title: "AI reviews quality & readiness", desc: "AI quality review flags what's complete, duplicated or risky — before you act on any of it. You stay in control." },
-  { n: "03", title: "Build a safe segment", desc: "Filter to the records that are usable and safe to outreach to. Save the segment for reuse." },
-  { n: "04", title: "Connect & verify sender", desc: "Connect your sending domain or mailbox. Verification gates activation — no surprises live." },
-  { n: "05", title: "Generate AI-assisted outreach assets", desc: "Email sequence, social pack, press release and video pack drafted by AI from your brief. Every output is editable before it goes anywhere." },
-  { n: "06", title: "Set timing & cadence", desc: "One-off or recurring (weekly/monthly). Decide how assets refresh between runs." },
-  { n: "07", title: "Activate safely (governed AI)", desc: "Tiered daily caps, risky-record limits and pooled governance for agencies — enforced automatically. You approve activation." },
-  { n: "08", title: "Work follow-up with AI support", desc: "Action queue for follow-up actions with AI-supported suggestions. Snooze, mark stuck, follow up — you send." },
-  { n: "09", title: "Move warm contacts into pipeline", desc: "Promote warm contacts into opportunities. Track value, stage and progress in the same workspace." },
-  { n: "10", title: "Review & repeat what works", desc: "Reply rates, pipeline value and activation health summarised every cycle. Rerun the winners." },
+  {
+    n: "01",
+    title: "Upload authorised business data",
+    desc: "Import CSV or spreadsheet records and map the fields needed for the customer's workspace.",
+  },
+  {
+    n: "02",
+    title: "Review data-quality flags",
+    desc: "Surface duplicates, missing fields and records requiring review. Software flags are not legal approval.",
+  },
+  {
+    n: "03",
+    title: "Create a customer-reviewed segment",
+    desc: "Filter and save records selected by the customer after reviewing source, permissions, suppression and suitability.",
+  },
+  {
+    n: "04",
+    title: "Connect and verify the customer's sender",
+    desc: "Configure the authorised mailbox or sender route and complete the applicable verification steps.",
+  },
+  {
+    n: "05",
+    title: "Prepare editable AI-assisted drafts",
+    desc: "Generate email, social, press and video drafts from a customer brief. Every output remains editable.",
+  },
+  {
+    n: "06",
+    title: "Set timing and cadence",
+    desc: "Configure one-off or recurring timing subject to the customer's plan, provider rules and activation controls.",
+  },
+  {
+    n: "07",
+    title: "Review activation controls",
+    desc: "Apply plan limits and record controls, then require an authorised-user decision before activation.",
+  },
+  {
+    n: "08",
+    title: "Record follow-up activity",
+    desc: "Use reply states, next actions and optional AI-assisted drafts while keeping every send under customer control.",
+  },
+  {
+    n: "09",
+    title: "Create early opportunity records",
+    desc: "Move customer-selected warm contacts into opportunity records with stage, value and owner fields.",
+  },
+  {
+    n: "10",
+    title: "Review recorded activity",
+    desc: "Summarise workspace activity and decide whether a later workflow should be reused, edited, paused or discontinued.",
+  },
 ];
 
 const outputs = [
   "Data Vault",
-  "Quality flags & segments",
+  "Quality and review flags",
   "Sender verification",
-  "Email sequence",
-  "Social pack",
-  "Press release",
-  "Video pack",
-  "Cadence scheduler",
-  "Follow-up & reply states",
-  "Pipeline",
-  "Performance review",
+  "Editable email drafts",
+  "Editable social drafts",
+  "Editable press drafts",
+  "Editable video drafts",
+  "Cadence settings",
+  "Follow-up records",
+  "Early opportunity records",
+  "Automated activity summary",
 ];
 
 const HowItWorks = () => (
   <>
     <SEO
-      title="How it works — Velocity Vision commercial workspace"
-      description="The end-to-end flow: upload data, review quality, activate safely, create outreach, set cadence, work follow-up and move opportunities into pipeline."
+      title="How it works — Customer-controlled workflow | Velocity Vision"
+      description="The Velocity Vision workflow for customer-provided business data, record review, editable AI-assisted drafts, sender verification, authorised activation, follow-up records and early opportunity administration."
       path="/how-it-works"
     />
     <Navbar />
     <main className="pt-24">
       <section className="section-padding bg-hero">
         <div className="max-w-5xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-            <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">How it works</p>
-            <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">AI-powered outreach. Human-controlled activation.</h1>
-            <p className="text-primary-foreground/75 text-lg mb-8 max-w-2xl">
-              One continuous flow inside one workspace. AI drafts the assets and quality-reviews your data; activation is governed and only happens when you approve it.
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+          >
+            <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">
+              How it works
+            </p>
+            <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">
+              AI-assisted drafts with customer-controlled activation
+            </h1>
+            <p className="text-primary-foreground/75 text-lg mb-5 max-w-3xl">
+              Velocity Vision separates data review, draft preparation, sender verification, activation approval, follow-up records and early opportunity administration.
+            </p>
+            <p className="text-primary-foreground/70 text-sm mb-8 max-w-3xl">
+              Velocity Vision does not scrape contacts, sell lists, provide managed campaigns, send automatically or guarantee compliance, deliverability, replies, sales, pipeline or revenue.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button variant="hero" size="lg" asChild>
-                <Link to="/auth">Start your workspace <ArrowRight size={18} /></Link>
+                <Link to="/auth">
+                  Start Free Preview <ArrowRight size={18} />
+                </Link>
               </Button>
               <Button variant="hero-outline" size="lg" asChild>
-                <Link to="/pricing">See pricing</Link>
+                <Link to="/pricing">Review pricing</Link>
               </Button>
             </div>
           </motion.div>
         </div>
       </section>
 
-      <div className="panel-wrap"><div className="panel-pink">
-      <section className="section-padding">
-        <div className="max-w-7xl mx-auto">
-          <div className="max-w-2xl mb-10">
-            <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">The flow</p>
-            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">Ten steps from raw data to repeatable pipeline</h2>
-            <p className="text-lg opacity-90">
-              Upload, review, generate, activate, follow up and repeat — all inside one workspace.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
-            {steps.map((s, i) => (
-              <motion.div
-                key={s.n}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.05 }}
-                className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground"
-              >
-                <p className="text-accent font-display font-bold text-2xl mb-3">{s.n}</p>
-                <h3 className="font-display font-semibold mb-2">{s.title}</h3>
-                <p className="text-sm leading-relaxed opacity-90">{s.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-      </div></div>
-
-      <div className="panel-wrap"><div className="panel-blue">
-      <section className="section-padding">
-        <div className="max-w-5xl mx-auto">
-          <div className="max-w-2xl mb-10">
-            <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">What's inside</p>
-            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">The same login covers the whole loop</h2>
-            <p className="text-lg opacity-90">
-              From data review through to opportunity movement — every practical output lives in one workspace.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {outputs.map((o) => (
-              <div key={o} className="flex items-center gap-2 bg-white border border-white/40 rounded-lg px-4 py-3 shadow-card text-foreground">
-                <Check className="text-accent shrink-0" size={16} />
-                <span className="text-sm font-medium">{o}</span>
+      <div className="panel-wrap">
+        <div className="panel-pink">
+          <section className="section-padding">
+            <div className="max-w-7xl mx-auto">
+              <div className="max-w-3xl mb-10">
+                <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">
+                  The workflow
+                </p>
+                <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
+                  Ten documented steps from upload to activity review
+                </h2>
+                <p className="text-lg opacity-90">
+                  The customer remains responsible for data source, lawful basis, recipients, content, sender identity, suppression handling and every activation decision.
+                </p>
               </div>
-            ))}
-          </div>
-          <p className="text-sm mt-8 max-w-2xl opacity-90">
-            From email sequences and social media content to press releases and follow-up, every practical output is generated inside the same workspace.
-          </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
+                {steps.map((step, index) => (
+                  <motion.div
+                    key={step.n}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: index * 0.05 }}
+                    className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground"
+                  >
+                    <p className="text-accent font-display font-bold text-2xl mb-3">
+                      {step.n}
+                    </p>
+                    <h3 className="font-display font-semibold mb-2">
+                      {step.title}
+                    </h3>
+                    <p className="text-sm leading-relaxed opacity-90">
+                      {step.desc}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </section>
         </div>
-      </section>
-      </div></div>
+      </div>
+
+      <div className="panel-wrap">
+        <div className="panel-blue">
+          <section className="section-padding">
+            <div className="max-w-5xl mx-auto">
+              <div className="max-w-3xl mb-10">
+                <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">
+                  Product outputs and records
+                </p>
+                <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
+                  Editable drafts and operational records in one workspace
+                </h2>
+                <p className="text-lg opacity-90">
+                  Outputs remain drafts until customer review. Recorded activity describes use of the workspace and is not a promised commercial result.
+                </p>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {outputs.map((output) => (
+                  <div
+                    key={output}
+                    className="flex items-center gap-2 bg-white border border-white/40 rounded-lg px-4 py-3 shadow-card text-foreground"
+                  >
+                    <Check className="text-accent shrink-0" size={16} />
+                    <span className="text-sm font-medium">{output}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
 
       <section className="section-padding bg-hero">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground mb-4">Self-serve, end to end</h2>
+          <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground mb-4">
+            Review the product before paid activation
+          </h2>
           <p className="text-primary-foreground/75 text-lg mb-6">
-            Everything runs from your own workspace — upload, generate, activate, follow up and report. No call required to get started.
+            Free Preview has no live sending. Paid activation follows onboarding, applicable checks and the terms shown before purchase.
           </p>
-          <Button variant="hero" size="lg" asChild>
-            <Link to="/auth">Start your workspace <ArrowRight size={16} /></Link>
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button variant="hero" size="lg" asChild>
+              <Link to="/auth">
+                Start Free Preview <ArrowRight size={16} />
+              </Link>
+            </Button>
+            <Button variant="hero-outline" size="lg" asChild>
+              <Link to="/legal">Review legal documents</Link>
+            </Button>
+          </div>
         </div>
       </section>
     </main>
