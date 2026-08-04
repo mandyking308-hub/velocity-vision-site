@@ -1,0 +1,23 @@
+name: Velocity final email test
+
+on:
+  push:
+    paths:
+      - 'test-trigger/velocity-final-email-test.txt'
+
+jobs:
+  test-email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Submit one final live enquiry
+        shell: bash
+        run: |
+          set -euo pipefail
+          PAYLOAD='{"name":"Velocity Final Email Test","email":"mandyking308+velocity-final-test@gmail.com","company":"Global Solutions Management LLC","message":"Final live email delivery test. Please treat this as a test enquiry.","route":"general_support"}'
+          curl --fail --silent --show-error \
+            --request POST \
+            --header 'apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJIUzI1NiIsInJlZiI6ImZkdWJocHp0aHRmenJ6a2prYWx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyMjY0MTQsImV4cCI6MjA4ODgwMjQxNH0.oRIjW8mquX27a797iEDJrcicyHTbDISHJHZZe8kt_-Y' \
+            --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJIUzI1NiIsInJlZiI6ImZkdWJocHp0aHRmenJ6a2prYWx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyMjY0MTQsImV4cCI6MjA4ODgwMjQxNH0.oRIjW8mquX27a797iEDJrcicyHTbDISHJHZZe8kt_-Y' \
+            --header 'Content-Type: application/json' \
+            --data "${PAYLOAD}" \
+            'https://fdubhpzthtfzrzkjkalw.supabase.co/functions/v1/notify-contact'
