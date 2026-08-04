@@ -2,24 +2,60 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const faqs = [
-  { q: "Is Velocity Vision AI-powered?", a: "Yes. AI drafts outreach assets (email sequences, social posts, press releases, video scripts, follow-up copy), reviews data quality and suggests follow-ups. AI outputs are drafts — you review, edit and control what is activated or sent. We don't promise replies, sales, deliverability or legal compliance." },
-  { q: "What does Velocity Vision actually replace?", a: "For most teams it replaces a stitched-together stack: a spreadsheet for contacts, a separate tool for email sequences, another for social, doc templates for press releases, an inbox-as-CRM for follow-up and a half-built pipeline tracker. All of that lives in one AI-powered workspace here." },
-  { q: "Is this a self-serve workspace?", a: "Yes. You upload your data, review AI-flagged quality, generate AI-assisted outreach assets, activate safely and work the follow-up from your own workspace — entirely self-serve." },
-  { q: "Does Velocity Vision scrape contacts or sell lists?", a: "No. Velocity Vision does not scrape contact data, sell lists or provide prospect databases. Customers supply their own lawfully obtained business data, manage suppression and opt-outs, verify their sender and approve every activation." },
-  { q: "What outputs does it actually generate?", a: "From a single brief AI drafts: email sequences, social media posts and hooks, a press release, and a short-form video pack (scripts, hooks, shot list, captions). All editable, all ready to plug into governed sending — you approve every activation." },
-  { q: "What does activation actually mean?", a: "Activation is the governed step where you connect and verify your sender, pick a safe segment from your Data Vault, set cadence and only then begin sending. Daily caps and risky-record limits are enforced by the platform — you remain in control." },
-  { q: "Is Velocity Vision a CRM replacement?", a: "No. Velocity Vision is built for marketing-led growth and early pipeline visibility, not CRM bloat. Outreach, follow-up states and early pipeline movement live in the workspace. Export to your CRM at any time for full sales operations and sales handoff." },
-  { q: "Is this for businesses or agencies?", a: "Both. Founders, agencies and lean growth teams use one workspace to run outreach and early pipeline. Agencies use one account with isolated workspaces per client, pooled credits and pooled sending governance." },
-  { q: "What happens when credits run out?", a: "Your workspace stays accessible — data, pipeline, follow-up and reporting remain live. Only new AI-heavy generations pause until you request a top-up or upgrade. You never lose state." },
-  { q: "Does it work outside the UK?", a: "Yes. Multilingual AI outreach, multi-currency pricing and tax treatment shown before payment support international teams." },
+  {
+    q: "Is Velocity Vision AI-powered?",
+    a: "Yes. AI helps prepare editable email, social, press, video and follow-up drafts and can flag data-quality issues. Customers review, edit and control every output and activation decision. Velocity Vision does not guarantee replies, sales, deliverability, compliance, pipeline or revenue.",
+  },
+  {
+    q: "What workflow can Velocity Vision bring together?",
+    a: "The workspace can bring customer-provided contact data, AI-assisted drafts, sender verification, activation controls, follow-up records and early opportunity records into one product. Customers should decide which existing tools or processes, if any, are genuinely replaced in their organisation.",
+  },
+  {
+    q: "Is this a self-serve workspace?",
+    a: "Yes. Customers upload authorised data, review software flags, prepare editable drafts, verify their sender, approve activation and manage follow-up from their own workspace. Velocity Vision does not provide managed campaigns.",
+  },
+  {
+    q: "Does Velocity Vision scrape contacts or sell lists?",
+    a: "No. Velocity Vision does not scrape contact data, sell lists or provide prospect databases. Customers supply their own lawfully obtained business data, maintain suppression and opt-out records, verify their sender and approve every activation.",
+  },
+  {
+    q: "What outputs does it generate?",
+    a: "From a customer brief, AI can prepare editable email sequences, social posts, press-release drafts, video scripts, hooks, shot-list ideas, captions and follow-up copy. Outputs remain drafts until reviewed and approved by the customer.",
+  },
+  {
+    q: "What does activation mean?",
+    a: "Activation is a separate customer-controlled step involving sender verification, segment review, cadence settings and an authorised-user decision. Daily caps and risky-record controls are operational safeguards; they are not legal approval or a deliverability guarantee.",
+  },
+  {
+    q: "Is Velocity Vision a CRM replacement?",
+    a: "Velocity Vision records follow-up states and early opportunities but is not presented as a full CRM replacement. Customers can export records when a broader sales or CRM process is required.",
+  },
+  {
+    q: "Is it for businesses or agencies?",
+    a: "Both. Businesses can use a customer-controlled workspace, while agencies can use one account with isolated client workspaces, pooled Campaign Credits and account-level governance. Agencies remain responsible for client authority, data, sender identity and activation decisions.",
+  },
+  {
+    q: "What happens when Campaign Credits run out?",
+    a: "New AI-intensive generation pauses until credits are added or the plan is upgraded. Continued access to stored records and other functionality remains subject to the applicable plan, paid access period, retention terms and account status.",
+  },
+  {
+    q: "Does it support international customers?",
+    a: "The website provides supported display currencies and multilingual access. The final currency, tax treatment, payment provider and applicable terms are confirmed before purchase. Customers remain responsible for laws applying to their own data, recipients and activity.",
+  },
 ];
 
 const HomeFAQ = () => (
   <section className="section-padding bg-splash-pink relative overflow-hidden">
-    <div aria-hidden className="blob blob-blue w-80 h-80 -top-20 -left-24 animate-floaty" /><div aria-hidden className="blob blob-pink w-72 h-72 -bottom-28 -right-16 animate-drifty" />
+    <div aria-hidden className="blob blob-blue w-80 h-80 -top-20 -left-24 animate-floaty" />
+    <div aria-hidden className="blob blob-pink w-72 h-72 -bottom-28 -right-16 animate-drifty" />
     <div className="max-w-4xl mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
@@ -28,21 +64,31 @@ const HomeFAQ = () => (
         transition={{ duration: 0.6 }}
         className="mb-10"
       >
-        <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">FAQ</p>
-        <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">Quick answers</h2>
+        <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">
+          FAQ
+        </p>
+        <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">
+          Product, activation and billing answers
+        </h2>
       </motion.div>
 
       <Accordion type="single" collapsible className="mb-10">
-        {faqs.map((f, i) => (
-          <AccordionItem key={i} value={`item-${i}`}>
-            <AccordionTrigger className="text-left font-display text-base">{f.q}</AccordionTrigger>
-            <AccordionContent className="text-muted-foreground leading-relaxed">{f.a}</AccordionContent>
+        {faqs.map((faq, index) => (
+          <AccordionItem key={faq.q} value={`item-${index}`}>
+            <AccordionTrigger className="text-left font-display text-base">
+              {faq.q}
+            </AccordionTrigger>
+            <AccordionContent className="text-muted-foreground leading-relaxed">
+              {faq.a}
+            </AccordionContent>
           </AccordionItem>
         ))}
       </Accordion>
 
       <Button variant="cta" asChild>
-        <Link to="/pricing">See pricing and answers <ArrowRight size={16} /></Link>
+        <Link to="/pricing">
+          Review pricing and billing terms <ArrowRight size={16} />
+        </Link>
       </Button>
     </div>
   </section>
