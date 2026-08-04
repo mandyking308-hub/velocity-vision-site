@@ -38,12 +38,10 @@ const ROUTE_LABELS: Record<string, string> = {
   website_contact: 'Website enquiry',
 };
 
-// Optional per-route internal recipient override via env vars.
-// Names are uppercased and prefixed with CONTACT_NOTIFY_TO_.
-// Falls back to the canonical Velocity contact mailbox if no override is configured.
-function recipientFor(route: string): string | undefined {
-  const key = `CONTACT_NOTIFY_TO_${route.toUpperCase()}`;
-  return Deno.env.get(key) || CONTACT_NOTIFY_TO || undefined;
+// Every public enquiry route is intentionally delivered to the canonical
+// Velocity mailbox. Stale route-specific environment overrides are ignored.
+function recipientFor(_route: string): string {
+  return CONTACT_NOTIFY_TO;
 }
 
 const esc = (s: string) =>
@@ -51,7 +49,6 @@ const esc = (s: string) =>
 
 const admin = () =>
   createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
-
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
@@ -133,10 +130,6 @@ Deno.serve(async (req) => {
   }
 
   const notifyTo = recipientFor(route);
-  if (!notifyTo) {
-    await logError('notify-contact: missing config');
-    return json({ ok: true, lead_id: leadId, contact_id: contactId, company_id: companyId, notified: false });
-  }
 
   // Internal notification + sender acknowledgement via Lovable's built-in email queue.
   let notified = false;
