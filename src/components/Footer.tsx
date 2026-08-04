@@ -48,10 +48,15 @@ const Footer = () => (
             <Link to="/legal" className="text-sm text-primary-foreground/70 hover:text-accent transition-colors">Legal Centre</Link>
             <Link to="/legal/terms-of-service" className="text-sm text-primary-foreground/70 hover:text-accent transition-colors">Terms of Service</Link>
             <Link to="/legal/privacy-policy" className="text-sm text-primary-foreground/70 hover:text-accent transition-colors">Privacy Policy</Link>
+            <Link to="/legal/acceptable-use-policy" className="text-sm text-primary-foreground/70 hover:text-accent transition-colors">Acceptable Use & Anti-Spam</Link>
+            <a href="https://globalsolutions.management/refunds" target="_blank" rel="noopener noreferrer" className="text-sm text-primary-foreground/70 hover:text-accent transition-colors">Refund & Cancellation Policy</a>
             <Link to="/legal/platform-security-policy" className="text-sm text-primary-foreground/70 hover:text-accent transition-colors">Security</Link>
             <Link to="/legal/cookie-policy" className="text-sm text-primary-foreground/70 hover:text-accent transition-colors">Cookie Policy</Link>
           </div>
           <div className="mt-6 flex flex-col gap-2">
+            <a href="mailto:contact@velocity-outreach.com" className="text-sm text-primary-foreground/70 hover:text-accent transition-colors">
+              contact@velocity-outreach.com
+            </a>
             <Link to="/contact" className="text-sm text-primary-foreground/70 hover:text-accent transition-colors">
               Contact us →
             </Link>
@@ -59,6 +64,7 @@ const Footer = () => (
               Start your workspace →
             </Link>
           </div>
+
         </div>
       </div>
       <div className="border-t border-primary-foreground/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
