@@ -18,27 +18,32 @@ import FinalCTA from "@/components/FinalCTA";
 const Index = () => (
   <>
     <SEO
-      title={"Velocity Vision — Marketing outreach, follow-up and pipeline in one workspace"}
-      description={"Upload your data, generate marketing outreach assets — email sequences, social media, press releases — activate safely, work follow-up and move leads into pipeline. For businesses and agencies."}
+      title="Velocity Vision — Customer-controlled B2B commercial workspace"
+      description="Self-serve B2B software for customer-provided business data, editable AI-assisted drafts, sender verification, governed activation controls, follow-up records and early opportunity administration."
       path="/"
       jsonLd={{
         "@context": "https://schema.org",
         "@graph": [
           {
             "@type": "Organization",
-            "name": "Velocity Vision",
-            "url": "https://velocity-outreach.com",
-            "description": "One workspace for marketing outreach, follow-up and pipeline. Self-serve, multilingual, multi-currency.",
+            name: "Velocity Vision",
+            url: "https://velocity-outreach.com",
+            description:
+              "A self-serve B2B software workspace operated by Global Solutions Management LLC.",
           },
           {
             "@type": "WebSite",
-            "name": "Velocity Vision",
-            "url": "https://velocity-outreach.com",
-            "potentialAction": {
-              "@type": "SearchAction",
-              "target": "https://velocity-outreach.com/insights?q={search_term_string}",
-              "query-input": "required name=search_term_string",
-            },
+            name: "Velocity Vision",
+            url: "https://velocity-outreach.com",
+          },
+          {
+            "@type": "SoftwareApplication",
+            name: "Velocity Vision",
+            applicationCategory: "BusinessApplication",
+            operatingSystem: "Web",
+            url: "https://velocity-outreach.com",
+            description:
+              "Self-serve software for customer-provided business data, editable AI-assisted drafts, governed activation controls, follow-up records and early opportunity administration.",
           },
         ],
       }}
@@ -46,20 +51,47 @@ const Index = () => (
     <Navbar />
     <main>
       <HeroSection />
-      <div className="panel-wrap"><div className="panel-pink"><AudienceSplit /></div></div>
-      <div className="panel-wrap"><div className="panel-blue"><HowItWorksPreview /></div></div>
-      <div className="panel-wrap"><div className="panel-pink"><ProblemProof /></div></div>
-      <div className="panel-wrap"><div className="panel-pink"><CampaignChannelsStrip /></div></div>
+      <div className="panel-wrap">
+        <div className="panel-pink">
+          <AudienceSplit />
+        </div>
+      </div>
+      <div className="panel-wrap">
+        <div className="panel-blue">
+          <HowItWorksPreview />
+        </div>
+      </div>
+      <div className="panel-wrap">
+        <div className="panel-pink">
+          <ProblemProof />
+        </div>
+      </div>
+      <div className="panel-wrap">
+        <div className="panel-pink">
+          <CampaignChannelsStrip />
+        </div>
+      </div>
       <CampaignCapabilities />
       <WorkflowSavings />
       <PricingTeaser />
-      <div className="panel-wrap"><div className="panel-blue"><EmailIntegrationsStrip /></div></div>
-      <div className="panel-wrap"><div className="panel-blue"><SecurityTrust /></div></div>
-      <div className="panel-wrap"><div className="panel-pink"><GlobalStrip /></div></div>
+      <div className="panel-wrap">
+        <div className="panel-blue">
+          <EmailIntegrationsStrip />
+        </div>
+      </div>
+      <div className="panel-wrap">
+        <div className="panel-blue">
+          <SecurityTrust />
+        </div>
+      </div>
+      <div className="panel-wrap">
+        <div className="panel-pink">
+          <GlobalStrip />
+        </div>
+      </div>
       <HomeFAQ />
       <FinalCTA />
     </main>
-
     <Footer />
   </>
 );
