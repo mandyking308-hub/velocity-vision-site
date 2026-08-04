@@ -1,7 +1,7 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
-const CONTACT_NOTIFY_TO = Deno.env.get('CONTACT_NOTIFY_TO');
+const CONTACT_NOTIFY_TO = 'contact@velocity-outreach.com';
 
 // Strong-enough email format check + disposable/test domain filter.
 const EMAIL_RE = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
@@ -40,7 +40,7 @@ const ROUTE_LABELS: Record<string, string> = {
 
 // Optional per-route internal recipient override via env vars.
 // Names are uppercased and prefixed with CONTACT_NOTIFY_TO_.
-// Falls back to CONTACT_NOTIFY_TO if no override is configured.
+// Falls back to the canonical Velocity contact mailbox if no override is configured.
 function recipientFor(route: string): string | undefined {
   const key = `CONTACT_NOTIFY_TO_${route.toUpperCase()}`;
   return Deno.env.get(key) || CONTACT_NOTIFY_TO || undefined;
