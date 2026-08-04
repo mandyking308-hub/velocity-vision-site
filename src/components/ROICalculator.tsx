@@ -60,7 +60,7 @@ const ROICalculator = () => {
             See your growth potential in 30 seconds.
           </h2>
           <p className="text-muted-foreground text-lg">
-            Plug in your numbers. We'll show you what a Velocity Influence engine could deliver — and what it would cost to build.
+            Plug in your numbers. We'll show you what a Velocity Vision engine could deliver — and what it would cost to build.
           </p>
         </motion.div>
 

@@ -310,8 +310,18 @@ const Contact = () => {
                     <p>Global Solutions Management LLC</p>
                     <p>Delaware, United States</p>
                     <p>Velocity Vision operates at velocity-outreach.com</p>
+                    <p>
+                      Support and billing:{" "}
+                      <a
+                        href="mailto:contact@velocity-outreach.com"
+                        className="text-accent underline underline-offset-4"
+                      >
+                        contact@velocity-outreach.com
+                      </a>
+                    </p>
                     <p>Used internationally · multi-currency · multilingual</p>
                   </div>
+
                 </div>
                 <div className="bg-card border border-border/50 rounded-xl p-6 shadow-card">
                   <h3 className="font-display font-semibold text-foreground mb-2">Agency or volume enquiry?</h3>

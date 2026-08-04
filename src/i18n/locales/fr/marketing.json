@@ -12,12 +12,13 @@
     "about": "À propos",
     "templates": "Modèles",
     "seePricing": "Voir les tarifs",
-    "startWorkspace": "Démarrer votre espace"
+    "startWorkspace": "Démarrer votre espace",
+    "contact": "Contact"
   },
   "hero": {
     "eyebrow": "Plateforme de croissance marketing",
     "title": "Lancez des campagnes complètes en minutes — pas en semaines.",
-    "subtitle": "Importez votre audience, activez une campagne et laissez Velocity Influence gérer l'outbound, les relances et le pipeline. En autonomie. Multilingue. Conçue pour les équipes internationales.",
+    "subtitle": "Importez votre audience, activez une campagne et laissez Velocity Vision gérer l'outbound, les relances et le pipeline. En autonomie. Multilingue. Conçue pour les équipes internationales.",
     "ctaPrimary": "Démarrer l'essai gratuit",
     "ctaSecondary": "Voir la démo"
   },

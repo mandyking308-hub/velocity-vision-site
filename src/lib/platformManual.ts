@@ -16,7 +16,7 @@ export const platformManual: ManualChapter[] = [
     sections: [
       {
         title: "Purpose & Vision",
-        content: `Velocity Influence is a full-stack marketing operations platform engineered to act as the marketing engine for the broader organisation group. It unifies campaign execution, client relationship management, billing, compliance, and executive analytics into one cohesive system.\n\n**Three Core Functions:**\n- **Internal marketing engine** — powering campaigns across the organisation's portfolio of brands and ventures\n- **External client services** — managing end-to-end marketing campaigns for external business clients on a subscription basis\n- **Agency capability** — enabling marketing agencies to manage multiple client workspaces under a single parent account with full data isolation\n\n**Strategic Position:**\nVelocity Influence is the operational foundation for the broader AI infrastructure strategy. The architecture is designed so that intelligent automation, predictive lead scoring, AI-driven campaign optimisation, and generative content can be layered on top of the existing data model without re-engineering the platform.`
+        content: `Velocity Vision is a full-stack marketing operations platform engineered to act as the marketing engine for the broader organisation group. It unifies campaign execution, client relationship management, billing, compliance, and executive analytics into one cohesive system.\n\n**Three Core Functions:**\n- **Internal marketing engine** — powering campaigns across the organisation's portfolio of brands and ventures\n- **External client services** — managing end-to-end marketing campaigns for external business clients on a subscription basis\n- **Agency capability** — enabling marketing agencies to manage multiple client workspaces under a single parent account with full data isolation\n\n**Strategic Position:**\nVelocity Vision is the operational foundation for the broader AI infrastructure strategy. The architecture is designed so that intelligent automation, predictive lead scoring, AI-driven campaign optimisation, and generative content can be layered on top of the existing data model without re-engineering the platform.`
       },
       {
         title: "Platform Architecture",
@@ -226,7 +226,7 @@ export const platformManual: ManualChapter[] = [
       },
       {
         title: "Sandbox Restrictions",
-        content: `**Mechanism:** \`DemoContext\` (\`src/contexts/DemoContext.tsx\`) tracks demo state. The \`guardAction()\` helper intercepts write operations.\n\n**Blocked Actions:**\n- Sending real campaigns\n- Uploading marketing lists\n- Modifying billing settings\n- Changing system configuration\n- Creating real user accounts\n\n**User Feedback:** Each blocked action shows toast: *"This feature is disabled in the demo environment."*\n\n**Banner:** \`DemoBanner.tsx\` displays a sticky top banner: *"You are currently viewing the Velocity Influence Demo Environment. Data shown here is sample data for demonstration purposes."*`
+        content: `**Mechanism:** \`DemoContext\` (\`src/contexts/DemoContext.tsx\`) tracks demo state. The \`guardAction()\` helper intercepts write operations.\n\n**Blocked Actions:**\n- Sending real campaigns\n- Uploading marketing lists\n- Modifying billing settings\n- Changing system configuration\n- Creating real user accounts\n\n**User Feedback:** Each blocked action shows toast: *"This feature is disabled in the demo environment."*\n\n**Banner:** \`DemoBanner.tsx\` displays a sticky top banner: *"You are currently viewing the Velocity Vision Demo Environment. Data shown here is sample data for demonstration purposes."*`
       },
       {
         title: "Demo Routes",
@@ -282,7 +282,7 @@ export const platformManual: ManualChapter[] = [
       },
       {
         title: "Document Structure",
-        content: `Each legal document page follows the same SaaS legal layout:\n- **Two-column layout:** sticky sidebar nav (left), document content (right)\n- **Sidebar:** numbered section list with smooth-scroll anchors\n- **Content:** expandable/collapsible sections, version & last updated header\n- **Footer:** *Velocity Influence Agency — Trading name of Global Solutions Management LLC, Delaware, United States*\n- **Contact link:** for legal enquiries`
+        content: `Each legal document page follows the same SaaS legal layout:\n- **Two-column layout:** sticky sidebar nav (left), document content (right)\n- **Sidebar:** numbered section list with smooth-scroll anchors\n- **Content:** expandable/collapsible sections, version & last updated header\n- **Footer:** *Velocity Vision Agency — Trading name of Global Solutions Management LLC, Delaware, United States*\n- **Contact link:** for legal enquiries`
       },
       {
         title: "Version Management",
@@ -424,7 +424,7 @@ export const platformManual: ManualChapter[] = [
     sections: [
       {
         title: "Repositioning Summary",
-        content: `The homepage was refined to position Velocity Influence as **both a self-serve platform and a full-service agency**, with a clear path for users to (a) try the platform instantly via the demo, (b) book a strategy call, or (c) request agency delivery.\n\n**Primary message:** "A marketing platform plus agency — for businesses and agencies."\n\n**Dual CTAs everywhere:**\n- **Primary:** "Explore the Platform" → \`/demo\`\n- **Secondary:** "Book a Demo" → \`/book-demo\``
+        content: `The homepage was refined to position Velocity Vision as **both a self-serve platform and a full-service agency**, with a clear path for users to (a) try the platform instantly via the demo, (b) book a strategy call, or (c) request agency delivery.\n\n**Primary message:** "A marketing platform plus agency — for businesses and agencies."\n\n**Dual CTAs everywhere:**\n- **Primary:** "Explore the Platform" → \`/demo\`\n- **Secondary:** "Book a Demo" → \`/book-demo\``
       },
       {
         title: "Section Stack (Index.tsx)",

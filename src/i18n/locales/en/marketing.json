@@ -12,12 +12,13 @@
     "about": "About",
     "templates": "Templates",
     "seePricing": "See pricing",
-    "startWorkspace": "Start your workspace"
+    "startWorkspace": "Start your workspace",
+    "contact": "Contact"
   },
   "hero": {
     "eyebrow": "Marketing growth launchpad",
     "title": "Launch full campaigns in minutes — not weeks.",
-    "subtitle": "Upload your audience, activate a campaign, and let Velocity Influence run the outbound, the follow-up and the pipeline. Self-serve. Multilingual. Built for global teams.",
+    "subtitle": "Upload your audience, activate a campaign, and let Velocity Vision run the outbound, the follow-up and the pipeline. Self-serve. Multilingual. Built for global teams.",
     "ctaPrimary": "Start free trial",
     "ctaSecondary": "See live demo"
   },

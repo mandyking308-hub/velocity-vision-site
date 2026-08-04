@@ -73,7 +73,7 @@ const FounderManual = () => {
 
   // Generate Markdown for download
   const generateMarkdown = () => {
-    let md = "# Velocity Influence — Platform Operations Manual\n\n";
+    let md = "# Velocity Vision — Platform Operations Manual\n\n";
     md += `Generated: ${format(new Date(), "d MMMM yyyy, HH:mm")}\n\n---\n\n`;
 
     md += "## Table of Contents\n\n";
@@ -159,7 +159,7 @@ const FounderManual = () => {
     doc.setTextColor(255, 255, 255);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(28);
-    doc.text("Velocity Influence", margin, 200);
+    doc.text("Velocity Vision", margin, 200);
     doc.setFontSize(20);
     doc.text("Platform Operations Manual", margin, 235);
     doc.setFont("helvetica", "normal");
@@ -230,7 +230,7 @@ const FounderManual = () => {
       doc.setFont("helvetica", "normal");
       doc.setFontSize(8);
       doc.setTextColor(150, 150, 150);
-      doc.text(`Velocity Influence — Operations Manual`, margin, pageH - 20);
+      doc.text(`Velocity Vision — Operations Manual`, margin, pageH - 20);
       doc.text(`Page ${p} of ${total}`, pageW - margin, pageH - 20, { align: "right" });
     }
 

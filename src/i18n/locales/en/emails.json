@@ -1,12 +1,12 @@
 {
   "welcome": {
-    "subject": "Welcome to Velocity Influence",
+    "subject": "Welcome to Velocity Vision",
     "greeting": "Hi {{name}},",
     "body": "Your workspace is live. Upload your first audience to launch a campaign in minutes.",
     "cta": "Open your dashboard"
   },
   "receipt": {
-    "subject": "Your Velocity Influence receipt",
+    "subject": "Your Velocity Vision receipt",
     "thanks": "Thanks for your purchase.",
     "amount": "Amount charged: {{amount}}"
   },
