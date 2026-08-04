@@ -1,0 +1,6 @@
+{
+  "tested_at": "2026-08-04T13:46:00Z",
+  "endpoint": "https://fdubhpzthtfzrzkjkalw.supabase.co/functions/v1/notify-contact",
+  "http_status": 200,
+  "response_body": "{\"ok\":true,\"lead_id\":\"f14034fa-1052-4d7b-88a8-80041d84a8de\",\"contact_id\":\"7c173b32-8cb1-481d-b764-b3d29bff1d99\",\"company_id\":\"aae8d6d6-0352-424c-98a7-29e9dfec9a55\",\"notified\":true}"
+}
