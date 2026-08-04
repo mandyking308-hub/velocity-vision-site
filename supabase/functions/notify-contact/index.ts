@@ -1,13 +1,7 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
-const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 const CONTACT_NOTIFY_TO = Deno.env.get('CONTACT_NOTIFY_TO');
-// Expected production value once Resend domain is verified:
-//   Velocity Vision <support@mail.velocity-outreach.com>
-// No silent fallback: if EMAIL_FROM is not set, notification email is skipped
-// and we log missing_email_from. CRM insert still happens.
-const EMAIL_FROM = Deno.env.get('EMAIL_FROM');
 
 // Strong-enough email format check + disposable/test domain filter.
 const EMAIL_RE = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
@@ -138,53 +132,43 @@ Deno.serve(async (req) => {
     // continue — we still try to send the notification email
   }
 
-  const timestamp = new Date().toISOString();
-
   const notifyTo = recipientFor(route);
-  if (!notifyTo || !RESEND_API_KEY) {
+  if (!notifyTo) {
     await logError('notify-contact: missing config');
     return json({ ok: true, lead_id: leadId, contact_id: contactId, company_id: companyId, notified: false });
   }
-  if (!EMAIL_FROM) {
-    await logError('notify-contact: missing_email_from');
-    return json({ ok: true, lead_id: leadId, contact_id: contactId, company_id: companyId, notified: false });
-  }
 
-  const subject = `[${routeLabel}] Website enquiry — ${name || 'Unknown'}`;
-  const html = `
-    <div style="font-family:Arial,sans-serif;color:#111;line-height:1.5">
-      <h2 style="margin:0 0 12px">New website enquiry — ${esc(routeLabel)}</h2>
-      <table style="border-collapse:collapse">
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Route</td><td><strong>${esc(routeLabel)}</strong> <span style="color:#888">(${esc(route)})</span></td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Name</td><td>${esc(name)}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Email</td><td>${esc(email)}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Company</td><td>${esc(company)}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Timestamp</td><td>${esc(timestamp)}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Lead ID</td><td>${esc(leadId || '')}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Contact ID</td><td>${esc(contactId || '')}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666">Company ID</td><td>${esc(companyId || '')}</td></tr>
-      </table>
-      <h3 style="margin:20px 0 6px">Message</h3>
-      <div style="white-space:pre-wrap;background:#f7f7f7;padding:12px;border-radius:6px">${esc(message)}</div>
-    </div>
-  `;
+  // Internal notification + sender acknowledgement via Lovable's built-in email queue.
+  let notified = false;
+  try {
+    const { error: notifyErr } = await supabase.functions.invoke('send-transactional-email', {
+      body: {
+        templateName: 'contact-notification',
+        recipientEmail: notifyTo,
+        idempotencyKey: `contact-notify-${leadId ?? crypto.randomUUID()}`,
+        templateData: { name, email, company, topic: routeLabel, message, leadId: leadId ?? '' },
+      },
+    });
+    if (notifyErr) throw notifyErr;
+    notified = true;
+  } catch (e) {
+    await logError('notify-contact: notification send failed', String(e).slice(0, 500));
+  }
 
   try {
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${RESEND_API_KEY}` },
-      body: JSON.stringify({ from: EMAIL_FROM, to: [notifyTo], reply_to: email || undefined, subject, html }),
+    await supabase.functions.invoke('send-transactional-email', {
+      body: {
+        templateName: 'contact-confirmation',
+        recipientEmail: email,
+        idempotencyKey: `contact-confirm-${leadId ?? email}`,
+        templateData: { name, message, topic: routeLabel },
+      },
     });
-    if (!res.ok) {
-      const detail = await res.text();
-      await logError(`notify-contact: resend ${res.status}`, detail.slice(0, 500));
-      return json({ ok: true, lead_id: leadId, contact_id: contactId, company_id: companyId, notified: false });
-    }
-    return json({ ok: true, lead_id: leadId, contact_id: contactId, company_id: companyId, notified: true });
   } catch (e) {
-    await logError('notify-contact: exception', String(e).slice(0, 500));
-    return json({ ok: true, lead_id: leadId, contact_id: contactId, company_id: companyId, notified: false });
+    await logError('notify-contact: confirmation send failed', String(e).slice(0, 500));
   }
+
+  return json({ ok: true, lead_id: leadId, contact_id: contactId, company_id: companyId, notified });
 });
 
 function json(body: unknown, status = 200) {

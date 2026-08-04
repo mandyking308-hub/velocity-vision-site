@@ -20,6 +20,7 @@ import Work from "./pages/Work.tsx";
 import Insights from "./pages/Insights.tsx";
 import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
+import Unsubscribe from "./pages/Unsubscribe.tsx";
 
 import NotFound from "./pages/NotFound.tsx";
 import AuthPage from "./pages/AuthPage.tsx";
@@ -123,6 +124,8 @@ const AnimatedRoutes = () => {
         <Route path="/insights" element={<PageTransition><Insights /></PageTransition>} />
         <Route path="/about" element={<PageTransition><About /></PageTransition>} />
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+        <Route path="/unsubscribe" element={<PageTransition><Unsubscribe /></PageTransition>} />
+
         <Route path="/book-demo" element={<Navigate to="/demo" replace />} />
         <Route path="/for-agencies" element={<PageTransition><ForAgencies /></PageTransition>} />
         <Route path="/for-businesses" element={<PageTransition><ForBusinesses /></PageTransition>} />
