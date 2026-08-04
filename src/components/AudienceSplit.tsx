@@ -11,18 +11,18 @@ const cards = [
   {
     icon: Briefcase,
     label: "For Businesses",
-    title: "A commercial workspace for lean teams",
-    desc: "Founders, agencies and lean growth teams need structure, safe activation and early pipeline — not another agency.",
-    cta: "See it for lean teams",
+    title: "A customer-controlled workspace for lean teams",
+    desc: "Organise authorised data, editable drafts, activation controls, follow-up and early opportunity records without transferring responsibility to a managed service.",
+    cta: "Review the business workspace",
     href: "/for-businesses",
     tone: "blue" as const,
   },
   {
     icon: Building2,
     label: "For Agencies",
-    title: "One account, one workspace per client",
-    desc: "Run multiple clients with isolated data, pooled credits and pooled sending governance — without tool sprawl.",
-    cta: "See it for agencies",
+    title: "One account with an isolated workspace per client",
+    desc: "Keep authorised client data, draft content, sender settings and activation decisions separated while using pooled Campaign Credits and account-level governance.",
+    cta: "Review the agency workspace",
     href: "/for-agencies",
     tone: "pink" as const,
   },
@@ -33,7 +33,6 @@ const AudienceSplit = () => (
     <div aria-hidden className="blob blob-pink w-72 h-72 -top-24 -right-16 animate-floaty" />
     <div aria-hidden className="blob blob-blue w-96 h-96 -bottom-32 -left-24 animate-drifty" />
     <div className="max-w-7xl mx-auto relative">
-      {/* Hero band: laughing marketer + colour blocks */}
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -44,7 +43,7 @@ const AudienceSplit = () => (
         <div className="md:col-span-2 relative aspect-[4/5] sm:aspect-[16/10] md:aspect-auto md:min-h-[460px] bg-muted">
           <img
             src={laughingMarketer}
-            alt="Founder laughing while her team runs outreach in Velocity Vision"
+            alt="Business user working in a commercial software workspace"
             className="absolute inset-0 w-full h-full object-cover object-[50%_20%]"
             loading="lazy"
             width={1024}
@@ -55,41 +54,72 @@ const AudienceSplit = () => (
           className="md:col-span-3 p-8 md:p-12 flex flex-col justify-center text-white relative"
           style={{ backgroundColor: BLUE }}
         >
-          <div aria-hidden className="absolute -top-16 -right-16 w-60 h-60 rounded-full" style={{ backgroundColor: PINK, opacity: 0.35, filter: "blur(30px)" }} />
-          <div aria-hidden className="absolute bottom-6 right-8 w-24 h-24 rounded-full" style={{ backgroundColor: PINK }} />
-          <p className="relative font-semibold text-[11px] uppercase tracking-[0.25em] text-white/80 mb-4">Built for the whole go-to-market team</p>
+          <div
+            aria-hidden
+            className="absolute -top-16 -right-16 w-60 h-60 rounded-full"
+            style={{ backgroundColor: PINK, opacity: 0.35, filter: "blur(30px)" }}
+          />
+          <div
+            aria-hidden
+            className="absolute bottom-6 right-8 w-24 h-24 rounded-full"
+            style={{ backgroundColor: PINK }}
+          />
+          <p className="relative font-semibold text-[11px] uppercase tracking-[0.25em] text-white/80 mb-4">
+            Built for customer-controlled B2B workflows
+          </p>
           <h2 className="relative font-display font-bold text-3xl md:text-5xl leading-[1.05] mb-4">
-            Real people. Real pipeline.{" "}
-            <span style={{ color: "#FFD6E7" }}>Zero busywork.</span>
+            One self-serve product.{" "}
+            <span style={{ color: "#FFD6E7" }}>Clear responsibility at every step.</span>
           </h2>
           <p className="relative text-white/85 text-base md:text-lg max-w-xl leading-relaxed">
-            Founders, sales teams, marketers and agencies use Velocity Vision to turn scattered data into outreach, follow-up and pipeline — without the tool sprawl.
+            Businesses and agencies use Velocity Vision to organise customer-provided data, editable drafts, activation controls, follow-up records and early opportunity records in one workspace.
           </p>
         </div>
       </motion.div>
 
       <div className="grid md:grid-cols-2 gap-6">
-        {cards.map((c, i) => {
-          const bg = c.tone === "blue" ? BLUE : PINK;
+        {cards.map((card, index) => {
+          const background = card.tone === "blue" ? BLUE : PINK;
+
           return (
             <motion.div
-              key={c.label}
+              key={card.label}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
               className="relative rounded-2xl p-8 shadow-elevated flex flex-col text-white overflow-hidden"
-              style={{ backgroundColor: bg }}
+              style={{ backgroundColor: background }}
             >
-              <div aria-hidden className="absolute -top-16 -right-10 w-52 h-52 rounded-full" style={{ backgroundColor: c.tone === "blue" ? PINK : BLUE, opacity: 0.25, filter: "blur(24px)" }} />
+              <div
+                aria-hidden
+                className="absolute -top-16 -right-10 w-52 h-52 rounded-full"
+                style={{
+                  backgroundColor: card.tone === "blue" ? PINK : BLUE,
+                  opacity: 0.25,
+                  filter: "blur(24px)",
+                }}
+              />
               <div className="relative w-12 h-12 rounded-lg bg-white/15 flex items-center justify-center mb-5">
-                <c.icon className="text-white" size={24} />
+                <card.icon className="text-white" size={24} />
               </div>
-              <p className="relative font-semibold text-xs uppercase tracking-widest mb-2 text-white/80">{c.label}</p>
-              <h3 className="relative text-2xl font-display font-semibold mb-3">{c.title}</h3>
-              <p className="relative text-white/85 text-sm md:text-base leading-relaxed mb-6 flex-1">{c.desc}</p>
-              <Button asChild className="relative self-start bg-white hover:bg-white/90" style={{ color: bg }}>
-                <Link to={c.href}>{c.cta} <ArrowRight size={16} /></Link>
+              <p className="relative font-semibold text-xs uppercase tracking-widest mb-2 text-white/80">
+                {card.label}
+              </p>
+              <h3 className="relative text-2xl font-display font-semibold mb-3">
+                {card.title}
+              </h3>
+              <p className="relative text-white/85 text-sm md:text-base leading-relaxed mb-6 flex-1">
+                {card.desc}
+              </p>
+              <Button
+                asChild
+                className="relative self-start bg-white hover:bg-white/90"
+                style={{ color: background }}
+              >
+                <Link to={card.href}>
+                  {card.cta} <ArrowRight size={16} />
+                </Link>
               </Button>
             </motion.div>
           );
@@ -100,4 +130,3 @@ const AudienceSplit = () => (
 );
 
 export default AudienceSplit;
-
