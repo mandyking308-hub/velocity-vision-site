@@ -14,17 +14,25 @@ const FinalCTA = () => (
         transition={{ duration: 0.6 }}
       >
         <h2 className="text-3xl md:text-5xl font-display font-bold text-primary-foreground mb-6">
-          Stop running outreach, follow-up and pipeline across six tools
+          Review the self-serve workspace before paid activation
         </h2>
-        <p className="text-primary-foreground/75 text-lg mb-10 max-w-xl mx-auto">
-          Bring data, assets, activation, follow-up and early pipeline into one governed workspace.
+        <p className="text-primary-foreground/75 text-lg mb-5 max-w-2xl mx-auto">
+          Organise customer-authorised data, prepare editable drafts and review the product controls in Free Preview.
+        </p>
+        <p className="text-primary-foreground/65 text-sm mb-10 max-w-2xl mx-auto">
+          Free Preview has no live sending and no automatic paid upgrade. Paid activation follows onboarding, applicable checks and the terms shown before purchase.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button variant="hero" size="lg" asChild>
-            <Link to="/auth">Start your workspace <ArrowRight size={18} /></Link>
+            <Link to="/auth">
+              Start Free Preview <ArrowRight size={18} />
+            </Link>
           </Button>
           <Button variant="hero-outline" size="lg" asChild>
-            <Link to="/pricing">See pricing</Link>
+            <Link to="/pricing">Review pricing</Link>
+          </Button>
+          <Button variant="hero-outline" size="lg" asChild>
+            <Link to="/legal">Review legal documents</Link>
           </Button>
         </div>
       </motion.div>
