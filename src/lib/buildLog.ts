@@ -105,7 +105,7 @@ export const buildLog: BuildLogEntry[] = [
   {
     date: "2026-03-15",
     feature: "Homepage Repositioning",
-    description: "Refined homepage to position Velocity Influence as platform + agency. Added PlatformPositioning four-block grid and MidPageCTA. Updated HeroSection with dual CTAs ('Explore the Platform' and 'Book a Demo'). Tightened copy across WhatWeDo, IndustriesSection, CampaignCapabilities, AgencySection, and FinalCTA.",
+    description: "Refined homepage to position Velocity Vision as platform + agency. Added PlatformPositioning four-block grid and MidPageCTA. Updated HeroSection with dual CTAs ('Explore the Platform' and 'Book a Demo'). Tightened copy across WhatWeDo, IndustriesSection, CampaignCapabilities, AgencySection, and FinalCTA.",
     component: "Website"
   },
   {

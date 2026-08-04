@@ -1,12 +1,12 @@
 {
   "welcome": {
-    "subject": "Bienvenue sur Velocity Influence",
+    "subject": "Bienvenue sur Velocity Vision",
     "greeting": "Bonjour {{name}},",
     "body": "Votre espace est en ligne. Importez votre première audience pour lancer une campagne en quelques minutes.",
     "cta": "Ouvrir mon tableau de bord"
   },
   "receipt": {
-    "subject": "Votre reçu Velocity Influence",
+    "subject": "Votre reçu Velocity Vision",
     "thanks": "Merci pour votre achat.",
     "amount": "Montant débité : {{amount}}"
   },

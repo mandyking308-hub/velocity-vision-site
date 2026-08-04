@@ -12,12 +12,13 @@
     "about": "Acerca de",
     "templates": "Plantillas",
     "seePricing": "Ver precios",
-    "startWorkspace": "Iniciar espacio de trabajo"
+    "startWorkspace": "Iniciar espacio de trabajo",
+    "contact": "Contacto"
   },
   "hero": {
     "eyebrow": "Plataforma de crecimiento de marketing",
     "title": "Lanza campañas completas en minutos, no semanas.",
-    "subtitle": "Sube tu audiencia, activa una campaña y deja que Velocity Influence ejecute el outbound, el seguimiento y el pipeline. Autoservicio. Multilingüe. Para equipos globales.",
+    "subtitle": "Sube tu audiencia, activa una campaña y deja que Velocity Vision ejecute el outbound, el seguimiento y el pipeline. Autoservicio. Multilingüe. Para equipos globales.",
     "ctaPrimary": "Empezar prueba gratis",
     "ctaSecondary": "Ver demo en vivo"
   },
