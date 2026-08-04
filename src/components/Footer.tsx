@@ -71,6 +71,8 @@ const Footer = () => (
         <div className="text-center md:text-left">
           <p className="text-xs text-primary-foreground/70">© 2026 Global Solutions Management LLC — operator of the Velocity Vision platform. Delaware, United States.</p>
           <p className="text-xs text-primary-foreground/50 mt-1">Confidential by default. We do not publish customer data or results without written permission.</p>
+          <p className="text-xs text-primary-foreground/50 mt-1 max-w-2xl">Velocity Vision is self-serve software. It does not scrape contact data, sell or supply lists, run managed outreach, generate fake engagement, or send anything you have not approved. Customers use their own lawfully obtained contacts and remain the data controller.</p>
+
         </div>
         <div className="flex gap-6">
           <Link to="/legal/privacy-policy" className="text-xs text-primary-foreground/70 hover:text-accent transition-colors">Privacy</Link>
