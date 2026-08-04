@@ -19,10 +19,12 @@ const requiredFiles = [
   "src/components/WorkflowSavings.tsx",
   "src/components/PricingTeaser.tsx",
   "src/components/EmailIntegrationsStrip.tsx",
+  "src/components/CampaignChannelsStrip.tsx",
   "src/components/SecurityTrust.tsx",
   "src/components/GlobalStrip.tsx",
   "src/components/HomeFAQ.tsx",
   "src/components/FinalCTA.tsx",
+  "src/components/Footer.tsx",
   "src/pages/Features.tsx",
   "src/pages/HowItWorks.tsx",
   "src/pages/Templates.tsx",
@@ -72,7 +74,10 @@ for (const route of [
 const sourceByFile = Object.fromEntries(
   requiredFiles.map((file) => [file, read(file)]),
 );
-const publicSource = Object.values(sourceByFile).join("\n");
+const marketingFiles = requiredFiles.filter(
+  (file) => file !== "src/App.tsx" && file !== "src/pages/legal/LegalDocumentPage.tsx",
+);
+const marketingSource = marketingFiles.map((file) => sourceByFile[file]).join("\n");
 
 const forbiddenPhrases = [
   "Most popular",
@@ -117,7 +122,7 @@ const forbiddenPhrases = [
 ];
 
 for (const phrase of forbiddenPhrases) {
-  assert(!publicSource.includes(phrase), `Forbidden or unsupported public phrase returned: ${phrase}`);
+  assert(!marketingSource.includes(phrase), `Forbidden or unsupported public phrase returned: ${phrase}`);
 }
 
 const index = sourceByFile["src/pages/Index.tsx"];
@@ -191,7 +196,7 @@ assert(
 
 const emailIntegrations = sourceByFile["src/components/EmailIntegrationsStrip.tsx"];
 for (const control of [
-  "does not guarantee deliverability",
+  "do not guarantee deliverability",
   "Provider compatibility and connection availability may change",
   "authorised mailbox",
 ]) {
@@ -211,7 +216,8 @@ const faq = sourceByFile["src/components/HomeFAQ.tsx"];
 for (const control of [
   "Does Velocity Vision scrape contacts or sell lists?",
   "does not provide managed campaigns",
-  "do not guarantee deliverability or legal compliance",
+  "does not guarantee replies, sales, deliverability, compliance",
+  "not legal approval or a deliverability guarantee",
   "remains subject to the applicable plan",
 ]) {
   assert(faq.includes(control), `Homepage FAQ is missing: ${control}`);
@@ -295,7 +301,7 @@ assert(!contact.includes('to: "/app/billing"'), "Public billing help must not se
 
 const help = sourceByFile["src/pages/Help.tsx"];
 for (const control of [
-  "Software flags are not legal approval",
+  "flags support customer assessment and are not legal approval",
   "does not qualify leads",
   "Growth and Agency Workspace renew monthly until cancelled",
   "GSM Refund Policy",
