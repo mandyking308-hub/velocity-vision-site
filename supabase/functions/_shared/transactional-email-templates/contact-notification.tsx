@@ -62,7 +62,6 @@ export const template = {
     message: 'Interested in agency workspaces.',
     leadId: '43dc1b29',
   },
-  to: Deno.env.get('CONTACT_NOTIFY_TO') || undefined,
 } satisfies TemplateEntry
 
 const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif' }
