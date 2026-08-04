@@ -58,6 +58,11 @@ assert(faq.includes("Does Velocity Vision scrape contacts or sell lists?"), "Hom
 const contact = read("src/pages/Contact.tsx");
 assert(contact.includes('toast.error("We could not send your message.'), "Contact form must show a real failure state");
 assert(contact.includes("if (error) throw error"), "Contact form must inspect the backend invocation result");
+assert(contact.includes("data?.notified !== true"), "Contact form must not report success unless notification delivery succeeded");
+assert(contact.includes("scrollToContactForm"), "Contact page must provide working in-page contact navigation");
+assert(contact.includes('to: "#contact-form"'), "Contact route cards must point to the public enquiry form");
+assert(!contact.includes('to: "/app"'), "Public contact support must not send logged-out reviewers to the protected app");
+assert(!contact.includes('to: "/app/billing"'), "Public billing support must not send logged-out reviewers to the protected app");
 assert(contact.includes("/legal/privacy-policy"), "Contact form must link to the Privacy Policy");
 
 const legalCentre = read("src/pages/legal/LegalCentre.tsx");
