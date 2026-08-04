@@ -3,70 +3,125 @@ import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Sparkles, Upload, Rocket, Send, ShieldCheck, TrendingUp, Coins } from "lucide-react";
+import {
+  Sparkles,
+  Upload,
+  Rocket,
+  Send,
+  ShieldCheck,
+  TrendingUp,
+  Coins,
+} from "lucide-react";
 
 const topics = [
-  { icon: Sparkles, title: "How Campaign Credits work", body: "Credits power AI-heavy actions — full campaign packs, social packs, press releases, video scripts, follow-up assets. Data storage, uploads, review, follow-up and pipeline are always free." },
-  { icon: Upload, title: "How to upload data safely", body: "Use CSV upload. Only include contacts you have a lawful basis to reach. The Data Vault scores every row for deliverability risk before you spend credits." },
-  { icon: Rocket, title: "How to prepare your first campaign", body: "Pick a goal, choose an audience segment, then generate a campaign pack. Free Preview supports 1 full pack and up to 25 contacts." },
-  { icon: ShieldCheck, title: "How to review AI outputs", body: "Every asset is a draft. Read for tone, factual accuracy and compliance. Edit freely — you control what is activated or sent." },
-  { icon: Send, title: "Why sending is gated", body: "Live sending is only enabled once your plan, mailbox connection and compliance gates are ready. This protects deliverability and your legal position." },
-  { icon: TrendingUp, title: "Moving from Free Preview to Growth", body: "When credits run low or you're ready for continuous outreach, top up credits or upgrade to Growth for recurring cadence, larger caps and follow-up automation." },
-  { icon: Coins, title: "Buying credits without subscribing", body: "You can top up credits at any time — no subscription required. Top-up credits are usable as soon as the payment clears with the payment provider identified at checkout." },
+  {
+    icon: Sparkles,
+    title: "How Campaign Credits work",
+    body: "Campaign Credits are non-cashable product-usage units for AI-intensive actions such as draft packs, social drafts, press drafts, video scripts and follow-up assets. Access and usage remain subject to the applicable plan terms.",
+  },
+  {
+    icon: Upload,
+    title: "How to upload authorised data",
+    body: "Use CSV or spreadsheet upload only for business records your organisation is authorised to process. Data Vault flags support customer review and do not confirm lawful basis, deliverability or compliance.",
+  },
+  {
+    icon: Rocket,
+    title: "How to prepare a first draft workflow",
+    body: "Choose a business objective, review a small authorised record set and generate editable draft assets. Free Preview supports product review without live sending.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "How to review AI outputs",
+    body: "Every output remains a draft. Review tone, factual accuracy, claims, recipients and legal requirements before deciding whether it should be used.",
+  },
+  {
+    icon: Send,
+    title: "Why live sending is gated",
+    body: "Free Preview does not enable live sending. Eligible paid activation follows onboarding, sender configuration, applicable product checks and an authorised-user decision. These controls do not guarantee deliverability or legal compliance.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Moving from Free Preview to a paid plan",
+    body: "Review the published Starter, Growth and Agency Workspace terms. The final product, price, currency, tax treatment, payment provider and applicable terms are confirmed before purchase.",
+  },
+  {
+    icon: Coins,
+    title: "Requesting additional Campaign Credits",
+    body: "Use the published Contact route or available account route. Additional credits are not activated until the commercial terms and payment route have been confirmed.",
+  },
 ];
 
 export default function GettingStarted() {
   return (
     <>
-      <SEO title="Getting started — Velocity Vision" description="Short guides for your first workspace, first upload, first campaign, and understanding Campaign Credits." path="/help/getting-started" />
+      <SEO
+        title="Getting started — Velocity Vision"
+        description="Guidance for reviewing a first workspace, uploading customer-authorised data, preparing editable drafts and understanding Campaign Credits and paid activation."
+        path="/help/getting-started"
+      />
       <Navbar />
       <main className="pt-24">
         <section className="section-padding bg-hero">
           <div className="max-w-4xl mx-auto">
-            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-              <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Training centre</p>
-              <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">Getting started with Velocity Vision</h1>
-              <p className="text-primary-foreground/75 text-lg max-w-2xl">
-                Practical guides for your first session. Start with Free Preview, upload a small dataset, generate a campaign pack, then decide whether to top up credits or upgrade.
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
+            >
+              <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">
+                Getting started
+              </p>
+              <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">
+                Review the workspace before paid activation
+              </h1>
+              <p className="text-primary-foreground/75 text-lg max-w-3xl">
+                Start with Free Preview, use a small authorised record set and review editable draft functions. Free Preview has no live sending and no automatic paid upgrade.
               </p>
             </motion.div>
           </div>
         </section>
 
-        <div className="panel-wrap"><div className="panel-blue">
-        <section className="section-padding">
-          <div className="max-w-5xl mx-auto">
-            <div className="grid gap-4 md:grid-cols-2">
-              {topics.map(({ icon: Icon, title, body }, i) => (
-                <motion.div
-                  key={title}
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.04 }}
-                  className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground"
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <Icon className="h-5 w-5 text-accent" />
-                    <div className="font-display font-semibold">{title}</div>
-                  </div>
-                  <p className="text-sm text-foreground/75 leading-relaxed">{body}</p>
-                </motion.div>
-              ))}
-            </div>
+        <div className="panel-wrap">
+          <div className="panel-blue">
+            <section className="section-padding">
+              <div className="max-w-5xl mx-auto">
+                <div className="grid gap-4 md:grid-cols-2">
+                  {topics.map(({ icon: Icon, title, body }, index) => (
+                    <motion.div
+                      key={title}
+                      initial={{ opacity: 0, y: 12 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.04 }}
+                      className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground"
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <Icon className="h-5 w-5 text-accent" />
+                        <h2 className="font-display font-semibold">{title}</h2>
+                      </div>
+                      <p className="text-sm text-foreground/75 leading-relaxed">
+                        {body}
+                      </p>
+                    </motion.div>
+                  ))}
+                </div>
 
-            <div className="mt-10 p-6 rounded-xl bg-white border border-white/40 shadow-card text-foreground">
-              <div className="font-display font-semibold mb-1">Need more help?</div>
-              <p className="text-sm text-foreground/75">
-                Use the Help widget at the bottom-right of any page to send a question or share feedback. Real replies come back to the email you provide — usually within one business day.
-              </p>
-              <p className="text-sm text-foreground/75 mt-2">
-                Want a walkthrough? <Link to="/contact" className="text-accent underline">Contact us</Link>.
-              </p>
-            </div>
+                <div className="mt-10 p-6 rounded-xl bg-white border border-white/40 shadow-card text-foreground">
+                  <h2 className="font-display font-semibold mb-1">Need more help?</h2>
+                  <p className="text-sm text-foreground/75">
+                    Use the public Contact page for product, billing, privacy, security, abuse, marketing-compliance or legal enquiries.
+                  </p>
+                  <p className="text-sm text-foreground/75 mt-2">
+                    <Link to="/contact" className="text-accent underline">
+                      Open the Contact page
+                    </Link>
+                    .
+                  </p>
+                </div>
+              </div>
+            </section>
           </div>
-        </section>
-        </div></div>
+        </div>
       </main>
       <Footer />
     </>

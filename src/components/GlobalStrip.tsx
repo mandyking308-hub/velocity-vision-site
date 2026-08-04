@@ -1,7 +1,7 @@
 import { Globe2, Languages, CreditCard, Scale, ShieldCheck, Users } from "lucide-react";
 
 const badges = [
-  { icon: Languages, label: "Multilingual site access" },
+  { icon: Languages, label: "Automated translation where available" },
   { icon: CreditCard, label: "Multi-currency pricing" },
   { icon: Scale, label: "International legal stack" },
   { icon: Globe2, label: "Global workspace access" },

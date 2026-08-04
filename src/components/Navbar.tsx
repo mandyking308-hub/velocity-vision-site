@@ -20,7 +20,6 @@ const Navbar = () => {
     { label: t("nav.forAgencies"), path: "/for-agencies" },
     { label: t("nav.features"), path: "/features" },
     { label: t("nav.templates"), path: "/templates" },
-    { label: "Contact", path: "/contact" },
   ];
 
   return (
