@@ -6,199 +6,253 @@ import SEO from "@/components/SEO";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Building2, ShieldCheck, Coins, Layers, Inbox, Eye, Mail, Share2, Newspaper, Megaphone, GitBranch, RefreshCw, Zap, Sparkles, CheckCircle2, TrendingUp, XCircle, Clock, Users, BarChart3 } from "lucide-react";
+import {
+  ArrowRight,
+  Building2,
+  ShieldCheck,
+  Coins,
+  Layers,
+  Inbox,
+  Eye,
+  Mail,
+  Share2,
+  Newspaper,
+  GitBranch,
+  Users,
+  CheckCircle2,
+} from "lucide-react";
 
-const benefits = [
-  { icon: Layers, title: "One workspace per client", desc: "Isolated data, isolated activation, isolated pipeline. No cross-client contamination, no context-switching tax." },
-  { icon: Coins, title: "Pooled credits across the account", desc: "Agency Workspace credits flow across all client workspaces — use them where the work lands that month." },
-  { icon: ShieldCheck, title: "Pooled sending governance", desc: "Shared send limits and account-level safety controls protect deliverability across every client." },
-  { icon: Inbox, title: "Follow-up & pipeline per client", desc: "Reply follow-up, follow-up states and opportunity movement, tracked per client — without bolting on another system." },
-  { icon: Eye, title: "Cross-client visibility", desc: "See what's active, what's stuck and where pipeline is moving across your whole book of clients." },
-  { icon: Building2, title: "Repeatable delivery", desc: "Reusable templates, segments and cadences. Operators ship the work; they don't reinvent the workflow each time." },
+const workspaceControls = [
+  {
+    icon: Layers,
+    title: "Isolated client workspaces",
+    desc: "Keep each client's authorised data, draft content, sender settings, activation decisions and pipeline records in a separate workspace.",
+  },
+  {
+    icon: Coins,
+    title: "Pooled Campaign Credits",
+    desc: "Allocate account-level Campaign Credits across client workspaces while preserving the product rules attached to each paid plan.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Pooled sending governance",
+    desc: "Apply account-level and workspace-level limits without treating those controls as legal approval or a deliverability guarantee.",
+  },
+  {
+    icon: Users,
+    title: "Team access",
+    desc: "Manage authorised users and keep client activity associated with the correct workspace and customer instruction.",
+  },
+  {
+    icon: Inbox,
+    title: "Client-specific follow-up",
+    desc: "Record replies, follow-up states and next actions inside the relevant client workspace.",
+  },
+  {
+    icon: Eye,
+    title: "Cross-workspace visibility",
+    desc: "Review operational activity across the agency account without combining client records or sender identities.",
+  },
 ];
 
-const capabilities = [
-  { icon: Mail, title: "Email sequences per client", desc: "Build and run multi-step outreach without mixing lists or messaging between accounts." },
-  { icon: Share2, title: "Social content at scale", desc: "Generate posts, hooks and platform variants alongside each client's campaign." },
-  { icon: Newspaper, title: "Press releases", desc: "Draft distribution-ready announcements for launches, wins and funding news." },
-  { icon: Megaphone, title: "Safe segment activation", desc: "Verify the sender, cap daily sends and flag risky records before anything goes live." },
-  { icon: Inbox, title: "Follow-up per client", desc: "Follow-up actions, snoozes and stuck-deal alerts stay in the right workspace — no crossed wires." },
-  { icon: GitBranch, title: "Pipeline tracking", desc: "Move warm contacts into opportunities and track value without adding another sales system seat." },
-  { icon: RefreshCw, title: "Reusable templates", desc: "Save cadences, segments and asset packs. Onboard new clients faster." },
-  { icon: Users, title: "Team clarity", desc: "Everyone works in the same system with clear client separation and shared templates." },
-  { icon: BarChart3, title: "Cross-account visibility", desc: "See what's active, what's stuck and where the revenue is moving across the whole portfolio." },
+const softwareOutputs = [
+  {
+    icon: Mail,
+    title: "Editable email drafts",
+    desc: "Prepare client-specific email sequence drafts for review before any activation decision.",
+  },
+  {
+    icon: Share2,
+    title: "Editable social drafts",
+    desc: "Generate posts, hooks and variants from an authorised client brief while keeping outputs in draft.",
+  },
+  {
+    icon: Newspaper,
+    title: "Editable press drafts",
+    desc: "Create announcement drafts that the agency and client review before distribution through their chosen route.",
+  },
+  {
+    icon: GitBranch,
+    title: "Follow-up and early pipeline records",
+    desc: "Record client-approved opportunities, stages and next actions without promising leads, replies, sales or revenue.",
+  },
 ];
 
-const replaces = [
-  { icon: XCircle, title: "Spreadsheets per client", desc: "Replace scattered contact lists with field-mapped, deduplicated data vaults for each account." },
-  { icon: XCircle, title: "Disconnected sales / email / content tools", desc: "Outreach, social, PR, follow-up and pipeline live in one connected workspace." },
-  { icon: XCircle, title: "Messy handoffs", desc: "Every client has its own workspace. No more guessing which list or thread belongs to whom." },
-  { icon: Clock, title: "Unclear follow-up ownership", desc: "Follow-up actions land in a single action queue per client with clear states and snooze logic." },
-  { icon: Layers, title: "Tool sprawl across the team", desc: "One platform, one login, one billing rhythm. Reduce seats, reduce context switching." },
-  { icon: RefreshCw, title: "Duplicated work across accounts", desc: "Reusable templates and segments mean you build the workflow once, deploy it many times." },
-];
-
-const outcomes = [
-  { icon: Zap, title: "Faster delivery", desc: "Brief to live campaign in minutes, not weeks. Ship more clients with the same team." },
-  { icon: ShieldCheck, title: "Better client separation", desc: "Isolated data, activation and pipeline mean no cross-client contamination." },
-  { icon: Sparkles, title: "More repeatable work", desc: "Templates and cadences turn ad-hoc delivery into a repeatable process." },
-  { icon: Users, title: "Clearer team workflows", desc: "Everyone works in the same system with shared assets and per-client context." },
-  { icon: TrendingUp, title: "Easier scaling", desc: "Add clients without multiplying tools, logins or admin overhead." },
-  { icon: Eye, title: "Visibility across accounts", desc: "See performance, stuck deals and pipeline across the whole portfolio at a glance." },
+const responsibilities = [
+  "The agency must have authority from each client to use the workspace and process the relevant data.",
+  "Each client or authorised agency user must provide lawfully obtained business data and maintain suppression and opt-out records.",
+  "The correct client sender must be connected and verified before activation.",
+  "Every draft, segment and activation decision must be reviewed and approved by an authorised user.",
+  "Velocity Vision does not scrape contacts, sell lists, operate managed campaigns or send automatically.",
+  "Software controls do not guarantee legal compliance, deliverability, replies, pipeline or commercial outcomes.",
 ];
 
 const ForAgencies = () => (
   <>
     <SEO
-      title="For Agencies — Multi-client commercial workspace | Velocity Vision"
-      description="Run every client from one account: isolated workspaces, pooled credits, pooled sending governance and cross-client pipeline visibility."
+      title="For Agencies — Isolated client workspaces | Velocity Vision"
+      description="A self-serve agency workspace with isolated client data, pooled Campaign Credits, governed activation controls, follow-up and early pipeline records."
       path="/for-agencies"
     />
     <Navbar />
     <main className="pt-24">
       <section className="section-padding bg-hero">
         <div className="max-w-5xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-            <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">For Agencies</p>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+          >
+            <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">
+              For agencies
+            </p>
             <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">
-              One account. One workspace per client. No tool sprawl.
+              One agency account with a separate software workspace for each client
             </h1>
-            <p className="text-primary-foreground/75 text-lg mb-8 max-w-2xl">
-              Manage data, activation, follow-up and pipeline per client — with pooled credits, pooled sending governance and clear visibility across the whole book.
+            <p className="text-primary-foreground/75 text-lg mb-5 max-w-3xl leading-relaxed">
+              Organise authorised client data, prepare editable AI-assisted drafts, apply governed activation controls and keep follow-up and early pipeline records separated by client.
+            </p>
+            <p className="text-primary-foreground/70 text-sm mb-8 max-w-3xl leading-relaxed">
+              Velocity Vision supplies self-serve software, not agency delivery. The agency and its clients remain responsible for authority, lawful basis, data source, sender identity, content approval, suppression handling and every activation decision.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button variant="hero" size="lg" asChild>
-                <Link to="/auth">Start Agency Workspace <ArrowRight size={18} /></Link>
+                <Link to="/auth">
+                  Start Agency Workspace <ArrowRight size={18} />
+                </Link>
               </Button>
               <Button variant="hero-outline" size="lg" asChild>
-                <Link to="/contact">Send a volume enquiry</Link>
+                <Link to="/pricing">See pricing</Link>
+              </Button>
+              <Button variant="hero-outline" size="lg" asChild>
+                <Link to="/contact">Send an agency enquiry</Link>
               </Button>
             </div>
           </motion.div>
         </div>
       </section>
 
-      <div className="panel-wrap"><div className="panel-pink">
-      <section className="section-padding">
-        <div className="max-w-7xl mx-auto">
-          <div className="max-w-2xl mb-10">
-            <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">How agencies work</p>
-            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">Operationalise delivery across every client</h2>
-            <p className="text-lg opacity-90">
-              Isolated workspaces, pooled credits, shared governance and cross-client visibility — built for the way agencies actually run.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {benefits.map((b, i) => (
-              <motion.div key={b.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground">
-                <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
-                  <b.icon className="text-accent" size={20} />
-                </div>
-                <h3 className="font-display font-semibold mb-2">{b.title}</h3>
-                <p className="text-sm leading-relaxed opacity-90">{b.desc}</p>
-              </motion.div>
-            ))}
-          </div>
+      <div className="panel-wrap">
+        <div className="panel-pink">
+          <section className="section-padding">
+            <div className="max-w-7xl mx-auto">
+              <div className="max-w-3xl mb-10">
+                <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">
+                  Agency workspace controls
+                </p>
+                <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
+                  Separate client activity while maintaining account-level oversight
+                </h2>
+                <p className="text-lg opacity-90">
+                  The product helps structure workspace separation and approval steps; it does not transfer the agency's or client's legal and operational responsibility to Velocity Vision.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {workspaceControls.map((item, index) => (
+                  <motion.div
+                    key={item.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: index * 0.05 }}
+                    className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
+                      <item.icon className="text-accent" size={20} />
+                    </div>
+                    <h3 className="font-display font-semibold mb-2">{item.title}</h3>
+                    <p className="text-sm leading-relaxed opacity-90">{item.desc}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </section>
         </div>
-      </section>
-      </div></div>
+      </div>
 
-      {/* Practical capabilities */}
-      <div className="panel-wrap"><div className="panel-blue">
-      <section className="section-padding">
-        <div className="max-w-7xl mx-auto">
-          <div className="max-w-2xl mb-10">
-            <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">What agencies can do</p>
-            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">Run the whole client delivery cycle from one login</h2>
-            <p className="text-lg opacity-90">
-              Client data, activation, content, follow-up and pipeline — managed per account, visible across the book.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {capabilities.map((c, i) => (
-              <motion.div key={c.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground">
-                <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
-                  <c.icon className="text-accent" size={20} />
-                </div>
-                <h3 className="font-display font-semibold mb-2">{c.title}</h3>
-                <p className="text-sm leading-relaxed opacity-90">{c.desc}</p>
-              </motion.div>
-            ))}
-          </div>
+      <div className="panel-wrap">
+        <div className="panel-blue">
+          <section className="section-padding">
+            <div className="max-w-7xl mx-auto">
+              <div className="max-w-3xl mb-10">
+                <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">
+                  Software outputs
+                </p>
+                <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
+                  Draft materials and operational records remain under agency and client control
+                </h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {softwareOutputs.map((item, index) => (
+                  <motion.div
+                    key={item.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: index * 0.05 }}
+                    className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
+                      <item.icon className="text-accent" size={20} />
+                    </div>
+                    <h3 className="font-display font-semibold mb-2">{item.title}</h3>
+                    <p className="text-sm leading-relaxed opacity-90">{item.desc}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </section>
         </div>
-      </section>
-      </div></div>
+      </div>
 
-      {/* What this replaces */}
-      <div className="panel-wrap"><div className="panel-pink">
-      <section className="section-padding">
-        <div className="max-w-7xl mx-auto">
-          <div className="max-w-2xl mb-10">
-            <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">Why agencies switch</p>
-            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">Stop stitching tools together across every client</h2>
-            <p className="text-lg opacity-90">
-              One workspace replaces the spreadsheet sprawl, the disconnected tool stack and the messy handoffs between team members.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {replaces.map((r, i) => (
-              <motion.div key={r.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground">
-                <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
-                  <r.icon className="text-accent" size={20} />
+      <div className="panel-wrap">
+        <div className="panel-pink">
+          <section className="section-padding">
+            <div className="max-w-5xl mx-auto">
+              <div className="flex items-center gap-3 mb-7">
+                <div className="w-11 h-11 rounded-lg bg-accent/10 flex items-center justify-center">
+                  <Building2 className="text-accent" size={22} />
                 </div>
-                <h3 className="font-display font-semibold mb-2">{r.title}</h3>
-                <p className="text-sm leading-relaxed opacity-90">{r.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-      </div></div>
-
-      {/* Outcomes */}
-      <div className="panel-wrap"><div className="panel-blue">
-      <section className="section-padding">
-        <div className="max-w-7xl mx-auto">
-          <div className="max-w-2xl mb-10">
-            <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">Agency outcomes</p>
-            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">Deliver faster, scale cleaner, keep clients separate</h2>
-            <p className="text-lg opacity-90">
-              Less overhead per client, more repeatable delivery, and a clearer view of where the work is moving.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {outcomes.map((o, i) => (
-              <motion.div key={o.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground">
-                <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
-                  <o.icon className="text-accent" size={20} />
+                <div>
+                  <p className="font-semibold text-sm uppercase tracking-widest opacity-80">
+                    Agency and client responsibilities
+                  </p>
+                  <h2 className="text-2xl md:text-3xl font-display font-bold mt-1">
+                    Required controls for every client workspace
+                  </h2>
                 </div>
-                <h3 className="font-display font-semibold mb-2">{o.title}</h3>
-                <p className="text-sm leading-relaxed opacity-90">{o.desc}</p>
-              </motion.div>
-            ))}
-          </div>
+              </div>
+              <div className="bg-white border border-white/40 rounded-xl p-7 shadow-card text-foreground">
+                <ul className="space-y-4">
+                  {responsibilities.map((responsibility) => (
+                    <li key={responsibility} className="flex items-start gap-3 text-sm leading-relaxed">
+                      <CheckCircle2 className="text-accent shrink-0 mt-0.5" size={18} />
+                      <span className="opacity-90">{responsibility}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </section>
         </div>
-      </section>
-      </div></div>
+      </div>
 
-      {/* Final CTA */}
       <section className="section-padding bg-hero">
         <div className="max-w-5xl mx-auto text-center">
           <h2 className="text-3xl md:text-5xl font-display font-bold text-primary-foreground mb-4">
-            One account. Every client. Less tool sprawl.
+            Review the Agency plan before purchase
           </h2>
-          <p className="text-primary-foreground/75 text-lg mb-8 max-w-2xl mx-auto">
-            Start your Agency Workspace today and see how multi-client delivery looks when everything lives in one place.
+          <p className="text-primary-foreground/75 text-lg mb-8 max-w-3xl mx-auto">
+            Published pricing explains the monthly billing cadence, pooled Campaign Credits, included workspace functionality and activation requirements.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button variant="hero" size="lg" asChild>
-              <Link to="/auth">Start Agency Workspace <ArrowRight size={18} /></Link>
+              <Link to="/pricing">
+                See Agency pricing <ArrowRight size={18} />
+              </Link>
             </Button>
             <Button variant="hero-outline" size="lg" asChild>
-              <Link to="/contact">Send a volume enquiry</Link>
-            </Button>
-            <Button variant="hero-outline" size="lg" asChild>
-              <Link to="/pricing">See pricing</Link>
+              <Link to="/contact">Send an agency enquiry</Link>
             </Button>
           </div>
         </div>
