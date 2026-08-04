@@ -2,7 +2,12 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
@@ -13,104 +18,104 @@ const sections = [
     items: [
       {
         q: "How do I start using Velocity Vision?",
-        a: "Create a workspace, add your contact data to the Data Vault, review the quality report, verify your sender, choose a template, then activate a safe cadence when the segment is ready. The core workflow is self-serve from inside the workspace.",
+        a: "Create a workspace, add customer-authorised business data, review the record flags, prepare editable drafts and explore the product controls. Free Preview has no live sending. Paid activation follows onboarding, applicable checks and the terms shown before purchase.",
       },
       {
-        q: "Do I need clean data before I start?",
-        a: "No. Velocity Vision is built for messy commercial data. Upload a CSV, paste records, or import a spreadsheet. The Data Vault flags duplicates, missing fields, risky formats and blocked records so you can clean and segment the list before activation.",
+        q: "Do I need perfectly formatted data before I start?",
+        a: "No. You can upload structured CSV or spreadsheet records and map the available fields. The workspace can surface duplicates, missing fields, invalid formats and records requiring review. Those flags support customer assessment and are not legal approval.",
       },
       {
-        q: "What should I do first?",
-        a: "Start with one small audience. Upload it, review the quality statuses, fix obvious issues, verify your sender, and generate one template output. That gives you a safe test path before you activate a larger segment.",
+        q: "What is a sensible first test?",
+        a: "Use a small set of records that your organisation is authorised to process. Review the source and suppression status, map the fields and generate draft content without enabling live sending.",
       },
     ],
   },
   {
-    title: "Data Vault & quality review",
+    title: "Data Vault and record review",
     items: [
       {
-        q: "What can I upload?",
-        a: "You can upload or paste structured contact data. Common fields include name, email, company, job title, location, sector, language preference, source and custom tags. The workspace uses those fields for segmentation, templates, activation and follow-up.",
+        q: "What data can I upload?",
+        a: "The Data Vault is intended for customer-authorised business records. Common fields include name, business email, company, role, location, source and customer-defined tags. Do not upload data you are not authorised to process or restricted sensitive data.",
       },
       {
         q: "What happens after upload?",
-        a: "Each row is mapped, checked, deduplicated and placed into a quality status. You receive a summary of what is ready, what needs review, what is risky, what is blocked and what appears duplicated before anything is activated.",
+        a: "Records are mapped and can be checked for duplicates, missing fields, invalid formats and other issues requiring customer review. The customer decides whether a record should remain, be corrected, be suppressed or be excluded from activation.",
       },
       {
-        q: "What do valid, needs review, risky, blocked and duplicate mean?",
-        a: "Valid records are ready for safe use. Needs review records have missing or uncertain fields you may want to fix. Risky records have deliverability or formatting concerns. Blocked records cannot be activated until the issue is resolved. Duplicate records appear to repeat an existing or newly uploaded contact.",
+        q: "What do the record statuses mean?",
+        a: "Statuses are operational labels for customer review. They do not confirm lawful basis, consent, recipient suitability, deliverability or legal compliance. Customers must maintain their own evidence and suppression records where required.",
       },
     ],
   },
   {
-    title: "AI, templates & outreach assets",
+    title: "AI-assisted drafts and templates",
     items: [
       {
         q: "Are outputs AI-generated?",
-        a: "Yes. Velocity Vision uses AI to help draft and structure outreach assets, quality checks and follow-up suggestions. You review and control what is activated or sent. AI outputs are drafts and should be reviewed before use. Velocity Vision does not guarantee replies, sales, deliverability, revenue or legal compliance.",
+        a: "AI can help prepare email, social, press, video and follow-up drafts and can support record review. Every output remains editable and must be reviewed by the customer. Velocity Vision does not guarantee compliance, deliverability, replies, sales, pipeline or revenue.",
       },
       {
-        q: "What is inside a template?",
-        a: "A template is a reusable, AI-assisted commercial workflow. It can produce outreach emails, follow-up steps, social copy, hooks, press copy, landing page copy and lead capture copy, depending on the use case. Templates connect back to the chosen segment, cadence and pipeline path.",
+        q: "What is a template?",
+        a: "A template is a reusable product structure for customer-authorised records, editable drafts, timing settings, activation review and follow-up administration. It is not a prospect database, legal approval or guaranteed commercial method.",
       },
       {
-        q: "Can I edit the outputs?",
-        a: "Yes. AI outputs are drafts until you approve them. You can edit tone, subject lines, calls to action, body copy, sequence steps and supporting assets before anything is scheduled or sent.",
-      },
-      {
-        q: "Can I regenerate part of an output pack?",
-        a: "Yes. You can regenerate a single email, one social post, one follow-up step or another individual asset without rebuilding the whole workflow.",
+        q: "Can I edit or regenerate an output?",
+        a: "Yes. Customers can edit draft content or regenerate an individual draft element. No generated output is automatically sent or published.",
       },
     ],
   },
   {
-    title: "Safe activation",
+    title: "Sender verification and activation",
     items: [
       {
-        q: "Why do I need to verify a sender?",
-        a: "Sender verification is required before activation. It protects your domain, supports deliverability and prevents accidental sending from an unapproved identity. If the sender is not verified, Velocity Vision blocks activation.",
+        q: "Why is sender verification required?",
+        a: "Sender verification helps confirm that the connected mailbox or domain is authorised for the workspace. It does not guarantee deliverability, inbox placement or legal compliance.",
       },
       {
-        q: "What happens if a segment contains risky records?",
-        a: "Risky records are flagged before activation. You can fix them, remove them from the segment, or keep them held back. The safety engine applies plan limits, send controls and audit checks so activation stays governed.",
+        q: "What happens when records require review?",
+        a: "The customer can correct, suppress or exclude records before activation. Plan limits and record controls are operational safeguards, while the authorised customer remains responsible for the final decision.",
       },
       {
-        q: "Can I schedule sends instead of activating immediately?",
-        a: "Yes. You can set a start date, cadence and sending window. You can also pause, edit or reschedule the cadence before the next send step runs.",
+        q: "Can activity be scheduled?",
+        a: "Eligible paid plans may provide timing and cadence settings subject to onboarding, the connected provider, product configuration and applicable controls. Customers can review or pause settings through the available workspace functions.",
       },
     ],
   },
   {
-    title: "Follow-up & pipeline",
+    title: "Follow-up and early opportunity records",
     items: [
       {
         q: "Where do replies go?",
-        a: "Replies return to your connected inbox. You can then log follow-up actions, snooze, mark done, assign a next action or move a warm contact into pipeline in the follow-up workspace.",
+        a: "Replies use the connected mailbox route. The workspace can record follow-up states, next actions and customer-selected early opportunity records.",
       },
       {
-        q: "How do follow-up states work?",
-        a: "Follow-up states help you separate new follow-up items, warm conversations, snoozed items, dormant contacts and stuck opportunities. The aim is to stop useful follow-up actions disappearing into a normal inbox.",
+        q: "What are follow-up states?",
+        a: "Follow-up states are customer-selected operational labels such as replied, snoozed, warm or dormant. They organise activity and do not confirm sales intent or a guaranteed opportunity.",
       },
       {
-        q: "When should I move someone into pipeline?",
-        a: "Move a contact into pipeline when they show intent: asking for details, requesting pricing, booking a call, asking for a proposal or showing clear commercial interest. Pipeline is for live opportunities, not every contact in the vault.",
+        q: "When should an opportunity record be created?",
+        a: "The customer decides when a contact should become an early opportunity record based on its own process and evidence. Velocity Vision does not qualify leads or promise that an opportunity will progress.",
       },
     ],
   },
   {
-    title: "Billing & credits",
+    title: "Plans, billing and Campaign Credits",
     items: [
       {
         q: "What plans are available?",
-        a: "Velocity Vision has Starter, Growth and Agency Workspace options. Plans are designed around workspace access, governed activation, templates, credits and scale. See the pricing page for the current plan details.",
+        a: "Free Preview, Starter, Growth and Agency Workspace are described on the Pricing page. Starter is one-off with 30 days of access. Growth and Agency Workspace renew monthly until cancelled.",
       },
       {
-        q: "What happens when credits run out?",
-        a: "Your workspace and stored data remain in place. New asset generation, top-up actions or activation may pause until you add credits or move to a plan that fits your usage.",
+        q: "What happens when Campaign Credits run out?",
+        a: "New AI-intensive generation pauses until additional credits are approved or the plan changes. Continued access to stored records and other functionality remains subject to the plan, paid access period, retention terms and account status.",
       },
       {
-        q: "Can I top up or upgrade?",
-        a: "Yes. You can add credits or upgrade from billing settings. The model is designed so you can store data generously and pay when you activate, generate or scale usage.",
+        q: "How do I request a top-up or upgrade?",
+        a: "Use the public Contact page or the available account route. The final amount, currency, tax treatment, payment provider and applicable terms are confirmed before purchase.",
+      },
+      {
+        q: "How do cancellation and refunds work?",
+        a: "Monthly plans should be cancelled before the next renewal date to stop future charges. Refund eligibility depends on the product terms, usage, applicable law and the identified payment provider. The GSM Refund Policy is linked from Pricing and the Legal Centre.",
       },
     ],
   },
@@ -119,32 +124,32 @@ const sections = [
     items: [
       {
         q: "How are clients kept separate?",
-        a: "Each client runs in its own workspace with isolated data, templates, activation, follow-up and pipeline. Agency users can switch between client workspaces without mixing lists, senders or opportunities.",
+        a: "Each client workspace uses separate workspace identifiers for authorised data, sender settings, drafts, activation decisions and operational records. The agency remains responsible for client authority and correct workspace use.",
       },
       {
-        q: "Can I reuse templates across clients?",
-        a: "Yes. Agencies can reuse proven templates and workflows across client workspaces, while each client still uses its own data, sender settings, segmentation and pipeline.",
+        q: "Can templates be reused across clients?",
+        a: "Template structures may be reused, but each client must use its own authorised data, sender, review process, content approval and activation decision.",
       },
       {
-        q: "How do pooled credits work?",
-        a: "Agency Workspace credits are pooled at account level so they can be used where the work lands. Client workspaces remain separate, while billing and usage visibility stay centralised.",
+        q: "How do pooled Campaign Credits work?",
+        a: "The Agency Workspace plan can pool Campaign Credits and account-level limits while retaining isolated client workspaces. The applicable pricing and usage terms are confirmed before purchase.",
       },
     ],
   },
   {
-    title: "Reports & exports",
+    title: "Reports and exports",
     items: [
       {
         q: "What can I export?",
-        a: "Depending on your workspace and permissions, you can export contact data, quality review results, generated assets, follow-up information, pipeline data and reports in common formats such as CSV or PDF.",
+        a: "Available exports depend on the workspace, permissions and product configuration. They may include customer records, draft assets, activity information and early opportunity records in supported formats.",
       },
       {
-        q: "Are seeded demo assets real downloads?",
-        a: "Seeded walkthrough data is there to help you review the product experience. Some seeded qa-seed:// asset pointers are placeholders, not real binary downloads. For a true export test, generate a fresh real asset in the workspace and export that file.",
+        q: "Are demo assets real customer files?",
+        a: "No. Seeded demonstration information is illustrative and is not a customer result, customer campaign or performance claim. Some demonstration pointers may not represent downloadable binary files.",
       },
       {
-        q: "How do I test a real export?",
-        a: "Use a small real test segment, generate one new asset or report, then download it from the relevant workspace screen. That confirms the real export path, rather than only checking seeded demo data.",
+        q: "How should I test an export?",
+        a: "Use a small authorised test record set, generate a new draft or report and test the available export route without including unnecessary personal or sensitive data.",
       },
     ],
   },
@@ -154,52 +159,77 @@ const Help = () => (
   <>
     <SEO
       title="Velocity Vision Help Centre"
-      description="User guide for Velocity Vision: workspaces, Data Vault, sender verification, campaigns, billing, activation and support tickets."
+      description="Product guidance for Velocity Vision workspaces, customer-authorised data, AI-assisted drafts, sender verification, activation controls, billing and support."
       path="/help"
     />
     <Navbar />
     <main className="pt-24">
       <section className="section-padding bg-hero">
         <div className="max-w-4xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-            <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">User guide</p>
-            <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-4">Velocity Vision Help Centre</h1>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+          >
+            <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">
+              Product guidance
+            </p>
+            <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-4">
+              Velocity Vision Help Centre
+            </h1>
             <p className="text-primary-foreground/75 text-lg">
-              Use this guide to understand workspaces, Data Vault, sender verification, campaigns, billing, activation and support tickets.
+              Guidance on customer-authorised data, editable drafts, sender verification, activation controls, follow-up records, billing and support routes.
             </p>
           </motion.div>
         </div>
       </section>
 
-      <div className="panel-wrap"><div className="panel-pink">
-      <section className="section-padding">
-        <div className="max-w-4xl mx-auto space-y-6">
-          {sections.map((s) => (
-            <div key={s.title} className="bg-white rounded-xl border border-white/40 shadow-card p-6 md:p-8 text-foreground">
-              <h2 className="text-2xl font-display font-bold mb-2">{s.title}</h2>
-              <Accordion type="single" collapsible>
-                {s.items.map((it, i) => (
-                  <AccordionItem key={i} value={`${s.title}-${i}`}>
-                    <AccordionTrigger className="text-left font-display">{it.q}</AccordionTrigger>
-                    <AccordionContent className="text-foreground/80 leading-relaxed">{it.a}</AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
+      <div className="panel-wrap">
+        <div className="panel-pink">
+          <section className="section-padding">
+            <div className="max-w-4xl mx-auto space-y-6">
+              {sections.map((section) => (
+                <div
+                  key={section.title}
+                  className="bg-white rounded-xl border border-white/40 shadow-card p-6 md:p-8 text-foreground"
+                >
+                  <h2 className="text-2xl font-display font-bold mb-2">
+                    {section.title}
+                  </h2>
+                  <Accordion type="single" collapsible>
+                    {section.items.map((item, index) => (
+                      <AccordionItem
+                        key={item.q}
+                        value={`${section.title}-${index}`}
+                      >
+                        <AccordionTrigger className="text-left font-display">
+                          {item.q}
+                        </AccordionTrigger>
+                        <AccordionContent className="text-foreground/80 leading-relaxed">
+                          {item.a}
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </div>
+              ))}
             </div>
-          ))}
+          </section>
         </div>
-      </section>
-      </div></div>
-
+      </div>
 
       <section className="section-padding bg-hero">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground mb-4">Ready to put your workspace to work?</h2>
+          <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground mb-4">
+            Need product, billing or compliance support?
+          </h2>
           <p className="text-primary-foreground/75 text-lg mb-8 max-w-2xl mx-auto">
-            Open your workspace and start moving data into safe outreach, follow-up and pipeline.
+            Use the public Contact page and select the route that matches the enquiry.
           </p>
           <Button variant="hero" size="lg" asChild>
-            <Link to="/auth">Open your workspace <ArrowRight size={18} /></Link>
+            <Link to="/contact">
+              Open Contact page <ArrowRight size={18} />
+            </Link>
           </Button>
         </div>
       </section>
