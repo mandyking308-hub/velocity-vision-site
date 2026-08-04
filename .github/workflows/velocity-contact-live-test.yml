@@ -1,0 +1,65 @@
+name: Velocity live contact test
+
+on:
+  push:
+    paths:
+      - '.github/workflows/velocity-contact-live-test.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  live-contact-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Submit one labelled enquiry to the live contact backend
+        shell: bash
+        run: |
+          set -euo pipefail
+          set -a
+          source .env
+          set +a
+
+          mkdir -p test-results
+          TESTED_AT="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          PAYLOAD="$(jq -n \
+            --arg name 'Velocity Live Test' \
+            --arg email 'mandyking308+velocity-live-test@gmail.com' \
+            --arg company 'Global Solutions Management LLC' \
+            --arg message "Automated production contact-form delivery test at ${TESTED_AT}. Please treat this as a test enquiry." \
+            --arg route 'general_support' \
+            '{name:$name,email:$email,company:$company,message:$message,route:$route}')"
+
+          RAW="$(curl --silent --show-error \
+            --request POST \
+            --header "apikey: ${VITE_SUPABASE_PUBLISHABLE_KEY}" \
+            --header "Authorization: Bearer ${VITE_SUPABASE_PUBLISHABLE_KEY}" \
+            --header 'Content-Type: application/json' \
+            --data "${PAYLOAD}" \
+            --write-out $'\n%{http_code}' \
+            "${VITE_SUPABASE_URL}/functions/v1/notify-contact")"
+
+          HTTP_STATUS="$(printf '%s\n' "${RAW}" | tail -n 1)"
+          RESPONSE_BODY="$(printf '%s\n' "${RAW}" | sed '$d')"
+
+          jq -n \
+            --arg tested_at "${TESTED_AT}" \
+            --arg endpoint "${VITE_SUPABASE_URL}/functions/v1/notify-contact" \
+            --arg http_status "${HTTP_STATUS}" \
+            --arg response_body "${RESPONSE_BODY}" \
+            '{tested_at:$tested_at,endpoint:$endpoint,http_status:($http_status|tonumber),response_body:$response_body}' \
+            > test-results/velocity-contact-live-test.json
+
+      - name: Save the test response
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add test-results/velocity-contact-live-test.json
+          git commit -m 'Record Velocity live contact test result'
+          git push
