@@ -9,3 +9,7 @@ createRoot(document.getElementById("root")!).render(
     <App />
   </HelmetProvider>
 );
+
+// build marker
+export const __BUILD_MARKER__ = "2026-08-04T16-54Z";
+(window as unknown as Record<string, string>).__vvBuild = __BUILD_MARKER__;
