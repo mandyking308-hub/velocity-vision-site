@@ -24,16 +24,16 @@ const routes = [
     icon: LifeBuoy,
     title: "Product support",
     desc: "Help using the workspace — uploads, activation, sender setup, follow-up, pipeline.",
-    action: "Open in-app support",
-    to: "/app",
+    action: "Send a support enquiry",
+    to: "#contact-form",
     topic: "general_support",
   },
   {
     icon: CreditCard,
     title: "Billing & account help",
     desc: "Plan changes, currency, invoices, top-ups, tax queries.",
-    action: "Open billing help",
-    to: "/app/billing",
+    action: "Send a billing enquiry",
+    to: "#contact-form",
     topic: "billing",
   },
   {
@@ -191,22 +191,14 @@ const Contact = () => {
                   </div>
                   <h3 className="font-display font-semibold text-foreground mb-2">{r.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed mb-5 flex-1">{r.desc}</p>
-                  {r.to === "#contact-form" ? (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      type="button"
-                      onClick={() => scrollToContactForm(r.topic)}
-                    >
-                      {r.action} <ArrowRight size={14} />
-                    </Button>
-                  ) : (
-                    <Button variant="outline" size="sm" asChild>
-                      <Link to={r.to}>
-                        {r.action} <ArrowRight size={14} />
-                      </Link>
-                    </Button>
-                  )}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    type="button"
+                    onClick={() => scrollToContactForm(r.topic)}
+                  >
+                    {r.action} <ArrowRight size={14} />
+                  </Button>
                 </motion.div>
               ))}
             </div>
