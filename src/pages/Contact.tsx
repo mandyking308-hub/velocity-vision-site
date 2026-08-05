@@ -130,9 +130,16 @@ const Contact = () => {
       });
 
       if (error) throw error;
-      if (!data?.ok || data?.notified !== true) {
-        throw new Error(data?.error || "notification_not_sent");
+      // The visitor result depends on persistence only. Internal notification and
+      // acknowledgement emails are post-save delivery work and must never turn a
+      // saved enquiry into a "failed" submission (that causes duplicate leads).
+      if (!data?.ok || data?.saved !== true) {
+        throw new Error(data?.error || "enquiry_not_saved");
       }
+      if (data?.notified !== true) {
+        console.warn("Contact enquiry saved but internal notification is delayed", data?.lead_id);
+      }
+
 
       toast.success("Message sent. We'll normally acknowledge it within one business day.");
       setForm({ name: "", email: "", company: "", message: "", topic: "general_support" });
