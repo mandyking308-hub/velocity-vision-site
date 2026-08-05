@@ -92,16 +92,21 @@ Deno.serve(async (req) => {
 
   try {
     if (company) {
-      const { data: c } = await supabase
+      // Supabase returns errors instead of throwing. A failed company row is
+      // non-fatal: the enquiry still persists against the contact + lead.
+      const { data: c, error: companyErr } = await supabase
         .from('companies')
         .insert({ name: company, status: 'prospect' as const })
         .select('id')
         .single();
+      if (companyErr) {
+        await logError('notify-contact: company insert failed', String(companyErr.message).slice(0, 500));
+      }
       companyId = c?.id ?? null;
     }
 
     const parts = name.split(/\s+/);
-    const { data: ct } = await supabase
+    const { data: ct, error: contactErr } = await supabase
       .from('contacts')
       .insert({
         first_name: parts[0] ?? name,
@@ -111,7 +116,9 @@ Deno.serve(async (req) => {
       })
       .select('id')
       .single();
+    if (contactErr) throw contactErr;
     contactId = ct?.id ?? null;
+
 
     const { data: ld, error: leadErr } = await supabase
       .from('leads')
