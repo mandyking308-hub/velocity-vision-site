@@ -12,11 +12,14 @@ Deno.serve(async (req) => {
   // trigger early delivery of all queued mail. The service-role key is also accepted
   // so the cron job can authenticate with the existing vault-held service-role secret.
   const cronSecret = Deno.env.get("CRON_SECRET");
+  const queueToken = Deno.env.get("EMAIL_QUEUE_CRON_TOKEN");
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   const authz = req.headers.get("Authorization") ?? "";
   const authorised =
     (!!cronSecret && authz === `Bearer ${cronSecret}`) ||
+    (!!queueToken && authz === `Bearer ${queueToken}`) ||
     (!!serviceKey && authz === `Bearer ${serviceKey}`);
+
   if (!authorised) {
     return new Response(JSON.stringify({ error: "Forbidden" }), {
       status: 403,
