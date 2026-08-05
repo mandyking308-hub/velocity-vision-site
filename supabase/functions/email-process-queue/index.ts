@@ -9,14 +9,24 @@ Deno.serve(async (req) => {
 
   // Shared-secret check — only the configured pg_cron job (or an operator with the
   // CRON_SECRET) may invoke this endpoint. Without this anyone with the URL could
-  // trigger early delivery of all queued mail.
+  // trigger early delivery of all queued mail. The service-role key is also accepted
+  // so the cron job can authenticate with the existing vault-held service-role secret.
   const cronSecret = Deno.env.get("CRON_SECRET");
-  if (!cronSecret || req.headers.get("Authorization") !== `Bearer ${cronSecret}`) {
+  const queueToken = Deno.env.get("EMAIL_QUEUE_CRON_TOKEN");
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  const authz = req.headers.get("Authorization") ?? "";
+  const authorised =
+    (!!cronSecret && authz === `Bearer ${cronSecret}`) ||
+    (!!queueToken && authz === `Bearer ${queueToken}`) ||
+    (!!serviceKey && authz === `Bearer ${serviceKey}`);
+
+  if (!authorised) {
     return new Response(JSON.stringify({ error: "Forbidden" }), {
       status: 403,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
+
 
   const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 

@@ -88,6 +88,7 @@ Deno.serve(async (req) => {
   let companyId: string | null = null;
   let contactId: string | null = null;
   let leadId: string | null = null;
+  let saved = false;
 
   try {
     if (company) {
@@ -112,7 +113,7 @@ Deno.serve(async (req) => {
       .single();
     contactId = ct?.id ?? null;
 
-    const { data: ld } = await supabase
+    const { data: ld, error: leadErr } = await supabase
       .from('leads')
       .insert({
         source,
@@ -123,22 +124,30 @@ Deno.serve(async (req) => {
       })
       .select('id')
       .single();
+    if (leadErr) throw leadErr;
     leadId = ld?.id ?? null;
+    saved = Boolean(leadId);
   } catch (e) {
     await logError('notify-contact: db insert failed', String(e).slice(0, 500));
-    // continue — we still try to send the notification email
+  }
+
+  // Persistence is the visitor-facing outcome. If nothing was saved we fail loudly
+  // so the form keeps its values and the visitor can retry.
+  if (!saved) {
+    return json({ ok: false, saved: false, notified: false, error: 'enquiry_not_saved' }, 500);
   }
 
   const notifyTo = recipientFor(route);
 
-  // Internal notification + sender acknowledgement via Lovable's built-in email queue.
+  // Post-save delivery work. Failures here are logged for retry/diagnosis but do
+  // NOT change the visitor's saved-submission result and never re-insert records.
   let notified = false;
   try {
     const { error: notifyErr } = await supabase.functions.invoke('send-transactional-email', {
       body: {
         templateName: 'contact-notification',
         recipientEmail: notifyTo,
-        idempotencyKey: `contact-notify-${leadId ?? crypto.randomUUID()}`,
+        idempotencyKey: `contact-notify-${leadId}`,
         templateData: { name, email, company, topic: routeLabel, message, leadId: leadId ?? '' },
       },
     });
@@ -148,21 +157,33 @@ Deno.serve(async (req) => {
     await logError('notify-contact: notification send failed', String(e).slice(0, 500));
   }
 
+  let acknowledged = false;
   try {
-    await supabase.functions.invoke('send-transactional-email', {
+    const { error: ackErr } = await supabase.functions.invoke('send-transactional-email', {
       body: {
         templateName: 'contact-confirmation',
         recipientEmail: email,
-        idempotencyKey: `contact-confirm-${leadId ?? email}`,
+        idempotencyKey: `contact-confirm-${leadId}`,
         templateData: { name, message, topic: routeLabel },
       },
     });
+    if (ackErr) throw ackErr;
+    acknowledged = true;
   } catch (e) {
     await logError('notify-contact: confirmation send failed', String(e).slice(0, 500));
   }
 
-  return json({ ok: true, lead_id: leadId, contact_id: contactId, company_id: companyId, notified });
+  return json({
+    ok: true,
+    saved: true,
+    notified,
+    acknowledged,
+    lead_id: leadId,
+    contact_id: contactId,
+    company_id: companyId,
+  });
 });
+
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
