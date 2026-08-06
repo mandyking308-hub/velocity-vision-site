@@ -44,8 +44,22 @@ export default function ReplyTriagePanel({
   const [draft, setDraft] = useState("");
 
   const suggestion = useMemo(() => classifyReply(text), [text]);
-  const category: ReplyCategory = override || suggestion.category;
+  // A deterministic opt-out or bounce in the text can never be downgraded to a
+  // sales label, no matter what is stored or chosen manually.
+  const complianceLock = useMemo(() => deterministicCompliance(text), [text]);
+  const allowedCategories = useMemo(
+    () => allowedOverrideCategories({ id: lead.id, reply_snippet: text }),
+    [lead.id, text],
+  );
+  const effectiveOverride: ReplyCategory | "" =
+    override && allowedCategories.includes(override) ? override : "";
+  const category: ReplyCategory = resolveIntent({
+    id: lead.id,
+    reply_snippet: text,
+    reply_category: effectiveOverride || null,
+  });
   const meta = REPLY_CATEGORIES[category];
+
 
   const save = async (patch: Record<string, any>, successMsg: string) => {
     if (!guardAction("Reply triage")) return;
