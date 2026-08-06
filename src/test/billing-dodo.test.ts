@@ -216,7 +216,8 @@ describe("dodo customer portal", () => {
   it("portal config fails closed without an api key", () => {
     const cfg = loadDodoPortalConfig(() => undefined);
     expect(cfg.ok).toBe(false);
-    expect(!cfg.ok && cfg.reason).toBe("missing_api_key");
+    if (cfg.ok) throw new Error("expected portal config to fail closed");
+    expect(cfg.reason).toBe("missing_api_key");
   });
 
   it("return url is the allow-listed billing page", () => {
