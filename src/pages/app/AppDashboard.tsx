@@ -17,13 +17,18 @@ import CreditMeter from "@/components/app/CreditMeter";
 import FollowUpReminders from "@/components/app/FollowUpReminders";
 import SendSafetyPanel from "@/components/app/SendSafetyPanel";
 import SenderStatusCard from "@/components/app/SenderStatusCard";
-import OnboardingChecklist from "@/components/app/OnboardingChecklist";
+import FirstCampaignLaunchpad from "@/components/app/FirstCampaignLaunchpad";
+import CampaignPreflight from "@/components/app/CampaignPreflight";
 import FreePreviewStatusCard from "@/components/app/FreePreviewStatusCard";
 import PriorityStrip from "@/components/app/PriorityStrip";
 import { computeSafety, DEFAULT_SENDER_STATE, type SenderState } from "@/lib/sendSafety";
+import { runPreflight } from "@/lib/campaignPreflight";
+import { computeReadiness } from "@/lib/senderReadiness";
+import { useLegalStatus } from "@/lib/legalCompliance";
 import type { PlanId } from "@/lib/credits";
 import { deriveFollowUpState } from "@/lib/leadStates";
 import { Card as UICard, CardContent as UICardContent } from "@/components/ui/card";
+
 
 interface VaultStats {
   total_contacts: number;
@@ -64,14 +69,22 @@ interface CadenceRow {
   start_at: string | null; cadence_end_at: string | null;
   next_run_at: string | null; timezone: string | null;
   runs_completed: number | null;
+  goal?: string | null;
+  brief?: any;
+  pack?: any;
+  approved_at?: string | null;
+  is_sample?: boolean | null;
 }
+
 
 export default function AppDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { remaining, planConfig } = useCredits();
   const { workspaces, currentId, loading: wsLoading } = useWorkspace();
+  const legal = useLegalStatus();
   const [firstName, setFirstName] = useState("");
+
   const [activeCampaigns, setActiveCampaigns] = useState(0);
   const [latestCampaignId, setLatestCampaignId] = useState<string | null>(null);
   const [campaignRows, setCampaignRows] = useState<CadenceRow[]>([]);
@@ -122,9 +135,10 @@ export default function AppDashboard() {
         { data: uploads, count: importsCount },
       ] = await Promise.all([
         supabase.from("campaigns")
-          .select("id, name, status, created_at, cadence_type, start_at, cadence_end_at, next_run_at, timezone, runs_completed")
+          .select("id, name, status, created_at, cadence_type, start_at, cadence_end_at, next_run_at, timezone, runs_completed, goal, brief, pack, approved_at, is_sample")
           .eq("workspace_id", currentId)
           .order("created_at", { ascending: false }),
+
         supabase.from("leads")
           .select("id, status, follow_up_at, follow_up_state, replied_at, snoozed_until, last_email_sent_at, last_contacted_at, last_interaction_at, opportunity_id")
           .eq("workspace_id", currentId),
@@ -282,6 +296,35 @@ export default function AppDashboard() {
   const safeSendToday = safety.safeAllowance;
   const recommendedSend = safety.recommendedToday;
 
+  // Working campaign for launchpad + preflight: the most recent campaign.
+  const workingCampaign = campaignRows[0] ?? null;
+  const dashboardPreflight = runPreflight({
+    campaign: workingCampaign,
+    safeContacts: vault.safe_to_activate,
+    reviewContacts: vault.needs_review,
+    senderState: senderDetail ? computeReadiness(senderDetail as any).state : null,
+    senderEmail,
+    remainingToday: safety.remainingToday,
+    pauseReasons: safety.pauseReasons,
+    creditsAvailable: remaining,
+    creditsRequired: Math.max(1, Math.min(vault.safe_to_activate, safety.recommendedToday || 1)),
+    legalAccepted: legal.isCompliant,
+    unsubscribeReady: true,
+  });
+
+  const launchpadSignals = {
+    hasBrief: Boolean(workingCampaign?.goal || workingCampaign?.brief),
+    approvedContacts: vault.safe_to_activate,
+    hasContent: Boolean((workingCampaign?.pack as any)?.emails?.[0]?.subject),
+    senderReady: sender.connected && sender.domain_authenticated,
+    preflightBlockers: dashboardPreflight.blockers.length,
+    approved: Boolean(workingCampaign?.approved_at),
+    isSample: workingCampaign?.is_sample === true,
+    activated: pipeline.leads > 0 || sendsUsedToday + sendsScheduledToday > 0,
+    campaignId: workingCampaign?.id ?? null,
+  };
+
+
   // Gate: no workspace → send to a clean create-first-workspace prompt.
   if (!wsLoading && workspaces.length === 0) {
     return (
@@ -360,19 +403,12 @@ export default function AppDashboard() {
       {/* Free Preview status + expiry nudges (renders nothing for paid plans) */}
       <FreePreviewStatusCard />
 
-      {/* A2. First-time onboarding checklist (auto-hides once complete) */}
-      <OnboardingChecklist
-        signals={{
-          hasContacts: vault.total_contacts > 0,
-          hasReviewed: vault.clean + vault.needs_review + vault.risky + vault.blocked > 0,
-          hasSafeSegment: vault.safe_to_activate > 0,
-          hasSender: sender.connected,
-          hasAssets: campaignRows.length > 0,
-          hasCadence: campaignRows.some((c) => !!c.start_at || (c.cadence_type && c.cadence_type !== "one_off")),
-          hasActivated: sendsUsedToday + sendsScheduledToday > 0 || sender.last_send_at !== null,
-          hasWorkedReplies: inter.replies_due + pipeline.opportunities > 0,
-        }}
-      />
+      {/* A2. Guided first campaign launchpad — live status, next genuine blocker */}
+      <FirstCampaignLaunchpad signals={launchpadSignals} />
+
+      {/* A3. Preflight scorecard for the working campaign */}
+      <CampaignPreflight result={dashboardPreflight} title="Sender & campaign preflight" compact />
+
 
 
       {/* B. Database Health */}

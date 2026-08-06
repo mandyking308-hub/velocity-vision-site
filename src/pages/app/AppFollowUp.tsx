@@ -11,7 +11,7 @@ import LeadActionPanel, { type ActionLead } from "@/components/app/LeadActionPan
 import { bucketCounts, deriveFollowUpState, STATE_LABEL, STATE_TONE, type FollowUpState } from "@/lib/leadStates";
 import { MessageSquare, Mail, AlertTriangle, Zap, Flame, Snowflake, Filter, RefreshCw, Send, Upload } from "lucide-react";
 import JourneyEmptyState from "@/components/app/JourneyEmptyState";
-import ReplyTriagePanel from "@/components/app/ReplyTriagePanel";
+import ReplyCommandCentre from "@/components/app/ReplyCommandCentre";
 import { Inbox } from "lucide-react";
 
 const TAB_KEYS: { id: "action" | "triage" | FollowUpState; labelKey: string; icon: any }[] = [
@@ -165,24 +165,25 @@ export default function AppFollowUp() {
 
       {loading ? (
         <Card><CardContent className="p-6 text-sm text-muted-foreground">{tc("actions.loading")}</CardContent></Card>
+      ) : tab === "triage" ? (
+        <ReplyCommandCentre leads={filtered as any} onChanged={load} />
       ) : filtered.length === 0 ? (
         <Card><CardContent className="p-6 text-sm text-muted-foreground">
           {tab === "action" ? t("followUp.empty.caughtUp") : t("followUp.empty.tryFilter")}
         </CardContent></Card>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-          {filtered.map((l) => (tab === "triage" ? (
-            <ReplyTriagePanel key={l.id} lead={l as any} onChanged={load} />
-          ) : (
+          {filtered.map((l) => (
             <LeadActionPanel
               key={l.id}
               lead={l}
               onChanged={load}
               campaignName={l.campaign_id ? campaigns[l.campaign_id] : null}
             />
-          )))}
+          ))}
         </div>
       )}
+
     </div>
   );
 }
