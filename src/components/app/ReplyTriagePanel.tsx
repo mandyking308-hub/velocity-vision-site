@@ -264,14 +264,18 @@ export default function ReplyTriagePanel({
           )}
           {meta.actionKey === "suppress" && (
             <Button size="sm" variant="destructive" disabled={busy} onClick={suppress}>
-              <ShieldOff className="h-3.5 w-3.5 mr-1" /> Suppress now
+              {category === "bounce" ? (
+                <>
+                  <MailX className="h-3.5 w-3.5 mr-1" /> Stop sends to this address
+                </>
+              ) : (
+                <>
+                  <ShieldOff className="h-3.5 w-3.5 mr-1" /> Suppress now
+                </>
+              )}
             </Button>
           )}
-          {meta.actionKey === "suppress_bounce" && (
-            <Button size="sm" variant="destructive" disabled={busy} onClick={suppressBounce}>
-              <MailX className="h-3.5 w-3.5 mr-1" /> Stop sends to this address
-            </Button>
-          )}
+
 
         </div>
 
