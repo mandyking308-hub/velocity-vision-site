@@ -6,6 +6,7 @@ import { ArrowRight, Check } from "lucide-react";
 const plans = [
   {
     name: "Starter",
+    slug: "starter",
     price: "£149",
     unit: "one-off",
     desc: "One-off access for one customer-controlled campaign workflow.",
@@ -20,6 +21,7 @@ const plans = [
   },
   {
     name: "Growth",
+    slug: "growth",
     price: "£249",
     unit: "per month",
     desc: "Monthly self-serve workspace for ongoing customer-controlled activity.",
@@ -35,6 +37,7 @@ const plans = [
   },
   {
     name: "Agency Workspace",
+    slug: "agency",
     price: "£499",
     unit: "per month",
     desc: "Monthly self-serve workspace with isolated client workspaces.",
@@ -121,7 +124,7 @@ const PricingTeaser = () => (
               ))}
             </ul>
             <Button variant="outline" asChild className="self-stretch">
-              <Link to="/contact">
+              <Link to={`/contact?plan=${plan.slug}`}>
                 {plan.cta} <ArrowRight size={16} />
               </Link>
             </Button>

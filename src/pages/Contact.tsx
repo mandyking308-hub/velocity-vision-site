@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { MapPin, ArrowRight, LifeBuoy, CreditCard, Building2, Handshake, MessageSquare, Scale } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import { parsePlanIntent, planEnquiryMessage } from "@/lib/planIntent";
 import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -78,12 +79,14 @@ const contactTopics = [
 ];
 
 const Contact = () => {
+  const [searchParams] = useSearchParams();
+  const planIntent = parsePlanIntent(searchParams.get("plan"));
   const [form, setForm] = useState({
     name: "",
     email: "",
     company: "",
-    message: "",
-    topic: "general_support",
+    message: planIntent ? planEnquiryMessage(planIntent) : "",
+    topic: planIntent ? (planIntent === "agency" ? "enterprise_volume" : "billing") : "general_support",
   });
   const [loading, setLoading] = useState(false);
 
