@@ -137,7 +137,7 @@ export function runPreflight(input: PreflightInput): PreflightResult {
         : "Add a campaign goal and describe who you are contacting — this drives the copy and the reporting.",
     ok: hasObjective && hasAudience,
     severity: "warning",
-    fixTo: c?.id ? `/app/campaigns/${c.id}` : undefined,
+    fixTo: c?.id ? `/app/campaigns/${c.id}` : "/app/campaigns",
     fixLabel: "Edit brief",
   });
 
@@ -151,7 +151,7 @@ export function runPreflight(input: PreflightInput): PreflightResult {
       : "No call to action chosen. Recipients need one obvious next step.",
     ok: hasCta,
     severity: "warning",
-    fixTo: c?.id ? `/app/campaigns/${c.id}` : undefined,
+    fixTo: c?.id ? `/app/campaigns/${c.id}` : "/app/campaigns",
     fixLabel: "Edit brief",
   });
 
@@ -294,7 +294,7 @@ export function runPreflight(input: PreflightInput): PreflightResult {
       : "Read the final copy and approve it. Nothing is sent automatically without this.",
     ok: Boolean(c?.approved_at),
     severity: "blocker",
-    fixTo: c?.id ? `/app/campaigns/${c.id}` : undefined,
+    fixTo: c?.id ? `/app/campaigns/${c.id}` : "/app/campaigns",
     fixLabel: "Review copy",
   });
 

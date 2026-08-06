@@ -55,7 +55,14 @@ export default function ReplyTriagePanel({
           lead_id: lead.id,
           user_id: u.user.id,
           action: "reply_triaged",
-          details: { category, confidence: suggestion.confidence, manual: Boolean(override) },
+          details: {
+            category,
+            confidence: suggestion.confidence,
+            manual: Boolean(override),
+            suggested_category: suggestion.category,
+            previous_category: lead.reply_category ?? null,
+            overridden: Boolean(override) && category !== suggestion.category,
+          },
         });
       }
       toast.success(successMsg);
