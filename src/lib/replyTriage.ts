@@ -119,12 +119,12 @@ const RULES: Rule[] = [
   { category: "wrong_person", weight: 8, rx: /\b(wrong person|not my (area|remit|department)|i don'?t handle|you (should|need to) (speak|talk) to|please contact my colleague|no longer (with|at) )\b/i },
   { category: "wrong_person", weight: 5, rx: /\bcopying in\b|\blooping in\b/i },
 
-  { category: "interested", weight: 8, rx: /\b(interested|sounds (good|great|interesting)|happy to (chat|talk|meet)|let'?s (chat|talk|set up|book)|send (me )?(more|over) (info|details)|book a time|keen to)\b/i },
+  { category: "interested", weight: 8, rx: /\b((?<!not )(?<!n't )interested|sounds (good|great|interesting)|happy to (chat|talk|meet)|let'?s (chat|talk|set up|book)|send (me )?(more|over) (info|details)|book a time|keen to)\b/i },
   { category: "interested", weight: 6, rx: /\b(what does it cost|pricing please|send a proposal|can we (meet|speak))\b/i },
 
   { category: "not_now", weight: 8, rx: /\b(not (right )?now|bad timing|circle back|revisit (in|next)|check back|too busy|next (quarter|month|year)|after (christmas|the summer|q[1-4]))\b/i },
 
-  { category: "negative", weight: 8, rx: /\b(not interested|no thanks|we'?re (all )?(set|sorted|covered)|already (have|use) (a|one)|not a (fit|priority)|pass on this)\b/i },
+  { category: "negative", weight: 12, rx: /\b(not interested|no thanks|we'?re (all )?(set|sorted|covered)|already (have|use) (a|one)|not a (fit|priority)|pass on this)\b/i },
 
   { category: "question", weight: 6, rx: /\b(how (does|do|would)|what (is|are|would)|can you (explain|clarify|confirm)|do you (support|offer|integrate))\b/i },
   { category: "question", weight: 3, rx: /\?\s*$/ },
