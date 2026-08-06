@@ -190,16 +190,25 @@ export default function AppBilling() {
               <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
               <div>
                 <div className="font-semibold text-destructive">
-                  {stripeSub?.status === "on_hold" ? "Subscription on hold" : "Payment failed"}
+                  {billingTroubleCopy(stripeSub?.status).title}
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Your last renewal didn't go through. Update your payment method to keep your plan active.
+                  {billingTroubleCopy(stripeSub?.status).body}
                 </p>
               </div>
             </div>
-            <Button onClick={() => buyPlan((stripeSub.plan as PlanId) || "growth")}>Retry payment</Button>
+            {stripeSub?.stripe_customer_id ? (
+              <Button onClick={openBillingPortal} disabled={portalLoading}>
+                {portalLoading ? "Opening…" : "Update payment method"}
+              </Button>
+            ) : (
+              <Button variant="outline" onClick={() => navigate("/contact")}>
+                Contact support
+              </Button>
+            )}
           </CardContent>
         </Card>
+
 
       )}
 
