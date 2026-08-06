@@ -287,6 +287,18 @@ const Pricing = () => {
                   </p>
                 </div>
 
+                <div className="mb-6 rounded-xl border border-border/50 bg-white/70 px-4 py-4 text-sm text-foreground/90 space-y-1">
+                  <p className="font-semibold">Not sure which plan?</p>
+                  <p>
+                    <strong>Starter</strong> is for running one first campaign end to end.{" "}
+                    <strong>Growth</strong> is the recommended operating plan for most teams running outreach continuously.{" "}
+                    <strong>Agency Workspace</strong> is for multi-client delivery across isolated client workspaces.
+                  </p>
+                  <p>
+                    Launch support included: complimentary onboarding and a review of your first campaign.
+                  </p>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {plans.map((plan, index) => (
                     <motion.div
@@ -295,11 +307,11 @@ const Pricing = () => {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true, margin: "-50px" }}
                       transition={{ duration: 0.4, delay: index * 0.06 }}
-                      className={`rounded-2xl p-6 lg:p-7 shadow-card border flex flex-col bg-white border-white/40 text-foreground ${plan.highlight ? "ring-1 ring-accent/30" : ""}`}
+                      className={`rounded-2xl p-6 lg:p-7 shadow-card border flex flex-col bg-white border-white/40 text-foreground ${plan.highlight ? "ring-2 ring-accent/60 shadow-elevated" : ""}`}
                     >
                       {plan.highlight && (
                         <span className="inline-block self-start text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-accent/15 text-accent font-semibold mb-3">
-                          Recurring plan
+                          Recommended for most teams
                         </span>
                       )}
                       <h2 className="font-display font-semibold text-xl">{plan.name}</h2>
