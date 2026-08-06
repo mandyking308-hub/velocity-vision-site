@@ -64,3 +64,94 @@ export function urgentCount(counts: Record<ReplyCategory, number>): number {
 export function nextActionFor(category: ReplyCategory): string {
   return REPLY_CATEGORIES[category].suggestedAction;
 }
+
+/* ------------------------------------------------------------------ */
+/* Intent groups — coarse filters above the per-category chips.        */
+/* ------------------------------------------------------------------ */
+
+export type IntentGroup = "compliance" | "opportunity" | "needs_you" | "no_action";
+
+export const INTENT_GROUPS: Record<IntentGroup, { label: string; description: string; categories: ReplyCategory[] }> = {
+  compliance: {
+    label: "Compliance",
+    description: "Opt-outs and delivery failures. Handle these before anything else.",
+    categories: ["unsubscribe", "bounce"],
+  },
+  opportunity: {
+    label: "Opportunity",
+    description: "Positive intent worth a personal reply today.",
+    categories: ["interested"],
+  },
+  needs_you: {
+    label: "Needs you",
+    description: "A person must decide — questions, wrong contact, or unclear replies.",
+    categories: ["question", "wrong_person", "uncategorised"],
+  },
+  no_action: {
+    label: "No action now",
+    description: "Timing or disinterest. Snooze or leave them alone.",
+    categories: ["not_now", "negative", "auto_reply"],
+  },
+};
+
+export const INTENT_GROUP_ORDER: IntentGroup[] = ["compliance", "opportunity", "needs_you", "no_action"];
+
+export function groupOf(category: ReplyCategory): IntentGroup {
+  for (const g of INTENT_GROUP_ORDER) {
+    if (INTENT_GROUPS[g].categories.includes(category)) return g;
+  }
+  return "needs_you";
+}
+
+export function summariseGroups(leads: IntentLead[]): Record<IntentGroup, number> {
+  const out = Object.fromEntries(INTENT_GROUP_ORDER.map((g) => [g, 0])) as Record<IntentGroup, number>;
+  for (const l of leads) out[groupOf(resolveIntent(l))] += 1;
+  return out;
+}
+
+export function filterByGroup<T extends IntentLead>(leads: T[], group: IntentGroup | "all"): T[] {
+  if (group === "all") return leads;
+  return leads.filter((l) => groupOf(resolveIntent(l)) === group);
+}
+
+/** Replies that have never been reviewed by a person. */
+export function untriagedCount(leads: IntentLead[]): number {
+  return leads.filter((l) => !l.reply_triaged_at).length;
+}
+
+/* ------------------------------------------------------------------ */
+/* Manual override audit trail                                         */
+/* ------------------------------------------------------------------ */
+
+export interface OverrideAudit {
+  /** True when a human classification differs from what the classifier says. */
+  overridden: boolean;
+  stored: ReplyCategory | null;
+  suggested: ReplyCategory;
+  triagedAt: string | null;
+}
+
+/**
+ * Describes whether the stored category is a human override of the automatic
+ * classification. Pure — the caller decides how to render or persist it.
+ */
+export function describeOverride(lead: IntentLead): OverrideAudit {
+  const suggested = classifyReply(lead.reply_snippet).category;
+  const stored = isValidCategory(lead.reply_category) ? lead.reply_category : null;
+  return {
+    overridden: stored !== null && stored !== suggested,
+    stored,
+    suggested,
+    triagedAt: lead.reply_triaged_at ?? null,
+  };
+}
+
+/** Audit-log payload for a manual reclassification. Never sends anything. */
+export function buildOverrideAuditDetails(
+  lead: IntentLead,
+  next: ReplyCategory,
+): { from: ReplyCategory | null; to: ReplyCategory; suggested: ReplyCategory; manual: true } {
+  const { stored, suggested } = describeOverride(lead);
+  return { from: stored, to: next, suggested, manual: true };
+}
+

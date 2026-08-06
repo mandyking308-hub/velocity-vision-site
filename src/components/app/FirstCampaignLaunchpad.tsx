@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Circle, ArrowRight, Rocket } from "lucide-react";
+import { CheckCircle2, Circle, ArrowRight, Rocket, Target } from "lucide-react";
 import { resolveLaunchpad, type LaunchpadSignals } from "@/lib/launchpad";
 
 /**
@@ -34,13 +34,29 @@ export default function FirstCampaignLaunchpad({ signals }: { signals: Launchpad
             </Badge>
           </div>
         </div>
-        <div className="mt-3">
-          <Button asChild size="sm">
-            <Link to={result.continueTo}>
-              Continue setup: {result.continueLabel} <ArrowRight className="h-3.5 w-3.5 ml-1" />
-            </Link>
-          </Button>
-        </div>
+        {result.nextBestAction && (
+          <div
+            className={`mt-3 rounded-lg border p-3 ${
+              result.nextBestAction.urgent ? "border-amber-300 bg-amber-50/60" : "border-primary/30 bg-background"
+            }`}
+            data-testid="next-best-action"
+          >
+            <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              <Target className="h-3.5 w-3.5" /> Next best action
+            </div>
+            <div className="mt-1 text-sm font-semibold">{result.nextBestAction.label}</div>
+            <p className="text-xs text-muted-foreground">{result.nextBestAction.detail}</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              <strong className="text-foreground">Why:</strong> {result.nextBestAction.why}
+            </p>
+            <Button asChild size="sm" className="mt-2">
+              <Link to={result.nextBestAction.to}>
+                {result.nextBestAction.cta} <ArrowRight className="h-3.5 w-3.5 ml-1" />
+              </Link>
+            </Button>
+          </div>
+        )}
+
       </CardHeader>
       <CardContent>
         <ol className="grid grid-cols-1 md:grid-cols-2 gap-2">

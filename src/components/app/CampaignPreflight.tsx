@@ -23,6 +23,10 @@ export default function CampaignPreflight({
   footer?: React.ReactNode;
 }) {
   const { checks, blockers, warnings, canActivate } = result;
+  // Direct fix link for the single most important outstanding item.
+  const nextFix = [...blockers, ...warnings].find((c) => Boolean(c.fixTo)) ?? null;
+
+
 
   return (
     <Card className={canActivate ? "border-emerald-200" : "border-amber-200"}>
@@ -61,7 +65,17 @@ export default function CampaignPreflight({
             You can activate, but {warnings.length} item{warnings.length === 1 ? "" : "s"} would improve this send.
           </p>
         )}
+        {nextFix?.fixTo && (
+          <div className="mt-2">
+            <Button asChild size="sm" data-testid="preflight-next-fix">
+              <Link to={nextFix.fixTo}>
+                Fix next: {nextFix.label} <ArrowRight className="h-3 w-3 ml-1" />
+              </Link>
+            </Button>
+          </div>
+        )}
       </CardHeader>
+
       <CardContent className="space-y-2">
         {(compact ? [...blockers, ...warnings] : checks).map((c) => (
           <Row key={c.id} check={c} />
