@@ -85,12 +85,12 @@ export const INTENT_GROUPS: Record<IntentGroup, { label: string; description: st
   needs_you: {
     label: "Needs you",
     description: "A person must decide — questions, wrong contact, or unclear replies.",
-    categories: ["question", "wrong_person", "needs_human", "uncategorised"],
+    categories: ["question", "wrong_person", "uncategorised"],
   },
   no_action: {
     label: "No action now",
     description: "Timing or disinterest. Snooze or leave them alone.",
-    categories: ["not_now", "not_interested", "auto_reply"],
+    categories: ["not_now", "negative", "auto_reply"],
   },
 };
 
