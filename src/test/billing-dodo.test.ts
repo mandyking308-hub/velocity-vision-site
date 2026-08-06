@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { classifyCheckoutReturn, isBillingTrouble } from "@/lib/checkoutReturn";
 import { buildSanitisedError, redactText, safeRoute } from "@/lib/clientErrorReport";
@@ -237,5 +239,28 @@ describe("dodo customer portal", () => {
     expect(resolveBillingPortalFunction("stripe")).toBe("create-billing-portal-session");
     expect(resolveBillingPortalFunction(null)).toBe("create-billing-portal-session");
     expect(resolveBillingPortalFunction(undefined)).toBe("create-billing-portal-session");
+  });
+});
+
+// ── Portal request-construction contract ──────────────────────────────────
+describe("dodo portal request construction", () => {
+  const src = readFileSync(
+    resolve(__dirname, "../../supabase/functions/dodo-customer-portal/index.ts"),
+    "utf8",
+  );
+
+  it("sends send_email and return_url as query parameters", () => {
+    expect(src).toContain('url.searchParams.set("send_email", "false")');
+    expect(src).toContain('url.searchParams.set("return_url", DODO_PORTAL_RETURN_URL)');
+  });
+
+  it("sends no JSON request body to the portal endpoint", () => {
+    expect(src).not.toMatch(/body:\s*JSON\.stringify/);
+    expect(src).not.toContain('"Content-Type": "application/json",\n      },\n      body');
+  });
+
+  it("still resolves the customer id server-side and validates the link", () => {
+    expect(src).toContain('.eq("provider", "dodo")');
+    expect(src).toContain("isSafeDodoPortalLink(link)");
   });
 });
