@@ -10,7 +10,8 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest run",
+    "test": "bun run test:ci",
+    "test:ci": "vitest run",
     "test:watch": "vitest"
   },
   "dependencies": {
