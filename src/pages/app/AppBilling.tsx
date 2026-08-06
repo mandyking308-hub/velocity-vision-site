@@ -94,10 +94,30 @@ export default function AppBilling() {
 
   useEffect(() => { load(); }, [user]);
 
-  // Post-payment provisioning: handle ?checkout=success and route the user
+  // Post-checkout return handling. Success keeps the existing Stripe behaviour;
+  // cancellation / failure / unknown values must never claim a payment.
   useEffect(() => {
-    const flag = params.get("checkout");
-    if (!flag) return;
+    const parsed = classifyCheckoutReturn(params.get("checkout"));
+    if (!parsed) return;
+    const clearParams = () => {
+      params.delete("checkout");
+      params.delete("session_id");
+      setParams(params, { replace: true });
+    };
+
+    if (parsed.status !== "success") {
+      if (parsed.status === "cancelled") {
+        toast.info("Checkout cancelled", { description: "No payment was taken. You can try again any time." });
+      } else if (parsed.status === "failed") {
+        toast.error("Payment didn't go through", { description: "No charge was made. Please try again or contact support." });
+      } else {
+        toast.info("Checkout closed", { description: "We couldn't confirm a payment for this return. Your billing details below are up to date." });
+      }
+      clearParams();
+      return;
+    }
+
+    const flag = parsed.flag;
     (async () => {
       setShowCheckoutFeedback(true);
       toast.success(tc("toasts.paymentReceived"));
@@ -113,12 +133,12 @@ export default function AppBilling() {
       } else if (flag === "growth" || flag === "agency") {
         navigate("/app", { replace: true });
       } else {
-        // strip the query param
-        params.delete("checkout"); params.delete("session_id"); setParams(params, { replace: true });
+        clearParams();
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   const buyPlan = (id: PlanId) => setPendingPlan(id);
 
