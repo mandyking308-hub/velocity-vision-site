@@ -84,3 +84,16 @@ export function resolveUnsubscribeReadiness(
       "The email carries an opt-out instruction, and suppressed or blocked recipients are refused at send time.",
   };
 }
+
+/**
+ * Named boolean form of the unsubscribe capability check.
+ *
+ * Invariant it encodes: an opt-out is only honourable when (a) the deployed
+ * `/unsubscribe` route + `handle-email-unsubscribe` function exist in this
+ * build, and (b) the message actually tells the recipient how to opt out —
+ * because `email-send` transmits the stored body verbatim and injects no
+ * footer. Unknown inputs are never a pass.
+ */
+export function isUnsubscribeCapabilityReady(input: UnsubscribeReadinessInput = {}): boolean {
+  return resolveUnsubscribeReadiness(input).ready;
+}
