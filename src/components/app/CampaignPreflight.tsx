@@ -33,17 +33,25 @@ export default function CampaignPreflight({
             <ClipboardCheck className="h-4 w-4 text-primary" /> {title}
           </CardTitle>
           {canActivate ? (
-            <Badge className="bg-emerald-100 text-emerald-700">Ready to activate</Badge>
-          ) : (
-            <Badge variant="destructive">
-              {blockers.length} blocker{blockers.length === 1 ? "" : "s"}
+            <Badge className="bg-emerald-100 text-emerald-700">
+              {warnings.length > 0 ? "Ready — needs attention" : "Ready to activate"}
             </Badge>
+          ) : (
+            <Badge variant="destructive">Blocked</Badge>
           )}
         </div>
-        <div className="mt-3 flex items-center gap-3">
-          <Progress value={score} className="h-2 flex-1" />
-          <span className="text-xs text-muted-foreground whitespace-nowrap">{score}% ready</span>
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
+          <Badge variant="outline" className="text-emerald-700">
+            {checks.filter((c) => c.ok).length} pass
+          </Badge>
+          <Badge variant="outline" className="text-amber-700">
+            {warnings.length} needs attention
+          </Badge>
+          <Badge variant="outline" className="text-rose-700">
+            {blockers.length} blocked
+          </Badge>
         </div>
+
         {!canActivate && (
           <p className="text-xs text-muted-foreground mt-2">
             Activation stays locked until every blocker below is cleared. Nothing sends automatically.
