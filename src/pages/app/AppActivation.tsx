@@ -212,7 +212,10 @@ export default function AppActivation() {
   const preflight = useMemo(() => runPreflight(buildPreflightInput(selectedCampaignRow)), [selectedCampaignRow, counts, defaultConn, senderReadinessState, fromEmail, safety, remaining, totalSelected, legal.isCompliant]);
   const gate = useMemo(() => activationGate(preflight), [preflight]);
   const activationBlocked = !legal.isCompliant;
-  const canActivate = totalSelected > 0 && !activationBlocked && gate.ok && (!wantsRisky || riskAck) && !!targetCampaignId && !activating;
+  const canActivate =
+    totalSelected > 0 && !activationBlocked && preflight.canActivate && gate.ok &&
+    (!wantsRisky || riskAck) && !!targetCampaignId && !activating;
+
 
 
   async function audit(action: string, details: any) {
