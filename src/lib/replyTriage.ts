@@ -112,6 +112,7 @@ export const REPLY_CATEGORIES: Record<ReplyCategory, ReplyCategoryMeta> = {
 export const REPLY_CATEGORY_ORDER: ReplyCategory[] = [
   "interested",
   "question",
+  "referral",
   "not_now",
   "wrong_person",
   "uncategorised",
