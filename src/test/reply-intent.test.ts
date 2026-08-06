@@ -12,8 +12,13 @@ import {
 } from "@/lib/replyIntent";
 
 describe("reply intent resolution", () => {
-  it("prefers a stored (manually overridden) category over the classifier", () => {
+  it("a stored sales label never suppresses a deterministic opt-out", () => {
     const lead = { id: "1", reply_category: "not_now", reply_snippet: "Please unsubscribe me" };
+    expect(resolveIntent(lead)).toBe("unsubscribe");
+  });
+
+  it("prefers a stored (manually overridden) category for an ordinary reply", () => {
+    const lead = { id: "1", reply_category: "not_now", reply_snippet: "Can you tell me more?" };
     expect(resolveIntent(lead)).toBe("not_now");
   });
 
