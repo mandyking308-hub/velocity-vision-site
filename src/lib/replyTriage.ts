@@ -109,8 +109,10 @@ export const REPLY_CATEGORY_ORDER: ReplyCategory[] = [
   "uncategorised",
   "auto_reply",
   "negative",
+  "bounce",
   "unsubscribe",
 ];
+
 
 interface Rule {
   category: ReplyCategory;
