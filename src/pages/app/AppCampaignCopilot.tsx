@@ -173,17 +173,24 @@ export default function AppCampaignCopilot() {
         }
       }
 
-      const quality = checkPackQuality(pack, brief);
-      if (!quality.ok) {
-        const { title, description } = formatQualityFailure(quality, false);
-        setError(`${title} ${description ?? ""}`.trim());
-        if (ledgerId) {
-          try { await supabase.rpc("refund_campaign_credits", { _ledger_id: ledgerId }); } catch { /* noop */ }
-          await refreshCredits();
+      // The quality guard exists so we never charge for weak AI output. It is
+      // tuned for generated copy, so it only applies to the paid AI path — a
+      // manual starter or sample is explicitly labelled placeholder content and
+      // must still reach the user rather than leaving them with nothing.
+      if (source === "ai") {
+        const quality = checkPackQuality(pack, brief);
+        if (!quality.ok) {
+          const { title, description } = formatQualityFailure(quality, false);
+          setError(`${title} ${description ?? ""}`.trim());
+          if (ledgerId) {
+            try { await supabase.rpc("refund_campaign_credits", { _ledger_id: ledgerId }); } catch { /* noop */ }
+            await refreshCredits();
+          }
+          setBusy(false);
+          return;
         }
-        setBusy(false);
-        return;
       }
+
 
       const plan = buildCopilotPlan({ input: briefInput, brief, pack, source });
       const payload = buildCampaignInsert({ brief, pack, plan, userId: user.id, workspaceId, sample: opts.sample });
