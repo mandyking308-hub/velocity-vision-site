@@ -10,6 +10,7 @@ export type ReplyCategory =
   | "not_now"
   | "wrong_person"
   | "unsubscribe"
+  | "bounce"
   | "auto_reply"
   | "negative"
   | "uncategorised";
@@ -27,9 +28,11 @@ export interface ReplyCategoryMeta {
     | "snooze"
     | "reassign"
     | "suppress"
+    | "suppress_bounce"
     | "ignore"
     | "review";
 }
+
 
 export const REPLY_CATEGORIES: Record<ReplyCategory, ReplyCategoryMeta> = {
   interested: {
