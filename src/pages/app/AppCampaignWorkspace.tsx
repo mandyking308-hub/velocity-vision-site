@@ -464,6 +464,7 @@ export default function AppCampaignWorkspace() {
               <p><strong>Deadline:</strong> {brief?.deadline || "—"}</p>
               <p><strong>Channels:</strong> {filterSupportedChannels(brief?.channels).join(", ")}</p>
             </Section>
+            {copilotPlan && <CopilotPlanCard plan={copilotPlan} />}
           </TabsContent>
 
           <TabsContent value="strategy" className="space-y-4 mt-4">
@@ -492,9 +493,19 @@ export default function AppCampaignWorkspace() {
 
           {channelCfg.includeEmail && (
             <TabsContent value="emails" className="space-y-3 mt-4">
+              {copilotPlan && (
+                <CopilotSequenceEditor
+                  campaignId={c.id}
+                  plan={copilotPlan}
+                  brief={brief}
+                  pack={pack}
+                  onSaved={({ brief: nb, pack: np }) => setC({ ...c, brief: nb, pack: np })}
+                />
+              )}
               <EmailSequenceSender emails={pack.emails} campaignId={c.id} workspaceId={workspaceId} leads={leads} />
             </TabsContent>
           )}
+
 
           {channelCfg.includeSocial && <TabsContent value="social" className="space-y-4 mt-4">
             <Section title="Launch posts">
