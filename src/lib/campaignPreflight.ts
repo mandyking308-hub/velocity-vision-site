@@ -98,6 +98,19 @@ export function runPreflight(input: PreflightInput): PreflightResult {
 
   const add = (x: PreflightCheck) => checks.push(x);
 
+  // 0. A campaign must actually be selected before anything can be prepared.
+  add({
+    id: "campaign",
+    label: "A campaign is selected",
+    detail: c?.id
+      ? `Leads will be prepared inside "${c.name || "this campaign"}".`
+      : "Choose the campaign these contacts should be prepared into.",
+    ok: Boolean(c?.id),
+    severity: "blocker",
+    fixTo: "/app/campaigns/new",
+    fixLabel: "Create a campaign",
+  });
+
   // 1. Campaign content exists
   add({
     id: "content",
@@ -110,6 +123,7 @@ export function runPreflight(input: PreflightInput): PreflightResult {
     fixTo: c?.id ? `/app/campaigns/${c.id}` : "/app/campaigns/new",
     fixLabel: "Open campaign",
   });
+
 
   // 2. Objective / audience clarity
   const hasObjective = Boolean((c?.goal || "").trim());
