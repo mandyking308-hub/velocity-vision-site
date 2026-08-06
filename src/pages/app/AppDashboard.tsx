@@ -24,6 +24,7 @@ import CampaignPreflight from "@/components/app/CampaignPreflight";
 import FreePreviewStatusCard from "@/components/app/FreePreviewStatusCard";
 import PriorityStrip from "@/components/app/PriorityStrip";
 import { computeSafety, DEFAULT_SENDER_STATE, type SenderState } from "@/lib/sendSafety";
+import { resolveUnsubscribeReadiness, UNSUBSCRIBE_HANDLER_DEPLOYED } from "@/lib/systemCapabilities";
 import { runPreflight } from "@/lib/campaignPreflight";
 import { computeReadiness } from "@/lib/senderReadiness";
 import { useLegalStatus } from "@/lib/legalCompliance";
@@ -91,6 +92,7 @@ export default function AppDashboard() {
   const [latestCampaignId, setLatestCampaignId] = useState<string | null>(null);
   const [campaignRows, setCampaignRows] = useState<CadenceRow[]>([]);
   const [funnelLeads, setFunnelLeads] = useState<FunnelLead[]>([]);
+  const [activatedCampaignIds, setActivatedCampaignIds] = useState<Set<string>>(new Set());
   const [funnelOpps, setFunnelOpps] = useState<FunnelOpportunity[]>([]);
   const [campaignNames, setCampaignNames] = useState<Record<string, string>>({});
   const [funnelFilters, setFunnelFilters] = useState<FunnelFilters>({ campaignId: "all" });
@@ -120,7 +122,7 @@ export default function AppDashboard() {
     if (wsLoading) return;
     // No workspace yet → the empty-state gate below renders. Skip metric fetch.
     if (!currentId) {
-      setActiveCampaigns(0); setLatestCampaignId(null); setCampaignRows([]);
+      setActiveCampaigns(0); setLatestCampaignId(null); setCampaignRows([]); setActivatedCampaignIds(new Set());
       setVault({ total_contacts: 0, total_companies: 0, imports: 0, clean: 0, needs_review: 0, risky: 0, blocked: 0, duplicates: 0, safe_to_activate: 0 });
       setPipeline({ leads: 0, opportunities: 0, pipeline_value: 0, won: 0, lost: 0, by_stage: {}, stuck: 0, next_action_due: 0 });
       setInter({ replies_due: 0, followups_today: 0, dormant: 0, warm: 0, bounces: 0 });
@@ -152,7 +154,7 @@ export default function AppDashboard() {
           .select("id, stage, estimated_value, stage_changed_at, next_action_at, source_campaign_id, source_lead_id")
           .eq("workspace_id", currentId),
         supabase.from("email_sends")
-          .select("status, sent_at")
+          .select("status, sent_at, campaign_id")
           .eq("workspace_id", currentId),
         supabase.from("data_uploads")
           .select("id", { count: "exact" })
@@ -196,6 +198,12 @@ export default function AppDashboard() {
 
       const ls = leads || [];
       setFunnelLeads(ls as any);
+      // Campaign-specific activation evidence. A global lead/send count must
+      // never mark a different (newer) campaign as live.
+      setActivatedCampaignIds(new Set<string>([
+        ...ls.map((l: any) => l.campaign_id).filter(Boolean),
+        ...(sends || []).map((s: any) => s.campaign_id).filter(Boolean),
+      ] as string[]));
       setFunnelOpps((opps || []) as any);
       setCampaignNames(
         Object.fromEntries((campaigns || []).map((c: any) => [c.id, c.name])) as Record<string, string>,
@@ -309,6 +317,14 @@ export default function AppDashboard() {
 
   // Working campaign for launchpad + preflight: the most recent campaign.
   const workingCampaign = campaignRows[0] ?? null;
+  // Derived from the actual copy that would be sent, never assumed.
+  const dashboardUnsubscribe = resolveUnsubscribeReadiness({
+    handlerAvailable: UNSUBSCRIBE_HANDLER_DEPLOYED,
+    messageBody: (workingCampaign?.pack as any)?.emails?.[0]?.body ?? null,
+  });
+  // Activation proof must belong to THIS campaign.
+  const workingCampaignActivated =
+    Boolean(workingCampaign?.id) && activatedCampaignIds.has(workingCampaign!.id);
   const dashboardPreflight = runPreflight({
     campaign: workingCampaign,
     safeContacts: vault.safe_to_activate,
@@ -320,7 +336,7 @@ export default function AppDashboard() {
     creditsAvailable: remaining,
     creditsRequired: Math.max(1, Math.min(vault.safe_to_activate, safety.recommendedToday || 1)),
     legalAccepted: legal.isCompliant,
-    unsubscribeReady: true,
+    unsubscribeReady: dashboardUnsubscribe.ready,
   });
 
   const launchpadSignals = {
@@ -331,7 +347,7 @@ export default function AppDashboard() {
     preflightBlockers: dashboardPreflight.blockers.length,
     approved: Boolean(workingCampaign?.approved_at),
     isSample: workingCampaign?.is_sample === true,
-    activated: pipeline.leads > 0 || sendsUsedToday + sendsScheduledToday > 0,
+    activated: workingCampaignActivated,
     campaignId: workingCampaign?.id ?? null,
     repliesWaiting: inter.replies_due,
     urgentReplies: inter.replies_due + inter.bounces,
