@@ -106,8 +106,27 @@ describe("UI and execution cannot diverge", () => {
     expect(src.match(/buildPreflightInput\(/g)?.length).toBeGreaterThanOrEqual(2);
   });
 
-  it("requires the gate verdict on the activation button", () => {
+  it("requires both the preflight verdict and the gate on the activation button", () => {
+    expect(src).toMatch(/const canActivate =[^;]*preflight\.canActivate/s);
     expect(src).toMatch(/const canActivate =[^;]*gate\.ok/s);
+  });
+
+  it("aborts before any state change or write when preflight fails", () => {
+    const runBody = src.slice(src.indexOf("async function runActivation"));
+    const guardIdx = runBody.indexOf("if (!preflight.canActivate)");
+    const setIdx = runBody.indexOf("setActivating(true)");
+    expect(guardIdx).toBeGreaterThan(-1);
+    expect(guardIdx).toBeLessThan(setIdx);
+  });
+
+  it("hard-refuses a missing, sample or unapproved campaign in the execution path", () => {
+    const runBody = src.slice(src.indexOf("async function runActivation"));
+    const guardIdx = runBody.indexOf("const hardFailure");
+    const insertIdx = runBody.indexOf('from("leads").insert');
+    expect(guardIdx).toBeGreaterThan(-1);
+    expect(guardIdx).toBeLessThan(insertIdx);
+    expect(runBody).toContain(".is_sample === true");
+    expect(runBody).toContain(".approved_at");
   });
 
   it("re-checks the gate against a freshly fetched campaign before writing leads", () => {
@@ -158,7 +177,7 @@ describe("bounce triage", () => {
     const meta = REPLY_CATEGORIES.bounce;
     expect(meta.label).toBe("Bounce");
     expect(meta.suggestedAction.toLowerCase()).toContain("stop");
-    expect(meta.actionKey).toBe("suppress_bounce");
+    expect(meta.actionKey).toBe("suppress");
     expect(REPLY_CATEGORY_ORDER).toContain("bounce");
   });
 
@@ -169,10 +188,11 @@ describe("bounce triage", () => {
   it("suppresses only on explicit confirmation, with a technical reason", () => {
     const panel = readFileSync("src/components/app/ReplyTriagePanel.tsx", "utf8");
     expect(panel).toContain('reason: "hard_bounce"');
+    expect(panel).toContain('reason: "reply_optout"');
     // Suppression lives inside an explicit click handler, not the classifier.
-    expect(panel).toMatch(/const suppressBounce = async \(\) => \{/);
-    expect(panel).toMatch(/onClick=\{suppressBounce\}/);
-    expect(panel).toContain('follow_up_state: "bounced"');
+    expect(panel).toMatch(/const suppress = async \(\) => \{/);
+    expect(panel).toMatch(/onClick=\{suppress\}/);
+    expect(panel).toContain('reply_category: isBounce ? "bounce" : "unsubscribe"');
     expect(panel).toContain('action: "reply_triaged_bounce"');
   });
 });
