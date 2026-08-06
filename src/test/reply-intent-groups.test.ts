@@ -64,6 +64,8 @@ describe("manual override audit trail", () => {
       from: "not_now",
       to: "unsubscribe",
       suggested: "interested",
+      effective: "not_now",
+      compliance_locked: null,
       manual: true,
     });
   });

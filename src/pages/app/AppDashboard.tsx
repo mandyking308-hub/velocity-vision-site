@@ -24,7 +24,7 @@ import CampaignPreflight from "@/components/app/CampaignPreflight";
 import FreePreviewStatusCard from "@/components/app/FreePreviewStatusCard";
 import PriorityStrip from "@/components/app/PriorityStrip";
 import { computeSafety, DEFAULT_SENDER_STATE, type SenderState } from "@/lib/sendSafety";
-import { resolveUnsubscribeReadiness, UNSUBSCRIBE_HANDLER_DEPLOYED } from "@/lib/systemCapabilities";
+import { isUnsubscribeCapabilityReady, resolveUnsubscribeReadiness, UNSUBSCRIBE_HANDLER_DEPLOYED } from "@/lib/systemCapabilities";
 import { runPreflight } from "@/lib/campaignPreflight";
 import { computeReadiness } from "@/lib/senderReadiness";
 import { useLegalStatus } from "@/lib/legalCompliance";
@@ -336,7 +336,10 @@ export default function AppDashboard() {
     creditsAvailable: remaining,
     creditsRequired: Math.max(1, Math.min(vault.safe_to_activate, safety.recommendedToday || 1)),
     legalAccepted: legal.isCompliant,
-    unsubscribeReady: dashboardUnsubscribe.ready,
+    unsubscribeReady: isUnsubscribeCapabilityReady({
+      handlerAvailable: UNSUBSCRIBE_HANDLER_DEPLOYED,
+      messageBody: (workingCampaign?.pack as any)?.emails?.[0]?.body ?? null,
+    }),
   });
 
   const launchpadSignals = {
