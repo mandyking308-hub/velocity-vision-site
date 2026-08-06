@@ -3,7 +3,8 @@ import { extractReferral, extractReturnDate, describeReturnDate } from "@/lib/re
 import { validateBookingUrl } from "@/lib/bookingUrl";
 import { isWaitingForFollowUp, applyQueueFilter, queueFilterCounts, isMeetingBooked } from "@/lib/replySla";
 import { computeFunnel } from "@/lib/outcomeFunnel";
-import { classifyReply, resolveCategory } from "@/lib/replyTriage";
+import { classifyReply } from "@/lib/replyTriage";
+import { resolveIntent, describeOverride } from "@/lib/replyIntent";
 
 const HOUR = 3600_000;
 const now = new Date("2026-03-10T12:00:00Z");
