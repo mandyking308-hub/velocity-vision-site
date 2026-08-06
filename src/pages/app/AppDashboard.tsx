@@ -189,6 +189,11 @@ export default function AppDashboard() {
       });
 
       const ls = leads || [];
+      setFunnelLeads(ls as any);
+      setFunnelOpps((opps || []) as any);
+      setCampaignNames(
+        Object.fromEntries((campaigns || []).map((c: any) => [c.id, c.name])) as Record<string, string>,
+      );
       const now = Date.now();
       const dayMs = 24 * 60 * 60 * 1000;
       const states = ls.map((l: any) => deriveFollowUpState(l));
