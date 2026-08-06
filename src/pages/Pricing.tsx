@@ -336,7 +336,7 @@ const Pricing = () => {
                         ))}
                       </ul>
                       <Button variant="cta" asChild>
-                        <Link to="/contact">{plan.cta}</Link>
+                        <Link to={`/contact?plan=${planSlug(plan.sku)}`}>{plan.cta}</Link>
                       </Button>
                     </motion.div>
                   ))}
