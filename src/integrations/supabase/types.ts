@@ -350,6 +350,8 @@ export type Database = {
       }
       campaigns: {
         Row: {
+          approved_at: string | null
+          approved_by: string | null
           brief: Json | null
           budget: number | null
           cadence_end_at: string | null
@@ -365,6 +367,7 @@ export type Database = {
           end_date: string | null
           goal: string | null
           id: string
+          is_sample: boolean
           language: string | null
           last_run_at: string | null
           lead_form_config: Json | null
@@ -389,6 +392,8 @@ export type Database = {
           workspace_id: string | null
         }
         Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
           brief?: Json | null
           budget?: number | null
           cadence_end_at?: string | null
@@ -404,6 +409,7 @@ export type Database = {
           end_date?: string | null
           goal?: string | null
           id?: string
+          is_sample?: boolean
           language?: string | null
           last_run_at?: string | null
           lead_form_config?: Json | null
@@ -428,6 +434,8 @@ export type Database = {
           workspace_id?: string | null
         }
         Update: {
+          approved_at?: string | null
+          approved_by?: string | null
           brief?: Json | null
           budget?: number | null
           cadence_end_at?: string | null
@@ -443,6 +451,7 @@ export type Database = {
           end_date?: string | null
           goal?: string | null
           id?: string
+          is_sample?: boolean
           language?: string | null
           last_run_at?: string | null
           lead_form_config?: Json | null
@@ -1667,6 +1676,9 @@ export type Database = {
           owner_id: string | null
           phone: string | null
           replied_at: string | null
+          reply_category: string | null
+          reply_snippet: string | null
+          reply_triaged_at: string | null
           snoozed_until: string | null
           source: string
           status: Database["public"]["Enums"]["lead_status"]
@@ -1694,6 +1706,9 @@ export type Database = {
           owner_id?: string | null
           phone?: string | null
           replied_at?: string | null
+          reply_category?: string | null
+          reply_snippet?: string | null
+          reply_triaged_at?: string | null
           snoozed_until?: string | null
           source?: string
           status?: Database["public"]["Enums"]["lead_status"]
@@ -1721,6 +1736,9 @@ export type Database = {
           owner_id?: string | null
           phone?: string | null
           replied_at?: string | null
+          reply_category?: string | null
+          reply_snippet?: string | null
+          reply_triaged_at?: string | null
           snoozed_until?: string | null
           source?: string
           status?: Database["public"]["Enums"]["lead_status"]

@@ -11,9 +11,12 @@ import LeadActionPanel, { type ActionLead } from "@/components/app/LeadActionPan
 import { bucketCounts, deriveFollowUpState, STATE_LABEL, STATE_TONE, type FollowUpState } from "@/lib/leadStates";
 import { MessageSquare, Mail, AlertTriangle, Zap, Flame, Snowflake, Filter, RefreshCw, Send, Upload } from "lucide-react";
 import JourneyEmptyState from "@/components/app/JourneyEmptyState";
+import ReplyTriagePanel from "@/components/app/ReplyTriagePanel";
+import { Inbox } from "lucide-react";
 
-const TAB_KEYS: { id: "action" | FollowUpState; labelKey: string; icon: any }[] = [
+const TAB_KEYS: { id: "action" | "triage" | FollowUpState; labelKey: string; icon: any }[] = [
   { id: "action", labelKey: "needsAction", icon: AlertTriangle },
+  { id: "triage", labelKey: "triage", icon: Inbox },
   { id: "replied", labelKey: "replied", icon: MessageSquare },
   { id: "overdue", labelKey: "overdue", icon: Mail },
   { id: "due", labelKey: "due", icon: Mail },
@@ -29,14 +32,14 @@ export default function AppFollowUp() {
   const { currentId } = useWorkspace();
   const [leads, setLeads] = useState<ActionLead[]>([]);
   const [campaigns, setCampaigns] = useState<Record<string, string>>({});
-  const [tab, setTab] = useState<"action" | FollowUpState>("action");
+  const [tab, setTab] = useState<"action" | "triage" | FollowUpState>("action");
   const [q, setQ] = useState("");
   const [campaign, setCampaign] = useState<string>("all");
   const [loading, setLoading] = useState(true);
 
   const load = async () => {
     setLoading(true);
-    const leadsQ = supabase.from("leads").select("id, name, email, phone, status, follow_up_at, follow_up_state, replied_at, snoozed_until, last_email_sent_at, last_email_subject, last_contacted_at, last_interaction_at, opportunity_id, owner_id, campaign_id, company_id, contact_id, workspace_id, last_action, created_at").order("created_at", { ascending: false });
+    const leadsQ = supabase.from("leads").select("id, name, email, phone, status, follow_up_at, follow_up_state, replied_at, snoozed_until, last_email_sent_at, last_email_subject, last_contacted_at, last_interaction_at, opportunity_id, owner_id, campaign_id, company_id, contact_id, workspace_id, last_action, created_at, reply_category, reply_snippet, reply_triaged_at").order("created_at", { ascending: false });
     const campsQ = supabase.from("campaigns").select("id, name");
     const [{ data: l }, { data: c }] = await Promise.all([
       currentId ? leadsQ.eq("workspace_id", currentId) : leadsQ,
@@ -55,8 +58,19 @@ export default function AppFollowUp() {
     [leads]
   );
 
+  // Triage queue: anything that has replied or already carries a reply record,
+  // untriaged first so nothing sits unread.
+  const triageQueue = useMemo(
+    () => leads
+      .filter((l: any) => l.replied_at || l.reply_category || deriveFollowUpState(l) === "replied")
+      .sort((a: any, b: any) => (a.reply_triaged_at ? 1 : 0) - (b.reply_triaged_at ? 1 : 0)),
+    [leads],
+  );
+
   const filtered = useMemo(() => {
-    const base = tab === "action" ? needsAction : leads.filter((l) => deriveFollowUpState(l) === tab);
+    const base = tab === "action" ? needsAction
+      : tab === "triage" ? triageQueue
+      : leads.filter((l) => deriveFollowUpState(l) === tab);
     return base
       .filter((l) => (campaign === "all" ? true : l.campaign_id === campaign))
       .filter((l) => {
@@ -64,7 +78,7 @@ export default function AppFollowUp() {
         const s = q.toLowerCase();
         return (l.name || "").toLowerCase().includes(s) || (l.email || "").toLowerCase().includes(s);
       });
-  }, [tab, needsAction, leads, q, campaign]);
+  }, [tab, needsAction, triageQueue, leads, q, campaign]);
 
   if (!loading && leads.length === 0) {
     return (
@@ -117,7 +131,9 @@ export default function AppFollowUp() {
 
       <div className="flex flex-wrap items-center gap-2 border-b">
         {TAB_KEYS.map((tk) => {
-          const n = tk.id === "action" ? needsAction.length : counts[tk.id as FollowUpState];
+          const n = tk.id === "action" ? needsAction.length
+            : tk.id === "triage" ? triageQueue.length
+            : counts[tk.id as FollowUpState];
           const active = tab === tk.id;
           return (
             <button
@@ -127,7 +143,7 @@ export default function AppFollowUp() {
                 active ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"
               }`}
             >
-              <tk.icon className="h-4 w-4" /> {t(`followUp.stats.${tk.labelKey}`)}
+              <tk.icon className="h-4 w-4" /> {tk.id === "triage" ? "Reply triage" : t(`followUp.stats.${tk.labelKey}`)}
               <Badge variant="outline" className="ml-1 h-5">{n}</Badge>
             </button>
           );
@@ -155,14 +171,16 @@ export default function AppFollowUp() {
         </CardContent></Card>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-          {filtered.map((l) => (
+          {filtered.map((l) => (tab === "triage" ? (
+            <ReplyTriagePanel key={l.id} lead={l as any} onChanged={load} />
+          ) : (
             <LeadActionPanel
               key={l.id}
               lead={l}
               onChanged={load}
               campaignName={l.campaign_id ? campaigns[l.campaign_id] : null}
             />
-          ))}
+          )))}
         </div>
       )}
     </div>

@@ -26,6 +26,11 @@ import { Pause, Play, Clock, Repeat } from "lucide-react";
 import { formatCampaignPackMarkdown, slugify } from "@/lib/campaignPackExport";
 import { checkPackQuality } from "@/lib/campaignQuality";
 import { formatQualityFailure } from "@/lib/campaignQualityToast";
+import CampaignPreflight from "@/components/app/CampaignPreflight";
+import { runPreflight } from "@/lib/campaignPreflight";
+import { computeReadiness } from "@/lib/senderReadiness";
+import { useLegalStatus } from "@/lib/legalCompliance";
+import { ShieldCheck, FlaskConical } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
@@ -52,6 +57,8 @@ interface Campaign {
   last_run_at: string | null;
   runs_completed: number | null;
   refresh_strategy: RefreshStrategy | null;
+  approved_at?: string | null;
+  is_sample?: boolean | null;
 }
 
 
@@ -68,16 +75,36 @@ export default function AppCampaignWorkspace() {
   const [leads, setLeads] = useState<any[]>([]);
   const [regenerating, setRegenerating] = useState(false);
   const [qualityDebug, setQualityDebug] = useState(false);
+  const [approving, setApproving] = useState(false);
+  const [signals, setSignals] = useState<{ safeContacts: number; reviewContacts: number; senderState: any }>({
+    safeContacts: 0, reviewContacts: 0, senderState: null,
+  });
+  const legal = useLegalStatus();
 
   useEffect(() => {
     if (!id) return;
     (async () => {
       const [{ data: camp }, { data: ld }] = await Promise.all([
-        supabase.from("campaigns").select("id, name, status, goal, campaign_kind, brief, pack, slug, lead_form_config, lead_form_published, cadence_type, cadence_interval, cadence_unit, start_at, timezone, cadence_end_at, cadence_max_runs, next_run_at, last_run_at, runs_completed, refresh_strategy").eq("id", id).maybeSingle(),
+        supabase.from("campaigns").select("id, name, status, goal, campaign_kind, brief, pack, slug, lead_form_config, lead_form_published, cadence_type, cadence_interval, cadence_unit, start_at, timezone, cadence_end_at, cadence_max_runs, next_run_at, last_run_at, runs_completed, refresh_strategy, approved_at, is_sample").eq("id", id).maybeSingle(),
         supabase.from("leads").select("id, name, email, status, created_at, last_action").eq("campaign_id", id).order("created_at", { ascending: false }),
       ]);
       setC(camp as any);
       setLeads(ld || []);
+    })();
+  }, [id]);
+
+  useEffect(() => {
+    (async () => {
+      const [{ count: safeCount }, { count: reviewCount }, { data: conn }] = await Promise.all([
+        supabase.from("contacts").select("id", { count: "exact", head: true }).eq("quality_status", "valid"),
+        supabase.from("contacts").select("id", { count: "exact", head: true }).eq("quality_status", "needs_review"),
+        supabase.from("email_connections").select("*").order("is_default", { ascending: false }).limit(1),
+      ]);
+      setSignals({
+        safeContacts: safeCount ?? 0,
+        reviewContacts: reviewCount ?? 0,
+        senderState: conn?.[0] ? computeReadiness(conn[0] as any).state : null,
+      });
     })();
   }, [id]);
 
@@ -273,6 +300,40 @@ export default function AppCampaignWorkspace() {
     refresh_strategy: (c.refresh_strategy || "reuse") as RefreshStrategy,
   };
 
+  const preflight = runPreflight({
+    scope: "campaign",
+    campaign: c as any,
+    safeContacts: signals.safeContacts,
+    reviewContacts: signals.reviewContacts,
+    senderState: signals.senderState,
+    senderEmail: null,
+    remainingToday: 0,
+    pauseReasons: [],
+    creditsAvailable: 0,
+    creditsRequired: 0,
+    legalAccepted: legal.isCompliant,
+    unsubscribeReady: true,
+  });
+
+  async function toggleApproval() {
+    if (!c) return;
+    setApproving(true);
+    try {
+      const { data: u } = await supabase.auth.getUser();
+      const next = c.approved_at ? null : new Date().toISOString();
+      const { error } = await (supabase.from("campaigns") as any)
+        .update({ approved_at: next, approved_by: next ? u.user?.id ?? null : null })
+        .eq("id", c.id);
+      if (error) throw error;
+      setC({ ...c, approved_at: next });
+      toast.success(next ? "Approved for sending" : "Approval withdrawn");
+    } catch (e: any) {
+      toast.error(e?.message || "Could not update approval");
+    } finally {
+      setApproving(false);
+    }
+  }
+
   return (
     <div className="space-y-4 max-w-6xl">
       <button onClick={() => navigate("/app/campaigns")} className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
@@ -331,6 +392,47 @@ export default function AppCampaignWorkspace() {
           
         </div>
       </div>
+
+      {c.is_sample && (
+        <Card className="border-amber-300 bg-amber-50/50 dark:bg-amber-950/20">
+          <CardContent className="p-4 text-sm flex items-start gap-3">
+            <FlaskConical className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+            <div>
+              <div className="font-medium text-amber-800 dark:text-amber-300">Sample campaign</div>
+              <p className="text-amber-900/80 dark:text-amber-200/80">
+                Built from example data so you can see a finished campaign. It can never be activated — replace the
+                offer, audience and contacts with your own, then create a real campaign.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {pack && (
+        <CampaignPreflight
+          result={preflight}
+          title="Preflight & readiness centre"
+          footer={
+            <div className="flex flex-wrap items-center gap-2 pt-1">
+              <Button
+                size="sm"
+                variant={c.approved_at ? "outline" : "default"}
+                disabled={approving || !!c.is_sample}
+                onClick={toggleApproval}
+              >
+                <ShieldCheck className="h-4 w-4 mr-1" />
+                {c.approved_at ? "Withdraw approval" : "I've read this — approve for sending"}
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => navigate("/app/activate")}>
+                Go to Activate
+              </Button>
+              <span className="text-xs text-muted-foreground">
+                Approval records who signed off. It never triggers a send on its own.
+              </span>
+            </div>
+          }
+        />
+      )}
 
       {!pack ? (
 
