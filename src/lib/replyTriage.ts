@@ -214,6 +214,25 @@ export function classifyReply(text: string | null | undefined): TriageSuggestion
     }
   }
 
+  // 3. A named referral outranks the generic "wrong person" read, but only when
+  //    a specific person or address is actually present. A vague redirect
+  //    ("speak to our ops lead") stays "wrong person". Never applied to an
+  //    out-of-office message, which is handled as its own category.
+  if (!scores.has("auto_reply")) {
+    const ref = extractReferral(body);
+    if (ref.hasReferral && (scores.has("wrong_person") || REFERRAL_SIGNAL.test(body))) {
+      return {
+        category: "referral",
+        confidence: ref.name && ref.email ? "high" : "medium",
+        reasons: [
+          ref.phrase ? `Matched "${ref.phrase}"` : "Referral phrasing detected",
+          ref.name ? `Suggested contact: ${ref.name}` : null,
+          ref.email ? `Suggested address: ${ref.email}` : null,
+        ].filter(Boolean) as string[],
+      };
+    }
+  }
+
   let best: ReplyCategory = "uncategorised";
   let bestScore = 0;
   let runnerUp = 0;
