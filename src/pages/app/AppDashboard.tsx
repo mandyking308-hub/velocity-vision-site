@@ -88,6 +88,10 @@ export default function AppDashboard() {
   const [activeCampaigns, setActiveCampaigns] = useState(0);
   const [latestCampaignId, setLatestCampaignId] = useState<string | null>(null);
   const [campaignRows, setCampaignRows] = useState<CadenceRow[]>([]);
+  const [funnelLeads, setFunnelLeads] = useState<FunnelLead[]>([]);
+  const [funnelOpps, setFunnelOpps] = useState<FunnelOpportunity[]>([]);
+  const [campaignNames, setCampaignNames] = useState<Record<string, string>>({});
+  const [funnelFilters, setFunnelFilters] = useState<FunnelFilters>({ campaignId: "all" });
   const [sender, setSender] = useState<SenderState>(DEFAULT_SENDER_STATE);
   const [senderEmail, setSenderEmail] = useState<string | null>(null);
   const [senderConnectionId, setSenderConnectionId] = useState<string | null>(null);
