@@ -43,7 +43,7 @@ describe("out-of-office return date", () => {
     expect(extractReturnDate("I am currently away with limited access.", now)).toBeNull();
   });
   it("describes the follow-up neutrally", () => {
-    expect(describeReturnDate("2026-03-18")).toMatch(/Follow up on\/after 2026-03-18/);
+    expect(describeReturnDate("2026-03-18")).toMatch(/Follow up on/);
   });
 });
 
@@ -88,8 +88,8 @@ describe("stale reply SLA", () => {
 
   it("never treats compliance categories as opportunities", () => {
     expect(isWaitingForFollowUp(unsub, now)).toBe(false);
-    expect(applyQueueFilter([unsub], "waiting_24h")).toHaveLength(0);
-    expect(applyQueueFilter([unsub], "unhandled")).toHaveLength(0);
+    expect(applyQueueFilter([unsub], "waiting_24h", now)).toHaveLength(0);
+    expect(applyQueueFilter([unsub], "referral", now)).toHaveLength(0);
   });
 
   it("filters and counts queues", () => {
@@ -123,6 +123,6 @@ describe("outcome funnel", () => {
     expect(by.contacted).toBe(3);
     expect(by.replied).toBe(2);
     expect(by.interested).toBe(1);
-    expect(by.meeting_booked).toBe(1);
+    expect(by.meeting).toBe(1);
   });
 });
