@@ -140,10 +140,10 @@ export default function AppDashboard() {
           .order("created_at", { ascending: false }),
 
         supabase.from("leads")
-          .select("id, status, follow_up_at, follow_up_state, replied_at, snoozed_until, last_email_sent_at, last_contacted_at, last_interaction_at, opportunity_id")
+          .select("id, status, source, campaign_id, follow_up_at, follow_up_state, replied_at, snoozed_until, last_email_sent_at, last_contacted_at, last_interaction_at, opportunity_id, reply_category, reply_triaged_at, meeting_booked_at, created_at")
           .eq("workspace_id", currentId),
         supabase.from("opportunities")
-          .select("id, stage, estimated_value, stage_changed_at, next_action_at")
+          .select("id, stage, estimated_value, stage_changed_at, next_action_at, source_campaign_id, source_lead_id")
           .eq("workspace_id", currentId),
         supabase.from("email_sends")
           .select("status, sent_at")
