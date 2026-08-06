@@ -124,7 +124,7 @@ const PricingTeaser = () => (
               ))}
             </ul>
             <Button variant="outline" asChild className="self-stretch">
-              <Link to="/contact">
+              <Link to={`/contact?plan=${plan.slug}`}>
                 {plan.cta} <ArrowRight size={16} />
               </Link>
             </Button>
