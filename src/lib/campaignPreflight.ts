@@ -98,6 +98,19 @@ export function runPreflight(input: PreflightInput): PreflightResult {
 
   const add = (x: PreflightCheck) => checks.push(x);
 
+  // 0. A campaign must actually be selected before anything can be prepared.
+  add({
+    id: "campaign",
+    label: "A campaign is selected",
+    detail: c?.id
+      ? `Leads will be prepared inside "${c.name || "this campaign"}".`
+      : "Choose the campaign these contacts should be prepared into.",
+    ok: Boolean(c?.id),
+    severity: "blocker",
+    fixTo: "/app/campaigns/new",
+    fixLabel: "Create a campaign",
+  });
+
   // 1. Campaign content exists
   add({
     id: "content",
@@ -110,6 +123,7 @@ export function runPreflight(input: PreflightInput): PreflightResult {
     fixTo: c?.id ? `/app/campaigns/${c.id}` : "/app/campaigns/new",
     fixLabel: "Open campaign",
   });
+
 
   // 2. Objective / audience clarity
   const hasObjective = Boolean((c?.goal || "").trim());
@@ -308,5 +322,57 @@ export function runPreflight(input: PreflightInput): PreflightResult {
     score: scored.length ? Math.round((passed / scored.length) * 100) : 0,
     canActivate: blockers.length === 0,
     allClear: blockers.length === 0 && warnings.length === 0,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Activation gate
+// ---------------------------------------------------------------------------
+// Activation is not sending: it prepares leads inside a campaign. Send-time
+// concerns (daily allowance, credits, mailbox health) stay VISIBLE in the
+// preflight card but must not hard-block activation, or we would contradict the
+// "activation is separate from sending" promise.
+//
+// These are the checks that must hold before a single lead row is written. The
+// gate is derived from the very same PreflightResult the UI renders, so the
+// button state and the execution path cannot drift apart.
+export const ACTIVATION_BLOCKER_IDS = [
+  "campaign",
+  "content",
+  "contacts",
+  "legal",
+  "approval",
+  "sample",
+] as const;
+
+export type ActivationBlockerId = (typeof ACTIVATION_BLOCKER_IDS)[number];
+
+export interface ActivationGateResult {
+  /** True only when every activation-critical check passes. */
+  ok: boolean;
+  /** The failing activation-critical checks, in preflight order. */
+  blockers: PreflightCheck[];
+  /** The first thing the user has to fix, for messaging. */
+  firstBlocker: PreflightCheck | null;
+  /** Ids only — safe to persist to the audit log (no free text, no PII). */
+  blockerIds: string[];
+}
+
+/**
+ * Derive the activation verdict from a preflight result.
+ *
+ * Pure and total: callers pass the same `PreflightResult` they display, so the
+ * UI button and `runActivation()` always agree.
+ */
+export function activationGate(result: PreflightResult): ActivationGateResult {
+  const critical = new Set<string>(ACTIVATION_BLOCKER_IDS);
+  const blockers = result.checks.filter(
+    (c) => !c.ok && c.severity === "blocker" && critical.has(c.id),
+  );
+  return {
+    ok: blockers.length === 0,
+    blockers,
+    firstBlocker: blockers[0] ?? null,
+    blockerIds: blockers.map((c) => c.id),
   };
 }

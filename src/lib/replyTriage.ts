@@ -10,6 +10,7 @@ export type ReplyCategory =
   | "not_now"
   | "wrong_person"
   | "unsubscribe"
+  | "bounce"
   | "auto_reply"
   | "negative"
   | "uncategorised";
@@ -27,9 +28,11 @@ export interface ReplyCategoryMeta {
     | "snooze"
     | "reassign"
     | "suppress"
+    | "suppress_bounce"
     | "ignore"
     | "review";
 }
+
 
 export const REPLY_CATEGORIES: Record<ReplyCategory, ReplyCategoryMeta> = {
   interested: {
@@ -67,6 +70,14 @@ export const REPLY_CATEGORIES: Record<ReplyCategory, ReplyCategoryMeta> = {
     suggestedAction: "Suppress immediately. This is a compliance obligation.",
     actionKey: "suppress",
   },
+  bounce: {
+    label: "Bounce",
+    description: "The message never reached a mailbox — the address failed on delivery.",
+    tone: "bg-orange-100 text-orange-700",
+    suggestedAction: "Stop further sends to this address, then review and correct it.",
+    actionKey: "suppress_bounce",
+  },
+
   auto_reply: {
     label: "Auto-reply",
     description: "Out of office or automated bounce-style response.",
@@ -98,8 +109,10 @@ export const REPLY_CATEGORY_ORDER: ReplyCategory[] = [
   "uncategorised",
   "auto_reply",
   "negative",
+  "bounce",
   "unsubscribe",
 ];
+
 
 interface Rule {
   category: ReplyCategory;
@@ -107,11 +120,20 @@ interface Rule {
   rx: RegExp;
 }
 
-// Order matters only via weight — highest total score wins.
+// Order matters only via weight — highest total score wins, except for the
+// hard-precedence categories below, which are decided before scoring.
 const RULES: Rule[] = [
   // Compliance first — these must never be misread as anything else.
   { category: "unsubscribe", weight: 10, rx: /\b(unsubscribe|opt.?out|remove me|take me off|stop (emailing|contacting)|do not (contact|email))\b/i },
   { category: "unsubscribe", weight: 8, rx: /\b(gdpr|erasure request|delete my data)\b/i },
+
+  // Delivery failures. These are machine-generated and read nothing like a
+  // human reply, so they must not be scored against negative/question rules.
+  { category: "bounce", weight: 10, rx: /\b(undeliverable|delivery (has )?failed|delivery failure|delivery status notification \(failure\)|failed delivery|returned to sender|mail delivery (subsystem|failed)|could not be delivered|unable to deliver)\b/i },
+  { category: "bounce", weight: 10, rx: /\b(mailbox (unavailable|not found|does not exist|is full)|recipient address rejected|user unknown|unknown user|no such user|address not found|recipient not found|account (has been )?(disabled|deactivated))\b/i },
+  { category: "bounce", weight: 8, rx: /\b(55[0-4][ -]5\.\d\.\d|smtp error 5\d\d|status: 5\.\d\.\d)/i },
+
+
 
   { category: "auto_reply", weight: 9, rx: /\b(out of (the )?office|automatic reply|auto[- ]?reply|on annual leave|on holiday|maternity leave|currently away)\b/i },
   { category: "auto_reply", weight: 6, rx: /\bi (will|'ll) be back on\b/i },
@@ -166,6 +188,23 @@ export function classifyReply(text: string | null | undefined): TriageSuggestion
     };
   }
 
+  // Hard precedence, applied before weights.
+  //
+  // 1. An explicit opt-out always wins: it is a compliance instruction, and it
+  //    outranks a bounce notice quoting the original message.
+  // 2. A delivery failure outranks the general negative/question rules, which
+  //    would otherwise fire on boilerplate inside the bounce report.
+  for (const cat of ["unsubscribe", "bounce"] as const) {
+    if (scores.has(cat)) {
+      const score = scores.get(cat)!;
+      return {
+        category: cat,
+        confidence: score >= 8 ? "high" : "medium",
+        reasons,
+      };
+    }
+  }
+
   let best: ReplyCategory = "uncategorised";
   let bestScore = 0;
   let runnerUp = 0;
@@ -178,6 +217,7 @@ export function classifyReply(text: string | null | undefined): TriageSuggestion
       runnerUp = score;
     }
   }
+
 
   const margin = bestScore - runnerUp;
   const confidence: TriageSuggestion["confidence"] =
@@ -213,6 +253,10 @@ export function draftReply(
       return `Hi ${name},\n\nDone — you've been removed and won't hear from me again.\n\nApologies for the intrusion.${signoff}`;
     case "auto_reply":
       return "";
+    // A bounce has no human on the other end — there is nothing to reply to.
+    case "bounce":
+      return "";
+
     default:
       return `Hi ${name},\n\nThanks for getting back to me.\n\n[Write your reply here.]${signoff}`;
   }

@@ -24,7 +24,7 @@ import {
 import type { PlanId } from "@/lib/credits";
 import SendSafetyPanel from "@/components/app/SendSafetyPanel";
 import CampaignPreflight from "@/components/app/CampaignPreflight";
-import { runPreflight } from "@/lib/campaignPreflight";
+import { runPreflight, activationGate } from "@/lib/campaignPreflight";
 import SenderStatusCard from "@/components/app/SenderStatusCard";
 import JourneyEmptyState from "@/components/app/JourneyEmptyState";
 import LegalComplianceGate from "@/components/LegalComplianceGate";
@@ -192,8 +192,12 @@ export default function AppActivation() {
   const sendPaused = safety.pauseReasons.length > 0;
   const selectedCampaignRow = campaigns.find((c) => c.id === (selectedCampaign || campaignId)) || null;
   const senderReadinessState = computeReadiness(defaultConn as any).state;
-  const preflight = useMemo(() => runPreflight({
-    campaign: selectedCampaignRow,
+  // One deterministic input builder, used by the rendered preflight card AND by
+  // the execution path, so what the user sees and what actually gates the write
+  // can never diverge. `campaignRow` is overridable so runActivation can verify
+  // against a freshly fetched campaign rather than possibly-stale UI state.
+  const buildPreflightInput = (campaignRow: typeof selectedCampaignRow) => ({
+    campaign: campaignRow,
     safeContacts: counts.valid,
     reviewContacts: counts.needs_review,
     senderState: defaultConn ? senderReadinessState : null,
@@ -204,9 +208,12 @@ export default function AppActivation() {
     creditsRequired: Math.max(1, totalSelected),
     legalAccepted: legal.isCompliant,
     unsubscribeReady: true,
-  }), [selectedCampaignRow, counts, defaultConn, senderReadinessState, fromEmail, safety, remaining, totalSelected, legal.isCompliant]);
+  });
+  const preflight = useMemo(() => runPreflight(buildPreflightInput(selectedCampaignRow)), [selectedCampaignRow, counts, defaultConn, senderReadinessState, fromEmail, safety, remaining, totalSelected, legal.isCompliant]);
+  const gate = useMemo(() => activationGate(preflight), [preflight]);
   const activationBlocked = !legal.isCompliant;
-  const canActivate = totalSelected > 0 && !activationBlocked && (!wantsRisky || riskAck) && !!targetCampaignId && !activating;
+  const canActivate = totalSelected > 0 && !activationBlocked && gate.ok && (!wantsRisky || riskAck) && !!targetCampaignId && !activating;
+
 
   async function audit(action: string, details: any) {
     try {
@@ -238,6 +245,30 @@ export default function AppActivation() {
     if (!user || !targetCampaignId) return;
     setActivating(true);
     try {
+      // Re-verify the gate against a FRESHLY fetched campaign row. The button
+      // state is not trusted here: a stale tab, a campaign un-approved in
+      // another window, or a direct call to this handler must all be refused
+      // before a single lead row is written.
+      const { data: freshRow } = await supabase
+        .from("campaigns")
+        .select("id, name, status, goal, pack, brief, approved_at, is_sample")
+        .eq("id", targetCampaignId)
+        .maybeSingle();
+      const liveGate = activationGate(runPreflight(buildPreflightInput((freshRow as any) ?? null)));
+      if (!liveGate.ok) {
+        // Ids only — no free text, no contact data.
+        await audit("activation_blocked_preflight", {
+          campaign_id: targetCampaignId,
+          blocker_ids: liveGate.blockerIds,
+        });
+        toast.error("Activation blocked by preflight", {
+          description: liveGate.firstBlocker
+            ? `${liveGate.firstBlocker.label}: ${liveGate.firstBlocker.detail}`
+            : "Resolve the outstanding preflight blockers and try again.",
+        });
+        return;
+      }
+
       await audit("activation_started", {
         campaign_id: targetCampaignId, batch: totalSelected, includeReview,
         riskyOverride: riskyClamped, plan, safeAllowance: safety.safeAllowance,

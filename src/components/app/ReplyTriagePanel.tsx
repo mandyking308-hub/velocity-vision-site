@@ -6,8 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  Inbox, Sparkles, Copy, ShieldOff, Clock, TrendingUp, Check, Loader2, Info,
+  Inbox, Sparkles, Copy, ShieldOff, MailX, Clock, TrendingUp, Check, Loader2, Info,
 } from "lucide-react";
+
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useDemo } from "@/contexts/DemoContext";
@@ -124,14 +125,67 @@ export default function ReplyTriagePanel({
     }
   };
 
+  /**
+   * Bounce handling. Only ever runs from an explicit click: classification on
+   * its own never suppresses anything. Uses the same suppression mechanism as
+   * an opt-out, but with a technical reason so reporting can tell a delivery
+   * failure apart from a compliance request. No reply is drafted.
+   */
+  const suppressBounce = async () => {
+    if (!guardAction("Stop sends after bounce")) return;
+    if (!lead.email) {
+      toast.error("This lead has no email address to stop sends to");
+      return;
+    }
+    setBusy(true);
+    try {
+      const { error } = await supabase
+        .from("suppressed_emails")
+        .upsert({ email: lead.email.toLowerCase(), reason: "hard_bounce" }, { onConflict: "email" });
+      if (error) throw error;
+      const now = new Date().toISOString();
+      await supabase
+        .from("leads")
+        .update({
+          reply_category: "bounce",
+          reply_snippet: text.slice(0, 4000) || null,
+          reply_triaged_at: now,
+          follow_up_state: "bounced",
+          last_interaction_at: now,
+          last_action: "Sending stopped after a delivery failure",
+        } as any)
+        .eq("id", lead.id);
+      const { data: u } = await supabase.auth.getUser();
+      if (u.user) {
+        await supabase.from("lead_audit_log").insert({
+          lead_id: lead.id,
+          user_id: u.user.id,
+          action: "reply_triaged_bounce",
+          details: { category: "bounce", reason: "hard_bounce", manual: Boolean(override) },
+        });
+      }
+      toast.success("Sends stopped — check the address and correct it before trying again");
+      onChanged?.();
+    } catch (e: any) {
+      toast.error(e?.message || "Could not stop sends to this address");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const makeDraft = () => {
     const d = draftReply(category, { firstName: lead.name, cta: null });
     if (!d) {
-      toast.info("No reply needed for an auto-response.");
+      toast.info(
+        category === "bounce"
+          ? "No reply to write — this message never reached a mailbox."
+          : "No reply needed for an auto-response.",
+      );
       return;
     }
     setDraft(d);
   };
+
 
   const mp: MoveToPipelineLead = {
     id: lead.id,
@@ -225,6 +279,12 @@ export default function ReplyTriagePanel({
               <ShieldOff className="h-3.5 w-3.5 mr-1" /> Suppress now
             </Button>
           )}
+          {meta.actionKey === "suppress_bounce" && (
+            <Button size="sm" variant="destructive" disabled={busy} onClick={suppressBounce}>
+              <MailX className="h-3.5 w-3.5 mr-1" /> Stop sends to this address
+            </Button>
+          )}
+
         </div>
 
         {draft && (
