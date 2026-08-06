@@ -274,7 +274,6 @@ export default function AppActivation() {
         riskyOverride: riskyClamped, plan, safeAllowance: safety.safeAllowance,
       });
 
-
       // Pull the selected slices, safest-first.
       const validContacts = await fetchContactsByQuality("valid", safeSelected);
       const reviewContacts = includeReview ? await fetchContactsByQuality("needs_review", reviewSelected) : [];
