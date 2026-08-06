@@ -37,6 +37,7 @@ const plans = [
   },
   {
     name: "Agency Workspace",
+    slug: "agency",
     price: "£499",
     unit: "per month",
     desc: "Monthly self-serve workspace with isolated client workspaces.",
