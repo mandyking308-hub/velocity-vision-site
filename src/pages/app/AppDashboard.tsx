@@ -82,7 +82,9 @@ export default function AppDashboard() {
   const navigate = useNavigate();
   const { remaining, planConfig } = useCredits();
   const { workspaces, currentId, loading: wsLoading } = useWorkspace();
+  const legal = useLegalStatus();
   const [firstName, setFirstName] = useState("");
+
   const [activeCampaigns, setActiveCampaigns] = useState(0);
   const [latestCampaignId, setLatestCampaignId] = useState<string | null>(null);
   const [campaignRows, setCampaignRows] = useState<CadenceRow[]>([]);
