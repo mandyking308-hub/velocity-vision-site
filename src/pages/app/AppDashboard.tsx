@@ -122,9 +122,10 @@ export default function AppDashboard() {
         { data: uploads, count: importsCount },
       ] = await Promise.all([
         supabase.from("campaigns")
-          .select("id, name, status, created_at, cadence_type, start_at, cadence_end_at, next_run_at, timezone, runs_completed")
+          .select("id, name, status, created_at, cadence_type, start_at, cadence_end_at, next_run_at, timezone, runs_completed, goal, brief, pack, approved_at, is_sample")
           .eq("workspace_id", currentId)
           .order("created_at", { ascending: false }),
+
         supabase.from("leads")
           .select("id, status, follow_up_at, follow_up_state, replied_at, snoozed_until, last_email_sent_at, last_contacted_at, last_interaction_at, opportunity_id")
           .eq("workspace_id", currentId),
