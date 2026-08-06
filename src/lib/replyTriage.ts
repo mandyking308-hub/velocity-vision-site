@@ -196,6 +196,27 @@ export function classifyReply(text: string | null | undefined): TriageSuggestion
     if (m[0] && reasons.length < 4) reasons.push(`Matched "${m[0].trim().slice(0, 48)}"`);
   }
 
+  // A clearly named referral is recognised even when no other rule fires
+  // ("Please email dana@acme.com — she owns this").
+  const earlyRef = extractReferral(body);
+  if (
+    !scores.has("auto_reply") &&
+    !scores.has("unsubscribe") &&
+    !scores.has("bounce") &&
+    earlyRef.hasReferral &&
+    (scores.has("wrong_person") || REFERRAL_SIGNAL.test(body))
+  ) {
+    return {
+      category: "referral",
+      confidence: earlyRef.name && earlyRef.email ? "high" : "medium",
+      reasons: [
+        earlyRef.phrase ? `Matched "${earlyRef.phrase}"` : "Referral phrasing detected",
+        earlyRef.name ? `Suggested contact: ${earlyRef.name}` : null,
+        earlyRef.email ? `Suggested address: ${earlyRef.email}` : null,
+      ].filter(Boolean) as string[],
+    };
+  }
+
   if (scores.size === 0) {
     return {
       category: "uncategorised",
