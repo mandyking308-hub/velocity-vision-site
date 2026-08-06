@@ -34,6 +34,12 @@ export interface PreflightResult {
 }
 
 export interface PreflightInput {
+  /**
+   * "send" runs every check including live send capacity and credits.
+   * "campaign" runs only the checks the campaign owner controls from the
+   * campaign workspace; capacity is verified again at activation.
+   */
+  scope?: "send" | "campaign";
   /** Campaign record basics. */
   campaign: {
     id?: string | null;
@@ -200,7 +206,8 @@ export function runPreflight(input: PreflightInput): PreflightResult {
   }
 
   // 6. Safety engine allowance
-  add({
+  const scope = input.scope ?? "send";
+  if (scope === "send") add({
     id: "allowance",
     label: "Daily safe send allowance remaining",
     detail:
@@ -213,7 +220,7 @@ export function runPreflight(input: PreflightInput): PreflightResult {
     fixLabel: "Open Activate",
   });
 
-  if (input.pauseReasons.length > 0) {
+  if (scope === "send" && input.pauseReasons.length > 0) {
     add({
       id: "paused",
       label: "Sending is not paused",
@@ -227,7 +234,7 @@ export function runPreflight(input: PreflightInput): PreflightResult {
 
   // 7. Credits
   const creditsOk = input.creditsAvailable >= input.creditsRequired;
-  add({
+  if (scope === "send") add({
     id: "credits",
     label: "Enough credits for this activation",
     detail: creditsOk
