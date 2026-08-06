@@ -76,7 +76,10 @@ export interface PreflightInput {
   creditsRequired: number;
   /** Whether the workspace has accepted the current legal/compliance versions. */
   legalAccepted: boolean;
-  /** Whether unsubscribe handling is wired for this send. */
+  /**
+   * Whether opt-out handling is confirmed for this send. Callers must derive
+   * this from lib/systemCapabilities — never pass a bare literal.
+   */
   unsubscribeReady: boolean;
 }
 
@@ -278,7 +281,7 @@ export function runPreflight(input: PreflightInput): PreflightResult {
     label: "Unsubscribe handling is active",
     detail: input.unsubscribeReady
       ? "Every message carries a working unsubscribe link and honours suppressions."
-      : "Unsubscribe handling is not available for this send.",
+      : "Opt-out handling is not confirmed for this send. Add an unsubscribe line to the email copy.",
     ok: input.unsubscribeReady,
     severity: "blocker",
     fixTo: "/app/settings/email",

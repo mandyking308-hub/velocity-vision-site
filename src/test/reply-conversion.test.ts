@@ -48,16 +48,25 @@ describe("out-of-office return date", () => {
 });
 
 describe("manual override precedence", () => {
-  it("stored human classification wins over deterministic reads", () => {
+  it("a deterministic opt-out cannot be overridden by a stored sales label", () => {
     const lead = {
       reply_category: "interested",
       reply_triaged_at: ago(1),
       reply_snippet: "please remove me",
     } as any;
-    expect(resolveIntent(lead)).toBe("interested");
+    expect(resolveIntent(lead)).toBe("unsubscribe");
     const audit = describeOverride(lead);
     expect(audit.overridden).toBe(true);
     expect(audit.suggested).toBe("unsubscribe");
+  });
+
+  it("still honours a stored classification for an ordinary reply", () => {
+    const lead = {
+      reply_category: "interested",
+      reply_triaged_at: ago(1),
+      reply_snippet: "Happy to take a look, send details.",
+    } as any;
+    expect(resolveIntent(lead)).toBe("interested");
   });
 });
 

@@ -20,6 +20,7 @@ import MoveToPipelineDialog, { type MoveToPipelineLead } from "@/components/app/
 import MeetingHandoffPanel from "@/components/app/MeetingHandoffPanel";
 import { useBookingUrl } from "@/hooks/useBookingUrl";
 import { describeWait, isWaitingForFollowUp } from "@/lib/replySla";
+import { allowedOverrideCategories, deterministicCompliance, resolveIntent } from "@/lib/replyIntent";
 
 /**
  * Supervised reply triage.
@@ -44,8 +45,22 @@ export default function ReplyTriagePanel({
   const [draft, setDraft] = useState("");
 
   const suggestion = useMemo(() => classifyReply(text), [text]);
-  const category: ReplyCategory = override || suggestion.category;
+  // A deterministic opt-out or bounce in the text can never be downgraded to a
+  // sales label, no matter what is stored or chosen manually.
+  const complianceLock = useMemo(() => deterministicCompliance(text), [text]);
+  const allowedCategories = useMemo(
+    () => allowedOverrideCategories({ id: lead.id, reply_snippet: text }),
+    [lead.id, text],
+  );
+  const effectiveOverride: ReplyCategory | "" =
+    override && allowedCategories.includes(override) ? override : "";
+  const category: ReplyCategory = resolveIntent({
+    id: lead.id,
+    reply_snippet: text,
+    reply_category: effectiveOverride || null,
+  });
   const meta = REPLY_CATEGORIES[category];
+
 
   const save = async (patch: Record<string, any>, successMsg: string) => {
     if (!guardAction("Reply triage")) return;
@@ -62,10 +77,11 @@ export default function ReplyTriagePanel({
           details: {
             category,
             confidence: suggestion.confidence,
-            manual: Boolean(override),
+            manual: Boolean(effectiveOverride),
             suggested_category: suggestion.category,
             previous_category: lead.reply_category ?? null,
-            overridden: Boolean(override) && category !== suggestion.category,
+            overridden: Boolean(effectiveOverride) && category !== suggestion.category,
+            compliance_locked: complianceLock,
           },
         });
       }
@@ -151,7 +167,7 @@ export default function ReplyTriagePanel({
             lead_id: lead.id,
             user_id: u.user.id,
             action: "reply_triaged_bounce",
-            details: { category: "bounce", reason: "hard_bounce", manual: Boolean(override) },
+            details: { category: "bounce", reason: "hard_bounce", manual: Boolean(effectiveOverride) },
           });
         }
       }
@@ -211,7 +227,7 @@ export default function ReplyTriagePanel({
           <div className="flex flex-col items-end gap-1">
             <Badge className={meta.tone}>{meta.label}</Badge>
             <span className="text-[11px] text-muted-foreground">
-              {override ? "set by you" : `${suggestion.confidence} confidence`}
+              {effectiveOverride ? "set by you" : `${suggestion.confidence} confidence`}
             </span>
           </div>
         </div>
@@ -245,15 +261,23 @@ export default function ReplyTriagePanel({
 
         <div className="space-y-1.5">
           <Label className="text-xs">Category</Label>
-          <Select value={override || suggestion.category} onValueChange={(v) => setOverride(v as ReplyCategory)}>
+          <Select value={effectiveOverride || category} onValueChange={(v) => setOverride(v as ReplyCategory)}>
             <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
             <SelectContent>
-              {REPLY_CATEGORY_ORDER.map((c) => (
+              {allowedCategories.map((c) => (
                 <SelectItem key={c} value={c}>{REPLY_CATEGORIES[c].label}</SelectItem>
               ))}
             </SelectContent>
           </Select>
+          {complianceLock && (
+            <p className="text-[11px] text-muted-foreground">
+              This reply is {complianceLock === "unsubscribe" ? "an opt-out request" : "a delivery failure"}.
+              It cannot be reclassified as a sales reply. You can still correct it between opt-out and
+              bounce if the wrong one was detected — every change is recorded.
+            </p>
+          )}
         </div>
+
 
         <div className="flex flex-wrap gap-1.5 pt-1 border-t">
           <Button size="sm" variant="outline" disabled={busy} onClick={saveTriage}>

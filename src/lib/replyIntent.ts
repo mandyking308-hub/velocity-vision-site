@@ -24,13 +24,45 @@ export function isValidCategory(value: unknown): value is ReplyCategory {
 }
 
 /**
- * Stored human/previous classification always wins over the classifier, so a
- * manual override is never silently reverted on reload.
+ * Deterministic compliance signal read from the reply text itself.
+ *
+ * An explicit opt-out outranks everything, including a hard bounce. These
+ * signals can never be downgraded by a stored or manual sales label.
+ */
+export function deterministicCompliance(snippet?: string | null): "unsubscribe" | "bounce" | null {
+  const c = classifyReply(snippet).category;
+  return c === "unsubscribe" || c === "bounce" ? c : null;
+}
+
+/**
+ * Resolve the intent for a lead.
+ *
+ * Compliance first: if the reply text deterministically says "unsubscribe",
+ * that wins over any stored/manual category. A hard bounce wins over any
+ * stored non-compliance category, but a stored `unsubscribe` still outranks it.
+ * Only when there is no deterministic compliance signal does a stored human
+ * classification win, so a genuine manual override is never silently reverted.
  */
 export function resolveIntent(lead: IntentLead): ReplyCategory {
-  if (isValidCategory(lead.reply_category)) return lead.reply_category;
+  const compliance = deterministicCompliance(lead.reply_snippet);
+  if (compliance === "unsubscribe") return "unsubscribe";
+  const stored = isValidCategory(lead.reply_category) ? lead.reply_category : null;
+  if (compliance === "bounce") return stored === "unsubscribe" ? "unsubscribe" : "bounce";
+  if (stored) return stored;
   return classifyReply(lead.reply_snippet).category;
 }
+
+/**
+ * Categories a person may choose for this reply. When the text carries a
+ * deterministic compliance signal, correction is allowed only between the
+ * compliance categories — it can never be downgraded to a sales label.
+ */
+export function allowedOverrideCategories(lead: IntentLead): ReplyCategory[] {
+  return deterministicCompliance(lead.reply_snippet)
+    ? [...COMPLIANCE_CATEGORIES]
+    : [...REPLY_CATEGORY_ORDER];
+}
+
 
 export function summariseIntents(leads: IntentLead[]): Record<ReplyCategory, number> {
   const out = Object.fromEntries(REPLY_CATEGORY_ORDER.map((c) => [c, 0])) as Record<ReplyCategory, number>;
