@@ -77,10 +77,11 @@ export default function ReplyTriagePanel({
           details: {
             category,
             confidence: suggestion.confidence,
-            manual: Boolean(override),
+            manual: Boolean(effectiveOverride),
             suggested_category: suggestion.category,
             previous_category: lead.reply_category ?? null,
-            overridden: Boolean(override) && category !== suggestion.category,
+            overridden: Boolean(effectiveOverride) && category !== suggestion.category,
+            compliance_locked: complianceLock,
           },
         });
       }
@@ -166,7 +167,7 @@ export default function ReplyTriagePanel({
             lead_id: lead.id,
             user_id: u.user.id,
             action: "reply_triaged_bounce",
-            details: { category: "bounce", reason: "hard_bounce", manual: Boolean(override) },
+            details: { category: "bounce", reason: "hard_bounce", manual: Boolean(effectiveOverride) },
           });
         }
       }
@@ -226,7 +227,7 @@ export default function ReplyTriagePanel({
           <div className="flex flex-col items-end gap-1">
             <Badge className={meta.tone}>{meta.label}</Badge>
             <span className="text-[11px] text-muted-foreground">
-              {override ? "set by you" : `${suggestion.confidence} confidence`}
+              {effectiveOverride ? "set by you" : `${suggestion.confidence} confidence`}
             </span>
           </div>
         </div>
@@ -260,7 +261,7 @@ export default function ReplyTriagePanel({
 
         <div className="space-y-1.5">
           <Label className="text-xs">Category</Label>
-          <Select value={override || suggestion.category} onValueChange={(v) => setOverride(v as ReplyCategory)}>
+          <Select value={effectiveOverride || category} onValueChange={(v) => setOverride(v as ReplyCategory)}>
             <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
             <SelectContent>
               {allowedCategories.map((c) => (
