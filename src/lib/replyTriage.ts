@@ -7,6 +7,7 @@
 export type ReplyCategory =
   | "interested"
   | "question"
+  | "referral"
   | "not_now"
   | "wrong_person"
   | "unsubscribe"
