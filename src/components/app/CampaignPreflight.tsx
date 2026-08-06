@@ -23,6 +23,10 @@ export default function CampaignPreflight({
   footer?: React.ReactNode;
 }) {
   const { checks, blockers, warnings, canActivate } = result;
+  // Direct fix link for the single most important outstanding item.
+  const nextFix = [...blockers, ...warnings].find((c) => Boolean(c.fixTo)) ?? null;
+
+
 
   return (
     <Card className={canActivate ? "border-emerald-200" : "border-amber-200"}>
