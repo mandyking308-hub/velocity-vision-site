@@ -248,12 +248,20 @@ export default function ReplyTriagePanel({
           <Select value={override || suggestion.category} onValueChange={(v) => setOverride(v as ReplyCategory)}>
             <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
             <SelectContent>
-              {REPLY_CATEGORY_ORDER.map((c) => (
+              {allowedCategories.map((c) => (
                 <SelectItem key={c} value={c}>{REPLY_CATEGORIES[c].label}</SelectItem>
               ))}
             </SelectContent>
           </Select>
+          {complianceLock && (
+            <p className="text-[11px] text-muted-foreground">
+              This reply is {complianceLock === "unsubscribe" ? "an opt-out request" : "a delivery failure"}.
+              It cannot be reclassified as a sales reply. You can still correct it between opt-out and
+              bounce if the wrong one was detected — every change is recorded.
+            </p>
+          )}
         </div>
+
 
         <div className="flex flex-wrap gap-1.5 pt-1 border-t">
           <Button size="sm" variant="outline" disabled={busy} onClick={saveTriage}>
