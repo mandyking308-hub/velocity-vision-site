@@ -165,24 +165,25 @@ export default function AppFollowUp() {
 
       {loading ? (
         <Card><CardContent className="p-6 text-sm text-muted-foreground">{tc("actions.loading")}</CardContent></Card>
+      ) : tab === "triage" ? (
+        <ReplyCommandCentre leads={filtered as any} onChanged={load} />
       ) : filtered.length === 0 ? (
         <Card><CardContent className="p-6 text-sm text-muted-foreground">
           {tab === "action" ? t("followUp.empty.caughtUp") : t("followUp.empty.tryFilter")}
         </CardContent></Card>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-          {filtered.map((l) => (tab === "triage" ? (
-            <ReplyTriagePanel key={l.id} lead={l as any} onChanged={load} />
-          ) : (
+          {filtered.map((l) => (
             <LeadActionPanel
               key={l.id}
               lead={l}
               onChanged={load}
               campaignName={l.campaign_id ? campaigns[l.campaign_id] : null}
             />
-          )))}
+          ))}
         </div>
       )}
+
     </div>
   );
 }
