@@ -18,6 +18,8 @@ import FollowUpReminders from "@/components/app/FollowUpReminders";
 import SendSafetyPanel from "@/components/app/SendSafetyPanel";
 import SenderStatusCard from "@/components/app/SenderStatusCard";
 import FirstCampaignLaunchpad from "@/components/app/FirstCampaignLaunchpad";
+import OutcomeFunnelPanel from "@/components/app/OutcomeFunnelPanel";
+import type { FunnelFilters, FunnelLead, FunnelOpportunity } from "@/lib/outcomeFunnel";
 import CampaignPreflight from "@/components/app/CampaignPreflight";
 import FreePreviewStatusCard from "@/components/app/FreePreviewStatusCard";
 import PriorityStrip from "@/components/app/PriorityStrip";
