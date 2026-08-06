@@ -70,6 +70,14 @@ export const REPLY_CATEGORIES: Record<ReplyCategory, ReplyCategoryMeta> = {
     suggestedAction: "Suppress immediately. This is a compliance obligation.",
     actionKey: "suppress",
   },
+  bounce: {
+    label: "Bounce",
+    description: "The message never reached a mailbox — the address failed on delivery.",
+    tone: "bg-orange-100 text-orange-700",
+    suggestedAction: "Stop further sends to this address, then review and correct it.",
+    actionKey: "suppress_bounce",
+  },
+
   auto_reply: {
     label: "Auto-reply",
     description: "Out of office or automated bounce-style response.",
