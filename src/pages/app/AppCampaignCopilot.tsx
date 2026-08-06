@@ -53,7 +53,7 @@ export default function AppCampaignCopilot() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { currentId: workspaceId } = useWorkspace();
-  const { refreshCredits } = useCredits();
+  const { refresh: refreshCredits } = useCredits();
   const { guardAction } = useDemo();
 
   const [step, setStep] = useState(0);
