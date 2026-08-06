@@ -263,7 +263,7 @@ export default function ReplyTriagePanel({
           <Button size="sm" variant="outline" disabled={busy} onClick={makeDraft}>
             <Sparkles className="h-3.5 w-3.5 mr-1" /> Draft a reply
           </Button>
-          {meta.actionKey === "move_to_pipeline" && (
+          {(meta.actionKey === "move_to_pipeline" || meta.actionKey === "review_referral") && (
             <Button size="sm" disabled={busy} onClick={() => setPipelineOpen(true)}>
               <TrendingUp className="h-3.5 w-3.5 mr-1" /> Move to pipeline
             </Button>
