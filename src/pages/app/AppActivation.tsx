@@ -212,7 +212,10 @@ export default function AppActivation() {
   const preflight = useMemo(() => runPreflight(buildPreflightInput(selectedCampaignRow)), [selectedCampaignRow, counts, defaultConn, senderReadinessState, fromEmail, safety, remaining, totalSelected, legal.isCompliant]);
   const gate = useMemo(() => activationGate(preflight), [preflight]);
   const activationBlocked = !legal.isCompliant;
-  const canActivate = totalSelected > 0 && !activationBlocked && gate.ok && (!wantsRisky || riskAck) && !!targetCampaignId && !activating;
+  const canActivate =
+    totalSelected > 0 && !activationBlocked && preflight.canActivate && gate.ok &&
+    (!wantsRisky || riskAck) && !!targetCampaignId && !activating;
+
 
 
   async function audit(action: string, details: any) {
@@ -243,17 +246,64 @@ export default function AppActivation() {
 
   async function runActivation() {
     if (!user || !targetCampaignId) return;
+
+    // ---- Execution guard. Runs before any state change and before any write.
+    // The button state is never trusted: this handler must refuse on its own
+    // if the UI is stale or bypassed entirely.
+    const blockAndReport = async (label: string, detail: string, blockerIds: string[]) => {
+      // Best-effort audit, ids only — no free text, no contact data.
+      await audit("activation_blocked_preflight", {
+        campaign_id: targetCampaignId,
+        blocker_ids: blockerIds,
+      });
+      toast.error("Activation blocked by preflight", { description: `${label}: ${detail}` });
+    };
+
+    if (!preflight.canActivate) {
+      const first = preflight.blockers[0];
+      await blockAndReport(
+        first?.label || "Preflight incomplete",
+        first?.detail || "Resolve the outstanding preflight blockers and try again.",
+        preflight.blockers.map((b) => b.id),
+      );
+      return;
+    }
+    if (!gate.ok) {
+      await blockAndReport(
+        gate.firstBlocker?.label || "Preflight incomplete",
+        gate.firstBlocker?.detail || "Resolve the outstanding preflight blockers and try again.",
+        gate.blockerIds,
+      );
+      return;
+    }
+
     setActivating(true);
     try {
-      // Re-verify the gate against a FRESHLY fetched campaign row. The button
-      // state is not trusted here: a stale tab, a campaign un-approved in
-      // another window, or a direct call to this handler must all be refused
+      // Re-verify against a FRESHLY fetched campaign row: a campaign un-approved
+      // or flipped to sample in another window must still be refused here,
       // before a single lead row is written.
       const { data: freshRow } = await supabase
         .from("campaigns")
         .select("id, name, status, goal, pack, brief, approved_at, is_sample")
         .eq("id", targetCampaignId)
         .maybeSingle();
+
+      // Explicit, non-negotiable execution guards, independent of the scoring
+      // in runPreflight: no campaign, a sample campaign, or a campaign without
+      // recorded human approval can never create leads.
+      const hardFailure =
+        !freshRow
+          ? { id: "campaign", label: "A campaign is selected", detail: "This campaign no longer exists." }
+          : (freshRow as any).is_sample === true
+          ? { id: "sample", label: "Not a sample campaign", detail: "Sample campaigns are for practice only and can never contact anyone." }
+          : !(freshRow as any).approved_at
+          ? { id: "approval", label: "Final human approval recorded", detail: "Approve the campaign content before preparing leads." }
+          : null;
+      if (hardFailure) {
+        await blockAndReport(hardFailure.label, hardFailure.detail, [hardFailure.id]);
+        return;
+      }
+
       const liveGate = activationGate(runPreflight(buildPreflightInput((freshRow as any) ?? null)));
       if (!liveGate.ok) {
         // Ids only — no free text, no contact data.
@@ -268,6 +318,8 @@ export default function AppActivation() {
         });
         return;
       }
+
+
 
       await audit("activation_started", {
         campaign_id: targetCampaignId, batch: totalSelected, includeReview,

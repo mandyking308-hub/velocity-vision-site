@@ -28,7 +28,6 @@ export interface ReplyCategoryMeta {
     | "snooze"
     | "reassign"
     | "suppress"
-    | "suppress_bounce"
     | "ignore"
     | "review";
 }
@@ -75,7 +74,7 @@ export const REPLY_CATEGORIES: Record<ReplyCategory, ReplyCategoryMeta> = {
     description: "The message never reached a mailbox — the address failed on delivery.",
     tone: "bg-orange-100 text-orange-700",
     suggestedAction: "Stop further sends to this address, then review and correct it.",
-    actionKey: "suppress_bounce",
+    actionKey: "suppress",
   },
 
   auto_reply: {
