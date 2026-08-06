@@ -8,6 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useCredits } from "@/contexts/CreditsContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { isBillingTrouble } from "@/lib/checkoutReturn";
 import { trackUpgradeEvent, type UpgradeEventName } from "@/lib/upgradeEvents";
 import TopUpModal from "./TopUpModal";
 
@@ -27,7 +30,7 @@ export type NudgeReason =
   | "upgrade_for_growth"
   | "upgrade_for_agency";
 
-type CtaKind = "buy_credits" | "upgrade_growth" | "upgrade_agency" | "compare_plans" | "learn_credits" | "keep_previewing";
+type CtaKind = "buy_credits" | "upgrade_growth" | "upgrade_agency" | "compare_plans" | "learn_credits" | "keep_previewing" | "fix_billing";
 
 interface CtaDef {
   kind: CtaKind;
