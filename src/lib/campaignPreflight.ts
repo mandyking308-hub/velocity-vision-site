@@ -376,3 +376,59 @@ export function activationGate(result: PreflightResult): ActivationGateResult {
     blockerIds: blockers.map((c) => c.id),
   };
 }
+
+/** The minimum a campaign row must expose for the execution guard. */
+export interface ActivationCampaignRef {
+  id?: string | null;
+  is_sample?: boolean | null;
+  approved_at?: string | null;
+}
+
+export interface ExecutionVerdict {
+  ok: boolean;
+  /** Human-readable first thing to fix. Empty when `ok`. */
+  reason: string;
+  /** Ids only — safe to persist to the audit log (no free text, no PII). */
+  blockerIds: string[];
+}
+
+/**
+ * The single source of truth for "may this campaign create leads right now?".
+ *
+ * Pure and total. Both the activation button and `runActivation()` call this
+ * with the same preflight result, so the rendered state and the executed
+ * decision cannot diverge. The campaign row is passed separately so the
+ * execution path can re-verify against a freshly fetched row.
+ */
+export function canExecuteActivation(
+  result: PreflightResult,
+  campaign: ActivationCampaignRef | null | undefined,
+): ExecutionVerdict {
+  if (!campaign?.id) {
+    return { ok: false, reason: "Choose the campaign these contacts should be prepared into.", blockerIds: ["campaign"] };
+  }
+  if (campaign.is_sample === true) {
+    return {
+      ok: false,
+      reason: "Sample campaigns are for practice only and can never contact anyone.",
+      blockerIds: ["sample"],
+    };
+  }
+  if (!campaign.approved_at) {
+    return {
+      ok: false,
+      reason: "Record final human approval of the campaign content before preparing leads.",
+      blockerIds: ["approval"],
+    };
+  }
+  if (!result.canActivate) {
+    const first = result.blockers[0];
+    return {
+      ok: false,
+      reason: first ? `${first.label}: ${first.detail}` : "Resolve the outstanding preflight blockers.",
+      blockerIds: result.blockers.map((b) => b.id),
+    };
+  }
+  return { ok: true, reason: "", blockerIds: [] };
+}
+
