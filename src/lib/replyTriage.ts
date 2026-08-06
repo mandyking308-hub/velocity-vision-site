@@ -120,11 +120,20 @@ interface Rule {
   rx: RegExp;
 }
 
-// Order matters only via weight — highest total score wins.
+// Order matters only via weight — highest total score wins, except for the
+// hard-precedence categories below, which are decided before scoring.
 const RULES: Rule[] = [
   // Compliance first — these must never be misread as anything else.
   { category: "unsubscribe", weight: 10, rx: /\b(unsubscribe|opt.?out|remove me|take me off|stop (emailing|contacting)|do not (contact|email))\b/i },
   { category: "unsubscribe", weight: 8, rx: /\b(gdpr|erasure request|delete my data)\b/i },
+
+  // Delivery failures. These are machine-generated and read nothing like a
+  // human reply, so they must not be scored against negative/question rules.
+  { category: "bounce", weight: 10, rx: /\b(undeliverable|delivery (has )?failed|delivery failure|delivery status notification \(failure\)|failed delivery|returned to sender|mail delivery (subsystem|failed)|could not be delivered|unable to deliver)\b/i },
+  { category: "bounce", weight: 10, rx: /\b(mailbox (unavailable|not found|does not exist|is full)|recipient address rejected|user unknown|unknown user|no such user|address not found|recipient not found|account (has been )?(disabled|deactivated))\b/i },
+  { category: "bounce", weight: 8, rx: /\b(55[0-4][ -]5\.\d\.\d|smtp error 5\d\d|status: 5\.\d\.\d)/i },
+
+
 
   { category: "auto_reply", weight: 9, rx: /\b(out of (the )?office|automatic reply|auto[- ]?reply|on annual leave|on holiday|maternity leave|currently away)\b/i },
   { category: "auto_reply", weight: 6, rx: /\bi (will|'ll) be back on\b/i },
