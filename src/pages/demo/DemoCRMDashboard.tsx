@@ -6,6 +6,59 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { generatePack, CampaignBrief } from "@/lib/campaignPack";
+import FirstCampaignLaunchpad from "@/components/app/FirstCampaignLaunchpad";
+import CampaignPreflight from "@/components/app/CampaignPreflight";
+import ReplyCommandCentre from "@/components/app/ReplyCommandCentre";
+import { runPreflight } from "@/lib/campaignPreflight";
+import type { LaunchpadSignals } from "@/lib/launchpad";
+
+// Sample-only state for the public demo. Nothing here touches real data.
+const DEMO_LAUNCHPAD: LaunchpadSignals = {
+  hasBrief: true,
+  approvedContacts: 1284,
+  hasContent: true,
+  senderReady: true,
+  preflightBlockers: 1,
+  approved: false,
+  isSample: true,
+  activated: false,
+  campaignId: null,
+};
+
+const DEMO_PREFLIGHT = runPreflight({
+  campaign: {
+    id: "demo-campaign-1",
+    name: "Spring Lead Sprint",
+    goal: "leads",
+    status: "draft",
+    pack: { emails: [{ subject: "A quicker way to launch", body: "Sample body copy for the demo." }] },
+    brief: { cta: "Book a 15-min walkthrough", audience: "SMB founders", offer: "AI campaign launchpad" },
+    approved_at: null,
+    is_sample: true,
+    start_at: null,
+    cadence_type: "one_off",
+  },
+  safeContacts: 1284,
+  reviewContacts: 92,
+  senderState: "ready_full",
+  senderEmail: "hello@example.com",
+  remainingToday: 80,
+  pauseReasons: [],
+  creditsAvailable: 18,
+  creditsRequired: 12,
+  legalAccepted: true,
+  unsubscribeReady: true,
+});
+
+const DEMO_REPLIES = [
+  { id: "d1", name: "Hannah Wright", reply_category: "interested", reply_snippet: "Sounds great — happy to chat next week.", reply_triaged_at: null },
+  { id: "d2", name: "Marco Lopez", reply_category: "question", reply_snippet: "How does it handle multiple workspaces?", reply_triaged_at: null },
+  { id: "d3", name: "Priya Shah", reply_category: "not_now", reply_snippet: "Bad timing — circle back next quarter.", reply_triaged_at: null },
+  { id: "d4", name: "Tom Clarke", reply_category: "unsubscribe", reply_snippet: "Please remove me from this list.", reply_triaged_at: null },
+  { id: "d5", name: "Aisha Khan", reply_category: "bounce", reply_snippet: "Delivery has failed: mailbox unavailable.", reply_triaged_at: null },
+  { id: "d6", name: "Owen Baker", reply_category: "auto_reply", reply_snippet: "Out of office until Monday.", reply_triaged_at: null },
+];
+
 
 const DEMO_BRIEF: CampaignBrief = {
   name: "Spring Lead Sprint",
