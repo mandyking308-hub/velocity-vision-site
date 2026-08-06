@@ -282,6 +282,8 @@ export function draftReply(
       return `Hi ${name},\n\nCompletely understood — timing matters more than anything.\n\nI'll come back to you at a better point. If a specific month works better, tell me and I'll make a note.${signoff}`;
     case "wrong_person":
       return `Hi ${name},\n\nApologies for the misdirect, and thanks for letting me know.\n\nWould you be able to point me to the right person? I'll take it from there and won't chase you again.${signoff}`;
+    case "referral":
+      return `Hi ${name},\n\nThank you for pointing me in the right direction — that's genuinely helpful.\n\nI'll reach out to them directly and mention that you suggested we speak. ${cta ? cta : "If it's easier for you to introduce us, just let me know."}${signoff}`;
     case "negative":
       return `Hi ${name},\n\nThanks for the straight answer — I appreciate it.\n\nI'll close this off and won't keep chasing. If anything changes, you know where I am.${signoff}`;
     case "unsubscribe":
