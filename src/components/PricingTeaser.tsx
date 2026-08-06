@@ -6,6 +6,7 @@ import { ArrowRight, Check } from "lucide-react";
 const plans = [
   {
     name: "Starter",
+    slug: "starter",
     price: "£149",
     unit: "one-off",
     desc: "One-off access for one customer-controlled campaign workflow.",
