@@ -165,12 +165,61 @@ export function resolveLaunchpad(s: LaunchpadSignals): LaunchpadResult {
     },
   ];
 
+  const WHY: Record<LaunchStepId, string> = {
+    brief: "Everything downstream — copy, targeting and reporting — is generated from this.",
+    contacts: "Nothing can be activated until contacts have passed data-quality review.",
+    content: "Preflight cannot pass, and nothing can be approved, without real copy to read.",
+    sender: "Sending from an unverified mailbox damages deliverability and is blocked.",
+    preflight: "Activation stays locked while any blocker is open.",
+    approval: "A human must read the final copy. Nothing is ever sent automatically.",
+    activated: "This prepares leads from your approved contacts — still no automatic sending.",
+  };
+  for (const step of steps) step.why = WHY[step.id];
+
   const completed = steps.filter((x) => x.done).length;
   const nextStep = steps.find((x) => !x.done) ?? null;
   const campaignLive = s.approved && !s.isSample && s.activated;
 
+  const repliesWaiting = Math.max(0, s.repliesWaiting ?? 0);
+  const urgentReplies = Math.max(0, s.urgentReplies ?? 0);
+  const reviewContacts = Math.max(0, s.reviewContacts ?? 0);
+
+  // Next best action: replies beat setup once the campaign is genuinely live,
+  // because an unanswered opt-out is a compliance risk, not a nice-to-have.
+  let nextBestAction: NextBestAction | null = null;
+  if (campaignLive && repliesWaiting > 0) {
+    nextBestAction = {
+      id: "replies",
+      label: urgentReplies > 0 ? "Work the replies that need attention" : "Work your replies",
+      detail:
+        urgentReplies > 0
+          ? `${urgentReplies} of ${repliesWaiting} waiting repl${repliesWaiting === 1 ? "y" : "ies"} are compliance or opportunity items.`
+          : `${repliesWaiting} repl${repliesWaiting === 1 ? "y" : "ies"} waiting to be triaged.`,
+      why: "Opt-outs and bounces must be handled first; interested replies go cold fastest.",
+      to: "/app/follow-up",
+      cta: "Open replies",
+      urgent: urgentReplies > 0,
+    };
+  } else if (nextStep) {
+    const detail =
+      nextStep.id === "contacts" && reviewContacts > 0
+        ? `${reviewContacts.toLocaleString()} contact${reviewContacts === 1 ? " is" : "s are"} held back pending review.`
+        : nextStep.detail;
+    nextBestAction = {
+      id: nextStep.id,
+      label: nextStep.label,
+      detail,
+      why: nextStep.why || "",
+      to: nextStep.to,
+      cta: nextStep.cta,
+      urgent: nextStep.id === "preflight" && s.preflightBlockers > 0,
+    };
+  }
+
   const summary = campaignLive
-    ? "Your first campaign is approved and activated. Work replies as they arrive."
+    ? repliesWaiting > 0
+      ? `Live — ${repliesWaiting} repl${repliesWaiting === 1 ? "y" : "ies"} waiting.`
+      : "Your first campaign is approved and activated. Work replies as they arrive."
     : nextStep
       ? `Not live yet — next: ${nextStep.label.toLowerCase()}.`
       : "Every step is complete.";
@@ -180,9 +229,11 @@ export function resolveLaunchpad(s: LaunchpadSignals): LaunchpadResult {
     completed,
     total: steps.length,
     nextStep,
-    continueTo: nextStep ? nextStep.to : "/app/follow-up",
-    continueLabel: nextStep ? nextStep.cta : "Work replies",
+    continueTo: nextBestAction ? nextBestAction.to : "/app/follow-up",
+    continueLabel: nextBestAction ? nextBestAction.cta : "Work replies",
     summary,
     campaignLive,
+    nextBestAction,
+
   };
 }
