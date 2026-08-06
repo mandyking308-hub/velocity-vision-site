@@ -17,13 +17,18 @@ import CreditMeter from "@/components/app/CreditMeter";
 import FollowUpReminders from "@/components/app/FollowUpReminders";
 import SendSafetyPanel from "@/components/app/SendSafetyPanel";
 import SenderStatusCard from "@/components/app/SenderStatusCard";
-import OnboardingChecklist from "@/components/app/OnboardingChecklist";
+import FirstCampaignLaunchpad from "@/components/app/FirstCampaignLaunchpad";
+import CampaignPreflight from "@/components/app/CampaignPreflight";
 import FreePreviewStatusCard from "@/components/app/FreePreviewStatusCard";
 import PriorityStrip from "@/components/app/PriorityStrip";
 import { computeSafety, DEFAULT_SENDER_STATE, type SenderState } from "@/lib/sendSafety";
+import { runPreflight } from "@/lib/campaignPreflight";
+import { computeReadiness } from "@/lib/senderReadiness";
+import { useLegalStatus } from "@/lib/legalCompliance";
 import type { PlanId } from "@/lib/credits";
 import { deriveFollowUpState } from "@/lib/leadStates";
 import { Card as UICard, CardContent as UICardContent } from "@/components/ui/card";
+
 
 interface VaultStats {
   total_contacts: number;
