@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 import { useCurrency } from "@/hooks/useCurrency";
 import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
 import PricingCurrencySelector from "@/components/PricingCurrencySelector";
-import { classifyCheckoutReturn, isBillingTrouble } from "@/lib/checkoutReturn";
+import { billingTroubleCopy, classifyCheckoutReturn, isBillingTrouble } from "@/lib/checkoutReturn";
 import { AlertTriangle } from "lucide-react";
 import FeedbackPrompt from "@/components/support/FeedbackPrompt";
 import BillingTermsSummary from "@/components/BillingTermsSummary";
