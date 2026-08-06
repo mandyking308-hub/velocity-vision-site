@@ -20,6 +20,7 @@ import MoveToPipelineDialog, { type MoveToPipelineLead } from "@/components/app/
 import MeetingHandoffPanel from "@/components/app/MeetingHandoffPanel";
 import { useBookingUrl } from "@/hooks/useBookingUrl";
 import { describeWait, isWaitingForFollowUp } from "@/lib/replySla";
+import { allowedOverrideCategories, deterministicCompliance, resolveIntent } from "@/lib/replyIntent";
 
 /**
  * Supervised reply triage.
