@@ -86,7 +86,7 @@ const Contact = () => {
     email: "",
     company: "",
     message: planIntent ? planEnquiryMessage(planIntent) : "",
-    topic: planIntent ? "billing" : "general_support",
+    topic: planIntent ? (planIntent === "agency" ? "enterprise_volume" : "billing") : "general_support",
   });
   const [loading, setLoading] = useState(false);
 
