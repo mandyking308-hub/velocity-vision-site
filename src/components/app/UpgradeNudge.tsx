@@ -8,6 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useCredits } from "@/contexts/CreditsContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { isBillingTrouble } from "@/lib/checkoutReturn";
 import { trackUpgradeEvent, type UpgradeEventName } from "@/lib/upgradeEvents";
 import TopUpModal from "./TopUpModal";
 
@@ -27,7 +30,7 @@ export type NudgeReason =
   | "upgrade_for_growth"
   | "upgrade_for_agency";
 
-type CtaKind = "buy_credits" | "upgrade_growth" | "upgrade_agency" | "compare_plans" | "learn_credits" | "keep_previewing";
+type CtaKind = "buy_credits" | "upgrade_growth" | "upgrade_agency" | "compare_plans" | "learn_credits" | "keep_previewing" | "fix_billing";
 
 interface CtaDef {
   kind: CtaKind;
@@ -179,13 +182,33 @@ export default function UpgradeNudge({
 }: UpgradeNudgeProps) {
   const def = REASONS[reason];
   const { plan, isFreePreview } = useCredits();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [topupOpen, setTopupOpen] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  // When the current subscription is in a problem state we must not invite a
+  // second subscription — the customer needs to fix billing first.
+  const [billingTrouble, setBillingTrouble] = useState(false);
 
   useEffect(() => {
     try { if (localStorage.getItem(DISMISS_KEY(reason)) === "1") setDismissed(true); } catch { /* ignore */ }
   }, [reason]);
+
+  useEffect(() => {
+    let active = true;
+    if (!user) { setBillingTrouble(false); return; }
+    (async () => {
+      const { data } = await supabase
+        .from("stripe_subscriptions")
+        .select("status")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (active) setBillingTrouble(isBillingTrouble(data?.status));
+    })();
+    return () => { active = false; };
+  }, [user]);
 
   const suppressForPaid = def.freePreviewOnly && !isFreePreview;
   const suppressForModalSpam = variant === "modal" && !def.hard && modalAlreadyShownThisSession();
@@ -199,6 +222,19 @@ export default function UpgradeNudge({
 
   const finalTitle = title ?? def.title;
   const finalBody = body ?? def.body;
+
+  const FIX_BILLING_CTA: CtaDef = { kind: "fix_billing", label: "Fix billing" };
+  /** Swap plan-purchase CTAs for a billing-fix CTA while billing is broken. */
+  const resolveCta = (cta: CtaDef): CtaDef =>
+    billingTrouble && (cta.kind === "upgrade_growth" || cta.kind === "upgrade_agency")
+      ? FIX_BILLING_CTA
+      : cta;
+  const primaryCta = resolveCta(def.primary);
+  const secondaryCta = def.secondary ? resolveCta(def.secondary) : undefined;
+  // Avoid rendering the same "Fix billing" button twice.
+  const showSecondary = !!secondaryCta && secondaryCta.kind !== primaryCta.kind;
+
+
 
   const runCta = async (cta: CtaDef) => {
     if (cta.kind === "buy_credits") {
@@ -218,6 +254,7 @@ export default function UpgradeNudge({
       navigate("/app/billing?upgrade=agency");
       return;
     }
+    if (cta.kind === "fix_billing") { navigate("/app/billing"); return; }
     if (cta.kind === "compare_plans") { navigate("/pricing"); return; }
     if (cta.kind === "learn_credits") { navigate("/help/getting-started"); return; }
     if (cta.kind === "keep_previewing") { handleDismiss(); return; }
@@ -245,12 +282,12 @@ export default function UpgradeNudge({
 
   const ctas = (
     <div className="flex flex-wrap gap-2">
-      <Button size="sm" onClick={() => runCta(def.primary)}>
-        {def.primary.label} <ArrowRight className="h-3.5 w-3.5 ml-1" />
+      <Button size="sm" onClick={() => runCta(primaryCta)}>
+        {primaryCta.label} <ArrowRight className="h-3.5 w-3.5 ml-1" />
       </Button>
-      {def.secondary && (
-        <Button size="sm" variant="outline" onClick={() => runCta(def.secondary!)}>
-          {def.secondary.label}
+      {showSecondary && (
+        <Button size="sm" variant="outline" onClick={() => runCta(secondaryCta!)}>
+          {secondaryCta!.label}
         </Button>
       )}
       {!def.hard && variant !== "modal" && (

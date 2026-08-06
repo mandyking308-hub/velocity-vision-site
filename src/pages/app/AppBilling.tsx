@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 import { useCurrency } from "@/hooks/useCurrency";
 import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
 import PricingCurrencySelector from "@/components/PricingCurrencySelector";
-import { classifyCheckoutReturn, isBillingTrouble } from "@/lib/checkoutReturn";
+import { billingTroubleCopy, classifyCheckoutReturn, isBillingTrouble } from "@/lib/checkoutReturn";
 import { AlertTriangle } from "lucide-react";
 import FeedbackPrompt from "@/components/support/FeedbackPrompt";
 import BillingTermsSummary from "@/components/BillingTermsSummary";
@@ -120,6 +120,9 @@ export default function AppBilling() {
     }
 
     const flag = parsed.flag;
+    // Strip the return params up-front so a refresh mid-polling can never
+    // replay the success message; routing below is unaffected.
+    clearParams();
     (async () => {
       setShowCheckoutFeedback(true);
       toast.success(tc("toasts.paymentReceived"));
@@ -134,10 +137,9 @@ export default function AppBilling() {
         navigate("/app/campaigns/new", { replace: true });
       } else if (flag === "growth" || flag === "agency") {
         navigate("/app", { replace: true });
-      } else {
-        clearParams();
       }
     })();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -190,16 +192,25 @@ export default function AppBilling() {
               <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
               <div>
                 <div className="font-semibold text-destructive">
-                  {stripeSub?.status === "on_hold" ? "Subscription on hold" : "Payment failed"}
+                  {billingTroubleCopy(stripeSub?.status).title}
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Your last renewal didn't go through. Update your payment method to keep your plan active.
+                  {billingTroubleCopy(stripeSub?.status).body}
                 </p>
               </div>
             </div>
-            <Button onClick={() => buyPlan((stripeSub.plan as PlanId) || "growth")}>Retry payment</Button>
+            {stripeSub?.stripe_customer_id ? (
+              <Button onClick={openBillingPortal} disabled={portalLoading}>
+                {portalLoading ? "Opening…" : "Update payment method"}
+              </Button>
+            ) : (
+              <Button variant="outline" onClick={() => navigate("/contact")}>
+                Contact support
+              </Button>
+            )}
           </CardContent>
         </Card>
+
 
       )}
 
