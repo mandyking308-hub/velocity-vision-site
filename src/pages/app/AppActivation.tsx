@@ -303,21 +303,17 @@ export default function AppActivation() {
         return;
       }
 
-
       const liveGate = activationGate(runPreflight(buildPreflightInput((freshRow as any) ?? null)));
       if (!liveGate.ok) {
-        // Ids only — no free text, no contact data.
-        await audit("activation_blocked_preflight", {
-          campaign_id: targetCampaignId,
-          blocker_ids: liveGate.blockerIds,
-        });
-        toast.error("Activation blocked by preflight", {
-          description: liveGate.firstBlocker
-            ? `${liveGate.firstBlocker.label}: ${liveGate.firstBlocker.detail}`
-            : "Resolve the outstanding preflight blockers and try again.",
-        });
+        await blockAndReport(
+          liveGate.firstBlocker?.label || "Preflight incomplete",
+          liveGate.firstBlocker?.detail || "Resolve the outstanding preflight blockers and try again.",
+          liveGate.blockerIds,
+        );
         return;
       }
+
+
 
 
 
