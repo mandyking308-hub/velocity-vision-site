@@ -33,6 +33,12 @@ export interface LaunchpadSignals {
   activated: boolean;
   /** Working campaign id, used for deep links. */
   campaignId?: string | null;
+  /** Replies waiting to be worked (optional; only used once live). */
+  repliesWaiting?: number;
+  /** Compliance/opportunity replies that must be handled first. */
+  urgentReplies?: number;
+  /** Contacts still held back pending manual data review. */
+  reviewContacts?: number;
 }
 
 export interface LaunchStep {
@@ -42,6 +48,19 @@ export interface LaunchStep {
   done: boolean;
   to: string;
   cta: string;
+  /** Why this step matters — shown on the next-best-action card only. */
+  why?: string;
+}
+
+export interface NextBestAction {
+  /** Step (or post-launch action) the operator should do right now. */
+  id: LaunchStepId | "replies";
+  label: string;
+  detail: string;
+  why: string;
+  to: string;
+  cta: string;
+  urgent: boolean;
 }
 
 export interface LaunchpadResult {
@@ -57,7 +76,14 @@ export interface LaunchpadResult {
   summary: string;
   /** True only when approval AND real activation have happened. */
   campaignLive: boolean;
+  /**
+   * Single highest-value action derived from live data. Before launch this is
+   * the next incomplete step; once live it becomes reply work when replies are
+   * actually waiting.
+   */
+  nextBestAction: NextBestAction | null;
 }
+
 
 export function resolveLaunchpad(s: LaunchpadSignals): LaunchpadResult {
   const campaignTo = s.campaignId ? `/app/campaigns/${s.campaignId}` : "/app/campaigns/copilot";
