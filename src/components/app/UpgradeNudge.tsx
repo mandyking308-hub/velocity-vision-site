@@ -254,6 +254,7 @@ export default function UpgradeNudge({
       navigate("/app/billing?upgrade=agency");
       return;
     }
+    if (cta.kind === "fix_billing") { navigate("/app/billing"); return; }
     if (cta.kind === "compare_plans") { navigate("/pricing"); return; }
     if (cta.kind === "learn_credits") { navigate("/help/getting-started"); return; }
     if (cta.kind === "keep_previewing") { handleDismiss(); return; }
@@ -281,12 +282,12 @@ export default function UpgradeNudge({
 
   const ctas = (
     <div className="flex flex-wrap gap-2">
-      <Button size="sm" onClick={() => runCta(def.primary)}>
-        {def.primary.label} <ArrowRight className="h-3.5 w-3.5 ml-1" />
+      <Button size="sm" onClick={() => runCta(primaryCta)}>
+        {primaryCta.label} <ArrowRight className="h-3.5 w-3.5 ml-1" />
       </Button>
-      {def.secondary && (
-        <Button size="sm" variant="outline" onClick={() => runCta(def.secondary!)}>
-          {def.secondary.label}
+      {showSecondary && (
+        <Button size="sm" variant="outline" onClick={() => runCta(secondaryCta!)}>
+          {secondaryCta!.label}
         </Button>
       )}
       {!def.hard && variant !== "modal" && (
