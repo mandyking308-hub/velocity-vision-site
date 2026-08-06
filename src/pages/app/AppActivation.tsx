@@ -23,6 +23,8 @@ import {
 } from "@/lib/sendSafety";
 import type { PlanId } from "@/lib/credits";
 import SendSafetyPanel from "@/components/app/SendSafetyPanel";
+import CampaignPreflight from "@/components/app/CampaignPreflight";
+import { runPreflight } from "@/lib/campaignPreflight";
 import SenderStatusCard from "@/components/app/SenderStatusCard";
 import JourneyEmptyState from "@/components/app/JourneyEmptyState";
 import LegalComplianceGate from "@/components/LegalComplianceGate";
@@ -58,7 +60,7 @@ export default function AppActivation() {
   const [roles, setRoles] = useState<string[]>([]);
   const [founderAccepting, setFounderAccepting] = useState(false);
   const [defaultConn, setDefaultConn] = useState<any>(null);
-  const [campaigns, setCampaigns] = useState<Array<{ id: string; name: string; status: string | null }>>([]);
+  const [campaigns, setCampaigns] = useState<Array<{ id: string; name: string; status: string | null; goal?: string | null; pack?: any; brief?: any; approved_at?: string | null; is_sample?: boolean | null }>>([]);
   const [selectedCampaign, setSelectedCampaign] = useState<string>(campaignId || "");
   const [activating, setActivating] = useState(false);
 
@@ -150,9 +152,9 @@ export default function AppActivation() {
       }
 
       // Load selectable campaigns in this workspace (draft/scheduled first).
-      const campQ = supabase.from("campaigns").select("id, name, status").order("created_at", { ascending: false }).limit(50);
+      const campQ = supabase.from("campaigns").select("id, name, status, goal, pack, brief, approved_at, is_sample").order("created_at", { ascending: false }).limit(50);
       const { data: camps } = currentId ? await campQ.eq("workspace_id", currentId) : await campQ;
-      const list = (camps || []) as Array<{ id: string; name: string; status: string | null }>;
+      const list = (camps || []) as Array<{ id: string; name: string; status: string | null; goal?: string | null; pack?: any; brief?: any; approved_at?: string | null; is_sample?: boolean | null }>;
       setCampaigns(list);
       if (!selectedCampaign && list.length > 0) {
         // Prefer the one the user came in with, else the most recent draft/scheduled, else first.
@@ -188,6 +190,21 @@ export default function AppActivation() {
   const wantsRisky = riskyClamped > 0;
   const targetCampaignId = selectedCampaign || campaignId || null;
   const sendPaused = safety.pauseReasons.length > 0;
+  const selectedCampaignRow = campaigns.find((c) => c.id === (selectedCampaign || campaignId)) || null;
+  const senderReadinessState = computeReadiness(defaultConn as any).state;
+  const preflight = useMemo(() => runPreflight({
+    campaign: selectedCampaignRow,
+    safeContacts: counts.valid,
+    reviewContacts: counts.needs_review,
+    senderState: defaultConn ? senderReadinessState : null,
+    senderEmail: fromEmail,
+    remainingToday: safety.remainingToday,
+    pauseReasons: safety.pauseReasons,
+    creditsAvailable: remaining,
+    creditsRequired: Math.max(1, totalSelected),
+    legalAccepted: legal.isCompliant,
+    unsubscribeReady: true,
+  }), [selectedCampaignRow, counts, defaultConn, senderReadinessState, fromEmail, safety, remaining, totalSelected, legal.isCompliant]);
   const activationBlocked = !legal.isCompliant;
   const canActivate = totalSelected > 0 && !activationBlocked && (!wantsRisky || riskAck) && !!targetCampaignId && !activating;
 
@@ -401,6 +418,8 @@ export default function AppActivation() {
         );
       })()}
       <SendSafetyPanel s={safety} used={usedToday} scheduled={scheduledToday} />
+
+      <CampaignPreflight result={preflight} title="Preflight & readiness centre" />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <Card className="lg:col-span-2">
