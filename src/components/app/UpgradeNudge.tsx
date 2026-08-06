@@ -182,13 +182,33 @@ export default function UpgradeNudge({
 }: UpgradeNudgeProps) {
   const def = REASONS[reason];
   const { plan, isFreePreview } = useCredits();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [topupOpen, setTopupOpen] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  // When the current subscription is in a problem state we must not invite a
+  // second subscription — the customer needs to fix billing first.
+  const [billingTrouble, setBillingTrouble] = useState(false);
 
   useEffect(() => {
     try { if (localStorage.getItem(DISMISS_KEY(reason)) === "1") setDismissed(true); } catch { /* ignore */ }
   }, [reason]);
+
+  useEffect(() => {
+    let active = true;
+    if (!user) { setBillingTrouble(false); return; }
+    (async () => {
+      const { data } = await supabase
+        .from("stripe_subscriptions")
+        .select("status")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (active) setBillingTrouble(isBillingTrouble(data?.status));
+    })();
+    return () => { active = false; };
+  }, [user]);
 
   const suppressForPaid = def.freePreviewOnly && !isFreePreview;
   const suppressForModalSpam = variant === "modal" && !def.hard && modalAlreadyShownThisSession();
@@ -202,6 +222,19 @@ export default function UpgradeNudge({
 
   const finalTitle = title ?? def.title;
   const finalBody = body ?? def.body;
+
+  const FIX_BILLING_CTA: CtaDef = { kind: "fix_billing", label: "Fix billing" };
+  /** Swap plan-purchase CTAs for a billing-fix CTA while billing is broken. */
+  const resolveCta = (cta: CtaDef): CtaDef =>
+    billingTrouble && (cta.kind === "upgrade_growth" || cta.kind === "upgrade_agency")
+      ? FIX_BILLING_CTA
+      : cta;
+  const primaryCta = resolveCta(def.primary);
+  const secondaryCta = def.secondary ? resolveCta(def.secondary) : undefined;
+  // Avoid rendering the same "Fix billing" button twice.
+  const showSecondary = !!secondaryCta && secondaryCta.kind !== primaryCta.kind;
+
+
 
   const runCta = async (cta: CtaDef) => {
     if (cta.kind === "buy_credits") {
