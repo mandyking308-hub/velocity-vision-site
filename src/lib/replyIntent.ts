@@ -53,14 +53,24 @@ export function resolveIntent(lead: IntentLead): ReplyCategory {
 }
 
 /**
- * Categories a person may choose for this reply. When the text carries a
- * deterministic compliance signal, correction is allowed only between the
- * compliance categories — it can never be downgraded to a sales label.
+ * Categories a person may choose for this reply.
+ *
+ * - Deterministic opt-out: locked to `unsubscribe`. It may never be downgraded,
+ *   not even to `bounce`.
+ * - Deterministic hard bounce: may stay `bounce` or be corrected upward to
+ *   `unsubscribe`. Never a sales label.
+ * - Otherwise: any category.
  */
 export function allowedOverrideCategories(lead: IntentLead): ReplyCategory[] {
-  return deterministicCompliance(lead.reply_snippet)
-    ? [...COMPLIANCE_CATEGORIES]
-    : [...REPLY_CATEGORY_ORDER];
+  const compliance = deterministicCompliance(lead.reply_snippet);
+  if (compliance === "unsubscribe") return ["unsubscribe"];
+  if (compliance === "bounce") return ["bounce", "unsubscribe"];
+  return [...REPLY_CATEGORY_ORDER];
+}
+
+/** True when `next` is a permitted classification for this reply. */
+export function isOverrideAllowed(lead: IntentLead, next: ReplyCategory): boolean {
+  return allowedOverrideCategories(lead).includes(next);
 }
 
 
