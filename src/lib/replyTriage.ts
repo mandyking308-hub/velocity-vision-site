@@ -154,7 +154,7 @@ const RULES: Rule[] = [
   { category: "auto_reply", weight: 9, rx: /\b(out of (the )?office|automatic reply|auto[- ]?reply|on annual leave|on holiday|maternity leave|currently away)\b/i },
   { category: "auto_reply", weight: 6, rx: /\bi (will|'ll) be back on\b/i },
 
-  { category: "wrong_person", weight: 8, rx: /\b(wrong person|not my (area|remit|department)|i don'?t handle|you (should|need to) (speak|talk) to|please contact my colleague|no longer (with|at) )\b/i },
+  { category: "wrong_person", weight: 8, rx: /\b(wrong person|not the right person|not my (area|remit|department)|i don'?t handle|you (should|need to) (speak|talk) to|please contact my colleague|no longer (with|at) )\b/i },
   { category: "wrong_person", weight: 5, rx: /\bcopying in\b|\blooping in\b/i },
 
   { category: "interested", weight: 8, rx: /\b((?<!not )(?<!n't )interested|sounds (good|great|interesting)|happy to (chat|talk|meet)|let'?s (chat|talk|set up|book)|send (me )?(more|over) (info|details)|book a time|keen to)\b/i },
