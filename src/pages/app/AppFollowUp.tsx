@@ -11,7 +11,7 @@ import LeadActionPanel, { type ActionLead } from "@/components/app/LeadActionPan
 import { bucketCounts, deriveFollowUpState, STATE_LABEL, STATE_TONE, type FollowUpState } from "@/lib/leadStates";
 import { MessageSquare, Mail, AlertTriangle, Zap, Flame, Snowflake, Filter, RefreshCw, Send, Upload } from "lucide-react";
 import JourneyEmptyState from "@/components/app/JourneyEmptyState";
-import ReplyTriagePanel from "@/components/app/ReplyTriagePanel";
+import ReplyCommandCentre from "@/components/app/ReplyCommandCentre";
 import { Inbox } from "lucide-react";
 
 const TAB_KEYS: { id: "action" | "triage" | FollowUpState; labelKey: string; icon: any }[] = [
