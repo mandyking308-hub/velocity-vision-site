@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { generatePack, CampaignBrief } from "@/lib/campaignPack";
 import FirstCampaignLaunchpad from "@/components/app/FirstCampaignLaunchpad";
 import CampaignPreflight from "@/components/app/CampaignPreflight";
-
+import ReplyCommandCentre from "@/components/app/ReplyCommandCentre";
 import { runPreflight } from "@/lib/campaignPreflight";
 import type { LaunchpadSignals } from "@/lib/launchpad";
 
@@ -134,7 +134,7 @@ export default function DemoCRMDashboard() {
             Sample replies grouped by intent. Compliance items are surfaced first and never treated as
             opportunities.
           </p>
-          <div/>
+          <ReplyCommandCentre leads={DEMO_REPLIES} readOnly />
         </TabsContent>
 
 
