@@ -41,7 +41,12 @@ const NAME_STOPWORDS = new Set([
   "sunday", "january", "february", "march", "april", "may", "june", "july",
   "august", "september", "october", "november", "december", "support", "sales",
   "info", "team", "ltd", "limited", "inc",
+  // Interrogatives and pronouns read as capitalised words at the start of a
+  // sentence ("Who is the right person?") but are never a referred person.
+  "who", "what", "which", "someone", "anyone", "nobody", "he", "she", "they",
+  "this", "that", "there", "it", "you", "your", "my", "me", "us", "unfortunately",
 ]);
+
 
 function cleanName(raw: string | undefined | null): string | null {
   const v = String(raw ?? "").trim().replace(/\s+/g, " ");
