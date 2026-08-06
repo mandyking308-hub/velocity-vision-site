@@ -49,13 +49,15 @@ describe("out-of-office return date", () => {
 
 describe("manual override precedence", () => {
   it("stored human classification wins over deterministic reads", () => {
-    const resolved = resolveCategory({
+    const lead = {
       reply_category: "interested",
       reply_triaged_at: ago(1),
       reply_snippet: "please remove me",
-    } as any);
-    expect(resolved.category).toBe("interested");
-    expect(resolved.isOverride).toBe(true);
+    } as any;
+    expect(resolveIntent(lead)).toBe("interested");
+    const audit = describeOverride(lead);
+    expect(audit.overridden).toBe(true);
+    expect(audit.suggested).toBe("unsubscribe");
   });
 });
 
