@@ -31,6 +31,8 @@ const STEPS: Array<{ title: string; body: string; cta: string; href: string }> =
 
 export default function SetupWizard() {
   const { isFreePreview, loading } = useCredits();
+  const { pathname } = useLocation();
+  const suppressed = isTourSuppressedRoute(pathname);
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
 
@@ -38,16 +40,26 @@ export default function SetupWizard() {
     if (typeof window === "undefined") return;
     if (loading) return;
     if (!isFreePreview) return;
+    // Deferred, not dismissed: nothing is written to storage, so the tour opens
+    // again as soon as the user is on a route where it cannot block them.
+    if (suppressed) {
+      setOpen(false);
+      return;
+    }
     if (localStorage.getItem(STORAGE_KEY)) return;
     setOpen(true);
-  }, [isFreePreview, loading]);
+  }, [isFreePreview, loading, suppressed]);
 
   const dismiss = () => {
     try { localStorage.setItem(STORAGE_KEY, "1"); } catch { /* ignore */ }
     setOpen(false);
   };
 
+  // Never mount the blocking overlay on a suppressed route.
+  if (suppressed) return null;
+
   const s = STEPS[step];
+
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) dismiss(); }}>
       <DialogContent className="max-w-lg">
