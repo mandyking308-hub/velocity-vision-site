@@ -50,13 +50,18 @@ const DEMO_PREFLIGHT = runPreflight({
   unsubscribeReady: true,
 });
 
+const HOURS_AGO = (h: number) => new Date(Date.now() - h * 3600_000).toISOString();
+
 const DEMO_REPLIES = [
   { id: "d1", name: "Hannah Wright", reply_category: "interested", reply_snippet: "Sounds great — happy to chat next week.", reply_triaged_at: null },
   { id: "d2", name: "Marco Lopez", reply_category: "question", reply_snippet: "How does it handle multiple workspaces?", reply_triaged_at: null },
   { id: "d3", name: "Priya Shah", reply_category: "not_now", reply_snippet: "Bad timing — circle back next quarter.", reply_triaged_at: null },
   { id: "d4", name: "Tom Clarke", reply_category: "unsubscribe", reply_snippet: "Please remove me from this list.", reply_triaged_at: null },
   { id: "d5", name: "Aisha Khan", reply_category: "bounce", reply_snippet: "Delivery has failed: mailbox unavailable.", reply_triaged_at: null },
-  { id: "d6", name: "Owen Baker", reply_category: "auto_reply", reply_snippet: "Out of office until Monday.", reply_triaged_at: null },
+  { id: "d6", name: "Owen Baker", reply_category: "auto_reply", reply_snippet: "Out of office, returning on 18 March 2026 with limited access until then.", reply_triaged_at: null, replied_at: HOURS_AGO(6) },
+  { id: "d7", name: "Nina Petrov", reply_category: "referral", reply_snippet: "Not me — the right person is Dana Fox, dana.fox@example.com.", reply_triaged_at: null, replied_at: HOURS_AGO(40) },
+  { id: "d8", name: "Callum Reid", reply_category: "interested", reply_snippet: "Interested — can you send a time to talk?", reply_triaged_at: null, replied_at: HOURS_AGO(52) },
+  { id: "d9", name: "Sofia Marino", reply_category: "interested", reply_snippet: "Great, booked a slot with you.", reply_triaged_at: HOURS_AGO(20), replied_at: HOURS_AGO(30), meeting_booked_at: HOURS_AGO(18) },
 ];
 
 
@@ -131,8 +136,10 @@ export default function DemoCRMDashboard() {
 
         <TabsContent value="replies" className="space-y-4 mt-4">
           <p className="text-sm text-muted-foreground">
-            Sample replies grouped by intent. Compliance items are surfaced first and never treated as
-            opportunities.
+            Sample replies grouped by intent. Velocity does not just generate campaigns — it helps you move
+            a reply safely towards a meeting, with a person in control of every send. Referrals, out-of-office
+            return dates, replies waiting more than 24 hours and booked meetings are all surfaced here.
+            Compliance items come first and are never treated as opportunities.
           </p>
           <ReplyCommandCentre leads={DEMO_REPLIES} readOnly />
         </TabsContent>
