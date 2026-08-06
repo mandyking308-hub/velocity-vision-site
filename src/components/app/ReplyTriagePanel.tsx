@@ -124,14 +124,67 @@ export default function ReplyTriagePanel({
     }
   };
 
+  /**
+   * Bounce handling. Only ever runs from an explicit click: classification on
+   * its own never suppresses anything. Uses the same suppression mechanism as
+   * an opt-out, but with a technical reason so reporting can tell a delivery
+   * failure apart from a compliance request. No reply is drafted.
+   */
+  const suppressBounce = async () => {
+    if (!guardAction("Stop sends after bounce")) return;
+    if (!lead.email) {
+      toast.error("This lead has no email address to stop sends to");
+      return;
+    }
+    setBusy(true);
+    try {
+      const { error } = await supabase
+        .from("suppressed_emails")
+        .upsert({ email: lead.email.toLowerCase(), reason: "hard_bounce" }, { onConflict: "email" });
+      if (error) throw error;
+      const now = new Date().toISOString();
+      await supabase
+        .from("leads")
+        .update({
+          reply_category: "bounce",
+          reply_snippet: text.slice(0, 4000) || null,
+          reply_triaged_at: now,
+          follow_up_state: "bounced",
+          last_interaction_at: now,
+          last_action: "Sending stopped after a delivery failure",
+        } as any)
+        .eq("id", lead.id);
+      const { data: u } = await supabase.auth.getUser();
+      if (u.user) {
+        await supabase.from("lead_audit_log").insert({
+          lead_id: lead.id,
+          user_id: u.user.id,
+          action: "reply_triaged_bounce",
+          details: { category: "bounce", reason: "hard_bounce", manual: Boolean(override) },
+        });
+      }
+      toast.success("Sends stopped — check the address and correct it before trying again");
+      onChanged?.();
+    } catch (e: any) {
+      toast.error(e?.message || "Could not stop sends to this address");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const makeDraft = () => {
     const d = draftReply(category, { firstName: lead.name, cta: null });
     if (!d) {
-      toast.info("No reply needed for an auto-response.");
+      toast.info(
+        category === "bounce"
+          ? "No reply to write — this message never reached a mailbox."
+          : "No reply needed for an auto-response.",
+      );
       return;
     }
     setDraft(d);
   };
+
 
   const mp: MoveToPipelineLead = {
     id: lead.id,
