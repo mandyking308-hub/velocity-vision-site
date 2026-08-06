@@ -2068,6 +2068,7 @@ export type Database = {
           meta: Json | null
           price_id: string
           product_kind: string
+          provider: string
           ref_id: string | null
           status: string
           stripe_payment_intent_id: string | null
@@ -2085,6 +2086,7 @@ export type Database = {
           meta?: Json | null
           price_id: string
           product_kind: string
+          provider?: string
           ref_id?: string | null
           status?: string
           stripe_payment_intent_id?: string | null
@@ -2102,6 +2104,7 @@ export type Database = {
           meta?: Json | null
           price_id?: string
           product_kind?: string
+          provider?: string
           ref_id?: string | null
           status?: string
           stripe_payment_intent_id?: string | null
@@ -2119,6 +2122,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      payment_webhook_events: {
+        Row: {
+          created_at: string
+          event_id: string
+          event_type: string | null
+          id: string
+          processed_at: string | null
+          provider: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          event_type?: string | null
+          id?: string
+          processed_at?: string | null
+          provider: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          event_type?: string | null
+          id?: string
+          processed_at?: string | null
+          provider?: string
+        }
+        Relationships: []
       }
       payments: {
         Row: {
@@ -2310,6 +2340,7 @@ export type Database = {
           plan: string | null
           price_id: string | null
           product_id: string | null
+          provider: string
           status: string
           stripe_customer_id: string | null
           stripe_subscription_id: string | null
@@ -2327,6 +2358,7 @@ export type Database = {
           plan?: string | null
           price_id?: string | null
           product_id?: string | null
+          provider?: string
           status?: string
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
@@ -2344,6 +2376,7 @@ export type Database = {
           plan?: string | null
           price_id?: string | null
           product_id?: string | null
+          provider?: string
           status?: string
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null

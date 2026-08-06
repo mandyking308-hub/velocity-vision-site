@@ -18,6 +18,8 @@ import { useTranslation } from "react-i18next";
 import { useCurrency } from "@/hooks/useCurrency";
 import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
 import PricingCurrencySelector from "@/components/PricingCurrencySelector";
+import { classifyCheckoutReturn, isBillingTrouble } from "@/lib/checkoutReturn";
+import { AlertTriangle } from "lucide-react";
 import FeedbackPrompt from "@/components/support/FeedbackPrompt";
 import BillingTermsSummary from "@/components/BillingTermsSummary";
 import PaymentEnvBadge from "@/components/app/PaymentEnvBadge";
@@ -94,10 +96,30 @@ export default function AppBilling() {
 
   useEffect(() => { load(); }, [user]);
 
-  // Post-payment provisioning: handle ?checkout=success and route the user
+  // Post-checkout return handling. Success keeps the existing Stripe behaviour;
+  // cancellation / failure / unknown values must never claim a payment.
   useEffect(() => {
-    const flag = params.get("checkout");
-    if (!flag) return;
+    const parsed = classifyCheckoutReturn(params.get("checkout"));
+    if (!parsed) return;
+    const clearParams = () => {
+      params.delete("checkout");
+      params.delete("session_id");
+      setParams(params, { replace: true });
+    };
+
+    if (parsed.status !== "success") {
+      if (parsed.status === "cancelled") {
+        toast.info("Checkout cancelled", { description: "No payment was taken. You can try again any time." });
+      } else if (parsed.status === "failed") {
+        toast.error("Payment didn't go through", { description: "No charge was made. Please try again or contact support." });
+      } else {
+        toast.info("Checkout closed", { description: "We couldn't confirm a payment for this return. Your billing details below are up to date." });
+      }
+      clearParams();
+      return;
+    }
+
+    const flag = parsed.flag;
     (async () => {
       setShowCheckoutFeedback(true);
       toast.success(tc("toasts.paymentReceived"));
@@ -113,12 +135,12 @@ export default function AppBilling() {
       } else if (flag === "growth" || flag === "agency") {
         navigate("/app", { replace: true });
       } else {
-        // strip the query param
-        params.delete("checkout"); params.delete("session_id"); setParams(params, { replace: true });
+        clearParams();
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   const buyPlan = (id: PlanId) => setPendingPlan(id);
 
@@ -161,16 +183,24 @@ export default function AppBilling() {
 
 
 
-      {stripeSub?.status === "past_due" && (
+      {isBillingTrouble(stripeSub?.status) && (
         <Card className="border-destructive">
           <CardContent className="p-4 flex items-center justify-between gap-3">
-            <div>
-              <div className="font-semibold text-destructive">Payment failed</div>
-              <p className="text-sm text-muted-foreground">Your last renewal didn't go through. Update your payment method to keep your plan active.</p>
+            <div className="flex gap-3">
+              <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+              <div>
+                <div className="font-semibold text-destructive">
+                  {stripeSub?.status === "on_hold" ? "Subscription on hold" : "Payment failed"}
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Your last renewal didn't go through. Update your payment method to keep your plan active.
+                </p>
+              </div>
             </div>
             <Button onClick={() => buyPlan((stripeSub.plan as PlanId) || "growth")}>Retry payment</Button>
           </CardContent>
         </Card>
+
       )}
 
       {/* Best next step — Free Preview conversion path */}
