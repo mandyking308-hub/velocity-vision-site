@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CreditCard, Mail, Briefcase, Scale, FileText } from "lucide-react";
+import BookingLinkSettings from "@/components/app/BookingLinkSettings";
 
 const items = [
   { title: "Email connections", desc: "Connect your sender and verify SPF / DKIM for deliverability.", icon: Mail, to: "/app/settings/email" },
