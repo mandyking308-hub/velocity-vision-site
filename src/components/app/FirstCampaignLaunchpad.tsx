@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Circle, ArrowRight, Rocket } from "lucide-react";
+import { CheckCircle2, Circle, ArrowRight, Rocket, Target } from "lucide-react";
 import { resolveLaunchpad, type LaunchpadSignals } from "@/lib/launchpad";
 
 /**
