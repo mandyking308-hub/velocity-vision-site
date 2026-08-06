@@ -120,6 +120,9 @@ export default function AppBilling() {
     }
 
     const flag = parsed.flag;
+    // Strip the return params up-front so a refresh mid-polling can never
+    // replay the success message; routing below is unaffected.
+    clearParams();
     (async () => {
       setShowCheckoutFeedback(true);
       toast.success(tc("toasts.paymentReceived"));
@@ -134,10 +137,9 @@ export default function AppBilling() {
         navigate("/app/campaigns/new", { replace: true });
       } else if (flag === "growth" || flag === "agency") {
         navigate("/app", { replace: true });
-      } else {
-        clearParams();
       }
     })();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
