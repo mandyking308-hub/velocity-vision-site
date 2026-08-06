@@ -36,6 +36,7 @@ export default function ReplyTriagePanel({
   onChanged?: () => void;
 }) {
   const { guardAction } = useDemo();
+  const { bookingUrl } = useBookingUrl();
   const [text, setText] = useState(lead.reply_snippet || "");
   const [override, setOverride] = useState<ReplyCategory | "">((lead.reply_category as ReplyCategory) || "");
   const [busy, setBusy] = useState(false);
