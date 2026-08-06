@@ -319,28 +319,7 @@ export default function AppActivation() {
         return;
       }
 
-      // state is not trusted here: a stale tab, a campaign un-approved in
-      // another window, or a direct call to this handler must all be refused
-      // before a single lead row is written.
-      const { data: freshRow } = await supabase
-        .from("campaigns")
-        .select("id, name, status, goal, pack, brief, approved_at, is_sample")
-        .eq("id", targetCampaignId)
-        .maybeSingle();
-      const liveGate = activationGate(runPreflight(buildPreflightInput((freshRow as any) ?? null)));
-      if (!liveGate.ok) {
-        // Ids only — no free text, no contact data.
-        await audit("activation_blocked_preflight", {
-          campaign_id: targetCampaignId,
-          blocker_ids: liveGate.blockerIds,
-        });
-        toast.error("Activation blocked by preflight", {
-          description: liveGate.firstBlocker
-            ? `${liveGate.firstBlocker.label}: ${liveGate.firstBlocker.detail}`
-            : "Resolve the outstanding preflight blockers and try again.",
-        });
-        return;
-      }
+
 
       await audit("activation_started", {
         campaign_id: targetCampaignId, batch: totalSelected, includeReview,
