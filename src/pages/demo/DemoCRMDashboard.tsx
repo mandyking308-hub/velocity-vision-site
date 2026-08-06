@@ -358,10 +358,11 @@ export default function DemoCRMDashboard() {
         </TabsContent>
 
         <TabsContent value="video" className="space-y-3 mt-4">
-          <Section title="3 hooks"><ol className="list-decimal pl-5">{pack.video.hooks.map((h, i) => <li key={i}>{h}</li>)}</ol></Section>
-          <Section title="30-second script"><pre className="whitespace-pre-wrap font-sans text-sm">{pack.video.script30}</pre></Section>
-          <Section title="Shot list"><ul className="list-disc pl-5">{pack.video.shotList.map((s, i) => <li key={i}>{s}</li>)}</ul></Section>
+          <Section title="3 hooks"><ol className="list-decimal pl-5">{(pack.video?.hooks ?? []).map((h, i) => <li key={i}>{h}</li>)}</ol></Section>
+          <Section title="30-second script"><pre className="whitespace-pre-wrap font-sans text-sm">{pack.video?.script30 ?? "Not included in this sample pack."}</pre></Section>
+          <Section title="Shot list"><ul className="list-disc pl-5">{(pack.video?.shotList ?? []).map((s, i) => <li key={i}>{s}</li>)}</ul></Section>
         </TabsContent>
+
 
         <TabsContent value="capture" className="space-y-3 mt-4">
           <Card><CardHeader><CardTitle className="text-base">{pack.leadCapture.formTitle}</CardTitle></CardHeader>
