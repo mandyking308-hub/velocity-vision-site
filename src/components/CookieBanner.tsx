@@ -74,6 +74,16 @@ const CookieBanner = () => {
     setManage(false);
   };
 
+  // Publish banner visibility so page content can reserve safe bottom space
+  // instead of being covered. Purely presentational — consent state unchanged.
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const root = document.documentElement;
+    if (visible) root.setAttribute("data-cookie-banner", "visible");
+    else root.removeAttribute("data-cookie-banner");
+    return () => root.removeAttribute("data-cookie-banner");
+  }, [visible]);
+
   if (!visible) return null;
 
   return (
