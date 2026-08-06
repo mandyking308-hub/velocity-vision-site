@@ -6,6 +6,87 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { generatePack, CampaignBrief } from "@/lib/campaignPack";
+import FirstCampaignLaunchpad from "@/components/app/FirstCampaignLaunchpad";
+import CampaignPreflight from "@/components/app/CampaignPreflight";
+import ReplyCommandCentre from "@/components/app/ReplyCommandCentre";
+import { runPreflight } from "@/lib/campaignPreflight";
+import type { LaunchpadSignals } from "@/lib/launchpad";
+
+// Sample-only state for the public demo. Nothing here touches real data.
+const DEMO_LAUNCHPAD: LaunchpadSignals = {
+  hasBrief: true,
+  approvedContacts: 1284,
+  hasContent: true,
+  senderReady: true,
+  preflightBlockers: 1,
+  approved: false,
+  isSample: true,
+  activated: false,
+  campaignId: null,
+};
+
+const DEMO_PREFLIGHT = runPreflight({
+  campaign: {
+    id: "demo-campaign-1",
+    name: "Spring Lead Sprint",
+    goal: "leads",
+    status: "draft",
+    pack: { emails: [{ subject: "A quicker way to launch", body: "Sample body copy for the demo." }] },
+    brief: { cta: "Book a 15-min walkthrough", audience: "SMB founders", offer: "AI campaign launchpad" },
+    approved_at: null,
+    is_sample: true,
+    start_at: null,
+    cadence_type: "one_off",
+  },
+  safeContacts: 1284,
+  reviewContacts: 92,
+  senderState: "ready_full",
+  senderEmail: "hello@example.com",
+  remainingToday: 80,
+  pauseReasons: [],
+  creditsAvailable: 18,
+  creditsRequired: 12,
+  legalAccepted: true,
+  unsubscribeReady: true,
+});
+
+const DEMO_REPLIES = [
+  { id: "d1", name: "Hannah Wright", reply_category: "interested", reply_snippet: "Sounds great — happy to chat next week.", reply_triaged_at: null },
+  { id: "d2", name: "Marco Lopez", reply_category: "question", reply_snippet: "How does it handle multiple workspaces?", reply_triaged_at: null },
+  { id: "d3", name: "Priya Shah", reply_category: "not_now", reply_snippet: "Bad timing — circle back next quarter.", reply_triaged_at: null },
+  { id: "d4", name: "Tom Clarke", reply_category: "unsubscribe", reply_snippet: "Please remove me from this list.", reply_triaged_at: null },
+  { id: "d5", name: "Aisha Khan", reply_category: "bounce", reply_snippet: "Delivery has failed: mailbox unavailable.", reply_triaged_at: null },
+  { id: "d6", name: "Owen Baker", reply_category: "auto_reply", reply_snippet: "Out of office until Monday.", reply_triaged_at: null },
+];
+
+
+const DEMO_BRIEF: CampaignBrief = {
+  name: "Spring Lead Sprint",
+  goal: "leads",
+  kind: "lead_gen",
+  offer: "AI campaign launchpad for SMBs",
+  audience: "SMB founders and marketing leads",
+  industry: "B2B SaaS",
+  geography: "UK & EU",
+  pricePoint: "£249/month",
+  tone: "Confident, friendly, founder-led",
+  cta: "Book a 15-min walkthrough",
+  channels: ["LinkedIn", "Email", "PR"],
+  deadline: "End of quarter",
+  notes: "Lean into time-to-launch.",
+  outputs: ["full"],
+};
+
+const DEMO_LEADS = [
+  { name: "Hannah Wright", source: "Spring Lead Sprint", stage: "new", action: "Submitted form" },
+  { name: "Marco Lopez", source: "Spring Lead Sprint", stage: "contacted", action: "Replied to email 1" },
+  { name: "Priya Shah", source: "Spring Lead Sprint", stage: "qualified", action: "Booked call" },
+  { name: "Tom Clarke", source: "Q1 PR Push", stage: "won", action: "Signed" },
+  { name: "Aisha Khan", source: "Q1 PR Push", stage: "lost", action: "Not a fit" },
+];
+
+const STAGES = ["new", "contacted", "qualified", "won", "lost"] as const;
+
 export default function DemoCRMDashboard() {
   const pack = useMemo(() => generatePack(DEMO_BRIEF), []);
   const [tab, setTab] = useState("dashboard");
@@ -27,6 +108,8 @@ export default function DemoCRMDashboard() {
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="flex flex-wrap h-auto">
           <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+          <TabsTrigger value="launchpad">Launchpad &amp; readiness</TabsTrigger>
+          <TabsTrigger value="replies">Reply intent</TabsTrigger>
           <TabsTrigger value="builder">Guided builder</TabsTrigger>
           <TabsTrigger value="pack">Campaign pack</TabsTrigger>
           <TabsTrigger value="social">Social pack</TabsTrigger>
@@ -36,6 +119,23 @@ export default function DemoCRMDashboard() {
           <TabsTrigger value="pipeline">Pipeline</TabsTrigger>
           <TabsTrigger value="reporting">Reporting</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="launchpad" className="space-y-4 mt-4">
+          <p className="text-sm text-muted-foreground">
+            Sample workspace state. No real contacts, no sending — this shows how Velocity guides a first
+            campaign and blocks activation until every check passes.
+          </p>
+          <FirstCampaignLaunchpad signals={DEMO_LAUNCHPAD} />
+          <CampaignPreflight result={DEMO_PREFLIGHT} title="Sender & campaign preflight (sample)" />
+        </TabsContent>
+
+        <TabsContent value="replies" className="space-y-4 mt-4">
+          <p className="text-sm text-muted-foreground">
+            Sample replies grouped by intent. Compliance items are surfaced first and never treated as
+            opportunities.
+          </p>
+          <ReplyCommandCentre leads={DEMO_REPLIES} readOnly />
+        </TabsContent>
 
 
 
