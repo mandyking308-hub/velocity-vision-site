@@ -272,3 +272,14 @@ iframe.goog-te-menu-frame,
 iframe.goog-te-banner-frame {
   pointer-events: none !important;
 }
+
+/* Reserve bottom space while the cookie consent banner is on screen so page
+   navigation controls are never covered. Consent behaviour is untouched. */
+[data-cookie-banner="visible"] .copilot-safe-bottom {
+  padding-bottom: 20rem;
+}
+@media (min-width: 640px) {
+  [data-cookie-banner="visible"] .copilot-safe-bottom {
+    padding-bottom: 14rem;
+  }
+}
