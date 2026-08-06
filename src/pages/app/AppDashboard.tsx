@@ -421,6 +421,15 @@ export default function AppDashboard() {
       {/* A2. Guided first campaign launchpad — live status, next genuine blocker */}
       <FirstCampaignLaunchpad signals={launchpadSignals} />
 
+      {/* A2b. Truthful outcome funnel — stored events only */}
+      <OutcomeFunnelPanel
+        leads={funnelLeads}
+        opportunities={funnelOpps}
+        campaigns={campaignNames}
+        filters={funnelFilters}
+        onFiltersChange={setFunnelFilters}
+      />
+
       {/* A3. Preflight scorecard for the working campaign */}
       <CampaignPreflight result={dashboardPreflight} title="Sender & campaign preflight" compact />
 
