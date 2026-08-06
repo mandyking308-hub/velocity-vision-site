@@ -169,21 +169,38 @@ export interface OverrideAudit {
   /** True when a human classification differs from what the classifier says. */
   overridden: boolean;
   stored: ReplyCategory | null;
+  /**
+   * What the classifier reads from the text. When compliance text is present
+   * this is the compliance category, never a sales label.
+   */
   suggested: ReplyCategory;
+  /** The classification actually in force — always the compliance result when one exists. */
+  effective: ReplyCategory;
+  /** The deterministic compliance signal, if any. */
+  complianceLocked: "unsubscribe" | "bounce" | null;
+  /** True when a stored label was ignored because compliance text overrides it. */
+  storedIgnored: boolean;
   triagedAt: string | null;
 }
 
 /**
  * Describes whether the stored category is a human override of the automatic
- * classification. Pure — the caller decides how to render or persist it.
+ * classification, and which classification is actually in force. A stored sales
+ * label is never reported as effective when deterministic compliance text
+ * exists. Pure — the caller decides how to render or persist it.
  */
 export function describeOverride(lead: IntentLead): OverrideAudit {
-  const suggested = classifyReply(lead.reply_snippet).category;
+  const compliance = deterministicCompliance(lead.reply_snippet);
   const stored = isValidCategory(lead.reply_category) ? lead.reply_category : null;
+  const effective = resolveIntent(lead);
+  const suggested = compliance ?? classifyReply(lead.reply_snippet).category;
   return {
-    overridden: stored !== null && stored !== suggested,
+    overridden: stored !== null && stored !== suggested && effective === stored,
     stored,
     suggested,
+    effective,
+    complianceLocked: compliance,
+    storedIgnored: stored !== null && stored !== effective,
     triagedAt: lead.reply_triaged_at ?? null,
   };
 }
@@ -192,8 +209,15 @@ export function describeOverride(lead: IntentLead): OverrideAudit {
 export function buildOverrideAuditDetails(
   lead: IntentLead,
   next: ReplyCategory,
-): { from: ReplyCategory | null; to: ReplyCategory; suggested: ReplyCategory; manual: true } {
-  const { stored, suggested } = describeOverride(lead);
-  return { from: stored, to: next, suggested, manual: true };
+): {
+  from: ReplyCategory | null;
+  to: ReplyCategory;
+  suggested: ReplyCategory;
+  effective: ReplyCategory;
+  compliance_locked: "unsubscribe" | "bounce" | null;
+  manual: true;
+} {
+  const { stored, suggested, effective, complianceLocked } = describeOverride(lead);
+  return { from: stored, to: next, suggested, effective, compliance_locked: complianceLocked, manual: true };
 }
 
