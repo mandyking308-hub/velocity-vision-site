@@ -290,6 +290,22 @@ export default function ReplyTriagePanel({
 
         </div>
 
+        {isWaitingForFollowUp({ ...(lead as any), reply_category: category }) && (
+          <p className="text-xs text-amber-700" data-testid="reply-waiting">
+            {describeWait(lead as any)} — no action recorded yet.
+          </p>
+        )}
+
+        <MeetingHandoffPanel
+          lead={lead as any}
+          category={category}
+          replyText={text}
+          bookingUrl={bookingUrl}
+          onChanged={onChanged}
+        />
+
+
+
         {draft && (
           <div className="space-y-1.5 pt-1 border-t">
             <Label className="text-xs">Editable draft — review before sending from your mailbox</Label>
