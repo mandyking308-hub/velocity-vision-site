@@ -21,6 +21,7 @@ const plans = [
   },
   {
     name: "Growth",
+    slug: "growth",
     price: "£249",
     unit: "per month",
     desc: "Monthly self-serve workspace for ongoing customer-controlled activity.",
