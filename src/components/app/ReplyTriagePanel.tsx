@@ -248,7 +248,7 @@ export default function ReplyTriagePanel({
           open={pipelineOpen}
           onOpenChange={setPipelineOpen}
           lead={mp}
-          onMoved={() => { setPipelineOpen(false); onChanged?.(); }}
+          onDone={() => { setPipelineOpen(false); onChanged?.(); }}
         />
       </CardContent>
     </Card>
