@@ -62,6 +62,7 @@ import AppLayout from "./pages/app/AppLayout.tsx";
 import AppDashboard from "./pages/app/AppDashboard.tsx";
 import AppCampaigns from "./pages/app/AppCampaigns.tsx";
 import AppCampaignNew from "./pages/app/AppCampaignNew.tsx";
+import AppCampaignCopilot from "./pages/app/AppCampaignCopilot";
 import AppCampaignWorkspace from "./pages/app/AppCampaignWorkspace.tsx";
 import AppLeads from "./pages/app/AppLeads.tsx";
 import AppTemplates from "./pages/app/AppTemplates.tsx";
@@ -181,6 +182,7 @@ const AnimatedRoutes = () => {
           <Route path="data-vault/imports/:id" element={<AppDataVaultImport />} />
           <Route path="campaigns" element={<AppCampaigns />} />
           <Route path="campaigns/new" element={<AppCampaignNew />} />
+          <Route path="campaigns/copilot" element={<AppCampaignCopilot />} />
           <Route path="campaigns/:id" element={<AppCampaignWorkspace />} />
           <Route path="leads" element={<AppLeads />} />
           <Route path="follow-up" element={<AppFollowUp />} />
