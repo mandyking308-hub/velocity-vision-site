@@ -255,7 +255,15 @@ export default function AppActivation() {
 
     // ---- Execution guard. Runs before any state change and before any write.
     // The button state is never trusted: this handler must refuse on its own
-    // if the UI is stale or bypassed entirely.
+    // if the UI is stale or bypassed entirely (e.g. the legal modal calling
+    // runActivation() directly). Same helper as the button calculation.
+    const preVerdict = canExecuteActivation(preflight, selectedCampaignRow as any);
+    if (!preVerdict.ok) {
+      // No database writes at all on this path — not even an audit row.
+      toast.error("Activation blocked by preflight", { description: preVerdict.reason });
+      return;
+    }
+
     const blockAndReport = async (label: string, detail: string, blockerIds: string[]) => {
       // Best-effort audit, ids only — no free text, no contact data.
       await audit("activation_blocked_preflight", {
@@ -265,15 +273,6 @@ export default function AppActivation() {
       toast.error("Activation blocked by preflight", { description: `${label}: ${detail}` });
     };
 
-    if (!preflight.canActivate) {
-      const first = preflight.blockers[0];
-      await blockAndReport(
-        first?.label || "Preflight incomplete",
-        first?.detail || "Resolve the outstanding preflight blockers and try again.",
-        preflight.blockers.map((b) => b.id),
-      );
-      return;
-    }
     if (!gate.ok) {
       await blockAndReport(
         gate.firstBlocker?.label || "Preflight incomplete",
@@ -294,21 +293,16 @@ export default function AppActivation() {
         .eq("id", targetCampaignId)
         .maybeSingle();
 
-      // Explicit, non-negotiable execution guards, independent of the scoring
-      // in runPreflight: no campaign, a sample campaign, or a campaign without
-      // recorded human approval can never create leads.
-      const hardFailure =
-        !freshRow
-          ? { id: "campaign", label: "A campaign is selected", detail: "This campaign no longer exists." }
-          : (freshRow as any).is_sample === true
-          ? { id: "sample", label: "Not a sample campaign", detail: "Sample campaigns are for practice only and can never contact anyone." }
-          : !(freshRow as any).approved_at
-          ? { id: "approval", label: "Final human approval recorded", detail: "Approve the campaign content before preparing leads." }
-          : null;
-      if (hardFailure) {
-        await blockAndReport(hardFailure.label, hardFailure.detail, [hardFailure.id]);
+      // Same helper again, now against live data.
+      const liveVerdict = canExecuteActivation(
+        runPreflight(buildPreflightInput((freshRow as any) ?? null)),
+        (freshRow as any) ?? null,
+      );
+      if (!liveVerdict.ok) {
+        await blockAndReport("Activation blocked", liveVerdict.reason, liveVerdict.blockerIds);
         return;
       }
+
 
       const liveGate = activationGate(runPreflight(buildPreflightInput((freshRow as any) ?? null)));
       if (!liveGate.ok) {
