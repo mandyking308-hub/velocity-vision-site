@@ -27,6 +27,8 @@ import { formatCampaignPackMarkdown, slugify } from "@/lib/campaignPackExport";
 import { checkPackQuality } from "@/lib/campaignQuality";
 import { formatQualityFailure } from "@/lib/campaignQualityToast";
 import CampaignPreflight from "@/components/app/CampaignPreflight";
+import { CopilotPlanCard, CopilotSequenceEditor } from "@/components/app/CopilotPlanCard";
+import { readCopilotPlan } from "@/lib/copilotBrief";
 import { runPreflight } from "@/lib/campaignPreflight";
 import { computeReadiness } from "@/lib/senderReadiness";
 import { useLegalStatus } from "@/lib/legalCompliance";
@@ -252,6 +254,7 @@ export default function AppCampaignWorkspace() {
   const pack = c.pack;
   const brief = c.brief;
   const channelCfg = getCampaignChannelConfig(brief);
+  const copilotPlan = readCopilotPlan(brief);
   const lifecycleCfg = {
     cadence_type: (c.cadence_type || "one_off") as CadenceType,
     start_at: c.start_at, cadence_end_at: c.cadence_end_at,
@@ -462,6 +465,7 @@ export default function AppCampaignWorkspace() {
               <p><strong>Deadline:</strong> {brief?.deadline || "—"}</p>
               <p><strong>Channels:</strong> {filterSupportedChannels(brief?.channels).join(", ")}</p>
             </Section>
+            {copilotPlan && <CopilotPlanCard plan={copilotPlan} />}
           </TabsContent>
 
           <TabsContent value="strategy" className="space-y-4 mt-4">
@@ -490,9 +494,19 @@ export default function AppCampaignWorkspace() {
 
           {channelCfg.includeEmail && (
             <TabsContent value="emails" className="space-y-3 mt-4">
+              {copilotPlan && (
+                <CopilotSequenceEditor
+                  campaignId={c.id}
+                  plan={copilotPlan}
+                  brief={brief}
+                  pack={pack}
+                  onSaved={({ brief: nb, pack: np }) => setC({ ...c, brief: nb, pack: np })}
+                />
+              )}
               <EmailSequenceSender emails={pack.emails} campaignId={c.id} workspaceId={workspaceId} leads={leads} />
             </TabsContent>
           )}
+
 
           {channelCfg.includeSocial && <TabsContent value="social" className="space-y-4 mt-4">
             <Section title="Launch posts">
