@@ -372,19 +372,12 @@ export default function AppDashboard() {
       {/* Free Preview status + expiry nudges (renders nothing for paid plans) */}
       <FreePreviewStatusCard />
 
-      {/* A2. First-time onboarding checklist (auto-hides once complete) */}
-      <OnboardingChecklist
-        signals={{
-          hasContacts: vault.total_contacts > 0,
-          hasReviewed: vault.clean + vault.needs_review + vault.risky + vault.blocked > 0,
-          hasSafeSegment: vault.safe_to_activate > 0,
-          hasSender: sender.connected,
-          hasAssets: campaignRows.length > 0,
-          hasCadence: campaignRows.some((c) => !!c.start_at || (c.cadence_type && c.cadence_type !== "one_off")),
-          hasActivated: sendsUsedToday + sendsScheduledToday > 0 || sender.last_send_at !== null,
-          hasWorkedReplies: inter.replies_due + pipeline.opportunities > 0,
-        }}
-      />
+      {/* A2. Guided first campaign launchpad — live status, next genuine blocker */}
+      <FirstCampaignLaunchpad signals={launchpadSignals} />
+
+      {/* A3. Preflight scorecard for the working campaign */}
+      <CampaignPreflight result={dashboardPreflight} title="Sender & campaign preflight" compact />
+
 
 
       {/* B. Database Health */}
