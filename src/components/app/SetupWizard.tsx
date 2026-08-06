@@ -9,6 +9,16 @@ import { FREE_LIMITS } from "@/lib/credits";
 
 const STORAGE_KEY = "vv_setup_wizard_dismissed_v1";
 
+/**
+ * Routes where the guided setup modal must never open: it would sit on top of
+ * the primary first-value flow and intercept its fields and buttons. The tour
+ * is only deferred, never dismissed, so it resumes on the next eligible route.
+ */
+export const TOUR_SUPPRESSED_ROUTES = ["/app/campaigns/copilot"];
+
+export const isTourSuppressedRoute = (pathname: string) =>
+  TOUR_SUPPRESSED_ROUTES.some((r) => pathname === r || pathname.startsWith(`${r}/`));
+
 const STEPS: Array<{ title: string; body: string; cta: string; href: string }> = [
   { title: "Create your workspace", body: "One workspace holds your data, campaigns and pipeline. Set your goal and audience next.", cta: "Open workspaces", href: "/app/workspaces" },
   { title: "Upload your first contacts", body: `Free Preview supports up to ${FREE_LIMITS.maxContacts} contacts. CSV upload with quality review is included.`, cta: "Go to Data Vault", href: "/app/data-vault" },
