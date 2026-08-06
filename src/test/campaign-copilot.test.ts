@@ -163,7 +163,7 @@ describe("copilot — sample mode is non-operational", () => {
       legalAccepted: true, unsubscribeReady: true,
     } as PreflightInput;
     const result = runPreflight(input);
-    expect(result.canProceed).toBe(false);
-    expect(result.blockers.some((b) => /sample/i.test(b.title + b.detail))).toBe(true);
+    expect(result.canActivate).toBe(false);
+    expect(result.blockers.some((b) => /sample/i.test(`${b.label} ${b.detail}`))).toBe(true);
   });
 });
