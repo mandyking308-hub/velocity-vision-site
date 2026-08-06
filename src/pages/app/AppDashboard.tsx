@@ -322,7 +322,11 @@ export default function AppDashboard() {
     isSample: workingCampaign?.is_sample === true,
     activated: pipeline.leads > 0 || sendsUsedToday + sendsScheduledToday > 0,
     campaignId: workingCampaign?.id ?? null,
+    repliesWaiting: inter.replies_due,
+    urgentReplies: inter.replies_due + inter.bounces,
+    reviewContacts: vault.needs_review,
   };
+
 
 
   // Gate: no workspace → send to a clean create-first-workspace prompt.
