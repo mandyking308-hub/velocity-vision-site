@@ -211,10 +211,16 @@ export default function AppActivation() {
   });
   const preflight = useMemo(() => runPreflight(buildPreflightInput(selectedCampaignRow)), [selectedCampaignRow, counts, defaultConn, senderReadinessState, fromEmail, safety, remaining, totalSelected, legal.isCompliant]);
   const gate = useMemo(() => activationGate(preflight), [preflight]);
+  // Single source of truth shared by the button and by runActivation().
+  const execVerdict = useMemo(
+    () => canExecuteActivation(preflight, selectedCampaignRow as any),
+    [preflight, selectedCampaignRow],
+  );
   const activationBlocked = !legal.isCompliant;
   const canActivate =
-    totalSelected > 0 && !activationBlocked && preflight.canActivate && gate.ok &&
+    totalSelected > 0 && !activationBlocked && execVerdict.ok && gate.ok &&
     (!wantsRisky || riskAck) && !!targetCampaignId && !activating;
+
 
 
 
