@@ -64,7 +64,13 @@ interface CadenceRow {
   start_at: string | null; cadence_end_at: string | null;
   next_run_at: string | null; timezone: string | null;
   runs_completed: number | null;
+  goal?: string | null;
+  brief?: any;
+  pack?: any;
+  approved_at?: string | null;
+  is_sample?: boolean | null;
 }
+
 
 export default function AppDashboard() {
   const { user } = useAuth();
