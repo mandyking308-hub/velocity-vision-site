@@ -95,6 +95,18 @@ export default function ReplyCommandCentre({
         ))}
       </div>
 
+      <div className="flex flex-wrap gap-1.5" data-testid="queue-filters">
+        {QUEUE_FILTERS.map((q) => (
+          <Chip
+            key={q.key}
+            active={queue === q.key}
+            onClick={() => setQueue(q.key)}
+            label={q.label}
+            count={queueCounts[q.key]}
+          />
+        ))}
+      </div>
+
       {group !== "all" && <p className="text-xs text-muted-foreground">{INTENT_GROUPS[group].description}</p>}
 
       <div className="flex flex-wrap gap-1.5">
