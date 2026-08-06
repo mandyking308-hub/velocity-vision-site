@@ -187,8 +187,8 @@ describe("bounce triage", () => {
 
   it("suppresses only on explicit confirmation, with a technical reason", () => {
     const panel = readFileSync("src/components/app/ReplyTriagePanel.tsx", "utf8");
+    expect(panel).toContain('isBounce ? "hard_bounce" : "reply_optout"');
     expect(panel).toContain('reason: "hard_bounce"');
-    expect(panel).toContain('reason: "reply_optout"');
     // Suppression lives inside an explicit click handler, not the classifier.
     expect(panel).toMatch(/const suppress = async \(\) => \{/);
     expect(panel).toMatch(/onClick=\{suppress\}/);
