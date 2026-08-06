@@ -55,6 +55,8 @@ export default function DemoCRMDashboard() {
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="flex flex-wrap h-auto">
           <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+          <TabsTrigger value="launchpad">Launchpad &amp; readiness</TabsTrigger>
+          <TabsTrigger value="replies">Reply intent</TabsTrigger>
           <TabsTrigger value="builder">Guided builder</TabsTrigger>
           <TabsTrigger value="pack">Campaign pack</TabsTrigger>
           <TabsTrigger value="social">Social pack</TabsTrigger>
@@ -64,6 +66,25 @@ export default function DemoCRMDashboard() {
           <TabsTrigger value="pipeline">Pipeline</TabsTrigger>
           <TabsTrigger value="reporting">Reporting</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="launchpad" className="space-y-4 mt-4">
+          <p className="text-sm text-muted-foreground">
+            Sample workspace state. No real contacts, no sending — this shows how Velocity guides a first
+            campaign and blocks activation until every check passes.
+          </p>
+          <FirstCampaignLaunchpad signals={DEMO_LAUNCHPAD} />
+          <CampaignPreflight result={DEMO_PREFLIGHT} title="Sender & campaign preflight (sample)" />
+        </TabsContent>
+
+        <TabsContent value="replies" className="space-y-4 mt-4">
+          <p className="text-sm text-muted-foreground">
+            Sample replies grouped by intent. Compliance items are surfaced first and never treated as
+            opportunities.
+          </p>
+          <ReplyCommandCentre leads={DEMO_REPLIES} readOnly />
+        </TabsContent>
+
+
 
         <TabsContent value="dashboard" className="space-y-6 mt-4">
           {/* Top summary */}
