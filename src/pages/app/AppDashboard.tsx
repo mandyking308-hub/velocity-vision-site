@@ -335,7 +335,10 @@ export default function AppDashboard() {
           </div>
         </div>
         <div className="flex flex-wrap gap-2 mt-6">
-        <Button size="lg" onClick={() => navigate("/app/activate")}>
+        <Button size="lg" onClick={() => navigate("/app/campaigns/copilot")}>
+            <Sparkles className="h-4 w-4 mr-2" /> Build my first campaign
+          </Button>
+          <Button size="lg" variant="outline" onClick={() => navigate("/app/activate")}>
             <Send className="h-4 w-4 mr-2" /> Activate a safe segment
           </Button>
           <Button size="lg" variant="outline" onClick={() => navigate("/app/data-vault/upload")}>

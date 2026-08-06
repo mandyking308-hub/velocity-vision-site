@@ -29,7 +29,7 @@ const STEPS: Step[] = [
   { key: "hasReviewed", label: "Review data quality", desc: "We flag risky, duplicate or blocked records before sending.", to: "/app/data-vault", cta: "Review", icon: ShieldCheck },
   { key: "hasSafeSegment", label: "Create a safe segment", desc: "Only clean, opt-in contacts get activated.", to: "/app/activate", cta: "Open Activate", icon: Send },
   { key: "hasSender", label: "Connect your sender", desc: "Authenticate SPF / DKIM to protect deliverability.", to: "/app/settings/email", cta: "Connect", icon: Mail },
-  { key: "hasAssets", label: "Create outreach assets", desc: "Email sequence, social pack, press release or video pack.", to: "/app/campaigns/new", cta: "Create", icon: Sparkles },
+  { key: "hasAssets", label: "Create outreach assets", desc: "Email sequence, social pack, press release or video pack.", to: "/app/campaigns/copilot", cta: "Build", icon: Sparkles },
   { key: "hasCadence", label: "Set your campaign timing", desc: "One-off, weekly, monthly — your outreach rhythm.", to: "/app/campaigns", cta: "Schedule", icon: Clock },
   { key: "hasActivated", label: "Activate safely", desc: "Send to your safe segment within your daily safety cap.", to: "/app/activate", cta: "Activate", icon: Send },
   { key: "hasWorkedReplies", label: "Work replies & move to pipeline", desc: "Turn warm conversations into opportunities and revenue.", to: "/app/follow-up", cta: "Open queue", icon: MessageSquare },
