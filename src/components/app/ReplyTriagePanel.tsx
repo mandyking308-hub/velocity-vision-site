@@ -6,8 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  Inbox, Sparkles, Copy, ShieldOff, Clock, TrendingUp, Check, Loader2, Info,
+  Inbox, Sparkles, Copy, ShieldOff, MailX, Clock, TrendingUp, Check, Loader2, Info,
 } from "lucide-react";
+
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useDemo } from "@/contexts/DemoContext";
