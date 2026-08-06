@@ -188,6 +188,23 @@ export function classifyReply(text: string | null | undefined): TriageSuggestion
     };
   }
 
+  // Hard precedence, applied before weights.
+  //
+  // 1. An explicit opt-out always wins: it is a compliance instruction, and it
+  //    outranks a bounce notice quoting the original message.
+  // 2. A delivery failure outranks the general negative/question rules, which
+  //    would otherwise fire on boilerplate inside the bounce report.
+  for (const cat of ["unsubscribe", "bounce"] as const) {
+    if (scores.has(cat)) {
+      const score = scores.get(cat)!;
+      return {
+        category: cat,
+        confidence: score >= 8 ? "high" : "medium",
+        reasons,
+      };
+    }
+  }
+
   let best: ReplyCategory = "uncategorised";
   let bestScore = 0;
   let runnerUp = 0;
@@ -200,6 +217,7 @@ export function classifyReply(text: string | null | undefined): TriageSuggestion
       runnerUp = score;
     }
   }
+
 
   const margin = bestScore - runnerUp;
   const confidence: TriageSuggestion["confidence"] =
