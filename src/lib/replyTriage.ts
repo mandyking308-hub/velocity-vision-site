@@ -49,6 +49,13 @@ export const REPLY_CATEGORIES: Record<ReplyCategory, ReplyCategoryMeta> = {
     suggestedAction: "Answer the question directly, then re-offer the next step.",
     actionKey: "reply",
   },
+  referral: {
+    label: "Referral",
+    description: "Points you at a named colleague or a different address.",
+    tone: "bg-violet-100 text-violet-700",
+    suggestedAction: "Review the suggested contact, then reach out with the referrer named.",
+    actionKey: "review_referral",
+  },
   not_now: {
     label: "Not now",
     description: "Open in principle, wrong timing.",
