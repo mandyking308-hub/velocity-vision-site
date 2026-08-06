@@ -38,6 +38,7 @@ export default function ReplyCommandCentre({
   readOnly?: boolean;
 }) {
   const [group, setGroup] = useState<IntentGroup | "all">("all");
+  const [queue, setQueue] = useState<QueueFilter>("all");
   const [filter, setFilter] = useState<ReplyCategory | "all">("all");
   const counts = useMemo(() => summariseIntents(leads), [leads]);
   const groupCounts = useMemo(() => summariseGroups(leads), [leads]);
