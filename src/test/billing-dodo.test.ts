@@ -4,12 +4,16 @@ import { buildSanitisedError, redactText, safeRoute } from "@/lib/clientErrorRep
 import {
   DODO_HANDLED_EVENTS,
   dodoReturnUrls,
+  DODO_PORTAL_RETURN_URL,
+  isSafeDodoPortalLink,
+  loadDodoPortalConfig,
   dodoSubscriptionStatus,
   isAllowedProductKey,
   loadDodoConfig,
   parseProductMap,
   verifyDodoWebhook,
 } from "../../supabase/functions/_shared/dodo";
+import { resolveBillingPortalFunction } from "@/lib/checkoutReturn";
 
 // ── A. Billing return states ──────────────────────────────────────────────
 describe("classifyCheckoutReturn", () => {
@@ -197,5 +201,41 @@ describe("client error sanitisation", () => {
     expect(payload.message).not.toContain("lead@corp.com");
     expect(payload.route).toBe("/app/leads");
     expect(Object.keys(payload).sort()).toEqual(["build", "message", "name", "route", "stack"]);
+  });
+});
+
+describe("dodo customer portal", () => {
+  it("portal config does not require the product map", () => {
+    const cfg = loadDodoPortalConfig((k) => (k === "DODO_API_KEY" ? "sk_test" : undefined));
+    expect(cfg.ok).toBe(true);
+    expect(cfg.ok && cfg.config.baseUrl).toContain("test.dodopayments.com");
+  });
+
+  it("portal config fails closed without an api key", () => {
+    const cfg = loadDodoPortalConfig(() => undefined);
+    expect(cfg.ok).toBe(false);
+    expect(!cfg.ok && cfg.reason).toBe("missing_api_key");
+  });
+
+  it("return url is the allow-listed billing page", () => {
+    expect(DODO_PORTAL_RETURN_URL).toBe("https://velocity-outreach.com/app/billing");
+  });
+
+  it("only accepts https dodo-hosted portal links", () => {
+    expect(isSafeDodoPortalLink("https://test.dodopayments.com/portal/abc")).toBe(true);
+    expect(isSafeDodoPortalLink("https://dodopayments.com/p/x")).toBe(true);
+    expect(isSafeDodoPortalLink("http://test.dodopayments.com/portal")).toBe(false);
+    expect(isSafeDodoPortalLink("https://evil.example/portal")).toBe(false);
+    expect(isSafeDodoPortalLink("https://dodopayments.com.evil.example/p")).toBe(false);
+    expect(isSafeDodoPortalLink("")).toBe(false);
+    expect(isSafeDodoPortalLink(null)).toBe(false);
+  });
+
+  it("routes portal requests to the correct provider function", () => {
+    expect(resolveBillingPortalFunction("dodo")).toBe("dodo-customer-portal");
+    expect(resolveBillingPortalFunction("DODO")).toBe("dodo-customer-portal");
+    expect(resolveBillingPortalFunction("stripe")).toBe("create-billing-portal-session");
+    expect(resolveBillingPortalFunction(null)).toBe("create-billing-portal-session");
+    expect(resolveBillingPortalFunction(undefined)).toBe("create-billing-portal-session");
   });
 });
