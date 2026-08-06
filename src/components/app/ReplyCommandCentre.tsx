@@ -47,7 +47,9 @@ export default function ReplyCommandCentre({
   const overrides = useMemo(() => leads.filter((l) => describeOverride(l).overridden).length, [leads]);
 
   const inGroup = useMemo(() => filterByGroup(leads, group), [leads, group]);
-  const visible = useMemo(() => sortByUrgency(filterByIntent(inGroup, filter)), [inGroup, filter]);
+  const inQueue = useMemo(() => applyQueueFilter(inGroup as any, queue), [inGroup, queue]) as typeof inGroup;
+  const visible = useMemo(() => sortByUrgency(filterByIntent(inQueue, filter)), [inQueue, filter]);
+  const queueCounts = useMemo(() => queueFilterCounts(leads as any), [leads]);
 
   // Category chips follow the selected group so counts always add up.
   const categoriesForGroup =
