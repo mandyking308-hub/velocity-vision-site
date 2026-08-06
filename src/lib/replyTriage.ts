@@ -28,6 +28,7 @@ export interface ReplyCategoryMeta {
     | "reply"
     | "snooze"
     | "reassign"
+    | "review_referral"
     | "suppress"
     | "ignore"
     | "review";
