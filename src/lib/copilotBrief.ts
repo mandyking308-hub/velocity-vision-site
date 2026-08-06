@@ -350,3 +350,44 @@ export function clearCopilotDraft(storage?: Pick<Storage, "removeItem">): void {
 export function draftHasContent(input: CopilotInput): boolean {
   return !!(input.offer.trim() || input.audience.trim() || input.proof.trim() || input.constraints.trim() || input.name.trim());
 }
+
+// ---------------------------------------------------------------------------
+// Insert payload for the EXISTING campaigns table (no parallel model)
+// ---------------------------------------------------------------------------
+
+export function buildCampaignSlug(name: string, rand = Math.random().toString(36).slice(2, 7)): string {
+  const base = (name || "campaign").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 48);
+  return `${base || "campaign"}-${rand}`;
+}
+
+export function buildCampaignInsert(args: {
+  brief: CampaignBrief;
+  pack: CampaignPack;
+  plan: CopilotPlan;
+  userId: string;
+  workspaceId: string | null;
+  sample: boolean;
+  slug?: string;
+}): Record<string, unknown> {
+  const { brief, pack, plan, userId, workspaceId, sample } = args;
+  return {
+    name: brief.name,
+    description: brief.offer,
+    goal: brief.goal,
+    campaign_kind: brief.kind,
+    // Copilot output is always a draft. It is never scheduled or activated here.
+    status: "draft",
+    type: "email",
+    owner_id: userId,
+    created_by: userId,
+    workspace_id: workspaceId,
+    brief: { ...brief, copilot: plan },
+    pack,
+    slug: args.slug ?? buildCampaignSlug(brief.name),
+    language: brief.language ?? "en",
+    is_sample: sample,
+    objective: plan.objective,
+    target_audience_description: brief.audience,
+    cadence_type: "one_off",
+  };
+}
