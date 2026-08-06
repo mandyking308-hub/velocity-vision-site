@@ -98,11 +98,11 @@ export default function ReplyCommandCentre({
       <div className="flex flex-wrap gap-1.5" data-testid="queue-filters">
         {QUEUE_FILTERS.map((q) => (
           <Chip
-            key={q.key}
-            active={queue === q.key}
-            onClick={() => setQueue(q.key)}
+            key={q.id}
+            active={queue === q.id}
+            onClick={() => setQueue(q.id)}
             label={q.label}
-            count={queueCounts[q.key]}
+            count={queueCounts[q.id]}
           />
         ))}
       </div>
