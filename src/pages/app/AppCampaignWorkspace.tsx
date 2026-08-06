@@ -27,6 +27,8 @@ import { formatCampaignPackMarkdown, slugify } from "@/lib/campaignPackExport";
 import { checkPackQuality } from "@/lib/campaignQuality";
 import { formatQualityFailure } from "@/lib/campaignQualityToast";
 import CampaignPreflight from "@/components/app/CampaignPreflight";
+import { CopilotPlanCard, CopilotSequenceEditor } from "@/components/app/CopilotPlanCard";
+import { readCopilotPlan } from "@/lib/copilotBrief";
 import { runPreflight } from "@/lib/campaignPreflight";
 import { computeReadiness } from "@/lib/senderReadiness";
 import { useLegalStatus } from "@/lib/legalCompliance";
