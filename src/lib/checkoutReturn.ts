@@ -83,3 +83,15 @@ export function billingTroubleCopy(status: string | null | undefined): { title: 
     body: "Your last renewal didn't go through. Update your payment method to keep your plan active.",
   };
 }
+
+/**
+ * Which edge function opens the hosted billing portal for a subscription row.
+ * Legacy rows have no `provider` and must keep using the proven Stripe path.
+ */
+export function resolveBillingPortalFunction(
+  provider: string | null | undefined,
+): "create-billing-portal-session" | "dodo-customer-portal" {
+  return String(provider ?? "").toLowerCase() === "dodo"
+    ? "dodo-customer-portal"
+    : "create-billing-portal-session";
+}

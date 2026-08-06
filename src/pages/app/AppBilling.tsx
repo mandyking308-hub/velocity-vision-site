@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 import { useCurrency } from "@/hooks/useCurrency";
 import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
 import PricingCurrencySelector from "@/components/PricingCurrencySelector";
-import { billingTroubleCopy, classifyCheckoutReturn, isBillingTrouble } from "@/lib/checkoutReturn";
+import { billingTroubleCopy, classifyCheckoutReturn, isBillingTrouble, resolveBillingPortalFunction } from "@/lib/checkoutReturn";
 import { AlertTriangle } from "lucide-react";
 import FeedbackPrompt from "@/components/support/FeedbackPrompt";
 import BillingTermsSummary from "@/components/BillingTermsSummary";
@@ -48,8 +48,24 @@ export default function AppBilling() {
 
   const openBillingPortal = async () => {
     setPortalLoading(true);
+    const fn = resolveBillingPortalFunction(stripeSub?.provider);
     try {
-      const { data, error } = await supabase.functions.invoke("create-billing-portal-session", {
+      if (fn === "dodo-customer-portal") {
+        // Dodo subscribers must never be sent to the Stripe portal.
+        const { data, error } = await supabase.functions.invoke(fn, { body: {} });
+        const code = (data as any)?.error;
+        if (code === "no_customer" || code === "payments_not_configured") {
+          toast.info("Billing management isn't available yet.", {
+            description: "Please contact support and we'll sort this for you.",
+          });
+          return;
+        }
+        if (error || !(data as any)?.url) throw error || new Error("no_portal_link");
+        window.location.href = (data as any).url;
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke(fn, {
         body: { returnPath: "/app/billing" },
       });
       if (error) throw error;

@@ -235,3 +235,49 @@ export function dodoSubscriptionStatus(eventType: string, payloadStatus?: string
       return (payloadStatus || "active").toLowerCase();
   }
 }
+
+// ── Customer portal (subscription management) ─────────────────────────────
+
+/** Where the hosted Dodo portal must send the customer back to. Allow-listed, never client supplied. */
+export const DODO_PORTAL_RETURN_URL = `${ALLOWED_ORIGINS[0]}/app/billing`;
+
+export interface DodoPortalConfig {
+  apiKey: string;
+  mode: DodoMode;
+  baseUrl: string;
+}
+
+export type DodoPortalConfigResult =
+  | { ok: true; config: DodoPortalConfig }
+  | { ok: false; reason: string };
+
+/**
+ * Portal-only config. Deliberately does NOT require DODO_PRODUCT_MAP: opening
+ * the management portal is unrelated to the checkout catalog.
+ */
+export function loadDodoPortalConfig(getEnv: (key: string) => string | undefined): DodoPortalConfigResult {
+  const apiKey = getEnv("DODO_API_KEY")?.trim();
+  if (!apiKey) return { ok: false, reason: "missing_api_key" };
+  const mode = normaliseMode(getEnv("DODO_ENVIRONMENT"));
+  return { ok: true, config: { apiKey, mode, baseUrl: DODO_BASE_URLS[mode] } };
+}
+
+/** Hostnames the portal link is allowed to live on. */
+const DODO_PORTAL_HOST_SUFFIXES = ["dodopayments.com"];
+
+/**
+ * Only ever hand the browser an HTTPS link on a Dodo-hosted domain, so a
+ * compromised or malformed provider response can't become an open redirect.
+ */
+export function isSafeDodoPortalLink(link: unknown): link is string {
+  if (typeof link !== "string" || !link.trim()) return false;
+  let url: URL;
+  try {
+    url = new URL(link);
+  } catch {
+    return false;
+  }
+  if (url.protocol !== "https:") return false;
+  const host = url.hostname.toLowerCase();
+  return DODO_PORTAL_HOST_SUFFIXES.some((s) => host === s || host.endsWith(`.${s}`));
+}
