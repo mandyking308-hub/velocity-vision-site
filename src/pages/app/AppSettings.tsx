@@ -38,6 +38,8 @@ export default function AppSettings() {
           );
         })}
       </div>
+      <BookingLinkSettings />
     </div>
+
   );
 }
