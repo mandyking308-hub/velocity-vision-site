@@ -16,8 +16,11 @@ const FinalCTA = () => (
         <h2 className="text-3xl md:text-5xl font-display font-bold text-primary-foreground mb-6">
           Stop running outreach, follow-up and pipeline across six tools
         </h2>
-        <p className="text-primary-foreground/75 text-lg mb-10 max-w-xl mx-auto">
+        <p className="text-primary-foreground/75 text-lg mb-4 max-w-xl mx-auto">
           Bring data, assets, activation, follow-up and early pipeline into one governed workspace.
+        </p>
+        <p className="text-primary-foreground/80 text-sm mb-10 max-w-xl mx-auto">
+          Launch support included: complimentary onboarding and a review of your first campaign.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button variant="hero" size="lg" asChild>
