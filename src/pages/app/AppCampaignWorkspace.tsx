@@ -318,7 +318,7 @@ export default function AppCampaignWorkspace() {
     legalAccepted: legal.isCompliant,
     unsubscribeReady: resolveUnsubscribeReadiness({
       handlerAvailable: UNSUBSCRIBE_HANDLER_DEPLOYED,
-      messageBody: (campaign?.pack as any)?.emails?.[0]?.body ?? null,
+      messageBody: (c?.pack as any)?.emails?.[0]?.body ?? null,
     }).ready,
   });
 
