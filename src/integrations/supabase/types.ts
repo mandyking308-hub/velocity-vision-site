@@ -598,6 +598,7 @@ export type Database = {
       client_workspaces: {
         Row: {
           agency_company_id: string
+          booking_url: string | null
           contact_email: string | null
           contact_name: string | null
           created_at: string
@@ -613,6 +614,7 @@ export type Database = {
         }
         Insert: {
           agency_company_id: string
+          booking_url?: string | null
           contact_email?: string | null
           contact_name?: string | null
           created_at?: string
@@ -628,6 +630,7 @@ export type Database = {
         }
         Update: {
           agency_company_id?: string
+          booking_url?: string | null
           contact_email?: string | null
           contact_name?: string | null
           created_at?: string
@@ -1671,6 +1674,8 @@ export type Database = {
           last_email_subject: string | null
           last_interaction_at: string | null
           marketing_interest: string | null
+          meeting_booked_at: string | null
+          meeting_note: string | null
           name: string | null
           opportunity_id: string | null
           owner_id: string | null
@@ -1701,6 +1706,8 @@ export type Database = {
           last_email_subject?: string | null
           last_interaction_at?: string | null
           marketing_interest?: string | null
+          meeting_booked_at?: string | null
+          meeting_note?: string | null
           name?: string | null
           opportunity_id?: string | null
           owner_id?: string | null
@@ -1731,6 +1738,8 @@ export type Database = {
           last_email_subject?: string | null
           last_interaction_at?: string | null
           marketing_interest?: string | null
+          meeting_booked_at?: string | null
+          meeting_note?: string | null
           name?: string | null
           opportunity_id?: string | null
           owner_id?: string | null
@@ -2764,6 +2773,7 @@ export type Database = {
         }
         Returns: {
           agency_company_id: string
+          booking_url: string | null
           contact_email: string | null
           contact_name: string | null
           created_at: string

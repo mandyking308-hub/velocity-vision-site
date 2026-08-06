@@ -80,7 +80,7 @@ export const INTENT_GROUPS: Record<IntentGroup, { label: string; description: st
   opportunity: {
     label: "Opportunity",
     description: "Positive intent worth a personal reply today.",
-    categories: ["interested"],
+    categories: ["interested", "referral"],
   },
   needs_you: {
     label: "Needs you",

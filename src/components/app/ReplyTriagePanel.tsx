@@ -17,6 +17,9 @@ import {
 } from "@/lib/replyTriage";
 import type { ActionLead } from "@/components/app/LeadActionPanel";
 import MoveToPipelineDialog, { type MoveToPipelineLead } from "@/components/app/MoveToPipelineDialog";
+import MeetingHandoffPanel from "@/components/app/MeetingHandoffPanel";
+import { useBookingUrl } from "@/hooks/useBookingUrl";
+import { describeWait, isWaitingForFollowUp } from "@/lib/replySla";
 
 /**
  * Supervised reply triage.
@@ -33,6 +36,7 @@ export default function ReplyTriagePanel({
   onChanged?: () => void;
 }) {
   const { guardAction } = useDemo();
+  const { bookingUrl } = useBookingUrl();
   const [text, setText] = useState(lead.reply_snippet || "");
   const [override, setOverride] = useState<ReplyCategory | "">((lead.reply_category as ReplyCategory) || "");
   const [busy, setBusy] = useState(false);
@@ -259,7 +263,7 @@ export default function ReplyTriagePanel({
           <Button size="sm" variant="outline" disabled={busy} onClick={makeDraft}>
             <Sparkles className="h-3.5 w-3.5 mr-1" /> Draft a reply
           </Button>
-          {meta.actionKey === "move_to_pipeline" && (
+          {(meta.actionKey === "move_to_pipeline" || meta.actionKey === "review_referral") && (
             <Button size="sm" disabled={busy} onClick={() => setPipelineOpen(true)}>
               <TrendingUp className="h-3.5 w-3.5 mr-1" /> Move to pipeline
             </Button>
@@ -285,6 +289,22 @@ export default function ReplyTriagePanel({
 
 
         </div>
+
+        {isWaitingForFollowUp({ ...(lead as any), reply_category: category }) && (
+          <p className="text-xs text-amber-700" data-testid="reply-waiting">
+            {describeWait(lead as any)} — no action recorded yet.
+          </p>
+        )}
+
+        <MeetingHandoffPanel
+          lead={lead as any}
+          category={category}
+          replyText={text}
+          bookingUrl={bookingUrl}
+          onChanged={onChanged}
+        />
+
+
 
         {draft && (
           <div className="space-y-1.5 pt-1 border-t">

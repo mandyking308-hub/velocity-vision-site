@@ -20,6 +20,7 @@ import {
   type IntentLead,
 } from "@/lib/replyIntent";
 import ReplyTriagePanel from "@/components/app/ReplyTriagePanel";
+import { applyQueueFilter, queueFilterCounts, QUEUE_FILTERS, describeWait, isWaitingForFollowUp, isMeetingBooked, type QueueFilter } from "@/lib/replySla";
 
 /**
  * Reply Intent Command Centre.
@@ -37,6 +38,7 @@ export default function ReplyCommandCentre({
   readOnly?: boolean;
 }) {
   const [group, setGroup] = useState<IntentGroup | "all">("all");
+  const [queue, setQueue] = useState<QueueFilter>("all");
   const [filter, setFilter] = useState<ReplyCategory | "all">("all");
   const counts = useMemo(() => summariseIntents(leads), [leads]);
   const groupCounts = useMemo(() => summariseGroups(leads), [leads]);
@@ -45,7 +47,9 @@ export default function ReplyCommandCentre({
   const overrides = useMemo(() => leads.filter((l) => describeOverride(l).overridden).length, [leads]);
 
   const inGroup = useMemo(() => filterByGroup(leads, group), [leads, group]);
-  const visible = useMemo(() => sortByUrgency(filterByIntent(inGroup, filter)), [inGroup, filter]);
+  const inQueue = useMemo(() => applyQueueFilter(inGroup as any, queue), [inGroup, queue]) as typeof inGroup;
+  const visible = useMemo(() => sortByUrgency(filterByIntent(inQueue, filter)), [inQueue, filter]);
+  const queueCounts = useMemo(() => queueFilterCounts(leads as any), [leads]);
 
   // Category chips follow the selected group so counts always add up.
   const categoriesForGroup =
@@ -87,6 +91,18 @@ export default function ReplyCommandCentre({
             onClick={() => selectGroup(g)}
             label={INTENT_GROUPS[g].label}
             count={groupCounts[g]}
+          />
+        ))}
+      </div>
+
+      <div className="flex flex-wrap gap-1.5" data-testid="queue-filters">
+        {QUEUE_FILTERS.map((q) => (
+          <Chip
+            key={q.id}
+            active={queue === q.id}
+            onClick={() => setQueue(q.id)}
+            label={q.label}
+            count={queueCounts[q.id]}
           />
         ))}
       </div>

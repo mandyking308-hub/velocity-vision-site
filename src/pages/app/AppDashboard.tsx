@@ -18,6 +18,8 @@ import FollowUpReminders from "@/components/app/FollowUpReminders";
 import SendSafetyPanel from "@/components/app/SendSafetyPanel";
 import SenderStatusCard from "@/components/app/SenderStatusCard";
 import FirstCampaignLaunchpad from "@/components/app/FirstCampaignLaunchpad";
+import OutcomeFunnelPanel from "@/components/app/OutcomeFunnelPanel";
+import type { FunnelFilters, FunnelLead, FunnelOpportunity } from "@/lib/outcomeFunnel";
 import CampaignPreflight from "@/components/app/CampaignPreflight";
 import FreePreviewStatusCard from "@/components/app/FreePreviewStatusCard";
 import PriorityStrip from "@/components/app/PriorityStrip";
@@ -88,6 +90,10 @@ export default function AppDashboard() {
   const [activeCampaigns, setActiveCampaigns] = useState(0);
   const [latestCampaignId, setLatestCampaignId] = useState<string | null>(null);
   const [campaignRows, setCampaignRows] = useState<CadenceRow[]>([]);
+  const [funnelLeads, setFunnelLeads] = useState<FunnelLead[]>([]);
+  const [funnelOpps, setFunnelOpps] = useState<FunnelOpportunity[]>([]);
+  const [campaignNames, setCampaignNames] = useState<Record<string, string>>({});
+  const [funnelFilters, setFunnelFilters] = useState<FunnelFilters>({ campaignId: "all" });
   const [sender, setSender] = useState<SenderState>(DEFAULT_SENDER_STATE);
   const [senderEmail, setSenderEmail] = useState<string | null>(null);
   const [senderConnectionId, setSenderConnectionId] = useState<string | null>(null);
@@ -140,10 +146,10 @@ export default function AppDashboard() {
           .order("created_at", { ascending: false }),
 
         supabase.from("leads")
-          .select("id, status, follow_up_at, follow_up_state, replied_at, snoozed_until, last_email_sent_at, last_contacted_at, last_interaction_at, opportunity_id")
+          .select("id, status, source, campaign_id, follow_up_at, follow_up_state, replied_at, snoozed_until, last_email_sent_at, last_contacted_at, last_interaction_at, opportunity_id, reply_category, reply_triaged_at, meeting_booked_at, created_at")
           .eq("workspace_id", currentId),
         supabase.from("opportunities")
-          .select("id, stage, estimated_value, stage_changed_at, next_action_at")
+          .select("id, stage, estimated_value, stage_changed_at, next_action_at, source_campaign_id, source_lead_id")
           .eq("workspace_id", currentId),
         supabase.from("email_sends")
           .select("status, sent_at")
@@ -189,6 +195,11 @@ export default function AppDashboard() {
       });
 
       const ls = leads || [];
+      setFunnelLeads(ls as any);
+      setFunnelOpps((opps || []) as any);
+      setCampaignNames(
+        Object.fromEntries((campaigns || []).map((c: any) => [c.id, c.name])) as Record<string, string>,
+      );
       const now = Date.now();
       const dayMs = 24 * 60 * 60 * 1000;
       const states = ls.map((l: any) => deriveFollowUpState(l));
@@ -409,6 +420,15 @@ export default function AppDashboard() {
 
       {/* A2. Guided first campaign launchpad — live status, next genuine blocker */}
       <FirstCampaignLaunchpad signals={launchpadSignals} />
+
+      {/* A2b. Truthful outcome funnel — stored events only */}
+      <OutcomeFunnelPanel
+        leads={funnelLeads}
+        opportunities={funnelOpps}
+        campaigns={campaignNames}
+        filters={funnelFilters}
+        onFiltersChange={setFunnelFilters}
+      />
 
       {/* A3. Preflight scorecard for the working campaign */}
       <CampaignPreflight result={dashboardPreflight} title="Sender & campaign preflight" compact />

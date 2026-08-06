@@ -4,9 +4,17 @@
 // autonomous: nothing is sent, suppressed or progressed without the user
 // pressing a button. The classifier only *suggests*; the human decides.
 
+import { extractReferral } from "@/lib/replyReferral";
+
+/** Strong redirect phrasing that, with a named person/address, means referral. */
+const REFERRAL_SIGNAL =
+  /\b(the right person|speak to|talk to|please contact|reach out to|copying in|cc'?ing in|looping in|i'?ve copied|i have copied)\b/i;
+
+
 export type ReplyCategory =
   | "interested"
   | "question"
+  | "referral"
   | "not_now"
   | "wrong_person"
   | "unsubscribe"
@@ -27,6 +35,7 @@ export interface ReplyCategoryMeta {
     | "reply"
     | "snooze"
     | "reassign"
+    | "review_referral"
     | "suppress"
     | "ignore"
     | "review";
@@ -47,6 +56,13 @@ export const REPLY_CATEGORIES: Record<ReplyCategory, ReplyCategoryMeta> = {
     tone: "bg-blue-100 text-blue-700",
     suggestedAction: "Answer the question directly, then re-offer the next step.",
     actionKey: "reply",
+  },
+  referral: {
+    label: "Referral",
+    description: "Points you at a named colleague or a different address.",
+    tone: "bg-violet-100 text-violet-700",
+    suggestedAction: "Review the suggested contact, then reach out with the referrer named.",
+    actionKey: "review_referral",
   },
   not_now: {
     label: "Not now",
@@ -103,6 +119,7 @@ export const REPLY_CATEGORIES: Record<ReplyCategory, ReplyCategoryMeta> = {
 export const REPLY_CATEGORY_ORDER: ReplyCategory[] = [
   "interested",
   "question",
+  "referral",
   "not_now",
   "wrong_person",
   "uncategorised",
@@ -137,7 +154,7 @@ const RULES: Rule[] = [
   { category: "auto_reply", weight: 9, rx: /\b(out of (the )?office|automatic reply|auto[- ]?reply|on annual leave|on holiday|maternity leave|currently away)\b/i },
   { category: "auto_reply", weight: 6, rx: /\bi (will|'ll) be back on\b/i },
 
-  { category: "wrong_person", weight: 8, rx: /\b(wrong person|not my (area|remit|department)|i don'?t handle|you (should|need to) (speak|talk) to|please contact my colleague|no longer (with|at) )\b/i },
+  { category: "wrong_person", weight: 8, rx: /\b(wrong person|not the right person|not my (area|remit|department)|i don'?t handle|you (should|need to) (speak|talk) to|please contact my colleague|no longer (with|at) )\b/i },
   { category: "wrong_person", weight: 5, rx: /\bcopying in\b|\blooping in\b/i },
 
   { category: "interested", weight: 8, rx: /\b((?<!not )(?<!n't )interested|sounds (good|great|interesting)|happy to (chat|talk|meet)|let'?s (chat|talk|set up|book)|send (me )?(more|over) (info|details)|book a time|keen to)\b/i },
@@ -179,6 +196,27 @@ export function classifyReply(text: string | null | undefined): TriageSuggestion
     if (m[0] && reasons.length < 4) reasons.push(`Matched "${m[0].trim().slice(0, 48)}"`);
   }
 
+  // A clearly named referral is recognised even when no other rule fires
+  // ("Please email dana@acme.com — she owns this").
+  const earlyRef = extractReferral(body);
+  if (
+    !scores.has("auto_reply") &&
+    !scores.has("unsubscribe") &&
+    !scores.has("bounce") &&
+    earlyRef.hasReferral &&
+    (scores.has("wrong_person") || REFERRAL_SIGNAL.test(body))
+  ) {
+    return {
+      category: "referral",
+      confidence: earlyRef.name && earlyRef.email ? "high" : "medium",
+      reasons: [
+        earlyRef.phrase ? `Matched "${earlyRef.phrase}"` : "Referral phrasing detected",
+        earlyRef.name ? `Suggested contact: ${earlyRef.name}` : null,
+        earlyRef.email ? `Suggested address: ${earlyRef.email}` : null,
+      ].filter(Boolean) as string[],
+    };
+  }
+
   if (scores.size === 0) {
     return {
       category: "uncategorised",
@@ -200,6 +238,25 @@ export function classifyReply(text: string | null | undefined): TriageSuggestion
         category: cat,
         confidence: score >= 8 ? "high" : "medium",
         reasons,
+      };
+    }
+  }
+
+  // 3. A named referral outranks the generic "wrong person" read, but only when
+  //    a specific person or address is actually present. A vague redirect
+  //    ("speak to our ops lead") stays "wrong person". Never applied to an
+  //    out-of-office message, which is handled as its own category.
+  if (!scores.has("auto_reply")) {
+    const ref = extractReferral(body);
+    if (ref.hasReferral && (scores.has("wrong_person") || REFERRAL_SIGNAL.test(body))) {
+      return {
+        category: "referral",
+        confidence: ref.name && ref.email ? "high" : "medium",
+        reasons: [
+          ref.phrase ? `Matched "${ref.phrase}"` : "Referral phrasing detected",
+          ref.name ? `Suggested contact: ${ref.name}` : null,
+          ref.email ? `Suggested address: ${ref.email}` : null,
+        ].filter(Boolean) as string[],
       };
     }
   }
@@ -246,6 +303,8 @@ export function draftReply(
       return `Hi ${name},\n\nCompletely understood — timing matters more than anything.\n\nI'll come back to you at a better point. If a specific month works better, tell me and I'll make a note.${signoff}`;
     case "wrong_person":
       return `Hi ${name},\n\nApologies for the misdirect, and thanks for letting me know.\n\nWould you be able to point me to the right person? I'll take it from there and won't chase you again.${signoff}`;
+    case "referral":
+      return `Hi ${name},\n\nThank you for pointing me in the right direction — that's genuinely helpful.\n\nI'll reach out to them directly and mention that you suggested we speak. ${cta ? cta : "If it's easier for you to introduce us, just let me know."}${signoff}`;
     case "negative":
       return `Hi ${name},\n\nThanks for the straight answer — I appreciate it.\n\nI'll close this off and won't keep chasing. If anything changes, you know where I am.${signoff}`;
     case "unsubscribe":
