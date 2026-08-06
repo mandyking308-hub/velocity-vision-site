@@ -4,6 +4,13 @@
 // autonomous: nothing is sent, suppressed or progressed without the user
 // pressing a button. The classifier only *suggests*; the human decides.
 
+import { extractReferral } from "@/lib/replyReferral";
+
+/** Strong redirect phrasing that, with a named person/address, means referral. */
+const REFERRAL_SIGNAL =
+  /\b(the right person|speak to|talk to|please contact|reach out to|copying in|cc'?ing in|looping in|i'?ve copied|i have copied)\b/i;
+
+
 export type ReplyCategory =
   | "interested"
   | "question"
