@@ -64,6 +64,16 @@ export default function ReplyTriagePanel({
 
   const save = async (patch: Record<string, any>, successMsg: string) => {
     if (!guardAction("Reply triage")) return;
+    // Compliance guard runs before any write: an opt-out can never be
+    // downgraded, and a hard bounce can only be corrected to an opt-out.
+    if (override && !allowedCategories.includes(override)) {
+      toast.error(
+        complianceLock === "unsubscribe"
+          ? "This reply is an opt-out request and cannot be reclassified."
+          : "This reply is a delivery failure. It can only stay a bounce or be corrected to an opt-out.",
+      );
+      return;
+    }
     setBusy(true);
     try {
       const { error } = await supabase.from("leads").update(patch as any).eq("id", lead.id);
