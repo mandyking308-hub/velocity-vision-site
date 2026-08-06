@@ -56,7 +56,10 @@ describe("manual override precedence", () => {
     } as any;
     expect(resolveIntent(lead)).toBe("unsubscribe");
     const audit = describeOverride(lead);
-    expect(audit.overridden).toBe(true);
+    // The stored sales label is ignored, so it is not reported as an effective override.
+    expect(audit.overridden).toBe(false);
+    expect(audit.storedIgnored).toBe(true);
+    expect(audit.effective).toBe("unsubscribe");
     expect(audit.suggested).toBe("unsubscribe");
   });
 

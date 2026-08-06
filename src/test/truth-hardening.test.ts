@@ -32,7 +32,12 @@ describe("compliance intent overrides a stored sales label", () => {
 
   it("manual override cannot downgrade a compliance reply to a sales label", () => {
     const locked = allowedOverrideCategories(lead("Please unsubscribe me."));
-    expect(locked).toEqual(["unsubscribe", "bounce"]);
+    // An opt-out is locked outright; a bounce may only be corrected upward to an opt-out.
+    expect(locked).toEqual(["unsubscribe"]);
+    expect(allowedOverrideCategories(lead("Delivery failed: mailbox does not exist")).sort()).toEqual([
+      "bounce",
+      "unsubscribe",
+    ]);
     for (const bad of ["interested", "question", "not_now", "negative", "uncategorised"]) {
       expect(locked).not.toContain(bad);
     }
