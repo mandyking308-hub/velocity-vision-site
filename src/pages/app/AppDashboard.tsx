@@ -294,6 +294,35 @@ export default function AppDashboard() {
   const safeSendToday = safety.safeAllowance;
   const recommendedSend = safety.recommendedToday;
 
+  // Working campaign for launchpad + preflight: the most recent campaign.
+  const workingCampaign = campaignRows[0] ?? null;
+  const dashboardPreflight = runPreflight({
+    campaign: workingCampaign,
+    safeContacts: vault.safe_to_activate,
+    reviewContacts: vault.needs_review,
+    senderState: senderDetail ? computeReadiness(senderDetail as any).state : null,
+    senderEmail,
+    remainingToday: safety.remainingToday,
+    pauseReasons: safety.pauseReasons,
+    creditsAvailable: remaining,
+    creditsRequired: Math.max(1, Math.min(vault.safe_to_activate, safety.recommendedToday || 1)),
+    legalAccepted: legal.isCompliant,
+    unsubscribeReady: true,
+  });
+
+  const launchpadSignals = {
+    hasBrief: Boolean(workingCampaign?.goal || workingCampaign?.brief),
+    approvedContacts: vault.safe_to_activate,
+    hasContent: Boolean((workingCampaign?.pack as any)?.emails?.[0]?.subject),
+    senderReady: sender.connected && sender.domain_authenticated,
+    preflightBlockers: dashboardPreflight.blockers.length,
+    approved: Boolean(workingCampaign?.approved_at),
+    isSample: workingCampaign?.is_sample === true,
+    activated: pipeline.leads > 0 || sendsUsedToday + sendsScheduledToday > 0,
+    campaignId: workingCampaign?.id ?? null,
+  };
+
+
   // Gate: no workspace → send to a clean create-first-workspace prompt.
   if (!wsLoading && workspaces.length === 0) {
     return (
