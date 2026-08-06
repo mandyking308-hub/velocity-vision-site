@@ -253,6 +253,10 @@ export function draftReply(
       return `Hi ${name},\n\nDone — you've been removed and won't hear from me again.\n\nApologies for the intrusion.${signoff}`;
     case "auto_reply":
       return "";
+    // A bounce has no human on the other end — there is nothing to reply to.
+    case "bounce":
+      return "";
+
     default:
       return `Hi ${name},\n\nThanks for getting back to me.\n\n[Write your reply here.]${signoff}`;
   }
