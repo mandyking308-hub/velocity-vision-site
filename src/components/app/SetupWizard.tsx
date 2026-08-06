@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { X, CheckCircle2, Circle, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,6 +8,16 @@ import { useCredits } from "@/contexts/CreditsContext";
 import { FREE_LIMITS } from "@/lib/credits";
 
 const STORAGE_KEY = "vv_setup_wizard_dismissed_v1";
+
+/**
+ * Routes where the guided setup modal must never open: it would sit on top of
+ * the primary first-value flow and intercept its fields and buttons. The tour
+ * is only deferred, never dismissed, so it resumes on the next eligible route.
+ */
+export const TOUR_SUPPRESSED_ROUTES = ["/app/campaigns/copilot"];
+
+export const isTourSuppressedRoute = (pathname: string) =>
+  TOUR_SUPPRESSED_ROUTES.some((r) => pathname === r || pathname.startsWith(`${r}/`));
 
 const STEPS: Array<{ title: string; body: string; cta: string; href: string }> = [
   { title: "Create your workspace", body: "One workspace holds your data, campaigns and pipeline. Set your goal and audience next.", cta: "Open workspaces", href: "/app/workspaces" },
@@ -21,6 +31,8 @@ const STEPS: Array<{ title: string; body: string; cta: string; href: string }> =
 
 export default function SetupWizard() {
   const { isFreePreview, loading } = useCredits();
+  const { pathname } = useLocation();
+  const suppressed = isTourSuppressedRoute(pathname);
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
 
@@ -28,16 +40,26 @@ export default function SetupWizard() {
     if (typeof window === "undefined") return;
     if (loading) return;
     if (!isFreePreview) return;
+    // Deferred, not dismissed: nothing is written to storage, so the tour opens
+    // again as soon as the user is on a route where it cannot block them.
+    if (suppressed) {
+      setOpen(false);
+      return;
+    }
     if (localStorage.getItem(STORAGE_KEY)) return;
     setOpen(true);
-  }, [isFreePreview, loading]);
+  }, [isFreePreview, loading, suppressed]);
 
   const dismiss = () => {
     try { localStorage.setItem(STORAGE_KEY, "1"); } catch { /* ignore */ }
     setOpen(false);
   };
 
+  // Never mount the blocking overlay on a suppressed route.
+  if (suppressed) return null;
+
   const s = STEPS[step];
+
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) dismiss(); }}>
       <DialogContent className="max-w-lg">

@@ -223,7 +223,7 @@ export default function AppCampaignCopilot() {
   };
 
   return (
-    <div className="p-4 sm:p-6 max-w-3xl mx-auto space-y-5">
+    <div className="copilot-safe-bottom p-4 sm:p-6 max-w-3xl mx-auto space-y-5">
       <Button variant="ghost" size="sm" className="-ml-2" onClick={() => navigate("/app")}>
         <ArrowLeft className="h-4 w-4 mr-1" /> Dashboard
       </Button>
