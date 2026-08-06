@@ -183,16 +183,24 @@ export default function AppBilling() {
 
 
 
-      {stripeSub?.status === "past_due" && (
+      {isBillingTrouble(stripeSub?.status) && (
         <Card className="border-destructive">
           <CardContent className="p-4 flex items-center justify-between gap-3">
-            <div>
-              <div className="font-semibold text-destructive">Payment failed</div>
-              <p className="text-sm text-muted-foreground">Your last renewal didn't go through. Update your payment method to keep your plan active.</p>
+            <div className="flex gap-3">
+              <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+              <div>
+                <div className="font-semibold text-destructive">
+                  {stripeSub?.status === "on_hold" ? "Subscription on hold" : "Payment failed"}
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Your last renewal didn't go through. Update your payment method to keep your plan active.
+                </p>
+              </div>
             </div>
             <Button onClick={() => buyPlan((stripeSub.plan as PlanId) || "growth")}>Retry payment</Button>
           </CardContent>
         </Card>
+
       )}
 
       {/* Best next step — Free Preview conversion path */}
