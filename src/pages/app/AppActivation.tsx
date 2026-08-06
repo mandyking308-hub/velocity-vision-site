@@ -192,8 +192,12 @@ export default function AppActivation() {
   const sendPaused = safety.pauseReasons.length > 0;
   const selectedCampaignRow = campaigns.find((c) => c.id === (selectedCampaign || campaignId)) || null;
   const senderReadinessState = computeReadiness(defaultConn as any).state;
-  const preflight = useMemo(() => runPreflight({
-    campaign: selectedCampaignRow,
+  // One deterministic input builder, used by the rendered preflight card AND by
+  // the execution path, so what the user sees and what actually gates the write
+  // can never diverge. `campaignRow` is overridable so runActivation can verify
+  // against a freshly fetched campaign rather than possibly-stale UI state.
+  const buildPreflightInput = (campaignRow: typeof selectedCampaignRow) => ({
+    campaign: campaignRow,
     safeContacts: counts.valid,
     reviewContacts: counts.needs_review,
     senderState: defaultConn ? senderReadinessState : null,
@@ -204,9 +208,12 @@ export default function AppActivation() {
     creditsRequired: Math.max(1, totalSelected),
     legalAccepted: legal.isCompliant,
     unsubscribeReady: true,
-  }), [selectedCampaignRow, counts, defaultConn, senderReadinessState, fromEmail, safety, remaining, totalSelected, legal.isCompliant]);
+  });
+  const preflight = useMemo(() => runPreflight(buildPreflightInput(selectedCampaignRow)), [selectedCampaignRow, counts, defaultConn, senderReadinessState, fromEmail, safety, remaining, totalSelected, legal.isCompliant]);
+  const gate = useMemo(() => activationGate(preflight), [preflight]);
   const activationBlocked = !legal.isCompliant;
-  const canActivate = totalSelected > 0 && !activationBlocked && (!wantsRisky || riskAck) && !!targetCampaignId && !activating;
+  const canActivate = totalSelected > 0 && !activationBlocked && gate.ok && (!wantsRisky || riskAck) && !!targetCampaignId && !activating;
+
 
   async function audit(action: string, details: any) {
     try {
