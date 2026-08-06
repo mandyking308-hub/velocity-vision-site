@@ -18,17 +18,17 @@ const HeroSection = () => (
         >
           <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-white/10 blur-3xl pointer-events-none" />
           <p className="relative font-semibold text-[11px] md:text-xs uppercase tracking-[0.25em] mb-6 inline-flex items-center gap-2 text-white/80">
-            <Sparkles size={14} /> Velocity Vision · Self-serve B2B software · Customer-controlled activation
+            <Sparkles size={14} /> Velocity Vision · For small teams, consultants and agencies
           </p>
           <h1 className="relative font-display font-bold leading-[1.02] tracking-tight text-4xl md:text-5xl lg:text-6xl mb-6">
-            Organise customer-provided data, editable outreach drafts and{" "}
-            <span style={{ color: PINK }}>early opportunity records</span>.
+            Turn your approved prospect data into{" "}
+            <span style={{ color: PINK }}>personalised outreach campaigns</span> — in one workspace.
           </h1>
           <p className="relative text-base md:text-lg text-white/85 max-w-xl mb-5 leading-relaxed">
-            Velocity Vision is a self-serve commercial workspace for authorised business data, AI-assisted draft creation, sender verification, governed activation controls, follow-up records and early pipeline administration.
+            Upload the business contacts you already have, review their quality, and generate editable email, social, press and video drafts in a single session. Verify your sender, approve what goes out, then work replies and early opportunities in the same place.
           </p>
-          <p className="relative text-sm text-white/75 max-w-xl mb-8 leading-relaxed">
-            Velocity Vision does not scrape contact data, sell lists, provide managed campaigns or send or publish automatically. Customers review their data and drafts, verify their sender and approve every activation decision.
+          <p className="relative text-sm text-white/80 max-w-xl mb-8 leading-relaxed">
+            Start free — no card, no live sending. Launch support included: complimentary onboarding and a review of your first campaign.
           </p>
           <div className="relative flex flex-col sm:flex-row gap-3">
             <Link
@@ -39,18 +39,23 @@ const HeroSection = () => (
               Start Free Preview <ArrowRight size={16} />
             </Link>
             <Link
-              to="/pricing"
+              to="/demo"
               className="inline-flex items-center justify-center px-8 py-4 rounded-full font-bold text-sm border-2 border-white/80 text-white hover:bg-white/10 transition-colors"
             >
-              Review pricing
+              See the product — no signup
             </Link>
           </div>
-          <p className="relative text-xs text-white/75 mt-5">
-            <Link to="/how-it-works" className="underline-offset-4 hover:underline">
-              Review how it works →
+          <p className="relative text-xs text-white/75 mt-5 leading-relaxed max-w-xl">
+            No scraped contacts. No list sales. Nothing sends or publishes automatically — you review your data and drafts, verify your sender and approve every activation.{" "}
+            <Link to="/pricing" className="underline-offset-4 hover:underline">
+              See pricing
             </Link>{" "}
-            · Free Preview has no live sending · Paid activation follows onboarding and applicable checks
+            ·{" "}
+            <Link to="/how-it-works" className="underline-offset-4 hover:underline">
+              How it works
+            </Link>
           </p>
+
         </motion.div>
 
         <motion.div
