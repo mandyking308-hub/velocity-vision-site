@@ -29,6 +29,7 @@ import { formatQualityFailure } from "@/lib/campaignQualityToast";
 import CampaignPreflight from "@/components/app/CampaignPreflight";
 import { CopilotPlanCard, CopilotSequenceEditor } from "@/components/app/CopilotPlanCard";
 import { readCopilotPlan } from "@/lib/copilotBrief";
+import { resolveUnsubscribeReadiness, UNSUBSCRIBE_HANDLER_DEPLOYED } from "@/lib/systemCapabilities";
 import { runPreflight } from "@/lib/campaignPreflight";
 import { computeReadiness } from "@/lib/senderReadiness";
 import { useLegalStatus } from "@/lib/legalCompliance";
@@ -315,7 +316,10 @@ export default function AppCampaignWorkspace() {
     creditsAvailable: 0,
     creditsRequired: 0,
     legalAccepted: legal.isCompliant,
-    unsubscribeReady: true,
+    unsubscribeReady: resolveUnsubscribeReadiness({
+      handlerAvailable: UNSUBSCRIBE_HANDLER_DEPLOYED,
+      messageBody: (campaign?.pack as any)?.emails?.[0]?.body ?? null,
+    }).ready,
   });
 
   async function toggleApproval() {

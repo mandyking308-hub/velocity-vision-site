@@ -24,6 +24,7 @@ import {
 import type { PlanId } from "@/lib/credits";
 import SendSafetyPanel from "@/components/app/SendSafetyPanel";
 import CampaignPreflight from "@/components/app/CampaignPreflight";
+import { resolveUnsubscribeReadiness, UNSUBSCRIBE_HANDLER_DEPLOYED } from "@/lib/systemCapabilities";
 import { runPreflight, activationGate, canExecuteActivation } from "@/lib/campaignPreflight";
 import SenderStatusCard from "@/components/app/SenderStatusCard";
 import JourneyEmptyState from "@/components/app/JourneyEmptyState";
@@ -207,7 +208,10 @@ export default function AppActivation() {
     creditsAvailable: remaining,
     creditsRequired: Math.max(1, totalSelected),
     legalAccepted: legal.isCompliant,
-    unsubscribeReady: true,
+    unsubscribeReady: resolveUnsubscribeReadiness({
+      handlerAvailable: UNSUBSCRIBE_HANDLER_DEPLOYED,
+      messageBody: (campaignRow?.pack as any)?.emails?.[0]?.body ?? null,
+    }).ready,
   });
   const preflight = useMemo(() => runPreflight(buildPreflightInput(selectedCampaignRow)), [selectedCampaignRow, counts, defaultConn, senderReadinessState, fromEmail, safety, remaining, totalSelected, legal.isCompliant]);
   const gate = useMemo(() => activationGate(preflight), [preflight]);
