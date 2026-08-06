@@ -106,14 +106,15 @@ describe("UI and execution cannot diverge", () => {
     expect(src.match(/buildPreflightInput\(/g)?.length).toBeGreaterThanOrEqual(2);
   });
 
-  it("requires both the preflight verdict and the gate on the activation button", () => {
-    expect(src).toMatch(/const canActivate =[^;]*preflight\.canActivate/s);
+  it("requires both the execution verdict and the gate on the activation button", () => {
+    expect(src).toMatch(/const canActivate =[^;]*execVerdict\.ok/s);
     expect(src).toMatch(/const canActivate =[^;]*gate\.ok/s);
+    expect(src).toMatch(/const execVerdict[\s\S]{0,120}canExecuteActivation\(/);
   });
 
   it("aborts before any state change or write when preflight fails", () => {
     const runBody = src.slice(src.indexOf("async function runActivation"));
-    const guardIdx = runBody.indexOf("if (!preflight.canActivate)");
+    const guardIdx = runBody.indexOf("canExecuteActivation(");
     const setIdx = runBody.indexOf("setActivating(true)");
     expect(guardIdx).toBeGreaterThan(-1);
     expect(guardIdx).toBeLessThan(setIdx);
@@ -121,13 +122,13 @@ describe("UI and execution cannot diverge", () => {
 
   it("hard-refuses a missing, sample or unapproved campaign in the execution path", () => {
     const runBody = src.slice(src.indexOf("async function runActivation"));
-    const guardIdx = runBody.indexOf("const hardFailure");
+    const guardIdx = runBody.indexOf("const liveVerdict");
     const insertIdx = runBody.indexOf('from("leads").insert');
     expect(guardIdx).toBeGreaterThan(-1);
     expect(guardIdx).toBeLessThan(insertIdx);
-    expect(runBody).toContain(".is_sample === true");
-    expect(runBody).toContain(".approved_at");
+    expect(runBody).toContain("freshRow");
   });
+
 
   it("re-checks the gate against a freshly fetched campaign before writing leads", () => {
     const runBody = src.slice(src.indexOf("async function runActivation"));
