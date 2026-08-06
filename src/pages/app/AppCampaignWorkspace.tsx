@@ -254,6 +254,7 @@ export default function AppCampaignWorkspace() {
   const pack = c.pack;
   const brief = c.brief;
   const channelCfg = getCampaignChannelConfig(brief);
+  const copilotPlan = readCopilotPlan(brief);
   const lifecycleCfg = {
     cadence_type: (c.cadence_type || "one_off") as CadenceType,
     start_at: c.start_at, cadence_end_at: c.cadence_end_at,
