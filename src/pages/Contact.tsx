@@ -78,12 +78,14 @@ const contactTopics = [
 ];
 
 const Contact = () => {
+  const [searchParams] = useSearchParams();
+  const planIntent = parsePlanIntent(searchParams.get("plan"));
   const [form, setForm] = useState({
     name: "",
     email: "",
     company: "",
-    message: "",
-    topic: "general_support",
+    message: planIntent ? planEnquiryMessage(planIntent) : "",
+    topic: planIntent ? "billing" : "general_support",
   });
   const [loading, setLoading] = useState(false);
 
