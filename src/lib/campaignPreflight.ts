@@ -324,3 +324,55 @@ export function runPreflight(input: PreflightInput): PreflightResult {
     allClear: blockers.length === 0 && warnings.length === 0,
   };
 }
+
+// ---------------------------------------------------------------------------
+// Activation gate
+// ---------------------------------------------------------------------------
+// Activation is not sending: it prepares leads inside a campaign. Send-time
+// concerns (daily allowance, credits, mailbox health) stay VISIBLE in the
+// preflight card but must not hard-block activation, or we would contradict the
+// "activation is separate from sending" promise.
+//
+// These are the checks that must hold before a single lead row is written. The
+// gate is derived from the very same PreflightResult the UI renders, so the
+// button state and the execution path cannot drift apart.
+export const ACTIVATION_BLOCKER_IDS = [
+  "campaign",
+  "content",
+  "contacts",
+  "legal",
+  "approval",
+  "sample",
+] as const;
+
+export type ActivationBlockerId = (typeof ACTIVATION_BLOCKER_IDS)[number];
+
+export interface ActivationGateResult {
+  /** True only when every activation-critical check passes. */
+  ok: boolean;
+  /** The failing activation-critical checks, in preflight order. */
+  blockers: PreflightCheck[];
+  /** The first thing the user has to fix, for messaging. */
+  firstBlocker: PreflightCheck | null;
+  /** Ids only — safe to persist to the audit log (no free text, no PII). */
+  blockerIds: string[];
+}
+
+/**
+ * Derive the activation verdict from a preflight result.
+ *
+ * Pure and total: callers pass the same `PreflightResult` they display, so the
+ * UI button and `runActivation()` always agree.
+ */
+export function activationGate(result: PreflightResult): ActivationGateResult {
+  const critical = new Set<string>(ACTIVATION_BLOCKER_IDS);
+  const blockers = result.checks.filter(
+    (c) => !c.ok && c.severity === "blocker" && critical.has(c.id),
+  );
+  return {
+    ok: blockers.length === 0,
+    blockers,
+    firstBlocker: blockers[0] ?? null,
+    blockerIds: blockers.map((c) => c.id),
+  };
+}
