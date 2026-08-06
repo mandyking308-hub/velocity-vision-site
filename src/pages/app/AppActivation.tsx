@@ -24,7 +24,7 @@ import {
 import type { PlanId } from "@/lib/credits";
 import SendSafetyPanel from "@/components/app/SendSafetyPanel";
 import CampaignPreflight from "@/components/app/CampaignPreflight";
-import { runPreflight } from "@/lib/campaignPreflight";
+import { runPreflight, activationGate } from "@/lib/campaignPreflight";
 import SenderStatusCard from "@/components/app/SenderStatusCard";
 import JourneyEmptyState from "@/components/app/JourneyEmptyState";
 import LegalComplianceGate from "@/components/LegalComplianceGate";
