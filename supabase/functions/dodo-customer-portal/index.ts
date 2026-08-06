@@ -66,15 +66,16 @@ Deno.serve(async (req) => {
     const url = new URL(
       `${cfg.config.baseUrl}/customers/${encodeURIComponent(customerId)}/customer-portal/session`,
     );
+    // Per the Dodo API reference, `send_email` and `return_url` are QUERY
+    // parameters on this endpoint — it documents no JSON request body.
     url.searchParams.set("send_email", "false");
+    url.searchParams.set("return_url", DODO_PORTAL_RETURN_URL);
 
     const response = await fetch(url.toString(), {
       method: "POST",
       headers: {
         Authorization: `Bearer ${cfg.config.apiKey}`,
-        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ return_url: DODO_PORTAL_RETURN_URL, send_email: false }),
     });
 
     if (!response.ok) {
