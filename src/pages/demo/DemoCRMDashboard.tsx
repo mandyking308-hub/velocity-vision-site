@@ -1,3 +1,4 @@
+import { resolveUnsubscribeReadiness, UNSUBSCRIBE_HANDLER_DEPLOYED } from "@/lib/systemCapabilities";
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Rocket, FolderOpen, Users, BarChart3, LayoutTemplate, Briefcase, Sparkles, Copy, ArrowRight, Mail, Megaphone, Video, Newspaper } from "lucide-react";
@@ -47,7 +48,10 @@ const DEMO_PREFLIGHT = runPreflight({
   creditsAvailable: 18,
   creditsRequired: 12,
   legalAccepted: true,
-  unsubscribeReady: true,
+  unsubscribeReady: resolveUnsubscribeReadiness({
+    handlerAvailable: UNSUBSCRIBE_HANDLER_DEPLOYED,
+    messageBody: "Sample copy for the demo. Unsubscribe at any time.",
+  }).ready,
 });
 
 const HOURS_AGO = (h: number) => new Date(Date.now() - h * 3600_000).toISOString();
