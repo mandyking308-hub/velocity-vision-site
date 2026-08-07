@@ -210,3 +210,75 @@ describe("parseBuyParam", () => {
     }
   });
 });
+
+// ── Source invariants: provider selection must never fall back to Stripe ──
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
+const read = (p: string) => readFileSync(resolve(process.cwd(), p), "utf8");
+
+describe("new-purchase provider wiring", () => {
+  const billing = read("src/pages/app/AppBilling.tsx");
+  const topup = read("src/components/app/TopUpModal.tsx");
+  const review = read("src/components/app/HumanReviewButton.tsx");
+
+  it("AppBilling never opens Stripe checkout for a new purchase", () => {
+    expect(billing).not.toContain("useStripeCheckout");
+    expect(billing).not.toContain("openCheckout(");
+    expect(billing).toContain("isProductLiveReady");
+    expect(billing).toContain("startCheckout");
+  });
+
+  it("AppBilling keeps Stripe subscription management intact", () => {
+    expect(billing).toContain("resolveBillingPortalFunction");
+    expect(billing).toContain("stripe_subscriptions");
+  });
+
+  it("AppBilling gates every purchase behind the legal gate", () => {
+    expect(billing).toContain("LegalComplianceGate");
+    expect(billing).toContain("parseBuyParam");
+    // the buy param may only preselect the gate
+    expect(billing).toContain("setPendingPlan(plan as PlanId)");
+  });
+
+  it("top-ups and human review use Dodo or the safe onboarding state", () => {
+    for (const src of [topup, review]) {
+      expect(src).not.toContain("useStripeCheckout");
+      expect(src).toContain("isProductLiveReady");
+      expect(src).toContain("CHECKOUT_ACTIVATING_COPY");
+      expect(src).toContain("LegalComplianceGate");
+    }
+  });
+});
+
+describe("public pricing CTA switching", () => {
+  const pricing = read("src/pages/Pricing.tsx");
+
+  it("keeps the onboarding CTA as the default branch", () => {
+    expect(pricing).toContain("Request Starter onboarding");
+    expect(pricing).toContain("Request Growth onboarding");
+    expect(pricing).toContain("Request Agency onboarding");
+    expect(pricing).toContain("/contact?plan=${planSlug(plan.sku)}");
+  });
+
+  it("only switches to purchase CTAs when the product is live-ready", () => {
+    expect(pricing).toContain("isProductLiveReady(readiness, plan.sku as DodoProductKey)");
+    expect(pricing).toContain("Buy Starter");
+    expect(pricing).toContain("Start Growth");
+    expect(pricing).toContain("Start Agency Workspace");
+    expect(pricing).toContain("authNextForPlan");
+  });
+
+  it("leaves Free Preview free and card-free", () => {
+    expect(pricing).toContain("Start Free Preview");
+    expect(pricing).toContain("No card required.");
+  });
+});
+
+describe("checkout return truth", () => {
+  it("fulfilment is never granted from query params", () => {
+    const billing = read("src/pages/app/AppBilling.tsx");
+    expect(billing).not.toMatch(/credit_ledger[^\n]*insert/i);
+    expect(billing).toContain("classifyCheckoutReturn");
+  });
+});
