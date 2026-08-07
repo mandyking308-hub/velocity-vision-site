@@ -6,12 +6,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Check } from "lucide-react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useCurrency } from "@/hooks/useCurrency";
 import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
 import PricingCurrencySelector from "@/components/PricingCurrencySelector";
@@ -22,8 +17,6 @@ import { useDodoReadiness } from "@/hooks/useDodoReadiness";
 import { isProductLiveReady, isAnyTopUpLiveReady, type DodoProductKey } from "@/lib/dodoReadiness";
 import { authNextForPlan } from "@/lib/safeNext";
 
-// Direct purchase-intent labels, used ONLY when live Dodo checkout is ready
-// for that specific product. Otherwise the onboarding CTAs below are kept.
 const LIVE_CTA: Record<string, string> = {
   vv_starter_oneoff: "Buy Starter",
   vv_growth_monthly: "Start Growth",
@@ -46,19 +39,19 @@ const plans: PlanDef[] = [
   {
     sku: "vv_starter_oneoff",
     name: "Starter",
-    tagline: "One activated campaign",
+    tagline: "One-off campaign workspace",
     unit: "one-off",
-    best: "Trying the workspace end to end",
+    best: "Running a first paid campaign end to end",
     credits: "Includes 25 Campaign Credits",
     features: [
       "1 workspace · one-off campaigns",
-      "Data Vault with quality review",
+      "Data Vault with customer review",
       "First-Campaign Copilot and Launchpad",
-      "Full outreach pack (email, social, press, video)",
-      "Preflight readiness checks, sender verification and governed activation",
+      "Full campaign pack (email, social, press, video)",
+      "Activation-preparation preflight and sender setup",
       "Reply Intent Command Centre, referrals and out-of-office dates",
       "Meeting handoff, pipeline and Outcome Funnel",
-      "Up to 20 sends/day · 30 days workspace access",
+      "Normal send ceiling up to 20/day · 30 days workspace access",
     ],
     cta: "Request Starter onboarding",
   },
@@ -67,16 +60,16 @@ const plans: PlanDef[] = [
     name: "Growth",
     tagline: "Recurring commercial workspace",
     unit: "per month",
-    best: "Lean teams running outreach continuously",
+    best: "Teams running customer-controlled outreach continuously",
     credits: "Includes 80 Campaign Credits / month",
     highlight: true,
     features: [
       "Everything in Starter, ongoing",
-      "Recurring cadence (weekly/monthly/custom)",
+      "Recurring cadence (weekly/monthly/custom) — each run remains customer-controlled",
       "Reusable recurring campaign templates and segments",
-      "Up to 50 sends/day",
+      "Normal send ceiling up to 50/day",
       "Reply triage, referral and out-of-office handling",
-      "Outcome Funnel reporting from your stored records",
+      "Outcome Funnel reporting from stored records",
     ],
     cta: "Request Growth onboarding",
   },
@@ -89,365 +82,178 @@ const plans: PlanDef[] = [
     credits: "Includes 250 pooled Campaign Credits / month",
     features: [
       "Everything in Growth",
-      "Unlimited client workspaces, isolated data",
-      "Pooled credits across clients",
+      "Unlimited isolated client workspaces",
+      "Pooled Campaign Credits across client workspaces",
       "Cross-client pipeline and Outcome Funnel visibility",
       "Account-wide view of daily send usage across client workspaces",
-      "Up to 100 sends/day",
+      "Normal send ceiling up to 100/day",
     ],
     cta: "Request Agency onboarding",
   },
 ];
 
-
 const buildFaqs = (topUpsPurchasable: boolean) => [
   {
     q: "Is Free Preview really free?",
-    a: "Yes. £0, no card required. You get 10 welcome Campaign Credits plus +2 per day (daily balance capped at 10) for 14 days. There is no automatic paid upgrade — you decide when, or whether, to buy credits or move to a paid plan.",
+    a: "Yes. £0, no card required. You get 10 welcome Campaign Credits plus +2 per day, with the daily balance capped at 10, for a 14-day preview. Free Preview is limited to one full campaign pack, one workspace, up to 25 contacts and no live sending. There is no automatic paid upgrade.",
   },
   {
-    q: "What happens when free credits run out?",
-    a: "The workspace stays available during the preview period. AI generation pauses until you request a top-up or paid upgrade. Your stored data and review work remain intact subject to the applicable access and retention terms.",
+    q: "What happens when the Free Preview pack or credits are used?",
+    a: "You can continue reviewing the existing preview work during the 14-day window, subject to the applicable terms. Free Preview cannot generate a second full campaign pack and does not accept credit top-ups. Move to a paid plan for further full-pack generation or live sending.",
   },
   {
-    q: "Can I buy credits without subscribing?",
+    q: "Can I buy Campaign Credits without a monthly subscription?",
     a: topUpsPurchasable
-      ? "Credit top-ups can be purchased from your billing settings when signed in, separately from a subscription. The final price, currency, tax treatment, payment provider and applicable terms are shown before you confirm payment."
-      : "Credit top-ups are handled through the published contact route rather than instant self-serve checkout at the moment. The final price, currency, tax treatment, payment provider and applicable terms are confirmed before any payment is taken.",
+      ? "Yes, on an eligible paid workspace. Starter is a one-off paid plan, so an eligible Starter account can buy available top-up packs without a monthly subscription. Growth and Agency are monthly plans. Free Preview cannot buy top-ups. The final price, currency, tax treatment, payment provider and terms are shown before payment."
+      : "Top-up packs are only for eligible paid workspaces and instant self-serve top-up checkout is not active yet. Starter is a one-off paid plan; Growth and Agency are monthly plans. Free Preview cannot buy top-ups. The final price, currency, tax treatment, payment provider and terms are confirmed before payment.",
   },
   {
     q: "Can I send outreach on Free Preview?",
-    a: "No. Live sending, mailbox connection and third-party account activation are gated on Free Preview. Sending can only be enabled on an eligible paid plan after the applicable product and compliance gates are completed.",
+    a: "No. Free Preview cannot connect a live sending mailbox or send outreach. Eligible paid plans can send only after the applicable sender, legal, unsubscribe and send-safety checks. Starter also supports live sending; Growth and Agency add recurring cadence.",
   },
   {
-    q: "Do free credits expire?",
-    a: "Yes. Free Preview runs for 14 days from signup, and the daily free balance is capped at 10. Paid top-up credits are governed by the plan and credit terms shown before purchase.",
+    q: "What are Campaign Credits used for today?",
+    a: "Campaign Credits are non-cashable product-usage units for credit-priced AI generation. The current live credit-priced generator is full campaign-pack generation. Data review, activation preparation and each individual email/contact send are not charged as Campaign Credits. Credits are not money, stored value or transferable currency.",
+  },
+  {
+    q: "Is activation preparation the same as sending?",
+    a: "No. Activation preparation creates campaign leads from customer-selected eligible records after campaign, legal and human-approval checks. It does not send email and does not spend Campaign Credits. Before a real send, Velocity Vision checks the paid plan, mailbox state, unsubscribe handling and current daily safety allowance again.",
   },
   {
     q: "Are AI outputs drafts?",
-    a: "Yes. Every AI-generated asset is a draft you review, edit and approve. Velocity Vision does not send, publish or activate anything automatically.",
+    a: "Yes. AI-generated assets remain editable drafts. The customer reviews and approves them. Velocity Vision does not automatically publish, send or activate campaign content.",
   },
   {
     q: "Does Velocity Vision scrape contacts or sell lists?",
-    a: "No. Velocity Vision does not scrape contact data, sell lists or supply prospect databases. Customers provide their own lawfully obtained business data and remain responsible for lawful basis, sender identity, suppression handling and every activation decision.",
-  },
-  {
-    q: "What am I actually paying for?",
-    a: "A self-serve software workspace: Data Vault, AI quality review, sender verification, governed activation, AI-assisted draft generation, cadence settings, follow-up records and early pipeline. Campaign Credits cover AI-intensive generation actions.",
-  },
-  {
-    q: "What are Campaign Credits?",
-    a: "Campaign Credits are non-cashable product-usage units for AI-intensive actions such as outreach packs, social posts, press releases, video scripts, follow-up assets and multilingual variants. They are not money, stored value or transferable currency.",
-  },
-  {
-    q: "Is storing data the same as activating it?",
-    a: "No. You can upload and review authorised data within plan limits. Activation is a separate customer-controlled step involving sender verification, segment review and applicable plan controls. AI drafts assets; the customer approves activation.",
+    a: "No. Customers provide their own lawfully obtained business data and remain responsible for lawful basis, sender identity, suppression handling and recipient appropriateness.",
   },
   {
     q: "What sending limits apply?",
-    a: "Daily send ceilings apply to the signed-in account on an eligible paid plan. Agency Workspace additionally gives an account-wide view of send usage across isolated client workspaces. Daily caps and risky-record controls are operational safeguards; they do not guarantee deliverability or legal compliance.",
+    a: "Normal daily plan ceilings are 20/day on Starter, 50/day on Growth and 100/day on Agency for the sending account. Sender health, warm-up and other safety controls can reduce those allowances but never raise them. Free Preview has a zero live-send ceiling. Agency also provides account-wide send-usage visibility across client workspaces; it does not claim cross-seat pooled-send enforcement.",
   },
   {
     q: "Which plans renew automatically?",
     a: "Starter is a one-off purchase with 30 days of workspace access. Growth and Agency Workspace are monthly subscriptions that renew at the disclosed monthly price until cancelled.",
   },
   {
-    q: "How do I cancel a monthly plan?",
-    a: "Cancel through the available billing settings or the published contact route before the next renewal date. Cancellation stops future renewal and normally leaves paid access available until the end of the current billing period, subject to the Terms.",
+    q: "What is Premium Human Review?",
+    a: "Where available, Premium Human Review is a separate paid add-on. It provides a senior-strategist review of the submitted campaign pack, written recommendations and one asynchronous revision pass. It is not legal advice, compliance sign-off, managed campaign delivery or a guarantee of results. Complimentary launch support is onboarding and setup guidance, not Premium Human Review.",
   },
   {
-    q: "How are paid products delivered?",
-    a: "Delivery is electronic through account activation and hosted workspace access after payment and any required onboarding or compliance checks are completed. No physical goods are supplied.",
+    q: "How do I cancel a monthly plan?",
+    a: "Cancel through the available billing settings or published contact route before the next renewal date. Cancellation stops future renewal and normally leaves paid access available until the end of the current billing period, subject to the Terms.",
   },
   {
     q: "What is the refund position?",
-    a: "Refund eligibility depends on the product terms, usage, applicable law and the procedures of the identified payment provider or Merchant of Record. Approved refunds are normally returned through the original payment method. The GSM Refund Policy is linked directly on this page.",
+    a: "Refund eligibility depends on the product terms, usage, applicable law and the procedures of the identified payment provider or Merchant of Record. Approved refunds are normally returned through the original payment method. The GSM Refund Policy is linked on this page.",
   },
   {
-    q: "What happens if I run out of paid credits?",
-    a: "The workspace remains subject to the paid access period and plan terms. New AI-intensive generation pauses until credits are added or the plan is upgraded; ordinary stored records do not become cashable or refundable balances.",
-  },
-  {
-    q: "Are outputs or results guaranteed?",
-    a: "No. Velocity Vision helps draft and organise customer-controlled activity. It does not guarantee replies, sales, deliverability, legal compliance, pipeline or revenue.",
-  },
-  {
-    q: "Can agencies share credits across clients?",
-    a: "Yes. Agency Workspace pools monthly Campaign Credits across isolated client workspaces, and shows account-wide send usage against the plan's daily send ceiling.",
+    q: "Are outputs or commercial results guaranteed?",
+    a: "No. Velocity Vision helps organise customer-controlled activity and stored outcome records. It does not guarantee replies, sales, deliverability, legal compliance, pipeline or revenue and does not perform automated attribution or A/B testing.",
   },
 ];
 
-const Pricing = () => {
+export default function Pricing() {
   const { currency, setCurrency } = useCurrency();
   const { readiness } = useDodoReadiness();
   const faqs = buildFaqs(isAnyTopUpLiveReady(readiness));
 
   return (
     <>
-      <SEO
-        title="Pricing — Velocity Vision commercial workspace"
-        description="Published multi-currency pricing for a self-serve B2B software workspace with electronic delivery, governed activation, clear billing cadence, cancellation and refund information."
-        path="/pricing"
-      />
+      <SEO title="Pricing — Velocity Vision commercial workspace" description="Published pricing for Velocity Vision Free Preview, Starter, Growth and Agency Workspace, with Campaign Credit, sending, billing and add-on terms." path="/pricing" />
       <Navbar />
       <main className="pt-20">
         <section className="relative bg-hero px-6 md:px-12 lg:px-20 pt-16 pb-28 md:pt-20 md:pb-36 lg:pt-24 lg:pb-44">
           <div className="max-w-4xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">
-                Pricing
-              </p>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-primary-foreground mb-5">
-                Published plans for a governed self-serve workspace
-              </h1>
-              <p className="text-primary-foreground/80 text-lg md:text-xl mb-8 max-w-3xl mx-auto">
-                Review the price, currency, billing cadence, included Campaign Credits, access period, tax treatment and delivery terms before purchase.
-              </p>
+            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+              <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Pricing</p>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-primary-foreground mb-5">Published plans for a customer-controlled workspace</h1>
+              <p className="text-primary-foreground/80 text-lg md:text-xl mb-8 max-w-3xl mx-auto">Review price, billing cadence, Campaign Credits, workspace access, send ceilings, tax treatment and delivery terms before purchase.</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button variant="hero" size="lg" asChild>
-                  <Link to="/auth">
-                    Start your workspace <ArrowRight size={18} />
-                  </Link>
-                </Button>
-                <Button variant="hero-outline" size="lg" asChild>
-                  <Link to="/contact">Talk to us about onboarding</Link>
-                </Button>
+                <Button variant="hero" size="lg" asChild><Link to="/auth">Start Free Preview <ArrowRight size={18} /></Link></Button>
+                <Button variant="hero-outline" size="lg" asChild><Link to="/contact">Talk to us about onboarding</Link></Button>
               </div>
             </motion.div>
           </div>
         </section>
 
-        <div className="panel-wrap">
-          <div className="panel-pink">
-            <section className="section-padding">
-              <div className="max-w-7xl mx-auto">
-                <div className="mb-6 md:mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                  <p className="text-xs md:text-sm max-w-xl leading-relaxed opacity-90">
-                    Choose your display currency. The final checkout confirms the transaction currency, applicable tax and payment provider before payment.
-                  </p>
-                  <PricingCurrencySelector
-                    align="right"
-                    currency={currency}
-                    onCurrencyChange={setCurrency}
-                  />
-                </div>
-
-                <div className="mb-6 rounded-2xl border border-white/40 bg-white p-6 lg:p-7 flex flex-col md:flex-row md:items-center gap-5 shadow-card text-foreground">
-                  <div className="flex-1 min-w-0">
-                    <span className="inline-block text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-accent/15 text-accent font-semibold mb-2">
-                      Free preview · £0
-                    </span>
-                    <h2 className="font-display font-semibold text-xl">Free Preview</h2>
-                    <p className="text-sm opacity-80 mt-1 max-w-2xl">
-                      Start with free Campaign Credits. Build your first workspace, review your data and generate preview assets before you pay.
-                    </p>
-                    <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-sm">
-                      <li className="flex gap-2">
-                        <Check size={16} className="text-accent mt-0.5" />
-                        10 welcome credits + 2/day (cap 10)
-                      </li>
-                      <li className="flex gap-2">
-                        <Check size={16} className="text-accent mt-0.5" />1 workspace, up to 25 contacts
-                      </li>
-                      <li className="flex gap-2">
-                        <Check size={16} className="text-accent mt-0.5" />1 full campaign pack (preview)
-                      </li>
-                      <li className="flex gap-2">
-                        <Check size={16} className="text-accent mt-0.5" />14-day preview window
-                      </li>
-                      <li className="flex gap-2">
-                        <Check size={16} className="text-accent mt-0.5" />No automatic upgrade — you choose if and when to buy
-                      </li>
-                      <li className="flex gap-2">
-                        <Check size={16} className="text-accent mt-0.5" />No live sending on Free Preview
-                      </li>
-                    </ul>
-                    <p className="text-xs opacity-70 mt-3">
-                      No card required. No automatic paid upgrade. Publishing and sending remain under customer control.
-                    </p>
-                  </div>
-                  <div className="flex flex-col gap-2 shrink-0">
-                    <Button size="lg" asChild>
-                      <Link to="/auth">
-                        Start Free Preview <ArrowRight size={18} />
-                      </Link>
-                    </Button>
-                    <Button variant="outline" size="lg" asChild>
-                      <Link to="/help/getting-started">How it works</Link>
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="mb-6 rounded-xl border border-accent/40 bg-accent/5 px-4 py-4 text-sm text-foreground/90 space-y-2">
-                  <p>
-                    Paid plans are activated after onboarding and applicable compliance checks. The final price, currency, tax treatment, payment provider and product terms are confirmed before purchase.
-                  </p>
-                  <p>
-                    <strong>Billing:</strong> Starter is one-off with 30 days of workspace access. Growth and Agency Workspace renew monthly until cancelled. Cancellation stops future renewal and normally leaves access available until the end of the current paid period.
-                  </p>
-                  <p>
-                    <strong>Delivery:</strong> paid products are delivered electronically through account activation and hosted workspace access. No physical goods are supplied.
-                  </p>
-                  <p>
-                    <strong>Refunds:</strong>{" "}
-                    <a
-                      href="https://globalsolutions.management/refunds"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="underline underline-offset-4 font-semibold"
-                    >
-                      read the GSM Refund Policy
-                    </a>
-                    . Product-specific terms and the identified payment provider's procedures may also apply.
-                  </p>
-                </div>
-
-                <div className="mb-6 rounded-xl border border-border/50 bg-white/70 px-4 py-4 text-sm text-foreground/90 space-y-1">
-                  <p className="font-semibold">Not sure which plan?</p>
-                  <p>
-                    <strong>Starter</strong> is for running one first campaign end to end.{" "}
-                    <strong>Growth</strong> is the recommended operating plan for most teams running outreach continuously.{" "}
-                    <strong>Agency Workspace</strong> is for multi-client delivery across isolated client workspaces.
-                  </p>
-                  <p>
-                    Launch support included: complimentary onboarding and a review of your first campaign.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {plans.map((plan, index) => (
-                    <motion.div
-                      key={plan.name}
-                      initial={{ opacity: 0, y: 24 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, margin: "-50px" }}
-                      transition={{ duration: 0.4, delay: index * 0.06 }}
-                      className={`rounded-2xl p-6 lg:p-7 shadow-card border flex flex-col bg-white border-white/40 text-foreground ${plan.highlight ? "ring-2 ring-accent/60 shadow-elevated" : ""}`}
-                    >
-                      {plan.highlight && (
-                        <span className="inline-block self-start text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-accent/15 text-accent font-semibold mb-3">
-                          Recommended for most teams
-                        </span>
-                      )}
-                      <h2 className="font-display font-semibold text-xl">{plan.name}</h2>
-                      <p className="text-sm opacity-80 mb-3">{plan.tagline}</p>
-                      <p className="mb-1">
-                        <span className="text-3xl md:text-4xl font-display font-bold">
-                          {priceFor(plan.sku, currency).formatted}
-                        </span>
-                        <span className="text-sm opacity-80 ml-1">{plan.unit}</span>
-                      </p>
-                      <p className="text-[11px] opacity-70 mb-3">{taxNotice(currency)}</p>
-                      <p className="text-xs mb-4">
-                        Best for: <span className="font-medium">{plan.best}</span>
-                      </p>
-                      <p className="text-xs font-semibold text-accent mb-4">{plan.credits}</p>
-                      <ul className="space-y-2 mb-6 flex-1">
-                        {plan.features.map((feature) => (
-                          <li key={feature} className="flex items-start gap-2 text-sm">
-                            <Check size={16} className="text-accent shrink-0 mt-0.5" />
-                            <span className="opacity-80">{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      {isProductLiveReady(readiness, plan.sku as DodoProductKey) ? (
-                        <Button variant="cta" asChild>
-                          <Link to={authNextForPlan(planSlug(plan.sku))}>
-                            {LIVE_CTA[plan.sku] ?? plan.cta}
-                          </Link>
-                        </Button>
-                      ) : (
-                        <Button variant="cta" asChild>
-                          <Link to={`/contact?plan=${planSlug(plan.sku)}`}>{plan.cta}</Link>
-                        </Button>
-                      )}
-                    </motion.div>
-                  ))}
-                </div>
-
-                <div className="mt-8">
-                  <GlobalStrip variant="compact" />
-                </div>
-              </div>
-            </section>
+        <div className="panel-wrap"><div className="panel-pink"><section className="section-padding"><div className="max-w-7xl mx-auto">
+          <div className="mb-6 md:mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <p className="text-xs md:text-sm max-w-xl leading-relaxed opacity-90">Choose a display currency. The final transaction currency, applicable tax, payment provider and terms are confirmed before payment.</p>
+            <PricingCurrencySelector align="right" currency={currency} onCurrencyChange={setCurrency} />
           </div>
-        </div>
 
-        <div className="panel-wrap">
-          <div className="panel-blue">
-            <section className="section-padding">
-              <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
-                <div className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground">
-                  <h2 className="font-display font-semibold text-lg mb-2">
-                    Campaign Credits
-                  </h2>
-                  <p className="text-sm opacity-90">
-                    AI-intensive generation actions draw on Campaign Credits. Credits are non-cashable product-usage units and are governed by the applicable plan terms.
-                  </p>
-                </div>
-                <div className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground">
-                  <h2 className="font-display font-semibold text-lg mb-2">
-                    Plan limits and top-ups
-                  </h2>
-                  <p className="text-sm opacity-90">
-                    Daily caps and risky-record controls are operational safeguards. They do not guarantee deliverability or compliance. Additional Campaign Credits can be added later; the price, currency, tax and payment provider are confirmed before any payment.
-                  </p>
-                </div>
-                <div className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground">
-                  <h2 className="font-display font-semibold text-lg mb-2">
-                    Multi-currency display
-                  </h2>
-                  <p className="text-sm opacity-90">
-                    Display prices are available in supported currencies. The checkout or onboarding confirmation identifies the final currency, tax and payment provider before payment.
-                  </p>
-                </div>
+          <div className="mb-6 rounded-2xl border border-white/40 bg-white p-6 lg:p-7 shadow-card text-foreground">
+            <div className="flex flex-col md:flex-row md:items-center gap-5">
+              <div className="flex-1">
+                <span className="inline-block text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-accent/15 text-accent font-semibold mb-2">Free Preview · £0</span>
+                <h2 className="font-display font-semibold text-xl">Build and review the first workflow before you pay</h2>
+                <ul className="mt-3 grid sm:grid-cols-2 gap-x-6 gap-y-1 text-sm">
+                  {["10 welcome credits + 2/day (daily balance cap 10)", "1 workspace · up to 25 contacts", "Maximum 1 full campaign pack", "14-day preview window", "No card · no automatic upgrade", "No live sending or mailbox connection", "No recurring cadence", "No credit top-ups into Free Preview"].map((x) => <li key={x} className="flex gap-2"><Check size={16} className="text-accent mt-0.5 shrink-0" />{x}</li>)}
+                </ul>
               </div>
-              <div className="max-w-5xl mx-auto mt-10 md:mt-12">
-                <TrustStrip variant="pricing" />
-              </div>
-            </section>
+              <Button size="lg" asChild><Link to="/auth">Start Free Preview <ArrowRight size={18} /></Link></Button>
+            </div>
           </div>
-        </div>
 
-        <div className="panel-wrap">
-          <div className="panel-pink">
-            <section className="section-padding">
-              <div className="max-w-3xl mx-auto">
-                <div className="max-w-2xl mb-8">
-                  <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">
-                    Pricing FAQ
-                  </p>
-                  <h2 className="text-3xl md:text-4xl font-display font-bold">
-                    Questions about plans, credits, billing and refunds
-                  </h2>
-                </div>
-                <div className="bg-white border border-white/40 rounded-2xl p-6 md:p-8 shadow-card text-foreground">
-                  <Accordion type="single" collapsible>
-                    {faqs.map((faq, index) => (
-                      <AccordionItem key={faq.q} value={`f-${index}`}>
-                        <AccordionTrigger className="text-left font-display">
-                          {faq.q}
-                        </AccordionTrigger>
-                        <AccordionContent className="leading-relaxed opacity-80">
-                          {faq.a}
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                </div>
-              </div>
-            </section>
+          <div className="mb-6 rounded-xl border border-accent/40 bg-accent/5 px-4 py-4 text-sm text-foreground/90 space-y-2">
+            <p><strong>Billing:</strong> Starter is one-off with 30 days of workspace access. Growth and Agency renew monthly until cancelled.</p>
+            <p><strong>Credits:</strong> the current live credit-priced action is full campaign-pack generation. Sending, Data Vault review and activation preparation are governed separately.</p>
+            <p><strong>Delivery:</strong> paid products are delivered electronically through account/workspace access after payment and any required onboarding or compliance checks.</p>
+            <p><strong>Refunds:</strong> <a href="https://globalsolutions.management/refunds" target="_blank" rel="noreferrer" className="underline underline-offset-4 font-semibold">read the GSM Refund Policy</a>. Product-specific terms and the identified payment provider's procedures may also apply.</p>
           </div>
-        </div>
+
+          <div className="mb-6 rounded-xl border border-border/50 bg-white/70 px-4 py-4 text-sm text-foreground/90 space-y-1">
+            <p><strong>Launch support:</strong> complimentary onboarding and setup guidance are included. Premium Human Review is a separate paid add-on where available.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {plans.map((plan, index) => (
+              <motion.div key={plan.name} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: index * 0.06 }} className={`rounded-2xl p-6 lg:p-7 shadow-card border flex flex-col bg-white border-white/40 text-foreground ${plan.highlight ? "ring-2 ring-accent/60 shadow-elevated" : ""}`}>
+                {plan.highlight && <span className="inline-block self-start text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-accent/15 text-accent font-semibold mb-3">Recommended for recurring use</span>}
+                <h2 className="font-display font-semibold text-xl">{plan.name}</h2>
+                <p className="text-sm opacity-80 mb-3">{plan.tagline}</p>
+                <p><span className="text-3xl md:text-4xl font-display font-bold">{priceFor(plan.sku, currency).formatted}</span><span className="text-sm opacity-80 ml-1">{plan.unit}</span></p>
+                <p className="text-[11px] opacity-70 mb-3">{taxNotice(currency)}</p>
+                <p className="text-xs mb-3">Best for: <span className="font-medium">{plan.best}</span></p>
+                <p className="text-xs font-semibold text-accent mb-4">{plan.credits}</p>
+                <ul className="space-y-2 mb-6 flex-1">{plan.features.map((feature) => <li key={feature} className="flex items-start gap-2 text-sm"><Check size={16} className="text-accent shrink-0 mt-0.5" /><span className="opacity-80">{feature}</span></li>)}</ul>
+                {isProductLiveReady(readiness, plan.sku as DodoProductKey) ? <Button variant="cta" asChild><Link to={authNextForPlan(planSlug(plan.sku))}>{LIVE_CTA[plan.sku] ?? plan.cta}</Link></Button> : <Button variant="cta" asChild><Link to={`/contact?plan=${planSlug(plan.sku)}`}>{plan.cta}</Link></Button>}
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="mt-6 rounded-2xl border border-white/40 bg-white p-6 shadow-card text-foreground">
+            <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
+              <div>
+                <span className="text-[10px] uppercase tracking-wider font-semibold text-accent">Optional paid add-on</span>
+                <h2 className="font-display font-semibold text-xl mt-1">Premium Human Review — {priceFor("vv_human_review_oneoff", currency).formatted} one-off</h2>
+                <p className="text-sm text-muted-foreground mt-2">A senior-strategist review of the submitted campaign pack, written recommendations and one asynchronous revision pass. It is not legal advice, compliance sign-off, managed delivery or a result guarantee.</p>
+              </div>
+              <Button variant="outline" asChild><Link to="/contact?topic=human-review">Ask about Human Review</Link></Button>
+            </div>
+          </div>
+          <div className="mt-8"><GlobalStrip variant="compact" /></div>
+        </div></section></div></div>
+
+        <div className="panel-wrap"><div className="panel-blue"><section className="section-padding"><div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
+          <Info title="Campaign Credits">Currently used for full campaign-pack generation. They are non-cashable product-usage units, not money or stored value.</Info>
+          <Info title="Paid-workspace top-ups">Top-up packs are only for eligible paid workspaces. Free Preview cannot buy top-ups. Availability depends on live checkout readiness.</Info>
+          <Info title="Send ceilings">Free 0/day · Starter 20/day · Growth 50/day · Agency 100/day normal ceilings. Sender/safety controls can reduce them.</Info>
+        </div><div className="max-w-5xl mx-auto mt-10"><TrustStrip variant="pricing" /></div></section></div></div>
+
+        <div className="panel-wrap"><div className="panel-pink"><section className="section-padding"><div className="max-w-3xl mx-auto">
+          <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">Pricing FAQ</p>
+          <h2 className="text-3xl md:text-4xl font-display font-bold mb-8">Questions about plans, credits, sending and billing</h2>
+          <div className="bg-white border border-white/40 rounded-2xl p-6 md:p-8 shadow-card text-foreground"><Accordion type="single" collapsible>{faqs.map((faq, index) => <AccordionItem key={faq.q} value={`f-${index}`}><AccordionTrigger className="text-left font-display">{faq.q}</AccordionTrigger><AccordionContent className="leading-relaxed opacity-80">{faq.a}</AccordionContent></AccordionItem>)}</Accordion></div>
+        </div></section></div></div>
       </main>
       <EmailIntegrationsStrip variant="compact" />
       <Footer />
     </>
   );
-};
+}
 
-export default Pricing;
+function Info({ title, children }: { title: string; children: React.ReactNode }) {
+  return <div className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground"><h2 className="font-display font-semibold text-lg mb-2">{title}</h2><p className="text-sm opacity-90">{children}</p></div>;
+}
