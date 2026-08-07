@@ -1,4 +1,5 @@
 // Campaign cadence helpers — single source of truth for schedule logic.
+// Cadence dates organise recurring work; they never mean automatic sending.
 
 export type CadenceType = "one_off" | "weekly" | "monthly" | "quarterly" | "yearly" | "custom";
 export type CadenceUnit = "day" | "week" | "month";
@@ -9,9 +10,9 @@ export interface CadenceConfig {
   cadence_type: CadenceType;
   cadence_interval: number;
   cadence_unit: CadenceUnit;
-  start_at: string | null;          // ISO timestamptz
+  start_at: string | null;
   timezone: string;
-  cadence_end_at: string | null;    // ISO timestamptz
+  cadence_end_at: string | null;
   cadence_max_runs: number | null;
   refresh_strategy: RefreshStrategy;
 }
@@ -27,8 +28,8 @@ export const CADENCE_LABELS: Record<CadenceType, string> = {
 
 export const REFRESH_LABELS: Record<RefreshStrategy, string> = {
   reuse: "Reuse existing assets",
-  clone: "Clone & edit last cycle",
-  regenerate: "Regenerate fresh assets",
+  clone: "Use prior assets as a starting point",
+  regenerate: "Prepare fresh assets before the next run",
 };
 
 export function defaultCadence(): CadenceConfig {
@@ -64,7 +65,7 @@ function addStep(d: Date, type: CadenceType, interval: number, unit: CadenceUnit
   return n;
 }
 
-/** Compute next run after `from` based on cadence + start_at. */
+/** Compute next cadence date after `from` based on cadence + start_at. */
 export function computeNextRun(cfg: CadenceConfig, from: Date = new Date()): Date | null {
   if (!cfg.start_at) return null;
   const start = new Date(cfg.start_at);
@@ -75,7 +76,6 @@ export function computeNextRun(cfg: CadenceConfig, from: Date = new Date()): Dat
   return next;
 }
 
-/** Derive lifecycle state from current status + cadence timing. */
 export function deriveLifecycle(
   status: string | null | undefined,
   cfg: Partial<CadenceConfig>,
@@ -117,42 +117,41 @@ function fmtDate(iso: string, tz: string): string {
   } catch { return new Date(iso).toLocaleDateString(); }
 }
 
-/** Plain English preview of cadence config. */
+/** Plain-English preview of cadence config. Every due date still requires customer review/action. */
 export function plainEnglish(cfg: CadenceConfig): string {
   const parts: string[] = [];
   if (cfg.start_at) parts.push(`Starts ${fmtDateTime(cfg.start_at, cfg.timezone)} (${cfg.timezone})`);
   switch (cfg.cadence_type) {
-    case "one_off": parts.push("Runs once"); break;
-    case "weekly": parts.push("Repeats every week"); break;
-    case "monthly": parts.push("Repeats every month"); break;
-    case "quarterly": parts.push("Repeats every quarter"); break;
-    case "yearly": parts.push("Repeats every year"); break;
-    case "custom":
-      parts.push(`Repeats every ${cfg.cadence_interval} ${cfg.cadence_unit}${cfg.cadence_interval > 1 ? "s" : ""}`);
-      break;
+    case "one_off": parts.push("One planned run"); break;
+    case "weekly": parts.push("Cadence every week"); break;
+    case "monthly": parts.push("Cadence every month"); break;
+    case "quarterly": parts.push("Cadence every quarter"); break;
+    case "yearly": parts.push("Cadence every year"); break;
+    case "custom": parts.push(`Cadence every ${cfg.cadence_interval} ${cfg.cadence_unit}${cfg.cadence_interval > 1 ? "s" : ""}`); break;
   }
   if (cfg.cadence_end_at) parts.push(`Ends ${fmtDate(cfg.cadence_end_at, cfg.timezone)}`);
-  if (cfg.cadence_max_runs) parts.push(`Max ${cfg.cadence_max_runs} runs`);
+  if (cfg.cadence_max_runs) parts.push(`Max ${cfg.cadence_max_runs} planned runs`);
   const next = computeNextRun(cfg);
-  if (next) parts.push(`Next run: ${fmtDateTime(next.toISOString(), cfg.timezone)}`);
+  if (next) parts.push(`Next review date: ${fmtDateTime(next.toISOString(), cfg.timezone)}`);
+  parts.push("Each run remains customer-controlled");
   return parts.join(" · ");
 }
 
-/** Short next-action label for cards. */
+/** Short next-action label for cards. Does not imply an automatic send/run. */
 export function nextActionLabel(cfg: Partial<CadenceConfig> & { next_run_at?: string | null }): string {
   const next = cfg.next_run_at
     ? new Date(cfg.next_run_at)
     : cfg.start_at && cfg.cadence_type
       ? computeNextRun(cfg as CadenceConfig)
       : null;
-  if (!next) return cfg.cadence_end_at ? `Ends ${fmtDate(cfg.cadence_end_at, cfg.timezone || "UTC")}` : "No schedule set";
+  if (!next) return cfg.cadence_end_at ? `Ends ${fmtDate(cfg.cadence_end_at, cfg.timezone || "UTC")}` : "No cadence date set";
   const days = Math.round((next.getTime() - Date.now()) / 86_400_000);
   const tz = cfg.timezone || "UTC";
-  if (days < 0) return `Overdue since ${fmtDate(next.toISOString(), tz)}`;
-  if (days === 0) return `Runs today at ${new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: tz }).format(next)}`;
-  if (days === 1) return `Runs tomorrow at ${new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: tz }).format(next)}`;
-  if (days <= 14) return `Runs in ${days} days · ${fmtDate(next.toISOString(), tz)}`;
-  return `Next run ${fmtDate(next.toISOString(), tz)}`;
+  if (days < 0) return `Cadence review overdue since ${fmtDate(next.toISOString(), tz)}`;
+  if (days === 0) return `Cadence review due today at ${new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: tz }).format(next)}`;
+  if (days === 1) return `Cadence review due tomorrow at ${new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: tz }).format(next)}`;
+  if (days <= 14) return `Cadence review in ${days} days · ${fmtDate(next.toISOString(), tz)}`;
+  return `Next cadence review ${fmtDate(next.toISOString(), tz)}`;
 }
 
 export const COMMON_TIMEZONES = [
