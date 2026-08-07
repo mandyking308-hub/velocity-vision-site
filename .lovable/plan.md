@@ -1,53 +1,33 @@
-# Launch-night conversion sprint — Velocity Vision
+# Pre-Dodo truth corrections
 
-Objective: maximise the chance of the first legitimate paying customer immediately after Dodo goes live. Five changes only. No price changes, no new features, no invented proof, no dark patterns. All existing legal, anti-spam and compliance content is preserved.
+Audit-derived corrections only. No new features, no price changes, no Dodo/Stripe logic changes.
 
-## What the audit found (verified in current source)
+## P0 — must fix before enabling Dodo
 
-- The homepage hero (`src/components/HeroSection.tsx`) leads with a long compliance-heavy sentence. It states what the product *is* but not who it is for, the outcome, or time-to-value. Two disclaimer paragraphs sit above the CTA.
-- The primary CTA is consistent (`Start Free Preview` / `Start your workspace` → `/auth`) on desktop and mobile (`src/components/Navbar.tsx` renders the same two buttons in the mobile menu).
-- A working product preview already exists at `/demo` (`src/pages/DemoLogin.tsx` → `/demo/crm`, `/demo/data-vault`), but it is **not linked from the hero or the navbar**. It is only reachable from `MidPageCTA` and `ROICalculator` far down the page. Prospects cannot see the product before paying unless they scroll.
-- Pricing (`src/pages/Pricing.tsx`) shows three equal cards. Growth has `highlight: true` but the badge only reads "Recurring plan" — no default/best-fit recommendation. Every plan CTA routes to `/contact` (correct while Stripe is parked).
-- Trust content is strong and already present: footer carries Terms, Privacy, Acceptable Use & Anti-Spam, Refund & Cancellation, Security, Cookies, Subprocessors; pricing FAQ covers cancellation; entity disclosure is in place.
-- High-intent capture exists at `/contact` with a topic selector, but there is no "Starter/Growth/Agency onboarding" prefill, so plan intent is lost between pricing and the form.
-- No abandoned-signup capture exists. That is out of scope tonight.
+1. **Free Preview cannot send — enforce server-side.** `supabase/functions/email-send/index.ts:47,234-235`: `WARMUP_DAILY_CAP` has no `free_preview` entry, so a free-preview account with an existing enabled connection falls back to 20/day. Add an explicit `free_preview: 0` and reject before the cap check.
+2. **Reconcile the two daily-cap sources.** UI shows 80/250/1000 (`src/lib/sendSafety.ts:8-13`); the server enforces 20/50/100 (`email-send/index.ts:47`). Pick one truth and make the UI display the enforced value, so no customer sees a number the system will refuse.
+3. **Remove the unimplemented "Preview / watermarked exports" bullet** (`src/lib/credits.ts:48`) — no watermark code exists.
+4. **Free Preview "1 full campaign pack"**: either enforce it in `AppCampaignNew.tsx:251` (`blocked` currently ignores `existingPackCount`) or reword the public/in-app claim to "1 pack included in your welcome credits".
+5. **Confirm top-up pricing is final.** `src/lib/credits.ts:138` marks 25/£49, 75/£119, 200/£279 as placeholders, but `TopUpModal.tsx` sells them live.
 
-## The five changes
+## P1 — tier-accuracy corrections
 
-### P0-1 — Hero: lead with audience, outcome and time-to-value
-File: `src/components/HeroSection.tsx`
-Rewrite the eyebrow, H1 and first paragraph so the first screen answers who it is for, what they get and how fast. Move the two disclaimer paragraphs to a single condensed line below the CTAs (keeping every substantive claim: no scraping, no list sales, no automatic sending, customer approves activation). No claim is removed or weakened.
-Expected effect: reduces first-screen bounce; the strongest single lever on a cold homepage.
+6. **`Pricing.tsx:73,75`** — "Recurring cadence (weekly/monthly)" and "Reusable templates & segments" are listed as Growth-only but are not gated anywhere. Either gate them or move to shared-across-tiers language.
+7. **`Pricing.tsx:91`** — "Pooled sending governance across client workspaces": `agency_pooled_sends_today()` is advisory and never blocks a send. Reword to "pooled send visibility" unless enforcement is added.
+8. **`PricingTeaser.tsx`** — add the same credit counts as `/pricing` (25 / 80 / 250) so homepage and pricing agree.
+9. **`AppBilling.tsx:78`** — replace the user-visible "No Stripe billing profile yet." toast with provider-neutral wording.
 
-### P0-2 — Surface the existing demo as a secondary hero CTA
-Files: `src/components/HeroSection.tsx`, `src/components/Navbar.tsx`
-Add "See the product (no signup)" → `/demo` as the third hero action, and add a `Demo` link to the desktop and mobile nav. This ships an already-built, compliant, read-only preview — no new product surface.
-Expected effect: lets a prospect evaluate before paying, the biggest gap in the current funnel.
+## P2 — publicly explain what already ships
 
-### P0-3 — Pricing: name a default plan and remove choice paralysis
-File: `src/pages/Pricing.tsx`
-Change the Growth card badge from "Recurring plan" to "Recommended for most teams", add a one-line "Not sure? Start with Growth — Starter is a one-off trial run, Agency is for multi-client work" above the grid. No price, currency, tax, SKU or refund copy changes.
-Expected effect: fewer stalled decisions at the highest-intent page.
+None of these appear on `/features`, `/how-it-works`, `CampaignCapabilities` or `/help/getting-started` today:
+First-Campaign Copilot, Launchpad, Preflight scorecard, Reply Intent Command Centre, deterministic compliance precedence, referral extraction, out-of-office return dates, 24h hot-reply SLA, meeting handoff and booking link, Outcome Funnel.
 
-### P0-4 — Carry plan intent into the contact form
-Files: `src/pages/Pricing.tsx`, `src/components/PricingTeaser.tsx`, `src/pages/Contact.tsx`
-Plan CTAs link to `/contact?plan=growth` (etc.). Contact reads the param, preselects the topic and prefills the message with "I'd like onboarding for the Growth plan." Purely presentational; no changes to submission, validation or the `lead-submit` path.
-Expected effect: reduces friction on the only conversion path currently live, and tells you which plan each enquiry wants.
+Add a single factual capability section covering these, using existing design tokens and existing disclaimer style. State meeting booking as *recorded*, not calendar-synced, and never claim A/B testing (deliberately deferred, `src/lib/outcomeFunnel.ts:6-10`).
 
-### P1-5 — Founder-led launch benefit, stated factually
-Files: `src/pages/Pricing.tsx`, `src/components/FinalCTA.tsx`
-Add one honest line: complimentary founder-led onboarding and a first-campaign review for early customers, with a stated support response expectation you can actually meet. No countdown, no seat counter, no scarcity language, no testimonials, no results claims.
-Expected effect: raises perceived value of the first purchase without any unverifiable claim.
+## P3 — demo completeness
 
-## Publish tonight vs. blocked
+Add the Outcome Funnel panel to the `/demo/crm` reporting tab; it is the only major new capability the no-signup demo does not show. Referral, OOO date, 24h waiting reply, meeting booked, Launchpad and Preflight are already demonstrated.
 
-- P0-1 through P0-4 and P1-5 are copy/UI only. Safe to build, test and publish tonight; none touch billing, auth, edge functions, RLS or the Stripe/Dodo paths.
-- Blocked on Dodo credentials and real payment testing: switching pricing CTAs from `/contact` to live checkout, and any end-to-end purchase verification. Not attempted in this sprint.
+## Deliberately out of scope
 
-## Explicitly not doing
-
-Abandoned-signup/checkout recovery, exit-intent capture, testimonial or logo sections, redesign, signup-field reduction (signup already asks only name/email/password), and any change to legal, refund, anti-spam or activation-governance content.
-
-## Verification before publish
-
-Production build, full test suite, and a Playwright pass over `/`, `/pricing`, `/contact`, `/demo` at 390px and 1280px checking CTA visibility, link integrity and no console errors.
+Prices, Dodo/Stripe checkout logic, legal pages, secrets, credit costs, and the client-side credit ledger integrity issue (`CreditsContext.consume` is bypassable) — the latter is a revenue-integrity item to schedule separately, not a launch blocker for the public site.
