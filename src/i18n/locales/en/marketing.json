@@ -16,31 +16,31 @@
     "contact": "Contact"
   },
   "hero": {
-    "eyebrow": "Marketing growth launchpad",
-    "title": "Launch full campaigns in minutes — not weeks.",
-    "subtitle": "Upload your audience, activate a campaign, and let Velocity Vision run the outbound, the follow-up and the pipeline. Self-serve. Multilingual. Built for global teams.",
-    "ctaPrimary": "Start free trial",
+    "eyebrow": "Governed B2B outreach workspace",
+    "title": "Plan, review and activate campaigns with customer control.",
+    "subtitle": "Upload your authorised business data, prepare AI-assisted drafts, verify your sender and manage replies, follow-up and early pipeline in one self-serve workspace. Multilingual. Built for global teams.",
+    "ctaPrimary": "Start free preview",
     "ctaSecondary": "See live demo"
   },
   "pricing": {
     "title": "Simple, transparent pricing",
-    "subtitle": "Every plan includes Campaign Credits, the Data Vault, and the full pipeline workspace.",
+    "subtitle": "Paid plans include Campaign Credits, the Data Vault and the customer-controlled outreach workspace described on the pricing page.",
     "month": "/month",
     "oneTime": "one-off",
     "perReview": "per review",
-    "taxNotice": "Prices exclude VAT/sales tax. Tax is calculated at checkout.",
+    "taxNotice": "Applicable tax, transaction currency and payment provider are confirmed before payment.",
     "starter": "Starter",
     "growth": "Growth",
     "agency": "Agency",
-    "choosePlan": "Choose plan"
+    "choosePlan": "Review plan"
   },
   "howItWorks": {
     "title": "How it works",
-    "subtitle": "From data to revenue in 5 guided steps.",
+    "subtitle": "From authorised data to reviewed outreach and follow-up in guided steps.",
     "step1": "Upload your data",
-    "step2": "Review & activate",
-    "step3": "Generate assets",
-    "step4": "Launch the campaign",
+    "step2": "Review & prepare",
+    "step3": "Generate drafts",
+    "step4": "Approve activation",
     "step5": "Work the replies"
   }
 }
