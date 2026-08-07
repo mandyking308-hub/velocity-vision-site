@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,8 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ShieldCheck, AlertTriangle, Send, ArrowLeft, Pause, Upload, Mail, Wand2, Plus } from "lucide-react";
-
+import { ShieldCheck, AlertTriangle, Send, ArrowLeft, Pause, Upload, Mail, Plus } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -18,91 +16,102 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCredits } from "@/contexts/CreditsContext";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import {
-  computeSafety, DEFAULT_SENDER_STATE, maxRiskyOverride, SENDER_HEALTH_LABEL,
-  SENDER_HEALTH_TONE, type SenderState,
+  computeSafety,
+  DEFAULT_SENDER_STATE,
+  maxRiskyOverride,
+  SENDER_HEALTH_LABEL,
+  SENDER_HEALTH_TONE,
+  type SenderState,
 } from "@/lib/sendSafety";
 import type { PlanId } from "@/lib/credits";
 import SendSafetyPanel from "@/components/app/SendSafetyPanel";
 import CampaignPreflight from "@/components/app/CampaignPreflight";
-import { resolveUnsubscribeReadiness, UNSUBSCRIBE_HANDLER_DEPLOYED } from "@/lib/systemCapabilities";
 import { runPreflight, activationGate, canExecuteActivation } from "@/lib/campaignPreflight";
 import SenderStatusCard from "@/components/app/SenderStatusCard";
 import JourneyEmptyState from "@/components/app/JourneyEmptyState";
 import LegalComplianceGate from "@/components/LegalComplianceGate";
 import { useLegalStatus } from "@/lib/legalCompliance";
-import { recordLegalAcceptance } from "@/lib/recordLegalAcceptance";
 import { computeReadiness, warmupCap } from "@/lib/senderReadiness";
 
-interface Counts { valid: number; needs_review: number; risky: number; blocked: number; suppressed: number; }
+interface Counts {
+  valid: number;
+  needs_review: number;
+  risky: number;
+  blocked: number;
+  suppressed: number;
+}
+
+type CampaignRow = {
+  id: string;
+  name: string;
+  status: string | null;
+  goal?: string | null;
+  pack?: any;
+  brief?: any;
+  approved_at?: string | null;
+  is_sample?: boolean | null;
+};
 
 export default function AppActivation() {
-  const { t } = useTranslation("app");
   const { user } = useAuth();
-  const { remaining, planConfig } = useCredits();
+  const { planConfig } = useCredits();
   const { currentId } = useWorkspace();
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const campaignId = params.get("campaign") || null;
+  const legal = useLegalStatus();
 
   const [counts, setCounts] = useState<Counts>({ valid: 0, needs_review: 0, risky: 0, blocked: 0, suppressed: 0 });
   const [includeReview, setIncludeReview] = useState(false);
   const [riskyOverride, setRiskyOverride] = useState(0);
   const [riskAck, setRiskAck] = useState(false);
-  const [batchSize, setBatchSize] = useState<number>(0);
+  const [batchSize, setBatchSize] = useState(0);
   const [sender, setSender] = useState<SenderState>(DEFAULT_SENDER_STATE);
   const [fromEmail, setFromEmail] = useState<string | null>(null);
   const [connectionId, setConnectionId] = useState<string | null>(null);
+  const [defaultConn, setDefaultConn] = useState<any>(null);
+  const [senderDetail, setSenderDetail] = useState<any>(null);
   const [usedToday, setUsedToday] = useState(0);
   const [scheduledToday, setScheduledToday] = useState(0);
-  const [agencyPooled, setAgencyPooled] = useState<number>(0);
-  const [senderDetail, setSenderDetail] = useState<any>(null);
-  const legal = useLegalStatus();
-  const [legalGateOpen, setLegalGateOpen] = useState(false);
-  const [roles, setRoles] = useState<string[]>([]);
-  const [founderAccepting, setFounderAccepting] = useState(false);
-  const [defaultConn, setDefaultConn] = useState<any>(null);
-  const [campaigns, setCampaigns] = useState<Array<{ id: string; name: string; status: string | null; goal?: string | null; pack?: any; brief?: any; approved_at?: string | null; is_sample?: boolean | null }>>([]);
-  const [selectedCampaign, setSelectedCampaign] = useState<string>(campaignId || "");
+  const [agencyPooled, setAgencyPooled] = useState(0);
+  const [campaigns, setCampaigns] = useState<CampaignRow[]>([]);
+  const [selectedCampaign, setSelectedCampaign] = useState(campaignId || "");
   const [activating, setActivating] = useState(false);
-
-
-  useEffect(() => {
-    if (!user) return;
-    supabase.from("user_roles").select("role").eq("user_id", user.id).then(({ data }) => {
-      setRoles((data || []).map((r: any) => r.role));
-    });
-  }, [user]);
-
-  const isFounderOrAdmin = roles.some((r) => r === "founder" || r === "admin");
-
+  const [legalGateOpen, setLegalGateOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
     (async () => {
       const connQ = supabase.from("email_connections").select("*").eq("user_id", user.id).order("is_default", { ascending: false });
       const sendsQ = supabase.from("email_sends").select("status, sent_at, scheduled_at, created_at");
-      const cBase = (q: string) => {
-        const b = supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", q);
-        return currentId ? b.eq("workspace_id", currentId) : b.not("source_upload_id", "is", null);
+      const countByQuality = (status: string) => {
+        let q = supabase.from("contacts").select("*", { count: "exact", head: true }).eq("quality_status", status);
+        if (currentId) q = q.eq("workspace_id", currentId);
+        return q;
       };
-      const [v, r, k, b, s, conn, sends] = await Promise.all([
-        cBase("valid"),
-        cBase("needs_review"),
-        cBase("risky"),
-        cBase("blocked"),
-        cBase("suppressed"),
+
+      const [valid, review, risky, blocked, suppressed, conn, sends] = await Promise.all([
+        countByQuality("valid"),
+        countByQuality("needs_review"),
+        countByQuality("risky"),
+        countByQuality("blocked"),
+        countByQuality("suppressed"),
         currentId ? connQ.eq("workspace_id", currentId) : connQ,
         currentId ? sendsQ.eq("workspace_id", currentId) : sendsQ,
       ]);
-      const c: Counts = {
-        valid: v.count ?? 0, needs_review: r.count ?? 0, risky: k.count ?? 0,
-        blocked: b.count ?? 0, suppressed: s.count ?? 0,
-      };
-      setCounts(c);
-      setBatchSize(c.valid);
 
-      const def = conn.data?.[0];
-      setDefaultConn(def || null);
+      const nextCounts: Counts = {
+        valid: valid.count ?? 0,
+        needs_review: review.count ?? 0,
+        risky: risky.count ?? 0,
+        blocked: blocked.count ?? 0,
+        suppressed: suppressed.count ?? 0,
+      };
+      setCounts(nextCounts);
+      setBatchSize(nextCounts.valid);
+
+      const def = conn.data?.[0] || null;
+      setDefaultConn(def);
       if (def) {
         setConnectionId(def.id);
         setFromEmail(def.from_email);
@@ -115,57 +124,61 @@ export default function AppActivation() {
           sending_enabled: def.sending_enabled,
           dns_checked_at: def.dns_checked_at,
         });
-        const last = (sends.data || []).filter((x: any) => x.status === "sent").map((x: any) => x.sent_at).filter(Boolean).sort().pop() || null;
-        const newly = def.last_verified_at ? (Date.now() - new Date(def.last_verified_at).getTime()) < 7 * 86400000 : true;
+        const readiness = computeReadiness(def as any);
+        const dnsVerified = def.verification_status === "verified" && def.sending_enabled === true;
+        const readyWarmup = readiness.canSendWarmup;
+        const warmCap = readyWarmup && !dnsVerified ? warmupCap((planConfig.id as PlanId) || "starter") : null;
+        const sentRows = (sends.data || []).filter((x: any) => x.status === "sent");
+        const last = sentRows.map((x: any) => x.sent_at).filter(Boolean).sort().pop() || null;
+        const newlyConnected = def.last_verified_at ? Date.now() - new Date(def.last_verified_at).getTime() < 7 * 86400000 : true;
         const totalSends = (sends.data || []).length || 1;
         const bounces = (sends.data || []).filter((x: any) => x.status === "bounced" || x.status === "failed").length;
-        // Provider-agnostic readiness: Nylas warm-up-eligible senders are
-        // treated as domain_authenticated so activation is not hard-blocked
-        // on DNS. SMTP still gates on real verification.
-        const r = computeReadiness(def as any);
-        const dnsVerified = def.verification_status === "verified" && def.sending_enabled === true;
-        const readyWarmup = r.canSendWarmup;
-        const wCap = readyWarmup && !dnsVerified ? warmupCap((planConfig.id as PlanId) || "starter") : null;
         setSender({
           connected: def.status === "connected",
           domain_authenticated: dnsVerified || readyWarmup,
           reconnect_required: def.status === "reconnect_required" || def.verification_status === "reconnect_required",
-          newly_connected: newly,
+          newly_connected: newlyConnected,
           last_send_at: last,
           bounce_rate: bounces / totalSends,
           unsubscribe_rate: 0,
-          warmup_daily_cap: wCap,
+          warmup_daily_cap: warmCap,
         });
       } else {
+        setConnectionId(null);
+        setFromEmail(null);
         setSenderDetail(null);
+        setSender(DEFAULT_SENDER_STATE);
       }
 
-      const today = new Date(); today.setHours(0,0,0,0);
-      const used = (sends.data || []).filter((x: any) => x.sent_at && new Date(x.sent_at) >= today).length;
-      const sched = (sends.data || []).filter((x: any) => x.scheduled_at && new Date(x.scheduled_at) >= today && !x.sent_at).length;
-      setUsedToday(used);
-      setScheduledToday(sched);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      setUsedToday((sends.data || []).filter((x: any) => x.sent_at && new Date(x.sent_at) >= today).length);
+      setScheduledToday((sends.data || []).filter((x: any) => x.scheduled_at && new Date(x.scheduled_at) >= today && !x.sent_at).length);
 
-      // Agency pooled cap: total sends today across every child workspace in this Agency company.
       if ((planConfig.id as PlanId) === "agency") {
         const { data: pooled } = await (supabase as any).rpc("agency_pooled_sends_today");
-        if (typeof pooled === "number") setAgencyPooled(pooled);
+        setAgencyPooled(typeof pooled === "number" ? pooled : 0);
+      } else {
+        setAgencyPooled(0);
       }
 
-      // Load selectable campaigns in this workspace (draft/scheduled first).
-      const campQ = supabase.from("campaigns").select("id, name, status, goal, pack, brief, approved_at, is_sample").order("created_at", { ascending: false }).limit(50);
-      const { data: camps } = currentId ? await campQ.eq("workspace_id", currentId) : await campQ;
-      const list = (camps || []) as Array<{ id: string; name: string; status: string | null; goal?: string | null; pack?: any; brief?: any; approved_at?: string | null; is_sample?: boolean | null }>;
+      let campQ = supabase
+        .from("campaigns")
+        .select("id, name, status, goal, pack, brief, approved_at, is_sample")
+        .order("created_at", { ascending: false })
+        .limit(50);
+      if (currentId) campQ = campQ.eq("workspace_id", currentId);
+      const { data: campData } = await campQ;
+      const list = (campData || []) as CampaignRow[];
       setCampaigns(list);
-      if (!selectedCampaign && list.length > 0) {
-        // Prefer the one the user came in with, else the most recent draft/scheduled, else first.
-        const prefer = campaignId && list.find((c) => c.id === campaignId);
+      setSelectedCampaign((current) => {
+        if (current && list.some((c) => c.id === current)) return current;
+        const requested = campaignId ? list.find((c) => c.id === campaignId) : null;
         const draft = list.find((c) => c.status === "draft" || c.status === "scheduled");
-        setSelectedCampaign((prefer || draft || list[0]).id);
-      }
+        return (requested || draft || list[0])?.id || "";
+      });
     })();
-  }, [user, planConfig.id, currentId]);
-
+  }, [user, currentId, planConfig.id, campaignId]);
 
   const plan = (planConfig.id as PlanId) || "starter";
   const safety = useMemo(() => computeSafety({
@@ -174,30 +187,22 @@ export default function AppActivation() {
     sender,
     sendsUsedToday: usedToday,
     sendsScheduledToday: scheduledToday,
-    sendCreditsRemaining: remaining,
     agencyPooledSendsToday: agencyPooled,
-  }), [plan, counts, sender, usedToday, scheduledToday, remaining, agencyPooled]);
+  }), [plan, counts, sender, usedToday, scheduledToday, agencyPooled]);
 
-  const safeSelected = Math.min(batchSize, counts.valid);
+  const eligibleSelected = Math.min(batchSize, counts.valid);
   const reviewSelected = includeReview ? counts.needs_review : 0;
-  const riskyMax = maxRiskyOverride(safeSelected + reviewSelected);
+  const riskyMax = maxRiskyOverride(eligibleSelected + reviewSelected);
   const riskyClamped = Math.min(riskyOverride, riskyMax, counts.risky);
-  const totalSelected = safeSelected + reviewSelected + riskyClamped;
-  const sendNow = Math.min(totalSelected, safety.remainingToday);
-  // Activation only prepares leads inside the campaign. It never sends.
-  // Send-time gates (sender, warm-up caps, legal at send, etc.) are enforced
-  // separately by the send engine. Blocking activation on those would
-  // contradict the "activation ≠ send" promise.
+  const totalSelected = eligibleSelected + reviewSelected + riskyClamped;
+  const sendTodayPreview = Math.min(totalSelected, safety.remainingToday);
   const wantsRisky = riskyClamped > 0;
   const targetCampaignId = selectedCampaign || campaignId || null;
-  const sendPaused = safety.pauseReasons.length > 0;
-  const selectedCampaignRow = campaigns.find((c) => c.id === (selectedCampaign || campaignId)) || null;
+  const selectedCampaignRow = campaigns.find((c) => c.id === targetCampaignId) || null;
   const senderReadinessState = computeReadiness(defaultConn as any).state;
-  // One deterministic input builder, used by the rendered preflight card AND by
-  // the execution path, so what the user sees and what actually gates the write
-  // can never diverge. `campaignRow` is overridable so runActivation can verify
-  // against a freshly fetched campaign rather than possibly-stale UI state.
-  const buildPreflightInput = (campaignRow: typeof selectedCampaignRow) => ({
+
+  const buildPreflightInput = (campaignRow: CampaignRow | null, legalAccepted = legal.isCompliant) => ({
+    scope: "campaign" as const,
     campaign: campaignRow,
     safeContacts: counts.valid,
     reviewContacts: counts.needs_review,
@@ -205,35 +210,23 @@ export default function AppActivation() {
     senderEmail: fromEmail,
     remainingToday: safety.remainingToday,
     pauseReasons: safety.pauseReasons,
-    creditsAvailable: remaining,
-    creditsRequired: Math.max(1, totalSelected),
-    legalAccepted: legal.isCompliant,
-    unsubscribeReady: resolveUnsubscribeReadiness({
-      handlerAvailable: UNSUBSCRIBE_HANDLER_DEPLOYED,
-      messageBody: (campaignRow?.pack as any)?.emails?.[0]?.body ?? null,
-    }).ready,
+    legalAccepted,
+    unsubscribeReady: false,
   });
-  const preflight = useMemo(() => runPreflight(buildPreflightInput(selectedCampaignRow)), [selectedCampaignRow, counts, defaultConn, senderReadinessState, fromEmail, safety, remaining, totalSelected, legal.isCompliant]);
-  const gate = useMemo(() => activationGate(preflight), [preflight]);
-  // Single source of truth shared by the button and by runActivation().
-  const execVerdict = useMemo(
-    () => canExecuteActivation(preflight, selectedCampaignRow as any),
-    [preflight, selectedCampaignRow],
+
+  const preflight = useMemo(
+    () => runPreflight(buildPreflightInput(selectedCampaignRow)),
+    [selectedCampaignRow, counts, defaultConn, senderReadinessState, fromEmail, safety, legal.isCompliant],
   );
-  const activationBlocked = !legal.isCompliant;
-  const canActivate =
-    totalSelected > 0 && !activationBlocked && execVerdict.ok && gate.ok &&
-    (!wantsRisky || riskAck) && !!targetCampaignId && !activating;
-
-
-
+  const gate = useMemo(() => activationGate(preflight), [preflight]);
+  const execVerdict = useMemo(() => canExecuteActivation(preflight, selectedCampaignRow), [preflight, selectedCampaignRow]);
+  const canActivate = totalSelected > 0 && execVerdict.ok && gate.ok && (!wantsRisky || riskAck) && !!targetCampaignId && !activating;
 
   async function audit(action: string, details: any) {
+    if (!user) return;
     try {
-      await (supabase as any).from("send_audit_log").insert({
-        action, details, user_id: user!.id, campaign_id: targetCampaignId,
-      });
-    } catch { /* best-effort */ }
+      await (supabase as any).from("send_audit_log").insert({ action, details, user_id: user.id, campaign_id: targetCampaignId });
+    } catch { /* best-effort only */ }
   }
 
   async function fetchContactsByQuality(status: "valid" | "needs_review" | "risky", limit: number) {
@@ -251,101 +244,60 @@ export default function AppActivation() {
     if (currentId) q = q.eq("workspace_id", currentId);
     const { data, error } = await q;
     if (error) throw error;
-    return (data || []) as any[];
+    return data || [];
   }
 
-  async function runActivation() {
+  async function runActivation(acceptedNow = false) {
     if (!user || !targetCampaignId) return;
-
-    // ---- Execution guard. Runs before any state change and before any write.
-    // The button state is never trusted: this handler must refuse on its own
-    // if the UI is stale or bypassed entirely (e.g. the legal modal calling
-    // runActivation() directly). Same helper as the button calculation.
-    const preVerdict = canExecuteActivation(preflight, selectedCampaignRow as any);
-    if (!preVerdict.ok) {
-      // No database writes at all on this path — not even an audit row.
-      toast.error("Activation blocked by preflight", { description: preVerdict.reason });
+    const uiResult = runPreflight(buildPreflightInput(selectedCampaignRow, acceptedNow || legal.isCompliant));
+    const uiVerdict = canExecuteActivation(uiResult, selectedCampaignRow);
+    if (!uiVerdict.ok) {
+      toast.error("Activation preparation blocked", { description: uiVerdict.reason });
       return;
     }
-
-    const blockAndReport = async (label: string, detail: string, blockerIds: string[]) => {
-      // Best-effort audit, ids only — no free text, no contact data.
-      await audit("activation_blocked_preflight", {
-        campaign_id: targetCampaignId,
-        blocker_ids: blockerIds,
-      });
-      toast.error("Activation blocked by preflight", { description: `${label}: ${detail}` });
-    };
-
-    if (!gate.ok) {
-      await blockAndReport(
-        gate.firstBlocker?.label || "Preflight incomplete",
-        gate.firstBlocker?.detail || "Resolve the outstanding preflight blockers and try again.",
-        gate.blockerIds,
-      );
+    if (wantsRisky && !riskAck) {
+      toast.error("Confirm the risky-record acknowledgement first.");
       return;
     }
 
     setActivating(true);
     try {
-      // Re-verify against a FRESHLY fetched campaign row: a campaign un-approved
-      // or flipped to sample in another window must still be refused here,
-      // before a single lead row is written.
-      const { data: freshRow } = await supabase
+      const { data: freshRow, error: freshError } = await supabase
         .from("campaigns")
         .select("id, name, status, goal, pack, brief, approved_at, is_sample")
         .eq("id", targetCampaignId)
         .maybeSingle();
+      if (freshError) throw freshError;
 
-      // Same helper again, now against live data.
-      const liveVerdict = canExecuteActivation(
-        runPreflight(buildPreflightInput((freshRow as any) ?? null)),
-        (freshRow as any) ?? null,
-      );
+      const liveResult = runPreflight(buildPreflightInput((freshRow as CampaignRow | null) ?? null, acceptedNow || legal.isCompliant));
+      const liveVerdict = canExecuteActivation(liveResult, freshRow as CampaignRow | null);
       if (!liveVerdict.ok) {
-        await blockAndReport("Activation blocked", liveVerdict.reason, liveVerdict.blockerIds);
+        await audit("activation_blocked_preflight", { campaign_id: targetCampaignId, blocker_ids: liveVerdict.blockerIds });
+        toast.error("Activation preparation blocked", { description: liveVerdict.reason });
         return;
       }
-
-      const liveGate = activationGate(runPreflight(buildPreflightInput((freshRow as any) ?? null)));
-      if (!liveGate.ok) {
-        await blockAndReport(
-          liveGate.firstBlocker?.label || "Preflight incomplete",
-          liveGate.firstBlocker?.detail || "Resolve the outstanding preflight blockers and try again.",
-          liveGate.blockerIds,
-        );
-        return;
-      }
-
-
-
-
 
       await audit("activation_started", {
-        campaign_id: targetCampaignId, batch: totalSelected, includeReview,
-        riskyOverride: riskyClamped, plan, safeAllowance: safety.safeAllowance,
+        campaign_id: targetCampaignId,
+        batch: totalSelected,
+        includeReview,
+        riskyOverride: riskyClamped,
+        plan,
       });
 
-      // Pull the selected slices, safest-first.
-      const validContacts = await fetchContactsByQuality("valid", safeSelected);
+      const validContacts = await fetchContactsByQuality("valid", eligibleSelected);
       const reviewContacts = includeReview ? await fetchContactsByQuality("needs_review", reviewSelected) : [];
       const riskyContacts = riskyClamped > 0 ? await fetchContactsByQuality("risky", riskyClamped) : [];
       const chosen = [...validContacts, ...reviewContacts, ...riskyContacts];
-
-      // Skip contacts already attached to this campaign as leads.
       const contactIds = chosen.map((c) => c.id);
+
       let existingContactIds = new Set<string>();
       if (contactIds.length) {
-        const { data: existing } = await supabase
-          .from("leads")
-          .select("contact_id")
-          .eq("campaign_id", targetCampaignId)
-          .in("contact_id", contactIds);
+        const { data: existing } = await supabase.from("leads").select("contact_id").eq("campaign_id", targetCampaignId).in("contact_id", contactIds);
         existingContactIds = new Set((existing || []).map((l: any) => l.contact_id).filter(Boolean));
       }
-      const toInsert = chosen.filter((c) => !existingContactIds.has(c.id));
 
-      const rows = toInsert.map((c) => ({
+      const rows = chosen.filter((c) => !existingContactIds.has(c.id)).map((c) => ({
         source: "activation",
         contact_id: c.id,
         company_id: c.company_id,
@@ -359,9 +311,8 @@ export default function AppActivation() {
       }));
 
       let created = 0;
-      const CHUNK = 100;
-      for (let i = 0; i < rows.length; i += CHUNK) {
-        const slice = rows.slice(i, i + CHUNK);
+      for (let i = 0; i < rows.length; i += 100) {
+        const slice = rows.slice(i, i + 100);
         const { error, count } = await supabase.from("leads").insert(slice as any, { count: "exact" });
         if (error) throw error;
         created += count ?? slice.length;
@@ -372,294 +323,198 @@ export default function AppActivation() {
         requested: chosen.length,
         already_linked: existingContactIds.size,
         leads_created: created,
-        includeReview, riskyIncluded: riskyClamped,
+        includeReview,
+        riskyIncluded: riskyClamped,
       });
-
-      toast.success(`Activated: ${created} lead${created === 1 ? "" : "s"} added to the campaign`);
+      toast.success(`${created} lead${created === 1 ? "" : "s"} prepared in the campaign`);
       navigate(`/app/campaigns/${targetCampaignId}`);
     } catch (e: any) {
-      await audit("activation_failed", { error: e?.message });
-      toast.error("Activation failed", { description: e?.message });
+      await audit("activation_failed", { error: String(e?.message || "activation_failed").slice(0, 180) });
+      toast.error("Activation preparation failed", { description: e?.message });
     } finally {
       setActivating(false);
     }
   }
 
   async function handleActivate() {
-    if (!canActivate) return;
-    if (!legal.isCompliant) { setLegalGateOpen(true); return; }
+    if (!targetCampaignId || totalSelected <= 0 || activating) return;
+    if (!legal.isCompliant) {
+      setLegalGateOpen(true);
+      return;
+    }
+    if (!canActivate) {
+      toast.error("Resolve the activation-preparation checks first.", { description: execVerdict.reason || gate.firstBlocker?.detail });
+      return;
+    }
     await runActivation();
   }
-
 
   const totalContacts = counts.valid + counts.needs_review + counts.risky + counts.blocked + counts.suppressed;
   const noData = totalContacts === 0;
 
   return (
     <div className="max-w-6xl space-y-6">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
           <Button variant="ghost" size="sm" onClick={() => navigate(-1)}><ArrowLeft className="h-4 w-4 mr-1" /> Back</Button>
-          <h1 className="text-3xl font-bold tracking-tight mt-2">Activate: prepare safe contacts as campaign leads</h1>
-          <p className="text-muted-foreground mt-1">Activation moves safe contacts into a campaign as leads. It does not send emails. Sending is a separate, governed action inside the campaign.</p>
+          <h1 className="text-3xl font-bold tracking-tight mt-2">Activate: prepare eligible contacts as campaign leads</h1>
+          <p className="text-muted-foreground mt-1">This screen prepares selected records inside the campaign. It does not send email and does not consume Campaign Credits.</p>
         </div>
-        <Badge className={`border-0 ${SENDER_HEALTH_TONE[safety.health]}`}>
-          Sender: {SENDER_HEALTH_LABEL[safety.health]}
-        </Badge>
+        <Badge className={`border-0 ${SENDER_HEALTH_TONE[safety.health]}`}>Send preview: {SENDER_HEALTH_LABEL[safety.health]}</Badge>
       </div>
 
       {noData ? (
         <JourneyEmptyState
           icon={Upload}
-          flow="Step 1 of the journey — Upload → Review → Activate"
+          flow="Step 1 — Upload → Review → Prepare"
           title="You haven't uploaded any contacts yet"
-          description="Activation runs on your safe segment. Upload contacts first, then return here to launch outreach."
-          why="Uploading is free and your data stays in your vault. We only consume credits when you choose to activate."
-          steps={[
-            { to: "/app/data-vault/upload", label: "Upload contacts", icon: Upload },
-            { to: "/app/data-vault", label: "View Data Vault" },
-          ]}
+          description="Upload authorised business data, review the workspace flags, then return here to prepare eligible records inside a campaign."
+          why="Data review and activation preparation do not spend Campaign Credits. Credits currently fund credit-priced AI generation such as a full campaign pack."
+          steps={[{ to: "/app/data-vault/upload", label: "Upload contacts", icon: Upload }, { to: "/app/data-vault", label: "View Data Vault" }]}
         />
       ) : counts.valid === 0 && counts.needs_review === 0 && counts.risky === 0 ? (
         <JourneyEmptyState
           icon={ShieldCheck}
-          flow={`Step 2 of the journey — ${totalContacts} contacts uploaded but none are eligible`}
-          title="No eligible contacts to activate"
-          description="Every uploaded record is currently blocked or suppressed. Review or import cleaner data to prepare leads."
-          steps={[
-            { to: "/app/data-vault", label: "Open Data Vault", icon: ShieldCheck },
-            { to: "/app/data-vault/upload", label: "Upload cleaner list", icon: Upload },
-          ]}
+          flow={`Step 2 — ${totalContacts} records uploaded but none currently eligible`}
+          title="No records available for activation preparation"
+          description="Every uploaded record is currently blocked or suppressed. Review the records or import a different authorised dataset."
+          steps={[{ to: "/app/data-vault", label: "Open Data Vault", icon: ShieldCheck }, { to: "/app/data-vault/upload", label: "Upload another list", icon: Upload }]}
         />
       ) : (
-      <>
-      {!legal.loading && !legal.isCompliant && (
-        <Alert variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Legal terms need to be re-accepted before activation</AlertTitle>
-          <AlertDescription className="space-y-2">
-            <p>
-              {legal.missing.length} document{legal.missing.length === 1 ? "" : "s"} updated since your last acceptance.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <Button size="sm" variant="secondary" onClick={() => setLegalGateOpen(true)}>
-                Review and accept terms
-              </Button>
-              {isFounderOrAdmin && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={founderAccepting}
-                  onClick={async () => {
-                    if (!user) return;
-                    setFounderAccepting(true);
-                    try {
-                      await recordLegalAcceptance({
-                        userId: user.id, email: user.email ?? null,
-                        source: "founder_qa_activation", workspaceId: currentId,
-                      });
-                      toast.success("Founder QA acceptance recorded");
-                      await legal.refresh();
-                    } catch (e: any) {
-                      toast.error("Could not record acceptance", { description: e?.message });
-                    } finally { setFounderAccepting(false); }
-                  }}
-                >
-                  {founderAccepting ? "Recording…" : "Founder QA: accept current platform terms"}
-                </Button>
-              )}
-            </div>
-          </AlertDescription>
-        </Alert>
-      )}
-      {(() => {
-        const r = computeReadiness(defaultConn as any);
-        if (!defaultConn) return null;
-        if (r.canSendFull) return null;
-        if (r.canSendWarmup) {
-          const cap = warmupCap((planConfig.id as PlanId) || "starter");
-          return (
-            <Alert>
-              <Mail className="h-4 w-4" />
-              <AlertTitle>Mailbox connected — warm-up sending available</AlertTitle>
-              <AlertDescription>
-                {r.personal
-                  ? `You can activate low-volume outreach now. Today's warm-up cap: ${cap} sends. Replies return to this inbox.`
-                  : `${r.friendlyLine} Today's warm-up cap: ${cap} sends.`}
+        <>
+          {!legal.loading && !legal.isCompliant && (
+            <Alert variant="destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Current legal terms must be accepted before activation preparation</AlertTitle>
+              <AlertDescription className="space-y-2">
+                <p>{legal.missing.length} document{legal.missing.length === 1 ? "" : "s"} changed since your last acceptance.</p>
+                <Button size="sm" variant="secondary" onClick={() => setLegalGateOpen(true)}>Review and accept terms</Button>
               </AlertDescription>
             </Alert>
-          );
-        }
-        return (
+          )}
+
           <Alert>
             <Mail className="h-4 w-4" />
-            <AlertTitle>Sender setup needed</AlertTitle>
+            <AlertTitle>Sending remains a separate step</AlertTitle>
             <AlertDescription>
-              Connect a mailbox, choose safe contacts, and activate outreach. We'll protect your daily limits and sender reputation.
+              The sender status and daily allowance below are a preview only. They do not block lead preparation here. Before a real send, the send path rechecks the paid plan, mailbox state, unsubscribe handling and current safety allowance.
             </AlertDescription>
           </Alert>
-        );
-      })()}
-      <SendSafetyPanel s={safety} used={usedToday} scheduled={scheduledToday} />
 
-      <CampaignPreflight result={preflight} title="Preflight & readiness centre" />
+          <SendSafetyPanel s={safety} used={usedToday} scheduled={scheduledToday} />
+          <CampaignPreflight result={preflight} title="Activation-preparation preflight" />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Card className="lg:col-span-2">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /> Build your activation batch</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-              <Tile label="Safe to activate" value={counts.valid} tone="good" />
-              <Tile label="Needs review" value={counts.needs_review} tone="warn" />
-              <Tile label="Risky" value={counts.risky} tone="warn" />
-              <Tile label="Blocked / suppressed" value={counts.blocked + counts.suppressed} tone="danger" />
-            </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <Card className="lg:col-span-2">
+              <CardHeader className="pb-2"><CardTitle className="text-base flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /> Build the preparation batch</CardTitle></CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                  <Tile label="Eligible under current checks" value={counts.valid} tone="good" />
+                  <Tile label="Needs review" value={counts.needs_review} tone="warn" />
+                  <Tile label="Risky" value={counts.risky} tone="warn" />
+                  <Tile label="Blocked / suppressed" value={counts.blocked + counts.suppressed} tone="danger" />
+                </div>
 
-            <div className="space-y-3">
-              <div>
-                <Label htmlFor="batch">Safe contacts to include</Label>
-                <Input id="batch" type="number" min={0} max={counts.valid}
-                  value={batchSize}
-                  onChange={(e) => setBatchSize(Math.max(0, Math.min(counts.valid, Number(e.target.value) || 0)))} />
-                <div className="text-xs text-muted-foreground mt-1">Max {counts.valid} based on your safe segment.</div>
-              </div>
-
-              <div className="flex items-start gap-2">
-                <Checkbox id="rev" checked={includeReview} onCheckedChange={(v) => setIncludeReview(!!v)} disabled={counts.needs_review === 0} />
                 <div>
-                  <Label htmlFor="rev" className="font-medium">Include {counts.needs_review} "needs review" contacts</Label>
-                  <div className="text-xs text-muted-foreground">These were not auto-classified as fully clean. Review recommended.</div>
+                  <Label htmlFor="batch">Eligible contacts to include</Label>
+                  <Input id="batch" type="number" min={0} max={counts.valid} value={batchSize} onChange={(e) => setBatchSize(Math.max(0, Math.min(counts.valid, Number(e.target.value) || 0)))} />
+                  <p className="text-xs text-muted-foreground mt-1">Maximum {counts.valid} records currently marked valid by workspace checks.</p>
                 </div>
-              </div>
 
-              {counts.risky > 0 && (
-                <div className="rounded-md border border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-900 p-3 space-y-2">
-                  <div className="flex items-center gap-2 text-amber-800 dark:text-amber-200 text-sm font-medium">
-                    <AlertTriangle className="h-4 w-4" /> Risky override
+                <div className="flex items-start gap-2">
+                  <Checkbox id="rev" checked={includeReview} onCheckedChange={(v) => setIncludeReview(!!v)} disabled={counts.needs_review === 0} />
+                  <div>
+                    <Label htmlFor="rev" className="font-medium">I have reviewed and want to include {counts.needs_review} “needs review” record{counts.needs_review === 1 ? "" : "s"}</Label>
+                    <p className="text-xs text-muted-foreground">Selecting this is a customer decision. The workspace label is not legal approval.</p>
                   </div>
-                  <p className="text-xs text-amber-900 dark:text-amber-200">
-                    Risky records (role addresses, free-mail without company, etc.) are excluded by default to protect deliverability.
-                    You can include up to <b>{riskyMax}</b> of them in this batch (≤10% of selected audience).
-                  </p>
-                  <Input type="number" min={0} max={riskyMax}
-                    value={riskyOverride}
-                    onChange={(e) => setRiskyOverride(Math.max(0, Math.min(riskyMax, Number(e.target.value) || 0)))}
-                  />
-                  {riskyClamped > 0 && (
-                    <div className="flex items-start gap-2">
-                      <Checkbox id="ack" checked={riskAck} onCheckedChange={(v) => setRiskAck(!!v)} />
-                      <Label htmlFor="ack" className="text-xs">
-                        I understand including risky contacts can hurt sender reputation and accept the deliverability risk.
-                      </Label>
-                    </div>
-                  )}
                 </div>
-              )}
 
-              {(counts.blocked + counts.suppressed) > 0 && (
-                <Alert variant="destructive">
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertTitle>{counts.blocked + counts.suppressed} records permanently excluded</AlertTitle>
-                  <AlertDescription>Blocked and suppressed records can never be included — this protects you legally and operationally.</AlertDescription>
-                </Alert>
-              )}
-            </div>
-
-            <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 space-y-3">
-              <div className="text-sm font-medium">Pre-flight summary</div>
-
-              <div className="space-y-1">
-                <Label className="text-xs">Target campaign</Label>
-                {campaigns.length === 0 ? (
-                  <div className="flex items-center justify-between gap-2 rounded border border-dashed border-border p-3">
-                    <div className="text-xs text-muted-foreground">You don't have a campaign yet. Create one to activate leads into.</div>
-                    <Button size="sm" variant="outline" onClick={() => navigate("/app/campaigns/new")}>
-                      <Plus className="h-3.5 w-3.5 mr-1" /> New campaign
-                    </Button>
+                {counts.risky > 0 && (
+                  <div className="rounded-md border border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-900 p-3 space-y-2">
+                    <div className="flex items-center gap-2 text-amber-800 dark:text-amber-200 text-sm font-medium"><AlertTriangle className="h-4 w-4" /> Risky-record override</div>
+                    <p className="text-xs text-amber-900 dark:text-amber-200">Risky records are excluded by default. You may explicitly include up to <strong>{riskyMax}</strong> in this batch under the current override cap. This does not establish lawful basis or guarantee deliverability.</p>
+                    <Input type="number" min={0} max={riskyMax} value={riskyOverride} onChange={(e) => setRiskyOverride(Math.max(0, Math.min(riskyMax, Number(e.target.value) || 0)))} />
+                    {riskyClamped > 0 && <div className="flex items-start gap-2"><Checkbox id="ack" checked={riskAck} onCheckedChange={(v) => setRiskAck(!!v)} /><Label htmlFor="ack" className="text-xs">I reviewed this override and accept the additional operational and deliverability risk.</Label></div>}
                   </div>
-                ) : (
-                  <Select value={selectedCampaign} onValueChange={setSelectedCampaign}>
-                    <SelectTrigger><SelectValue placeholder="Choose a campaign" /></SelectTrigger>
-                    <SelectContent>
-                      {campaigns.map((c) => (
-                        <SelectItem key={c.id} value={c.id}>{c.name}{c.status ? ` · ${c.status}` : ""}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
                 )}
-                <p className="text-[11px] text-muted-foreground">Leads are added to this campaign. No emails are sent from this screen.</p>
-              </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
-                <Tile label="Audience selected" value={totalSelected} />
-                <Tile label="Leads to create" value={totalSelected} tone="good" />
-                <Tile label="Can send today" value={sendNow} />
-                <Tile label="Today's safe cap" value={safety.safeAllowance} />
-              </div>
-              {sendNow < totalSelected && (
-                <div className="text-xs text-amber-700 dark:text-amber-400">
-                  All {totalSelected} contact(s) will be prepared as leads. Only {sendNow} can go out today under your current safe cap — the rest wait in the campaign until you send them.
+                {counts.blocked + counts.suppressed > 0 && (
+                  <Alert variant="destructive">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTitle>{counts.blocked + counts.suppressed} blocked or suppressed record{counts.blocked + counts.suppressed === 1 ? "" : "s"} excluded</AlertTitle>
+                    <AlertDescription>These records are excluded by current platform suppression and blocking rules. Review the underlying reason in the Data Vault; platform exclusion is not legal advice.</AlertDescription>
+                  </Alert>
+                )}
+
+                <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 space-y-3">
+                  <div className="text-sm font-medium">Preparation summary</div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Target campaign</Label>
+                    {campaigns.length === 0 ? (
+                      <div className="flex items-center justify-between gap-2 rounded border border-dashed border-border p-3">
+                        <p className="text-xs text-muted-foreground">Create a campaign before preparing leads.</p>
+                        <Button size="sm" variant="outline" onClick={() => navigate("/app/campaigns/new")}><Plus className="h-3.5 w-3.5 mr-1" /> New campaign</Button>
+                      </div>
+                    ) : (
+                      <Select value={selectedCampaign} onValueChange={setSelectedCampaign}>
+                        <SelectTrigger><SelectValue placeholder="Choose a campaign" /></SelectTrigger>
+                        <SelectContent>{campaigns.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}{c.status ? ` · ${c.status}` : ""}</SelectItem>)}</SelectContent>
+                      </Select>
+                    )}
+                    <p className="text-[11px] text-muted-foreground">Selected records are added as campaign leads. No email is sent from this screen.</p>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                    <Tile label="Records selected" value={totalSelected} />
+                    <Tile label="Leads to prepare" value={totalSelected} tone="good" />
+                    <Tile label="Send preview today" value={sendTodayPreview} />
+                    <Tile label="Current send allowance" value={safety.safeAllowance} />
+                  </div>
+                  {sendTodayPreview < totalSelected && <p className="text-xs text-amber-700 dark:text-amber-400">All selected records can still be prepared as leads if the activation checks pass. A later real send may be limited by the then-current sender and plan allowance.</p>}
+                  {safety.pauseReasons.length > 0 && <p className="text-xs text-amber-700 dark:text-amber-400 flex items-start gap-1"><Pause className="h-3.5 w-3.5 mt-0.5 shrink-0" /> Current sending is unavailable or reduced for the reasons above. Lead preparation remains separate.</p>}
+
+                  <Button className="w-full mt-1" size="lg" disabled={totalSelected <= 0 || !targetCampaignId || activating || (wantsRisky && !riskAck)} onClick={handleActivate}>
+                    <Send className="h-4 w-4 mr-2" /> {activating ? "Preparing…" : "Confirm activation preparation"}
+                  </Button>
+                  <p className="text-xs text-muted-foreground text-center">Campaign Credits are not charged here. The current live credit-priced action is full campaign-pack generation.</p>
                 </div>
-              )}
-              {sendPaused && (
-                <div className="text-xs text-amber-700 dark:text-amber-400 flex items-start gap-1"><Pause className="h-3.5 w-3.5 mt-0.5 shrink-0" /> Sending is paused (see reasons above). You can still activate — leads are prepared inside the campaign and wait until sending is resumed.</div>
-              )}
-              <Button className="w-full mt-1" size="lg" disabled={!canActivate} onClick={handleActivate}>
-                <Send className="h-4 w-4 mr-2" /> {activating ? "Activating…" : "Confirm safe activation"}
-              </Button>
-              <p className="text-xs text-muted-foreground text-center">Storing contacts is free. Sending consumes credits — and stays a separate click in the campaign.</p>
-            </div>
+              </CardContent>
+            </Card>
 
-          </CardContent>
-        </Card>
-
-        <SenderStatusCard
-          connection={defaultConn}
-          usedToday={usedToday}
-          warmupCap={warmupCap((planConfig.id as PlanId) || "starter")}
-          state={sender}
-          health={safety.health}
-          scheduledToday={scheduledToday}
-          fromEmail={fromEmail}
-          connectionId={connectionId}
-          detail={senderDetail}
-          onVerified={(r) => {
-            setSenderDetail((d: any) => ({
-              ...(d || {}),
-              verification_status: r?.verification_status,
-              mx_status: r?.mx_status, spf_status: r?.spf_status,
-              dkim_status: r?.dkim_status, dmarc_status: r?.dmarc_status,
-              sending_enabled: !!r?.sending_enabled,
-              dns_checked_at: new Date().toISOString(),
-            }));
-            setSender((s) => ({ ...s, domain_authenticated: !!r?.verified }));
-          }}
-        />
-      </div>
-      </>
+            <SenderStatusCard
+              connection={defaultConn}
+              usedToday={usedToday}
+              warmupCap={warmupCap((planConfig.id as PlanId) || "starter")}
+              state={sender}
+              health={safety.health}
+              scheduledToday={scheduledToday}
+              fromEmail={fromEmail}
+              connectionId={connectionId}
+              detail={senderDetail}
+              onVerified={(r) => {
+                setSenderDetail((d: any) => ({ ...(d || {}), verification_status: r?.verification_status, mx_status: r?.mx_status, spf_status: r?.spf_status, dkim_status: r?.dkim_status, dmarc_status: r?.dmarc_status, sending_enabled: !!r?.sending_enabled, dns_checked_at: new Date().toISOString() }));
+                setSender((s) => ({ ...s, domain_authenticated: !!r?.verified }));
+              }}
+            />
+          </div>
+        </>
       )}
+
       <LegalComplianceGate
         open={legalGateOpen}
         onOpenChange={setLegalGateOpen}
         source="activation"
         workspaceId={currentId}
-        title="Accept current terms before activation"
-        description="Sending on your behalf requires up-to-date acceptance of our platform legal stack."
-        confirmLabel="Accept and activate"
-        onConfirm={async () => { await legal.refresh(); await runActivation(); }}
+        title="Accept current terms before activation preparation"
+        description="Preparing campaign leads requires current acceptance of the platform legal stack. Live sending remains a separate customer-controlled action with its own send-time checks."
+        confirmLabel="Accept and prepare leads"
+        onConfirm={async () => { await legal.refresh(); await runActivation(true); }}
       />
     </div>
   );
 }
 
 function Tile({ label, value, tone }: { label: string; value: number; tone?: "good" | "warn" | "danger" }) {
-  const t = tone === "good" ? "text-emerald-600" : tone === "warn" ? "text-amber-600" : tone === "danger" ? "text-rose-600" : "";
-  return (
-    <div className="rounded-md border border-border p-2">
-      <div className="text-[11px] text-muted-foreground">{label}</div>
-      <div className={`text-lg font-bold ${t}`}>{value}</div>
-    </div>
-  );
+  const cls = tone === "good" ? "text-emerald-600" : tone === "warn" ? "text-amber-600" : tone === "danger" ? "text-rose-600" : "";
+  return <div className="rounded-md border border-border p-2"><div className="text-[11px] text-muted-foreground">{label}</div><div className={`text-lg font-bold ${cls}`}>{value}</div></div>;
 }
