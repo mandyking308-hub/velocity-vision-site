@@ -32,32 +32,32 @@ const steps = [
   {
     n: "05",
     title: "Prepare editable AI-assisted drafts",
-    desc: "Generate email, social, press and video drafts from a customer brief. Every output remains editable.",
+    desc: "Answer the Copilot brief and generate email, social, press and video drafts. Every output remains editable, and the Launchpad shows what is still outstanding.",
   },
   {
     n: "06",
     title: "Set timing and cadence",
-    desc: "Configure one-off or recurring timing subject to the customer's plan, provider rules and activation controls.",
+    desc: "Configure one-off timing on any paid plan, or recurring cadence on Growth and Agency, subject to plan, provider rules and activation controls.",
   },
   {
     n: "07",
-    title: "Review activation controls",
-    desc: "Apply plan limits and record controls, then require an authorised-user decision before activation.",
+    title: "Run preflight and review activation controls",
+    desc: "Work through the preflight readiness scorecard, apply plan limits and daily send allowances, then require an authorised-user decision before activation.",
   },
   {
     n: "08",
-    title: "Record follow-up activity",
-    desc: "Use reply states, next actions and optional AI-assisted drafts while keeping every send under customer control.",
+    title: "Triage replies in the Reply Intent Command Centre",
+    desc: "Review replies grouped by intent, with unsubscribe and bounce wording always taking precedence, referrals surfaced for review, out-of-office return dates recorded and replies waiting 24h+ listed together.",
   },
   {
     n: "09",
-    title: "Create early opportunity records",
-    desc: "Move customer-selected warm contacts into opportunity records with stage, value and owner fields.",
+    title: "Hand off meetings and create opportunity records",
+    desc: "Move an interested reply into handoff with your own booking link, record a meeting as booked when it is confirmed, and create opportunity records with stage, value and owner fields. Velocity Vision does not connect to your calendar.",
   },
   {
     n: "10",
-    title: "Review recorded activity",
-    desc: "Summarise workspace activity and decide whether a later workflow should be reused, edited, paused or discontinued.",
+    title: "Measure the Outcome Funnel",
+    desc: "Review Contacted → Replied → Interested/Referral → Meeting booked → Opportunity → Won from your stored records, then decide whether a later workflow should be reused, edited, paused or discontinued.",
   },
 ];
 
@@ -126,7 +126,7 @@ const HowItWorks = () => (
                   The workflow
                 </p>
                 <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
-                  Ten documented steps from upload to activity review
+                  Ten documented steps from upload to measured outcomes
                 </h2>
                 <p className="text-lg opacity-90">
                   The customer remains responsible for data source, lawful basis, recipients, content, sender identity, suppression handling and every activation decision.

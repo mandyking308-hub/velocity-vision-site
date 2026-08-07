@@ -51,8 +51,18 @@ const cards = [
   },
   {
     icon: Inbox,
-    title: "Follow-up records",
-    desc: "Record reply states, next actions, snoozes and customer-managed follow-up activity in one queue.",
+    title: "Reply Intent Command Centre",
+    desc: "Triage replies by intent — interested, referral, out of office, not now, unsubscribe, bounce — with unsubscribe and bounce wording always taking precedence over a sales-positive label.",
+  },
+  {
+    icon: Users,
+    title: "Referrals and out-of-office dates",
+    desc: "Surface a referred contact for your review and record a detected return date, plus a queue of replies waiting more than 24 hours.",
+  },
+  {
+    icon: Send,
+    title: "Meeting handoff",
+    desc: "Move an interested reply into handoff with your own booking link and record the meeting as booked when it is confirmed. No calendar connection.",
   },
   {
     icon: GitBranch,
@@ -61,8 +71,8 @@ const cards = [
   },
   {
     icon: BarChart3,
-    title: "Automated activity summary",
-    desc: "Summarise recorded activation, reply and early-pipeline information. Reports describe workspace activity and do not guarantee performance.",
+    title: "Outcome Funnel and activity summary",
+    desc: "See Contacted → Replied → Interested/Referral → Meeting booked → Opportunity → Won from your stored records. Reports describe workspace activity and do not guarantee performance.",
   },
   {
     icon: Users,

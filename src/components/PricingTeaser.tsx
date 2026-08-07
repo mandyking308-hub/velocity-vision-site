@@ -11,11 +11,12 @@ const plans = [
     unit: "one-off",
     desc: "One-off access for one customer-controlled campaign workflow.",
     bullets: [
-      "1 workspace",
-      "Data Vault with quality review",
-      "AI-assisted email, social, press and video drafts",
-      "Sender verification and governed activation",
-      "30 days workspace access",
+      "1 workspace · 25 Campaign Credits",
+      "Copilot brief, Launchpad and full campaign pack",
+      "Preflight checks, sender verification and governed activation",
+      "Reply triage, referrals, out-of-office dates and meeting handoff",
+      "Pipeline and Outcome Funnel · up to 20 sends/day",
+      "One-off campaigns · 30 days workspace access",
     ],
     cta: "Request Starter onboarding",
   },
@@ -27,10 +28,10 @@ const plans = [
     desc: "Monthly self-serve workspace for ongoing customer-controlled activity.",
     bullets: [
       "Everything in Starter, ongoing",
-      "Reusable templates and segments",
-      "Per-workspace sending limits",
-      "Follow-up and early pipeline records",
-      "Automated monthly performance summary",
+      "80 Campaign Credits / month",
+      "Recurring cadence and reusable campaign templates",
+      "Up to 50 sends/day",
+      "Follow-up, reply states and early pipeline records",
     ],
     recurring: true,
     cta: "Request Growth onboarding",
@@ -42,16 +43,17 @@ const plans = [
     unit: "per month",
     desc: "Monthly self-serve workspace with isolated client workspaces.",
     bullets: [
-      "Isolated client workspaces",
-      "Pooled Campaign Credits",
-      "Pooled account-level governance",
-      "Client-specific follow-up and pipeline records",
-      "Seat and workspace management",
+      "Everything in Growth",
+      "Unlimited isolated client workspaces",
+      "250 pooled Campaign Credits / month",
+      "Cross-client pipeline and Outcome Funnel visibility",
+      "Account-wide daily send usage view · up to 100 sends/day",
     ],
     recurring: true,
     cta: "Request Agency onboarding",
   },
 ];
+
 
 const PricingTeaser = () => (
   <section className="section-padding bg-splash-duo relative overflow-hidden">

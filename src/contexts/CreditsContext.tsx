@@ -162,10 +162,12 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
     return true;
   }, [user, remaining, topupBalance, starterExpired, freePreviewExpired, isFreePreview, planId, load]);
 
-  // NOTE: Human Review purchases MUST go through Stripe checkout —
-  // `HumanReviewButton` calls openCheckout() and the Stripe webhook inserts
-  // the `human_reviews` row via service_role after payment clears. This stub
-  // remains only to preserve the public type; it does not write to the DB.
+  // NOTE: Human Review purchases MUST go through hosted checkout —
+  // `HumanReviewButton` starts checkout (Dodo when live, otherwise the existing
+  // Stripe path) and the provider webhook inserts the `human_reviews` row via
+  // service_role after payment clears. This stub remains only to preserve the
+  // public type; it does not write to the DB.
+
   const purchaseHumanReview = useCallback<CreditsContextValue["purchaseHumanReview"]>(async () => {
     toast.error("Use the Buy button to start checkout.");
   }, []);

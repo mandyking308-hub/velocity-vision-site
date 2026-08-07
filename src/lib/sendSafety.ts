@@ -5,12 +5,17 @@ import type { PlanId } from "./credits";
 
 /* --------------- 1. Plan-tier daily ceilings --------------- */
 
+// Canonical daily send ceilings. These MUST match WARMUP_DAILY_CAP in
+// supabase/functions/email-send/index.ts, which is the authoritative
+// server-side enforcement point. Warm-up, sender health and rate limits can
+// only reduce the effective allowance — never raise it above these numbers.
 export const PLAN_DAILY_CEILING: Record<PlanId, number> = {
-  free_preview: 0, // Free preview cannot send outreach.
-  starter: 80,
-  growth: 250,
-  agency: 1000, // pooled across workspaces
+  free_preview: 0, // Free preview cannot make live sends.
+  starter: 20,
+  growth: 50,
+  agency: 100, // counted per sending account
 };
+
 
 /* --------------- 2. Activation readiness model --------------- */
 
@@ -141,7 +146,7 @@ export interface SafetyResult {
 }
 
 export function computeSafety(input: SafetyInput): SafetyResult {
-  const ceiling = PLAN_DAILY_CEILING[input.plan] ?? 80;
+  const ceiling = PLAN_DAILY_CEILING[input.plan] ?? 0; // fail closed on unknown plan
   const adjustments: SafetyAdjustment[] = [];
   const pause: string[] = [];
   let factor = 1;
@@ -195,16 +200,18 @@ export function computeSafety(input: SafetyInput): SafetyResult {
     safeAllowance = Math.min(safeAllowance, input.sender.warmup_daily_cap);
   }
 
-  // Agency pooled enforcement — the 1,000/day ceiling is shared across all child workspaces.
+  // Agency pooled visibility — sends across all client workspaces are counted
+  // together so the operator can see account-wide usage. The authoritative
+  // per-account daily ceiling is enforced server-side in email-send.
   let agencyPooledRemaining: number | undefined = undefined;
   if (input.plan === "agency") {
     const pooledUsed = input.agencyPooledSendsToday ?? 0;
     agencyPooledRemaining = Math.max(0, ceiling - pooledUsed);
     if (pooledUsed >= ceiling) {
-      pause.push(`Agency pooled cap reached — ${pooledUsed.toLocaleString()} / ${ceiling.toLocaleString()} sends today across all client workspaces.`);
+      pause.push(`Pooled daily cap reached — ${pooledUsed.toLocaleString()} / ${ceiling.toLocaleString()} sends today across all client workspaces.`);
       safeAllowance = 0;
     } else if (agencyPooledRemaining < safeAllowance) {
-      adjustments.push({ factor: agencyPooledRemaining / Math.max(safeAllowance, 1), reason: `Agency pooled cap: ${agencyPooledRemaining.toLocaleString()} sends left today across all client workspaces.` });
+      adjustments.push({ factor: agencyPooledRemaining / Math.max(safeAllowance, 1), reason: `Pooled daily allowance: ${agencyPooledRemaining.toLocaleString()} sends left today across all client workspaces.` });
       safeAllowance = agencyPooledRemaining;
     }
   }

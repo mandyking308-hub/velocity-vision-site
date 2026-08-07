@@ -157,6 +157,12 @@ export default function AppCampaignCopilot() {
         } catch (aiErr: any) {
           const status = aiErr?.status ?? aiErr?.context?.status;
           const code = String(aiErr?.context?.body ?? aiErr?.message ?? "");
+          if (/free_preview_pack_limit/.test(code)) {
+            setError("Free Preview includes one full campaign pack. Your first pack stays available to review — upgrade to generate more. Your brief has been saved.");
+            setBusy(false);
+            await refreshCredits();
+            return;
+          }
           if (status === 402 || /insufficient_credits|starter_expired|no_plan/.test(code)) {
             setError(`A full campaign pack costs ${CREDIT_COSTS.full_campaign_pack} credits. Top up, upgrade, or try the sample path. Your brief has been saved.`);
             setBusy(false);

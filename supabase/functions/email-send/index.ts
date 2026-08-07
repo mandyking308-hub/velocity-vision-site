@@ -44,9 +44,19 @@ const CURRENT_LEGAL_VERSIONS: Record<string, string> = {
   "subprocessors": "1.0",
 };
 
+// Canonical server-side daily ceilings. Kept in lockstep with
+// src/lib/sendSafety.ts (PLAN_DAILY_CEILING). Warm-up and sender health may
+// reduce the effective ceiling; nothing may exceed it.
+// Free Preview is 0: the preview tier can explore the whole workflow but may
+// never make a real (non controlled-test) send.
 const WARMUP_DAILY_CAP: Record<string, number> = {
-  starter: 20, growth: 50, agency: 100,
+  free_preview: 0, starter: 20, growth: 50, agency: 100,
 };
+// Warm-up-only senders (custom domain not yet fully verified) are additionally
+// held to this reduced allowance.
+const WARMUP_WARMING_CAP = 20;
+
+
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -228,22 +238,34 @@ async function runSendGates(admin: any, userId: string, conn: any, sendRow: any)
     }
   }
 
-  // 4. Daily warm-up / plan cap.
+  // 4. Plan gate + daily warm-up / plan cap.
+  //    Fails closed: an unknown or missing plan cannot send, and free_preview
+  //    is never allowed to fall back to a paid tier's allowance.
   const { data: plan } = await admin.from("user_plans")
     .select("plan").eq("user_id", userId).maybeSingle();
-  const planId = (plan?.plan || "starter").toLowerCase();
-  const cap = WARMUP_DAILY_CAP[planId] ?? WARMUP_DAILY_CAP.starter;
+  const planId = String(plan?.plan || "").toLowerCase();
+  if (!planId || !(planId in WARMUP_DAILY_CAP)) {
+    return { ok: false, code: "plan_not_recognised",
+      reason: "No active plan found for this account. Sending is disabled.", status: 402 };
+  }
+  const cap = WARMUP_DAILY_CAP[planId];
+  if (cap <= 0) {
+    return { ok: false, code: "plan_send_not_permitted",
+      reason: "Free Preview cannot send live outreach. Upgrade to activate sending.", status: 402 };
+  }
   const todayStart = new Date(); todayStart.setUTCHours(0, 0, 0, 0);
   const { count: sentToday } = await admin.from("email_sends")
     .select("id", { count: "exact", head: true })
     .eq("user_id", userId)
     .eq("status", "sent")
     .gte("sent_at", todayStart.toISOString());
-  const effectiveCap = warmupOnly ? Math.min(cap, WARMUP_DAILY_CAP[planId] ?? 20) : cap;
+  // Warm-up may only reduce the plan ceiling, never raise it.
+  const effectiveCap = warmupOnly ? Math.min(cap, WARMUP_WARMING_CAP) : cap;
   if ((sentToday ?? 0) >= effectiveCap) {
     return { ok: false, code: "daily_cap_reached",
       reason: `Daily send cap of ${effectiveCap} reached for your plan/warm-up.`, status: 429 };
   }
+
 
   return { ok: true };
 }
