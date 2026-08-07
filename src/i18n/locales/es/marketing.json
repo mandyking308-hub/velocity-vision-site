@@ -16,31 +16,31 @@
     "contact": "Contacto"
   },
   "hero": {
-    "eyebrow": "Plataforma de crecimiento de marketing",
-    "title": "Lanza campañas completas en minutos, no semanas.",
-    "subtitle": "Sube tu audiencia, activa una campaña y deja que Velocity Vision ejecute el outbound, el seguimiento y el pipeline. Autoservicio. Multilingüe. Para equipos globales.",
-    "ctaPrimary": "Empezar prueba gratis",
+    "eyebrow": "Espacio de trabajo B2B con controles",
+    "title": "Planifica, revisa y activa campañas bajo el control del cliente.",
+    "subtitle": "Sube datos empresariales que estés autorizado a usar, prepara borradores asistidos por IA, verifica tu remitente y gestiona respuestas, seguimiento y pipeline inicial en un espacio de autoservicio. Multilingüe. Para equipos globales.",
+    "ctaPrimary": "Iniciar vista previa gratis",
     "ctaSecondary": "Ver demo en vivo"
   },
   "pricing": {
     "title": "Precios simples y transparentes",
-    "subtitle": "Cada plan incluye Créditos de campaña, el Data Vault y el espacio de pipeline completo.",
+    "subtitle": "Los planes de pago incluyen Créditos de campaña, el Data Vault y el espacio de outreach controlado por el cliente descrito en la página de precios.",
     "month": "/mes",
     "oneTime": "pago único",
     "perReview": "por revisión",
-    "taxNotice": "Los precios no incluyen IVA ni impuestos sobre ventas. El impuesto se calcula al pagar.",
+    "taxNotice": "Los impuestos aplicables, la moneda de la transacción y el proveedor de pago se confirman antes de pagar.",
     "starter": "Inicial",
     "growth": "Crecimiento",
     "agency": "Agencia",
-    "choosePlan": "Elegir plan"
+    "choosePlan": "Revisar plan"
   },
   "howItWorks": {
     "title": "Cómo funciona",
-    "subtitle": "De datos a ingresos en 5 pasos guiados.",
+    "subtitle": "De datos autorizados a outreach revisado y seguimiento mediante pasos guiados.",
     "step1": "Sube tus datos",
-    "step2": "Revisa y activa",
-    "step3": "Genera activos",
-    "step4": "Lanza la campaña",
-    "step5": "Trabaja las respuestas"
+    "step2": "Revisa y prepara",
+    "step3": "Genera borradores",
+    "step4": "Aprueba la activación",
+    "step5": "Gestiona las respuestas"
   }
 }
