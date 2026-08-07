@@ -1,5 +1,5 @@
-// Send Safety Engine — central governance for safe outreach activation.
-// Founder-editable defaults. All numbers are intentionally configurable here.
+// Send Safety Engine — central governance for customer-controlled outreach sending.
+// Daily send ceilings are enforced by paid plan + sender/data safety, not Campaign Credits.
 
 import type { PlanId } from "./credits";
 
@@ -10,12 +10,11 @@ import type { PlanId } from "./credits";
 // server-side enforcement point. Warm-up, sender health and rate limits can
 // only reduce the effective allowance — never raise it above these numbers.
 export const PLAN_DAILY_CEILING: Record<PlanId, number> = {
-  free_preview: 0, // Free preview cannot make live sends.
+  free_preview: 0, // Free Preview cannot make live sends.
   starter: 20,
   growth: 50,
   agency: 100, // counted per sending account
 };
-
 
 /* --------------- 2. Activation readiness model --------------- */
 
@@ -28,13 +27,13 @@ export type QualityStatus =
   | "duplicate";
 
 export type ActivationClass =
-  | "safe"            // ready to activate
-  | "review"          // gate behind manual review
-  | "excluded_risky"  // off by default, can override
-  | "excluded";       // never sendable
+  | "safe"
+  | "review"
+  | "excluded_risky"
+  | "excluded";
 
 export const ACTIVATION_LABELS: Record<ActivationClass, string> = {
-  safe: "Safe to activate",
+  safe: "Eligible for activation review",
   review: "Review before activation",
   excluded_risky: "Excluded by default — override possible",
   excluded: "Excluded from activation",
@@ -76,13 +75,13 @@ export type SenderHealth = "healthy" | "warming" | "needs_attention" | "paused" 
 
 export interface SenderState {
   connected: boolean;
-  domain_authenticated: boolean;        // SPF + DKIM (or provider-managed for Nylas warm-up)
+  domain_authenticated: boolean;
   reconnect_required: boolean;
-  newly_connected: boolean;             // < 7 days
+  newly_connected: boolean;
   last_send_at: string | null;
-  bounce_rate: number;                  // 0..1
-  unsubscribe_rate: number;             // 0..1
-  complaint_rate?: number;              // optional
+  bounce_rate: number;
+  unsubscribe_rate: number;
+  complaint_rate?: number;
   /** When set, sender is warm-up-eligible; caps the daily safeAllowance. */
   warmup_daily_cap?: number | null;
 }
@@ -114,8 +113,8 @@ export const SENDER_HEALTH_TONE: Record<SenderHealth, string> = {
 /* --------------- 4. Safety adjustments --------------- */
 
 export interface SafetyAdjustment {
-  factor: number;   // multiplier 0..1
-  reason: string;   // plain-English
+  factor: number;
+  reason: string;
 }
 
 export interface SafetyInput {
@@ -124,29 +123,31 @@ export interface SafetyInput {
   sender: SenderState;
   sendsUsedToday: number;
   sendsScheduledToday: number;
-  sendCreditsRemaining: number;
-  /** Agency only: total sends today pooled across all child workspaces. */
+  /**
+   * @deprecated Kept temporarily for caller compatibility only.
+   * Campaign Credits fund credit-priced AI generation and MUST NOT cap live sends.
+   */
+  sendCreditsRemaining?: number;
+  /** Agency only: total sends today across the account's client workspaces. */
   agencyPooledSendsToday?: number;
 }
 
 export interface SafetyResult {
   planCeiling: number;
-  safeAllowance: number;        // after adjustments and credits cap
-  recommendedToday: number;     // conservative starting point
-  remainingToday: number;       // safeAllowance - used - scheduled (>=0)
+  safeAllowance: number;
+  recommendedToday: number;
+  remainingToday: number;
   adjustments: SafetyAdjustment[];
-  pauseReasons: string[];       // if non-empty, sending is paused
+  pauseReasons: string[];
   health: SenderHealth;
   excluded: { risky: number; blocked: number; review: number };
-  reviewShare: number;          // share of audience flagged as review
-  /** Agency only: pooled sends today across the whole workspace. */
+  reviewShare: number;
   agencyPooledSendsToday?: number;
-  /** Agency only: pooled remaining capacity across the whole workspace. */
   agencyPooledRemaining?: number;
 }
 
 export function computeSafety(input: SafetyInput): SafetyResult {
-  const ceiling = PLAN_DAILY_CEILING[input.plan] ?? 0; // fail closed on unknown plan
+  const ceiling = PLAN_DAILY_CEILING[input.plan] ?? 0;
   const adjustments: SafetyAdjustment[] = [];
   const pause: string[] = [];
   let factor = 1;
@@ -155,7 +156,6 @@ export function computeSafety(input: SafetyInput): SafetyResult {
   const reviewShare = totalAudience > 0 ? input.vault.needs_review / totalAudience : 0;
   const health = senderHealth(input.sender);
 
-  // Adjustments
   if (!input.sender.connected) {
     pause.push("No sender mailbox is connected.");
     factor = 0;
@@ -165,7 +165,6 @@ export function computeSafety(input: SafetyInput): SafetyResult {
     factor = 0;
   }
   if (!input.sender.domain_authenticated && input.sender.connected && !input.sender.warmup_daily_cap) {
-    // Not warm-up eligible (SMTP/custom without verification) — pause.
     pause.push("Sender setup is not complete.");
     factor = 0;
   }
@@ -185,33 +184,37 @@ export function computeSafety(input: SafetyInput): SafetyResult {
     adjustments.push({ factor: 0.75, reason: `${Math.round(reviewShare * 100)}% of this segment still needs review.` });
     factor *= 0.75;
   }
-  if (input.sendCreditsRemaining <= 0) {
-    pause.push("Send credits exhausted.");
-    factor = 0;
-  }
 
+  // Campaign Credits are deliberately absent from this calculation. Sending is
+  // governed by the paid-plan ceiling, sender readiness, data status and the
+  // authoritative server-side email-send limit.
   const adjusted = Math.floor(ceiling * factor);
-  let safeAllowance = Math.max(0, Math.min(adjusted, input.sendCreditsRemaining, input.vault.valid));
+  let safeAllowance = Math.max(0, Math.min(adjusted, input.vault.valid));
+
   if (input.sender.warmup_daily_cap && input.sender.warmup_daily_cap > 0) {
     if (safeAllowance > input.sender.warmup_daily_cap) {
-      adjustments.push({ factor: input.sender.warmup_daily_cap / Math.max(safeAllowance, 1),
-        reason: `Warm-up cap: ${input.sender.warmup_daily_cap}/day for this sender.` });
+      adjustments.push({
+        factor: input.sender.warmup_daily_cap / Math.max(safeAllowance, 1),
+        reason: `Warm-up cap: ${input.sender.warmup_daily_cap}/day for this sender.`,
+      });
     }
     safeAllowance = Math.min(safeAllowance, input.sender.warmup_daily_cap);
   }
 
-  // Agency pooled visibility — sends across all client workspaces are counted
-  // together so the operator can see account-wide usage. The authoritative
-  // per-account daily ceiling is enforced server-side in email-send.
+  // Agency account-wide usage visibility. The authoritative daily ceiling is
+  // still enforced server-side in email-send for the sending account.
   let agencyPooledRemaining: number | undefined = undefined;
   if (input.plan === "agency") {
     const pooledUsed = input.agencyPooledSendsToday ?? 0;
     agencyPooledRemaining = Math.max(0, ceiling - pooledUsed);
     if (pooledUsed >= ceiling) {
-      pause.push(`Pooled daily cap reached — ${pooledUsed.toLocaleString()} / ${ceiling.toLocaleString()} sends today across all client workspaces.`);
+      pause.push(`Daily account cap reached — ${pooledUsed.toLocaleString()} / ${ceiling.toLocaleString()} sends today across client workspaces.`);
       safeAllowance = 0;
     } else if (agencyPooledRemaining < safeAllowance) {
-      adjustments.push({ factor: agencyPooledRemaining / Math.max(safeAllowance, 1), reason: `Pooled daily allowance: ${agencyPooledRemaining.toLocaleString()} sends left today across all client workspaces.` });
+      adjustments.push({
+        factor: agencyPooledRemaining / Math.max(safeAllowance, 1),
+        reason: `Account-wide daily allowance: ${agencyPooledRemaining.toLocaleString()} sends left today.`,
+      });
       safeAllowance = agencyPooledRemaining;
     }
   }
@@ -222,7 +225,6 @@ export function computeSafety(input: SafetyInput): SafetyResult {
     pause.push("Daily safe cap reached.");
   }
 
-  // Conservative recommendation: ~60% of remaining, min 10, capped by remaining
   const rec = remainingToday <= 0 ? 0 : Math.max(Math.min(10, remainingToday), Math.floor(remainingToday * 0.6));
 
   return {
@@ -247,7 +249,7 @@ export function computeSafety(input: SafetyInput): SafetyResult {
 /* --------------- 5. Risky override caps --------------- */
 
 export const RISKY_OVERRIDE_MAX_PER_BATCH = 25;
-export const RISKY_OVERRIDE_MAX_SHARE = 0.1; // <= 10% of batch
+export const RISKY_OVERRIDE_MAX_SHARE = 0.1;
 
 export function maxRiskyOverride(batchSize: number) {
   return Math.min(RISKY_OVERRIDE_MAX_PER_BATCH, Math.floor(batchSize * RISKY_OVERRIDE_MAX_SHARE));
