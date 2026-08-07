@@ -145,7 +145,7 @@ const buildFaqs = (topUpsPurchasable: boolean) => [
   },
   {
     q: "What sending limits apply?",
-    a: "Starter and Growth use per-workspace limits, while Agency Workspace uses pooled account-level governance across client workspaces. Daily caps and risky-record controls are operational safeguards; they do not guarantee deliverability or legal compliance.",
+    a: "Daily send ceilings apply to the signed-in account on an eligible paid plan. Agency Workspace additionally gives an account-wide view of send usage across isolated client workspaces. Daily caps and risky-record controls are operational safeguards; they do not guarantee deliverability or legal compliance.",
   },
   {
     q: "Which plans renew automatically?",
