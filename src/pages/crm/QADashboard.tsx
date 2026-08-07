@@ -20,153 +20,124 @@ const TEST_SEED: { category: string; tests: { name: string; description: string 
   {
     category: "Website",
     tests: [
-      { name: "Homepage loads", description: "Homepage renders all sections correctly" },
-      { name: "Navigation links", description: "All navbar links navigate to correct pages" },
-      { name: "Services page", description: "Services page loads with all content" },
-      { name: "Industries page", description: "Industries page loads correctly" },
-      { name: "For Agencies page", description: "For Agencies page loads with all sections" },
-      { name: "Contact form", description: "Contact form submits and creates CRM records" },
-      { name: "Demo booking", description: "Demo booking form creates lead in CRM" },
-      { name: "Demo → CRM sync", description: "Confirm demo requests automatically create CRM lead records" },
+      { name: "Homepage loads", description: "Homepage renders the current self-serve product story correctly" },
+      { name: "Navigation links", description: "All navbar and footer links resolve to active routes" },
+      { name: "Pricing truth", description: "Pricing, credits, cadence and send ceilings match enforced plan rules" },
+      { name: "Features & workflow", description: "Features and How It Works describe implemented customer-controlled functionality" },
+      { name: "Contact form", description: "Contact form persists a valid enquiry without creating duplicate leads on notification delay" },
+      { name: "Demo entry", description: "/demo renders the illustrative no-signup demo and /book-demo redirects to it" },
+      { name: "Legal Centre", description: "Legal Centre and all current legal-document routes resolve correctly" },
+      { name: "Hosted capture", description: "Invalid or non-live /c/:slug links fail safely and capture pages remain noindex" },
     ],
   },
   {
     category: "CRM",
     tests: [
-      { name: "Lead creation (website)", description: "Website forms create lead records" },
-      { name: "Manual lead entry", description: "Manual lead creation via CRM works" },
-      { name: "Company record creation", description: "New companies can be created with all fields" },
-      { name: "Contact creation", description: "New contacts can be created and linked to companies" },
-      { name: "Opportunity creation", description: "Opportunities can be created with values" },
-      { name: "Pipeline: New", description: "Leads start in New stage" },
-      { name: "Pipeline: Contacted", description: "Leads move to Contacted stage" },
-      { name: "Pipeline: Demo Scheduled", description: "Leads move to Demo Scheduled stage" },
-      { name: "Pipeline: Proposal", description: "Leads move to Proposal Sent stage" },
-      { name: "Pipeline: Negotiation", description: "Leads move to Negotiation stage" },
-      { name: "Pipeline: Won/Lost", description: "Leads move to Won or Lost stage" },
-      { name: "Dashboard metrics", description: "CRM dashboard KPIs update accurately" },
-      { name: "Contact timelines", description: "Contact timelines record activity correctly" },
-      { name: "Search & filters", description: "Search and filter functionality works" },
+      { name: "CRM access control", description: "Signed-out users and users without internal roles cannot access /crm routes" },
+      { name: "Companies", description: "Company records can be reviewed and managed by authorised internal users" },
+      { name: "Contacts", description: "Contact records can be reviewed and linked to companies" },
+      { name: "Leads", description: "Lead records and current lead states render correctly" },
+      { name: "Opportunities", description: "Opportunity records, stages, values and next actions render correctly" },
+      { name: "Tasks", description: "Internal tasks render and update for authorised users" },
+      { name: "Campaign records", description: "Internal campaign records and campaign detail routes render correctly" },
+      { name: "QA and error logs", description: "QA checklist and error-log views remain restricted to internal users" },
     ],
   },
   {
-    category: "Client Portal",
+    category: "Customer App",
     tests: [
-      { name: "Client login", description: "Client can log in securely and see portal" },
-      { name: "Password reset", description: "Password reset flow works correctly" },
-      { name: "Campaign overview", description: "Client sees campaign overview display" },
-      { name: "Campaign metrics", description: "Campaign performance metrics display correctly" },
-      { name: "Upload assets", description: "Client can upload campaign assets" },
-      { name: "Download reports", description: "Client can download campaign reports" },
-      { name: "Messaging system", description: "Client messaging system works correctly" },
-      { name: "View invoices", description: "Client can view invoices in billing section" },
-      { name: "Data isolation", description: "Each client only sees their own data" },
+      { name: "Signed-out guard", description: "Every /app route redirects to /auth without flashing customer data" },
+      { name: "Dashboard", description: "Customer command centre renders current workspace state" },
+      { name: "Data Vault", description: "Upload, mapping, validation and import-review surfaces render correctly" },
+      { name: "Campaigns", description: "Campaign list, creation, Copilot and campaign workspace routes render correctly" },
+      { name: "Activation", description: "Activation screen uses real readiness and plan controls" },
+      { name: "Replies & follow-up", description: "Reply queues, SLA states and follow-up actions use stored records" },
+      { name: "Pipeline", description: "Customer-selected opportunities and stages render from stored records" },
+      { name: "Performance", description: "Performance and Outcome Funnel reporting use real stored data" },
+      { name: "Billing", description: "Billing page reflects provider readiness, plan and credit state without exposing secrets" },
+      { name: "Settings & workspaces", description: "Settings and client-workspace routes remain scoped to the signed-in account" },
     ],
   },
   {
-    category: "Campaign Engine",
+    category: "Campaign Safety",
     tests: [
-      { name: "Create campaign", description: "Internal user can create campaigns" },
-      { name: "Schedule campaign", description: "Campaign scheduling with dates works" },
-      { name: "Upload assets", description: "Campaign asset upload to storage works" },
-      { name: "Audience upload", description: "Audience list upload and management works" },
-      { name: "Status updates", description: "Campaign status transitions work correctly" },
-      { name: "Performance metrics", description: "Campaign metrics record and display correctly" },
-      { name: "Report generation", description: "Campaign reports generate correctly" },
+      { name: "Free Preview send block", description: "Free Preview is hard-blocked from live sending server-side" },
+      { name: "Free Preview pack limit", description: "The one-full-pack preview limit is enforced before credits are spent" },
+      { name: "Recurring cadence gate", description: "Recurring cadence is available only to Growth and Agency plans" },
+      { name: "Plan send ceilings", description: "Daily send ceilings remain 0 / 20 / 50 / 100 for Free / Starter / Growth / Agency" },
+      { name: "Preflight", description: "Campaign preflight reports evidence-based readiness before activation" },
+      { name: "Unsubscribe precedence", description: "Unsubscribe intent cannot be downgraded into a sales opportunity" },
+      { name: "Bounce precedence", description: "Bounce handling prevents unsafe sales treatment while preserving unsubscribe priority" },
+      { name: "Referral handling", description: "Referral replies remain reviewable and do not auto-create contacts" },
+      { name: "Out-of-office handling", description: "Clear OOO return dates are extracted for manual follow-up without auto-send" },
+      { name: "Meeting handoff", description: "Booking-link and manual meeting-booked actions remain customer-controlled" },
+      { name: "Outcome Funnel", description: "Contacted-to-won funnel uses stored records and zero-safe rates" },
     ],
   },
   {
-    category: "Agency Accounts",
+    category: "Agency Workspace",
     tests: [
-      { name: "Agency onboarding", description: "Agency account onboarding flow completes correctly" },
-      { name: "Create workspace", description: "Agency can create client workspaces" },
-      { name: "Switch workspaces", description: "Agency can switch between client workspaces" },
-      { name: "Workspace campaigns", description: "Campaigns can be created for different workspaces" },
-      { name: "Workspace reports", description: "Reports are viewable per client workspace" },
-      { name: "CRM linking", description: "CRM records link Agency → Workspace → Campaign correctly" },
-      { name: "Agency data isolation", description: "Agency accounts only see their own workspaces" },
+      { name: "Create workspace", description: "Eligible Agency accounts can create isolated client workspaces" },
+      { name: "Switch workspace", description: "Agency users can switch among their own client workspaces" },
+      { name: "Workspace isolation", description: "Client-workspace records remain isolated to the owning agency account" },
+      { name: "Pooled credits", description: "Agency Campaign Credits are pooled across isolated client workspaces" },
+      { name: "Account-wide send view", description: "Agency can review account-wide daily send usage against the plan ceiling" },
+      { name: "Cross-client outcomes", description: "Cross-client pipeline and Outcome Funnel visibility uses stored workspace records" },
     ],
   },
   {
-    category: "Founder Dashboard",
+    category: "Billing & Payments",
     tests: [
-      { name: "Access control", description: "Only founder/admin roles can access" },
-      { name: "Total clients KPI", description: "Active client count is accurate" },
-      { name: "Agency vs Business", description: "Agency clients vs business clients breakdown is correct" },
-      { name: "Active campaigns KPI", description: "Campaign count matches database" },
-      { name: "Revenue metrics", description: "Revenue figures calculate correctly" },
-      { name: "Lead stats", description: "Lead generation numbers are accurate" },
-      { name: "Pipeline value", description: "Pipeline value aggregation is correct" },
-      { name: "Dynamic updates", description: "KPIs update when data changes" },
-    ],
-  },
-  {
-    category: "Billing",
-    tests: [
-      { name: "Create subscription", description: "Subscription creation works" },
-      { name: "Agency subscription", description: "Agency plan subscription works correctly" },
-      { name: "Generate invoice", description: "Invoice creation with auto-number works" },
-      { name: "Payment processing", description: "Payment processing via Stripe works" },
-      { name: "Invoice download", description: "Invoice PDF download works" },
-      { name: "Payment status updates", description: "Payment status transitions update correctly" },
-      { name: "CRM revenue sync", description: "Billing events update CRM records" },
-      { name: "Dashboard revenue sync", description: "Billing updates founder dashboard analytics" },
-    ],
-  },
-  {
-    category: "Onboarding Journey",
-    tests: [
-      { name: "Demo → CRM lead", description: "Demo booking creates CRM lead record" },
-      { name: "Lead conversion", description: "Qualified lead converts to client account" },
-      { name: "Portal account", description: "Client portal access created on conversion" },
-      { name: "Business onboarding", description: "Business onboarding path works correctly" },
-      { name: "Agency onboarding", description: "Agency onboarding path works correctly" },
-      { name: "Workspace creation", description: "Agency client workspace creation works" },
-      { name: "Onboarding form", description: "Onboarding data saves to database" },
-      { name: "Progress tracker", description: "Onboarding progress indicators display correctly" },
+      { name: "Dodo readiness fail-closed", description: "Direct-purchase CTAs remain unavailable until the relevant live Dodo product is ready" },
+      { name: "Direct checkout intent", description: "A live-ready paid product routes through safe authenticated purchase intent without auto-starting payment" },
+      { name: "Webhook fulfilment", description: "Verified provider webhook events remain the authority for paid fulfilment" },
+      { name: "Top-up readiness", description: "Top-up copy and checkout availability reflect real runtime product readiness" },
+      { name: "Human Review reference", description: "Human Review accepts only a valid owned campaign reference and other products reject refId" },
+      { name: "Existing Stripe subscriber portal", description: "Legacy Stripe subscribers retain their existing provider-specific billing portal path" },
+      { name: "Provider-neutral customer copy", description: "Customer-facing billing language does not falsely promise a specific provider path" },
     ],
   },
   {
     category: "Demo Environment",
     tests: [
-      { name: "Demo login", description: "Demo login page loads and demo credentials work" },
-      { name: "Demo banner", description: "Demo banner appears at top of screen with CTA" },
-      { name: "Sample data loads", description: "Sample contacts, campaigns and analytics load correctly" },
-      { name: "Upload blocked", description: "Uploading marketing lists shows disabled message" },
-      { name: "Send blocked", description: "Sending campaigns shows disabled message" },
-      { name: "Billing blocked", description: "Modifying billing settings shows disabled message" },
-      { name: "Account creation blocked", description: "Creating new accounts shows disabled message" },
-      { name: "Create Account CTA", description: "Create My Account button redirects to signup page" },
+      { name: "Demo entry", description: "Public demo entry loads without requiring a paid account" },
+      { name: "Illustrative labelling", description: "Sample records and outcomes are clearly identifiable as demo/illustrative data" },
+      { name: "Mutation safety", description: "Demo actions do not mutate production customer records" },
+      { name: "Real send blocked", description: "Demo cannot trigger real outbound sending" },
+      { name: "Real billing blocked", description: "Demo cannot trigger real payment or billing mutations" },
+      { name: "New capabilities visible", description: "Demo surfaces Launchpad, Preflight, referral, OOO, waiting reply, meeting and Outcome Funnel examples" },
     ],
   },
   {
     category: "Legal Acceptance",
     tests: [
-      { name: "Signup checkbox", description: "Legal acceptance checkbox required during account creation" },
-      { name: "Document links", description: "All 9 legal document links open in new tabs" },
-      { name: "Acceptance logging", description: "Acceptance record created with user ID, email, IP, version" },
-      { name: "Admin compliance view", description: "Legal compliance dashboard shows acceptance records" },
-      { name: "Portal legal section", description: "Client portal shows accepted versions and dates" },
-      { name: "Version tracking", description: "Legal documents display version numbers correctly" },
+      { name: "Signup checkbox", description: "Legal acceptance is mandatory during account creation" },
+      { name: "Legal document routes", description: "All current legal-document routes resolve from the Legal Centre" },
+      { name: "Acceptance logging", description: "Legal acceptance is recorded with the applicable user and document-version context" },
+      { name: "Compliance view", description: "Internal legal-compliance surfaces remain restricted to authorised roles" },
+      { name: "Version tracking", description: "Current legal document versions are displayed and recorded consistently" },
     ],
   },
   {
     category: "Security",
     tests: [
-      { name: "Client data isolation", description: "Clients only see own company data" },
-      { name: "Agency workspace isolation", description: "Agency accounts only see own workspaces" },
-      { name: "Founder restriction", description: "Founder dashboard blocked for non-founder/admin" },
-      { name: "Role enforcement", description: "Internal staff roles restrict access correctly" },
-      { name: "Auth required", description: "Protected routes redirect unauthenticated users" },
+      { name: "Customer data isolation", description: "Customers only see records allowed by current ownership and RLS rules" },
+      { name: "Agency workspace isolation", description: "Agency accounts only see their own client workspaces" },
+      { name: "Internal role enforcement", description: "CRM routes require both authentication and an authorised internal role" },
+      { name: "Safe return paths", description: "Authentication next-path handling rejects external or malformed redirects" },
+      { name: "Dodo secret exposure", description: "API keys, webhook secrets, product IDs and customer IDs are not exposed by public readiness" },
+      { name: "Sensitive translation protection", description: "GTranslate marks sensitive inputs and secret-bearing elements as notranslate" },
     ],
   },
   {
-    category: "Performance",
+    category: "Release Quality",
     tests: [
-      { name: "Page load speed", description: "Pages load within acceptable time limits" },
-      { name: "Dashboard performance", description: "Dashboards perform well with large datasets" },
-      { name: "Campaign reporting speed", description: "Campaign reports generate quickly" },
-      { name: "CRM search performance", description: "CRM search returns results within 2 seconds" },
+      { name: "Automated tests", description: "Full automated test suite passes before publication" },
+      { name: "Typecheck", description: "TypeScript typecheck completes without errors" },
+      { name: "Production build", description: "Production build completes successfully" },
+      { name: "Mobile layout", description: "Public pages render without horizontal overflow at 390px" },
+      { name: "Route smoke", description: "Public routes render and protected routes redirect safely" },
+      { name: "Truth sweep", description: "Public copy, llms.txt, sitemap and internal reference material match current implementation" },
     ],
   },
 ];
@@ -212,7 +183,6 @@ const QADashboard = () => {
     mutationFn: async () => {
       for (const cat of TEST_SEED) {
         for (const test of cat.tests) {
-          // Check if already exists
           const existing = testResults?.find((r: any) => r.category === cat.category && r.test_name === test.name);
           if (!existing) {
             await supabase.from("qa_test_results" as any).insert({
@@ -246,7 +216,6 @@ const QADashboard = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["qa-errors"] }),
   });
 
-  // Summary stats
   const total = testResults?.length ?? 0;
   const passed = testResults?.filter((t: any) => t.status === "passed").length ?? 0;
   const failed = testResults?.filter((t: any) => t.status === "failed").length ?? 0;
@@ -306,7 +275,6 @@ const QADashboard = () => {
         </div>
       </div>
 
-      {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {[
           { label: "Total Tests", value: total, icon: Shield, color: "text-accent" },
@@ -323,7 +291,6 @@ const QADashboard = () => {
         ))}
       </div>
 
-      {/* Tabs */}
       <div className="flex gap-1 bg-muted/50 rounded-lg p-1 w-fit">
         {[{ key: "tests", label: `Test Cases (${total})` }, { key: "errors", label: `Error Log (${unresolvedErrors.length})` }].map((t) => (
           <button key={t.key} onClick={() => setTab(t.key as any)} className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${tab === t.key ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>{t.label}</button>
