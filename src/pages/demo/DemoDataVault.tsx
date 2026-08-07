@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import VaultSummaryCards from "@/components/app/datavault/VaultSummaryCards";
@@ -22,7 +23,7 @@ export default function DemoDataVault() {
     { label: "Total contacts", value: 247, icon: Users },
     { label: "Total companies", value: 92, icon: Building2 },
     { label: "Imported lists", value: 3, icon: FolderUp },
-    { label: "Clean", value: 208, icon: CheckCircle2, tone: "good" as const },
+    { label: "Eligible", value: 208, icon: CheckCircle2, tone: "good" as const },
     { label: "Needs review", value: 23, icon: AlertTriangle, tone: "warn" as const },
     { label: "Risky", value: 18, icon: AlertOctagon, tone: "warn" as const },
     { label: "Blocked", value: 9, icon: Ban, tone: "danger" as const },
@@ -39,38 +40,41 @@ export default function DemoDataVault() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Data Vault Demo — Velocity Vision</title>
+        <meta name="robots" content="noindex,nofollow" />
+      </Helmet>
       <div className="bg-accent text-accent-foreground px-4 py-2.5 text-center text-sm font-semibold sticky top-0 z-50">
-        DEMO — not your live customer data
+        DEMO — illustrative sample data only
       </div>
       <header className="border-b border-border bg-card">
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between gap-3">
           <div className="font-bold">Velocity · Data Vault demo</div>
           <div className="flex gap-2">
             <Button asChild variant="outline"><Link to="/demo/crm">Demo dashboard</Link></Button>
-            <Button asChild><Link to="/auth">Unlock your workspace</Link></Button>
+            <Button asChild><Link to="/auth">Start your workspace</Link></Button>
           </div>
         </div>
       </header>
-
 
       <main className="max-w-6xl mx-auto p-6 space-y-6">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Data Vault</h1>
-            <p className="text-muted-foreground mt-1">This is what happens when you drop in your spreadsheet — instantly.</p>
+            <p className="text-muted-foreground mt-1">This illustrates how uploaded business records are mapped, deduplicated and flagged for customer review.</p>
           </div>
-          <Button asChild size="lg"><Link to="/auth"><Upload className="h-4 w-4 mr-2" />Upload your own data</Link></Button>
+          <Button asChild size="lg"><Link to="/auth"><Upload className="h-4 w-4 mr-2" />Start Free Preview</Link></Button>
         </div>
 
         <VaultSummaryCards stats={stats} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <Card className="lg:col-span-2">
-            <CardHeader><CardTitle className="text-base">Recent imports</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-base">Illustrative imports</CardTitle></CardHeader>
             <CardContent><RecentImportsTable imports={imports as any} /></CardContent>
           </Card>
           <Card>
-            <CardHeader><CardTitle className="text-base">Data health</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-base">Illustrative data health</CardTitle></CardHeader>
             <CardContent><DataHealthPanel clean={208} needs_review={23} risky={18} blocked={9} /></CardContent>
           </Card>
         </div>
@@ -80,30 +84,28 @@ export default function DemoDataVault() {
           <CardContent><PreviewStep rows={DEMO_ROWS as any} totals={totals} /></CardContent>
         </Card>
 
-        <ImportReport
-          s={{
-            rows: 247,
-            created: 226,
-            companies_created: 84,
-            duplicates: 12,
-            risky: 18,
-            needs_review: 23,
-            blocked: 9,
-            safe_to_send: 208,
-            recommended: [
-              { title: "Review 18 risky contacts", to: "/auth" },
-              { title: "Move safe contacts into outreach", to: "/auth" },
-            ],
-          }}
-        />
+        <ImportReport s={{
+          rows: 247,
+          created: 226,
+          companies_created: 84,
+          duplicates: 12,
+          risky: 18,
+          needs_review: 23,
+          blocked: 9,
+          safe_to_send: 208,
+          recommended: [
+            { title: "Review 18 risky contacts", to: "/auth" },
+            { title: "Review eligible contacts for activation", to: "/auth" },
+          ],
+        }} />
 
         <Card className="bg-primary text-primary-foreground">
           <CardContent className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-3">
             <div>
-              <div className="text-lg font-semibold">Try it with your own list</div>
-              <div className="text-sm opacity-90">Free to upload. We'll show you what's usable before you spend a credit.</div>
+              <div className="text-lg font-semibold">Try the workflow with your own authorised data</div>
+              <div className="text-sm opacity-90">Free Preview supports up to 25 contacts. Data review does not spend Campaign Credits; workspace flags are operational review aids, not legal approval.</div>
             </div>
-            <Button asChild variant="secondary" size="lg"><Link to="/auth">Upload your own data <ArrowRight className="h-4 w-4 ml-1" /></Link></Button>
+            <Button asChild variant="secondary" size="lg"><Link to="/auth">Start Free Preview <ArrowRight className="h-4 w-4 ml-1" /></Link></Button>
           </CardContent>
         </Card>
       </main>
