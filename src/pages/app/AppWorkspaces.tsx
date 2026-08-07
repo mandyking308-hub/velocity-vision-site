@@ -27,17 +27,17 @@ export default function AppWorkspaces() {
   const [legalGateOpen, setLegalGateOpen] = useState(false);
 
   const isAgency = plan === "agency";
-  const limit = planConfig.workspaceLimit; // null = unlimited
+  const limit = planConfig.workspaceLimit;
   const atLimit = limit !== null && workspaces.length >= limit;
   const canCreate = !atLimit;
 
   const heading = isAgency ? "Client workspaces" : "My workspace";
   const subCopy = isAgency
-    ? "Open a client workspace to manage its contacts, campaigns, replies, billing and early pipeline."
-    : "Open your workspace to manage contacts, campaigns, replies, billing and early pipeline.";
+    ? "Keep each client's contacts, campaigns, replies and pipeline isolated while plan billing and pooled Campaign Credits remain account-level."
+    : "Open your workspace to manage contacts, campaigns, replies and early pipeline. Plan billing remains account-level.";
   const creditNote = isAgency
-    ? "Agency credits are pooled across all client workspaces."
-    : "Credits apply to this workspace.";
+    ? "Agency Campaign Credits are pooled across client workspaces."
+    : "Campaign Credits apply to this account's workspace.";
 
   const openWorkspace = (id: string) => {
     setCurrentId(id);
@@ -85,42 +85,26 @@ export default function AppWorkspaces() {
     await doCreate();
   };
 
-
   const CreateDialog = (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button disabled={!canCreate}>
-          <Plus className="h-4 w-4 mr-2" /> Create workspace
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger asChild><Button disabled={!canCreate}><Plus className="h-4 w-4 mr-2" /> Create workspace</Button></DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>{isAgency ? "Create a client workspace" : "Create your workspace"}</DialogTitle>
           <DialogDescription>
             {isAgency
-              ? "Each client workspace has its own contacts, campaigns, assets, replies and pipeline. Credits are pooled across all client workspaces."
-              : "Your workspace keeps contacts, campaigns, assets, replies, billing and pipeline organised."}
+              ? "Each client workspace keeps its contacts, campaigns, assets, replies and pipeline separate. Plan billing and pooled Campaign Credits remain account-level."
+              : "Your workspace keeps contacts, campaigns, assets, replies and pipeline organised. Billing remains account-level."}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
-          <div>
-            <Label htmlFor="ws-name">Workspace name *</Label>
-            <Input id="ws-name" value={name} onChange={(e) => setName(e.target.value)} placeholder={isAgency ? "e.g. Acme Ltd (client)" : "e.g. Acme Ltd"} />
-          </div>
-          <div>
-            <Label htmlFor="ws-industry">Industry (optional)</Label>
-            <Input id="ws-industry" value={industry} onChange={(e) => setIndustry(e.target.value)} placeholder="e.g. B2B SaaS" />
-          </div>
-          <div>
-            <Label htmlFor="ws-web">Website (optional)</Label>
-            <Input id="ws-web" value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://…" />
-          </div>
+          <div><Label htmlFor="ws-name">Workspace name *</Label><Input id="ws-name" value={name} onChange={(e) => setName(e.target.value)} placeholder={isAgency ? "e.g. Acme Ltd (client)" : "e.g. Acme Ltd"} /></div>
+          <div><Label htmlFor="ws-industry">Industry (optional)</Label><Input id="ws-industry" value={industry} onChange={(e) => setIndustry(e.target.value)} placeholder="e.g. B2B SaaS" /></div>
+          <div><Label htmlFor="ws-web">Website (optional)</Label><Input id="ws-web" value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://…" /></div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)} disabled={busy}>Cancel</Button>
-          <Button onClick={create} disabled={busy || !name.trim() || !canCreate}>
-            {busy ? "Creating…" : "Create workspace"}
-          </Button>
+          <Button onClick={create} disabled={busy || !name.trim() || !canCreate}>{busy ? "Creating…" : "Create workspace"}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -131,22 +115,14 @@ export default function AppWorkspaces() {
   return (
     <div className="space-y-6 max-w-4xl">
       <div className="flex items-start justify-between gap-3 flex-wrap">
-        <div>
-          <h1 className="text-3xl font-bold">{heading}</h1>
-          <p className="text-muted-foreground">{subCopy}</p>
-        </div>
+        <div><h1 className="text-3xl font-bold">{heading}</h1><p className="text-muted-foreground">{subCopy}</p></div>
         {workspaces.length > 0 && showCreate && CreateDialog}
       </div>
 
       <Card className="bg-muted/40 border-dashed">
         <CardContent className="p-3 flex items-start gap-2 text-sm text-muted-foreground">
           <Info className="h-4 w-4 mt-0.5 shrink-0" />
-          <span>
-            <strong className="text-foreground">{planConfig.name} plan.</strong> {creditNote}
-            {atLimit && !isAgency && (
-              <> · Need separate client workspaces? <a href="/app/billing" className="text-primary underline underline-offset-2">Upgrade to Agency</a>.</>
-            )}
-          </span>
+          <span><strong className="text-foreground">{planConfig.name} plan.</strong> {creditNote}{atLimit && !isAgency && <> · Need separate client workspaces? <a href="/app/billing" className="text-primary underline underline-offset-2">Upgrade to Agency</a>.</>}</span>
         </CardContent>
       </Card>
 
@@ -155,62 +131,28 @@ export default function AppWorkspaces() {
       ) : workspaces.length === 0 ? (
         <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-accent/5">
           <CardContent className="p-10 text-center space-y-4">
-            <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-              <Sparkles className="h-7 w-7 text-primary" />
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold">Create your first workspace</h2>
-              <p className="text-sm text-muted-foreground max-w-md mx-auto mt-1">
-                Your workspace keeps contacts, campaigns, assets, replies, billing and pipeline organised.
-              </p>
-            </div>
+            <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto"><Sparkles className="h-7 w-7 text-primary" /></div>
+            <div><h2 className="text-xl font-semibold">Create your first workspace</h2><p className="text-sm text-muted-foreground max-w-md mx-auto mt-1">Keep contacts, campaigns, assets, replies and pipeline organised in one customer-controlled workspace.</p></div>
             {CreateDialog}
           </CardContent>
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {workspaces.map((w) => (
-            <Card
-              key={w.id}
-              data-testid={`workspace-card-${w.id}`}
-              className="cursor-pointer transition-colors hover:border-primary/50"
-              onClick={() => openWorkspace(w.id)}
-            >
+            <Card key={w.id} data-testid={`workspace-card-${w.id}`} className="cursor-pointer transition-colors hover:border-primary/50" onClick={() => openWorkspace(w.id)}>
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Briefcase className="h-4 w-4 text-primary" /> {w.name}
-                </CardTitle>
+                <CardTitle className="text-lg flex items-center gap-2"><Briefcase className="h-4 w-4 text-primary" /> {w.name}</CardTitle>
                 {w.id === currentId && <Badge><Check className="h-3 w-3 mr-1" />Active</Badge>}
               </CardHeader>
               <CardContent className="space-y-3">
-                <p className="text-sm text-muted-foreground">
-                  {isAgency ? "Client workspace" : "Your workspace"} · click to open
-                </p>
-                <Button
-                  variant={w.id === currentId ? "outline" : "default"}
-                  className="w-full"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    openWorkspace(w.id);
-                  }}
-                >
-                  Open workspace
-                </Button>
+                <p className="text-sm text-muted-foreground">{isAgency ? "Client workspace" : "Your workspace"} · click to open</p>
+                <Button variant={w.id === currentId ? "outline" : "default"} className="w-full" onClick={(e) => { e.stopPropagation(); openWorkspace(w.id); }}>Open workspace</Button>
               </CardContent>
             </Card>
           ))}
         </div>
       )}
-      <LegalComplianceGate
-        open={legalGateOpen}
-        onOpenChange={setLegalGateOpen}
-        source="workspace_create"
-        title="Accept current terms before creating a workspace"
-        description="Creating a workspace requires up-to-date acceptance of our platform legal stack."
-        confirmLabel="Accept and create"
-        onConfirm={async () => { await legal.refresh(); await doCreate(); }}
-      />
+      <LegalComplianceGate open={legalGateOpen} onOpenChange={setLegalGateOpen} source="workspace_create" title="Accept current terms before creating a workspace" description="Creating a workspace requires up-to-date acceptance of our platform legal stack." confirmLabel="Accept and create" onConfirm={async () => { await legal.refresh(); await doCreate(); }} />
     </div>
   );
 }
-
