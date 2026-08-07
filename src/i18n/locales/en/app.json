@@ -43,7 +43,7 @@
     },
     "empty": {
       "title": "Nothing to act on yet",
-      "body": "Upload your data to start activating campaigns.",
+      "body": "Upload your data to start preparing campaigns.",
       "cta": "Upload data"
     }
   },
@@ -54,11 +54,11 @@
   },
   "activate": {
     "title": "Activate",
-    "subtitle": "Move clean, verified data into live campaigns.",
+    "subtitle": "Review eligible data and campaign controls before live activation.",
     "readiness": "Readiness",
     "launch": "Launch",
     "toasts": {
-      "prepared": "Activation prepared for {{count}} contacts. Open your campaign to schedule the send."
+      "prepared": "Activation prepared for {{count}} contacts. Open your campaign to review the send schedule."
     }
   },
   "campaigns": {
@@ -74,7 +74,7 @@
       "finalRunLogged": "Final run logged · campaign completed",
       "packRegenerated": "Pack regenerated",
       "draftSaved": "Campaign saved as draft",
-      "draftSavedDesc": "Top up credits to unlock the AI-generated pack.",
+      "draftSavedDesc": "Add Campaign Credits to unlock the AI-generated pack.",
       "packGenerated": "Campaign pack generated",
       "generateFailed": "Failed to generate campaign"
     }
@@ -126,14 +126,14 @@
     },
     "empty": {
       "title": "No leads in your follow-up queue yet",
-      "description": "Once you activate a campaign, replies and follow-ups land here automatically.",
+      "description": "After a campaign is activated, recorded replies and follow-up actions appear here as they are received or logged.",
       "caughtUp": "Nothing in this queue. You're caught up.",
       "tryFilter": "Nothing in this queue. Try another filter."
     }
   },
   "pipeline": {
     "title": "Pipeline",
-    "subtitle": "Active opportunities and where revenue is moving — or getting stuck.",
+    "subtitle": "Active opportunities, recorded value and next actions in one place.",
     "stats": {
       "opportunities": "Opportunities",
       "active": "Active",
@@ -164,7 +164,6 @@
   },
   "settings": {
     "title": "Settings",
-    "language": "Language",
     "timezone": "Time zone",
     "currency": "Currency",
     "country": "Country"
