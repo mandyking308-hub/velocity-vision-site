@@ -29,7 +29,7 @@ export default function DataVaultDashboardWidget() {
         total: total ?? 0,
         valid: valid ?? 0,
         needs: needs ?? 0,
-        safe_to_send: (latest as any)?.summary?.safe_to_send ?? valid ?? 0,
+        eligible_under_checks: (latest as any)?.summary?.safe_to_send ?? valid ?? 0,
         latest,
       };
     },
@@ -49,7 +49,7 @@ export default function DataVaultDashboardWidget() {
           <Stat label="Uploaded" value={data?.total ?? 0} />
           <Stat label="Valid" value={data?.valid ?? 0} tone="good" />
           <Stat label="Needs review" value={data?.needs ?? 0} tone="warn" />
-          <Stat label="Safe to send" value={data?.safe_to_send ?? 0} />
+          <Stat label="Eligible under checks" value={data?.eligible_under_checks ?? 0} />
         </div>
         {data?.latest && (
           <div className="text-xs text-muted-foreground mt-3">
