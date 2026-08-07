@@ -2,18 +2,20 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { TOPUP_PACKS } from "@/lib/credits";
-import { useStripeCheckout } from "@/hooks/useStripeCheckout";
-import { PRICE_IDS } from "@/lib/stripe";
+import { useDodoCheckout } from "@/hooks/useDodoCheckout";
+import { useDodoReadiness } from "@/hooks/useDodoReadiness";
+import { CHECKOUT_ACTIVATING_COPY, isProductLiveReady, type DodoProductKey } from "@/lib/dodoReadiness";
+import { toast } from "sonner";
 import { Sparkles } from "lucide-react";
 import { useCurrency } from "@/hooks/useCurrency";
 import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
 import LegalComplianceGate from "@/components/LegalComplianceGate";
 import BillingTermsSummary from "@/components/BillingTermsSummary";
 
-const PACK_TO_PRICE: Record<string, string> = {
-  small: PRICE_IDS.topup_small,
-  medium: PRICE_IDS.topup_medium,
-  large: PRICE_IDS.topup_large,
+const PACK_TO_PRODUCT: Record<string, DodoProductKey> = {
+  small: "vv_topup_small",
+  medium: "vv_topup_medium",
+  large: "vv_topup_large",
 };
 const PACK_TO_SKU: Record<string, SkuId> = {
   small: "vv_topup_small",
@@ -22,7 +24,8 @@ const PACK_TO_SKU: Record<string, SkuId> = {
 };
 
 export default function TopUpModal({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
-  const { openCheckout, element } = useStripeCheckout();
+  const { startCheckout } = useDodoCheckout();
+  const { readiness } = useDodoReadiness();
   const { currency } = useCurrency();
   
   const [pendingPack, setPendingPack] = useState<string | null>(null);
@@ -36,11 +39,12 @@ export default function TopUpModal({ open, onOpenChange }: { open: boolean; onOp
     if (!pendingPack) return;
     const id = pendingPack;
     setPendingPack(null);
-    openCheckout({
-      priceId: PACK_TO_PRICE[id],
-      title: "Buy Campaign Credits",
-      returnPath: `/app/billing?checkout=topup_${id}`,
-    });
+    const productKey = PACK_TO_PRODUCT[id];
+    if (!isProductLiveReady(readiness, productKey)) {
+      toast.info(CHECKOUT_ACTIVATING_COPY, { description: "No payment was taken." });
+      return;
+    }
+    await startCheckout(productKey);
   };
 
   return (
@@ -75,7 +79,6 @@ export default function TopUpModal({ open, onOpenChange }: { open: boolean; onOp
         confirmLabel="Accept and continue to checkout"
         onConfirm={confirmBuy}
       />
-      {element}
     </>
   );
 }

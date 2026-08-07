@@ -5,8 +5,10 @@ import { Sparkles, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { HUMAN_REVIEW_PRICE } from "@/lib/credits";
-import { useStripeCheckout } from "@/hooks/useStripeCheckout";
-import { PRICE_IDS } from "@/lib/stripe";
+import { useDodoCheckout } from "@/hooks/useDodoCheckout";
+import { useDodoReadiness } from "@/hooks/useDodoReadiness";
+import { CHECKOUT_ACTIVATING_COPY, isProductLiveReady } from "@/lib/dodoReadiness";
+import { toast } from "sonner";
 import LegalComplianceGate from "@/components/LegalComplianceGate";
 
 interface Props { campaignId: string }
@@ -15,7 +17,8 @@ export default function HumanReviewButton({ campaignId }: Props) {
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [existing, setExisting] = useState<{ status: string } | null>(null);
-  const { openCheckout, element } = useStripeCheckout();
+  const { startCheckout } = useDodoCheckout();
+  const { readiness } = useDodoReadiness();
   const [legalOpen, setLegalOpen] = useState(false);
 
   useEffect(() => {
@@ -66,16 +69,14 @@ export default function HumanReviewButton({ campaignId }: Props) {
         title="Confirm current terms before checkout"
         description="Please accept the current versions of our platform legal stack to continue to checkout."
         confirmLabel="Accept and continue"
-        onConfirm={() => {
-          openCheckout({
-            priceId: PRICE_IDS.human_review,
-            refId: campaignId,
-            title: "Buy Premium Human Review",
-            returnPath: `/app/campaigns/${campaignId}?checkout=review`,
-          });
+        onConfirm={async () => {
+          if (!isProductLiveReady(readiness, "vv_human_review_oneoff")) {
+            toast.info(CHECKOUT_ACTIVATING_COPY, { description: "No payment was taken." });
+            return;
+          }
+          await startCheckout("vv_human_review_oneoff");
         }}
       />
-      {element}
     </>
   );
 }

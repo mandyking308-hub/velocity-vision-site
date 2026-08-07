@@ -319,6 +319,9 @@ export default function AppBilling() {
       <section>
         <h2 className="text-xl font-semibold mb-3">Plans</h2>
         <BillingTermsSummary className="mb-4" />
+        {!readiness.live && (
+          <p className="text-sm text-muted-foreground mb-4">{CHECKOUT_ACTIVATING_COPY}</p>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {planEntries.map((id) => {
             const cfg = PLANS[id];
