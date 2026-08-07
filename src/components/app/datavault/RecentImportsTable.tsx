@@ -29,7 +29,7 @@ export default function RecentImportsTable({ imports }: { imports: RecentImport[
             <th className="py-2 font-medium">Rows</th>
             <th className="py-2 font-medium">Created</th>
             <th className="py-2 font-medium">Duplicates</th>
-            <th className="py-2 font-medium">Safe to send</th>
+            <th className="py-2 font-medium">Eligible under checks</th>
             <th className="py-2 font-medium">Status</th>
           </tr>
         </thead>
