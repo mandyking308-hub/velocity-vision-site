@@ -2,12 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const faqs = [
   {
@@ -32,7 +27,7 @@ const faqs = [
   },
   {
     q: "What does activation mean?",
-    a: "Activation is a separate customer-controlled step involving sender verification, segment review, cadence settings and an authorised-user decision. Daily caps and risky-record controls are operational safeguards; they are not legal approval or a deliverability guarantee.",
+    a: "Activation preparation is a separate customer-controlled step involving campaign content, eligible records, legal acceptance and human approval. Mailbox readiness, unsubscribe handling and daily send limits are checked again when sending. Operational safeguards are not legal approval or a deliverability guarantee.",
   },
   {
     q: "Is Velocity Vision a CRM replacement?",
@@ -40,11 +35,11 @@ const faqs = [
   },
   {
     q: "Is it for businesses or agencies?",
-    a: "Both. Businesses can use a customer-controlled workspace, while agencies can use one account with isolated client workspaces, pooled Campaign Credits and account-level governance. Agencies remain responsible for client authority, data, sender identity and activation decisions.",
+    a: "Both. Businesses can use a customer-controlled workspace, while agencies can use one account with isolated client workspaces, pooled Campaign Credits, cross-client outcome visibility and account-wide send-usage visibility. Agencies remain responsible for client authority, data, sender identity and activation decisions.",
   },
   {
     q: "What happens when Campaign Credits run out?",
-    a: "New AI-intensive generation pauses until credits are added or the plan is upgraded. Continued access to stored records and other functionality remains subject to the applicable plan, paid access period, retention terms and account status.",
+    a: "Campaign Credits currently fund full campaign-pack generation. When the balance is insufficient for a credit-priced AI action, that generation pauses until eligible credits are added or the plan changes. Live sending is governed separately by paid-plan and sender safety limits; Campaign Credits are not charged per email or contact sent.",
   },
   {
     q: "Does it support international customers?",
@@ -57,39 +52,19 @@ const HomeFAQ = () => (
     <div aria-hidden className="blob blob-blue w-80 h-80 -top-20 -left-24 animate-floaty" />
     <div aria-hidden className="blob blob-pink w-72 h-72 -bottom-28 -right-16 animate-drifty" />
     <div className="max-w-4xl mx-auto">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="mb-10"
-      >
-        <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">
-          FAQ
-        </p>
-        <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">
-          Product, activation and billing answers
-        </h2>
+      <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="mb-10">
+        <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">FAQ</p>
+        <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">Product, activation and billing answers</h2>
       </motion.div>
-
       <Accordion type="single" collapsible className="mb-10">
         {faqs.map((faq, index) => (
           <AccordionItem key={faq.q} value={`item-${index}`}>
-            <AccordionTrigger className="text-left font-display text-base">
-              {faq.q}
-            </AccordionTrigger>
-            <AccordionContent className="text-muted-foreground leading-relaxed">
-              {faq.a}
-            </AccordionContent>
+            <AccordionTrigger className="text-left font-display text-base">{faq.q}</AccordionTrigger>
+            <AccordionContent className="text-muted-foreground leading-relaxed">{faq.a}</AccordionContent>
           </AccordionItem>
         ))}
       </Accordion>
-
-      <Button variant="cta" asChild>
-        <Link to="/pricing">
-          Review pricing and billing terms <ArrowRight size={16} />
-        </Link>
-      </Button>
+      <Button variant="cta" asChild><Link to="/pricing">Review pricing and billing terms <ArrowRight size={16} /></Link></Button>
     </div>
   </section>
 );
