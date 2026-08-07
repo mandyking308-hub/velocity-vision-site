@@ -75,7 +75,7 @@ export default function AppBilling() {
       if (data?.url) {
         window.location.href = data.url;
       } else if (data?.noCustomer) {
-        toast.info("No Stripe billing profile yet.");
+        toast.info("No billing profile yet.");
       } else {
         toast.error("Couldn't open billing portal.");
       }

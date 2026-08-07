@@ -51,12 +51,14 @@ const plans: PlanDef[] = [
     best: "Trying the workspace end to end",
     credits: "Includes 25 Campaign Credits",
     features: [
-      "1 workspace",
+      "1 workspace · one-off campaigns",
       "Data Vault with quality review",
-      "Sender verification & governed activation",
+      "First-Campaign Copilot and Launchpad",
       "Full outreach pack (email, social, press, video)",
-      "Follow-up & pipeline",
-      "30 days workspace access",
+      "Preflight readiness checks, sender verification and governed activation",
+      "Reply Intent Command Centre, referrals and out-of-office dates",
+      "Meeting handoff, pipeline and Outcome Funnel",
+      "Up to 20 sends/day · 30 days workspace access",
     ],
     cta: "Request Starter onboarding",
   },
@@ -70,11 +72,11 @@ const plans: PlanDef[] = [
     highlight: true,
     features: [
       "Everything in Starter, ongoing",
-      "Recurring cadence (weekly/monthly)",
-      "Larger daily send caps",
-      "Reusable templates & segments",
-      "Follow-up inbox with reply states",
-      "Automated monthly performance summary",
+      "Recurring cadence (weekly/monthly/custom)",
+      "Reusable recurring campaign templates and segments",
+      "Up to 50 sends/day",
+      "Reply triage, referral and out-of-office handling",
+      "Outcome Funnel reporting from your stored records",
     ],
     cta: "Request Growth onboarding",
   },
@@ -86,16 +88,17 @@ const plans: PlanDef[] = [
     best: "Agencies and fractional teams",
     credits: "Includes 250 pooled Campaign Credits / month",
     features: [
+      "Everything in Growth",
       "Unlimited client workspaces, isolated data",
       "Pooled credits across clients",
-      "Pooled sending governance across client workspaces",
-      "Cross-client pipeline visibility",
-      "Reusable templates & branded reports",
-      "Seat management",
+      "Cross-client pipeline and Outcome Funnel visibility",
+      "Account-wide view of daily send usage across client workspaces",
+      "Up to 100 sends/day",
     ],
     cta: "Request Agency onboarding",
   },
 ];
+
 
 const faqs = [
   {
@@ -254,7 +257,7 @@ const Pricing = () => {
                         <Check size={16} className="text-accent mt-0.5" />14-day preview window
                       </li>
                       <li className="flex gap-2">
-                        <Check size={16} className="text-accent mt-0.5" />Paid activation and top-ups arranged through onboarding
+                        <Check size={16} className="text-accent mt-0.5" />No automatic upgrade — you choose if and when to buy
                       </li>
                       <li className="flex gap-2">
                         <Check size={16} className="text-accent mt-0.5" />No live sending on Free Preview

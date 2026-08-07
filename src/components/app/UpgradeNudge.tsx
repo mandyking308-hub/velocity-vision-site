@@ -101,7 +101,7 @@ const REASONS: Record<NudgeReason, ReasonDef> = {
   },
   free_preview_export_gate: {
     title: "Preview exports are limited on Free Preview",
-    body: "Upgrade to unlock full campaign export and remove preview watermarks.",
+    body: "Upgrade to keep generating full campaign packs and activate live sending.",
     primary: { kind: "upgrade_growth", label: "Upgrade to Growth" },
     secondary: { kind: "compare_plans", label: "Compare plans" },
     hard: true,

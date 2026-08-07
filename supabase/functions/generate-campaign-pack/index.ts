@@ -258,6 +258,8 @@ Deno.serve(async (req) => {
     if (msg.includes("insufficient_credits")) return json({ error: "insufficient_credits" }, 402);
     if (msg.includes("starter_expired")) return json({ error: "starter_expired" }, 402);
     if (msg.includes("no_plan")) return json({ error: "no_plan" }, 402);
+    if (msg.includes("free_preview_expired")) return json({ error: "free_preview_expired" }, 402);
+    if (msg.includes("free_preview_pack_limit")) return json({ error: "free_preview_pack_limit" }, 402);
     return json({ error: "credit_reservation_failed", detail: msg.slice(0, 200) }, 402);
   }
   const ledgerId = reservedId as string;

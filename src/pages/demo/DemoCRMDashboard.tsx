@@ -10,6 +10,8 @@ import { generatePack, CampaignBrief } from "@/lib/campaignPack";
 import FirstCampaignLaunchpad from "@/components/app/FirstCampaignLaunchpad";
 import CampaignPreflight from "@/components/app/CampaignPreflight";
 import ReplyCommandCentre from "@/components/app/ReplyCommandCentre";
+import OutcomeFunnelPanel from "@/components/app/OutcomeFunnelPanel";
+import type { FunnelLead, FunnelOpportunity } from "@/lib/outcomeFunnel";
 import { runPreflight } from "@/lib/campaignPreflight";
 import type { LaunchpadSignals } from "@/lib/launchpad";
 
@@ -68,6 +70,39 @@ const DEMO_REPLIES = [
   { id: "d9", name: "Sofia Marino", reply_category: "interested", reply_snippet: "Great, booked a slot with you.", reply_triaged_at: HOURS_AGO(20), replied_at: HOURS_AGO(30), meeting_booked_at: HOURS_AGO(18) },
 ];
 
+
+// Illustrative funnel data for the public demo only. Same component and same
+// stored-data logic as the real workspace, but every row here is sample data.
+const DEMO_FUNNEL_LEADS: FunnelLead[] = [
+  ...DEMO_REPLIES.map((r, i) => ({
+    id: r.id,
+    campaign_id: "demo-campaign-1",
+    source: i % 2 === 0 ? "Launch email" : "LinkedIn follow-up",
+    last_email_sent_at: HOURS_AGO(96),
+    replied_at: (r as any).replied_at ?? HOURS_AGO(48),
+    meeting_booked_at: (r as any).meeting_booked_at ?? null,
+    reply_category: r.reply_category,
+    reply_snippet: r.reply_snippet,
+    opportunity_id: r.id === "d9" ? "demo-opp-1" : null,
+    status: r.id === "d9" ? "closed_won" : "contacted",
+  })),
+  ...Array.from({ length: 9 }, (_, i) => ({
+    id: `demo-contacted-${i}`,
+    campaign_id: "demo-campaign-1",
+    source: i % 2 === 0 ? "Launch email" : "LinkedIn follow-up",
+    last_email_sent_at: HOURS_AGO(96),
+    replied_at: null,
+    meeting_booked_at: null,
+    reply_category: null,
+    reply_snippet: null,
+    opportunity_id: null,
+    status: "contacted",
+  })),
+];
+
+const DEMO_FUNNEL_OPPS: FunnelOpportunity[] = [
+  { id: "demo-opp-1", source_lead_id: "d9", source_campaign_id: "demo-campaign-1", stage: "won", created_at: HOURS_AGO(12) },
+];
 
 const DEMO_BRIEF: CampaignBrief = {
   name: "Spring Lead Sprint",
@@ -415,6 +450,16 @@ export default function DemoCRMDashboard() {
             <Stat label="Qualified" value={DEMO_LEADS.filter((l) => l.stage === "qualified").length} />
             <Stat label="Won" value={DEMO_LEADS.filter((l) => l.stage === "won").length} />
             <Stat label="Conversion" value="20%" />
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground mb-2">
+              Sample data only — this is the same Outcome Funnel used in the workspace, filled with illustrative demo records.
+            </p>
+            <OutcomeFunnelPanel
+              leads={DEMO_FUNNEL_LEADS}
+              opportunities={DEMO_FUNNEL_OPPS}
+              campaigns={{ "demo-campaign-1": "Demo launch campaign" }}
+            />
           </div>
           <Card><CardHeader><CardTitle className="text-base">What worked best</CardTitle></CardHeader>
             <CardContent className="text-sm space-y-1">

@@ -45,8 +45,8 @@ export const PLANS: Record<PlanId, PlanConfig> = {
       "+2 free credits per day (capped at 10)",
       "Up to 25 contacts",
       "1 full campaign pack",
-      "Preview / watermarked exports",
-      "Sending stays gated — upgrade to activate",
+      "Explore the full workflow in review mode",
+      "No live sending — upgrade to activate",
       "14 days of preview access",
     ],
   },
@@ -63,11 +63,12 @@ export const PLANS: Record<PlanId, PlanConfig> = {
     pooledCredits: false,
     features: [
       "1 workspace",
-      "1 guided campaign brief",
-      "1 full campaign pack",
-      "Social, press release, video pack",
-      "30 days of access",
-      "25 Campaign Credits included",
+      "Copilot brief, Launchpad and full campaign pack",
+      "Preflight checks and governed activation",
+      "Reply Intent Command Centre, referrals and out-of-office dates",
+      "Meeting handoff, pipeline and Outcome Funnel",
+      "One-off campaigns · up to 20 sends/day",
+      "30 days of access · 25 Campaign Credits",
     ],
   },
   growth: {
@@ -81,12 +82,12 @@ export const PLANS: Record<PlanId, PlanConfig> = {
     workspaceLimit: 1,
     pooledCredits: false,
     features: [
-      "1 main workspace",
+      "Everything in Starter, ongoing",
       "80 Campaign Credits / month",
-      "Templates, lead capture, pipeline",
-      "Connected email area",
-      "Repeat campaigns",
-      "Monthly performance review",
+      "Recurring cadence (weekly, monthly, custom)",
+      "Reusable recurring campaign templates",
+      "Up to 50 sends/day",
+      "1 main workspace",
     ],
   },
   agency: {
@@ -100,15 +101,30 @@ export const PLANS: Record<PlanId, PlanConfig> = {
     workspaceLimit: null,
     pooledCredits: true,
     features: [
-      "Unlimited client workspaces",
+      "Everything in Growth",
+      "Unlimited isolated client workspaces",
       "250 pooled Campaign Credits / month",
-      "Reusable templates & assets",
-      "Cross-client pipeline",
-      "Client-level reporting",
-      "Seat management",
+      "Cross-client pipeline and Outcome Funnel visibility",
+      "Account-wide send usage across client workspaces",
+      "Up to 100 sends/day",
     ],
   },
 };
+
+
+// --- Plan entitlements (mirrored by authoritative server/DB enforcement) ---
+
+/** Recurring cadence + reusable recurring templates are Growth/Agency only.
+ *  Mirrored by the campaigns trigger `enforce_recurring_cadence_plan`. */
+export function canUseRecurringCadence(plan: PlanId): boolean {
+  return plan === "growth" || plan === "agency";
+}
+
+/** Live (non controlled-test) sending. Mirrored by `email-send`, which is the
+ *  authoritative gate — Free Preview has a 0/day ceiling. */
+export function canSendLive(plan: PlanId): boolean {
+  return plan !== "free_preview";
+}
 
 // Credit cost per AI-heavy action. All other actions are free.
 export const CREDIT_COSTS = {

@@ -61,6 +61,91 @@ const groups = [
     ],
   },
   {
+    label: "Guided First Campaign",
+    features: [
+      {
+        title: "First-Campaign Copilot",
+        value: "Answer a short guided brief — goal, audience, offer, tone — and the workspace prepares a complete editable campaign pack from it.",
+      },
+      {
+        title: "First Campaign Launchpad",
+        value: "A step-by-step checklist showing exactly what is still outstanding for this campaign: data, sender, pack review, preflight and activation.",
+      },
+      {
+        title: "Campaign-specific status",
+        value: "Launch status is tracked per campaign from your stored records, so one activated campaign does not mark another as ready.",
+      },
+    ],
+  },
+  {
+    label: "Preflight and Readiness",
+    features: [
+      {
+        title: "Preflight scorecard",
+        value: "Before activation, review a readiness scorecard covering audience quality, sender setup, unsubscribe handling and campaign content.",
+      },
+      {
+        title: "Blocking versus advisory checks",
+        value: "Hard blockers must be resolved before activation. Advisory items are shown for your own judgement and are recorded with the decision.",
+      },
+      {
+        title: "Send safety allowance",
+        value: "See the daily allowance for your plan and any reductions applied by warm-up, sender health or audience review status.",
+      },
+    ],
+  },
+  {
+    label: "Reply Intent Command Centre",
+    features: [
+      {
+        title: "Reply triage by intent",
+        value: "Recorded replies are grouped by intent — interested, not now, not interested, referral, out of office, unsubscribe, bounce — for your review.",
+      },
+      {
+        title: "Compliance-first precedence",
+        value: "Where a reply contains unsubscribe or bounce wording, that outcome takes precedence over any sales-positive label. This is an operational safeguard, not legal advice or a compliance guarantee.",
+      },
+      {
+        title: "Reviewable overrides",
+        value: "You can correct a classification, and the change is recorded. Deterministic compliance outcomes cannot be downgraded.",
+      },
+    ],
+  },
+  {
+    label: "Referrals, Out-of-Office and Waiting Replies",
+    features: [
+      {
+        title: "Referral review",
+        value: "When a reply points to a different person, the suggested referral details are surfaced for your review before anything is added.",
+      },
+      {
+        title: "Out-of-office return dates",
+        value: "Where a return date is detected in an out-of-office reply, it is recorded so you can plan the follow-up yourself.",
+      },
+      {
+        title: "24h+ waiting queue",
+        value: "Replies waiting more than 24 hours for a response are listed together so nothing sits unanswered.",
+      },
+    ],
+  },
+  {
+    label: "Meetings and Outcome Measurement",
+    features: [
+      {
+        title: "Meeting handoff",
+        value: "Move an interested reply into a handoff state with your notes and your own configurable booking link. Velocity Vision does not connect to or write to your calendar.",
+      },
+      {
+        title: "Meeting booked recording",
+        value: "Record a meeting as booked manually when it is confirmed, so the pipeline reflects what actually happened.",
+      },
+      {
+        title: "Outcome Funnel",
+        value: "See Contacted → Replied → Interested/Referral → Meeting booked → Opportunity → Won built from your stored records. Reporting only; no A/B testing.",
+      },
+    ],
+  },
+  {
     label: "Editable AI-Assisted Drafts",
     features: [
       {
@@ -82,7 +167,7 @@ const groups = [
     features: [
       {
         title: "One-off and recurring settings",
-        value: "Configure one-off, weekly, monthly or custom timing subject to the customer's plan and activation controls.",
+        value: "Configure one-off timing on every paid plan. Recurring weekly, monthly or custom cadence and reusable recurring templates are included with Growth and Agency.",
       },
       {
         title: "Draft refresh choices",
@@ -154,11 +239,11 @@ const groups = [
       },
       {
         title: "Pooled credits and limits",
-        value: "Use pooled Campaign Credits and account-level governance under the Agency Workspace plan.",
+        value: "Use pooled Campaign Credits across client workspaces and review account-level send usage under the Agency Workspace plan.",
       },
       {
         title: "Cross-workspace activity view",
-        value: "Review recorded activation, follow-up and early opportunity information across the agency account.",
+        value: "Review recorded activation, follow-up, early opportunity and Outcome Funnel information across the agency account.",
       },
     ],
   },

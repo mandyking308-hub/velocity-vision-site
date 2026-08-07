@@ -19,7 +19,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useCredits } from "@/contexts/CreditsContext";
 import UpgradeNudge from "@/components/app/UpgradeNudge";
-import { CREDIT_COSTS } from "@/lib/credits";
+import { CREDIT_COSTS, canUseRecurringCadence } from "@/lib/credits";
 import {
   CadenceConfig, CADENCE_LABELS, CadenceType, COMMON_TIMEZONES, REFRESH_LABELS,
   RefreshStrategy, computeNextRun, defaultCadence, plainEnglish,
@@ -59,7 +59,7 @@ export default function AppCampaignNew() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { currentId: workspaceId } = useWorkspace();
-  const { remaining, starterExpired, isFreePreview, refresh: refreshCredits } = useCredits();
+  const { remaining, starterExpired, isFreePreview, plan, refresh: refreshCredits } = useCredits();
   const [existingPackCount, setExistingPackCount] = useState(0);
   useEffect(() => {
     if (!isFreePreview || !user) return;
@@ -139,6 +139,22 @@ export default function AppCampaignNew() {
       toast.error("Starter access has ended", { description: "Upgrade or buy another Starter to keep generating." });
       return;
     }
+    // Free Preview includes exactly one full campaign pack (also enforced in
+    // the database, which rejects a second reservation without spending credits).
+    if (isFreePreview && existingPackCount >= 1) {
+      toast.error("Free Preview includes one full campaign pack", {
+        description: "Upgrade to Starter or Growth to generate more packs. Your first pack stays available to review.",
+      });
+      return;
+    }
+    // Recurring cadence is a Growth/Agency capability (mirrored by a DB trigger).
+    if (cadence.cadence_type !== "one_off" && !canUseRecurringCadence(plan)) {
+      toast.error("Recurring cadence is available on Growth and Agency", {
+        description: "Your plan supports one-off campaigns. Upgrade to schedule repeating campaigns.",
+      });
+      setStep(5);
+      return;
+    }
     setSaving(true);
     try {
       // 1) Server-side credit gate + AI generation (credits are reserved
@@ -159,6 +175,14 @@ export default function AppCampaignNew() {
       } catch (aiErr: any) {
         const status = aiErr?.status ?? aiErr?.context?.status;
         const code = aiErr?.context?.body ? String(aiErr.context.body) : String(aiErr?.message || "");
+        if (/free_preview_pack_limit/.test(code)) {
+          toast.error("Free Preview includes one full campaign pack", {
+            description: "Upgrade to generate more. Your first pack stays available to review.",
+          });
+          setSaving(false);
+          await refreshCredits();
+          return;
+        }
         if (status === 402 || /insufficient_credits|starter_expired|no_plan/.test(code)) {
           toast.error("You don't have enough Campaign Credits", {
             description: `Generating a full campaign pack costs ${CREDIT_COSTS.full_campaign_pack} credits. Top up or upgrade to continue.`,
@@ -248,7 +272,12 @@ export default function AppCampaignNew() {
   };
 
 
-  const blocked = remaining < CREDIT_COSTS.full_campaign_pack || starterExpired;
+  const recurringAllowed = canUseRecurringCadence(plan);
+  const packLimitReached = isFreePreview && existingPackCount >= 1;
+  const blocked =
+    remaining < CREDIT_COSTS.full_campaign_pack ||
+    starterExpired ||
+    packLimitReached;
   const schedulePastError =
     cadence.cadence_type === "one_off" &&
     !!cadence.start_at &&
@@ -260,14 +289,15 @@ export default function AppCampaignNew() {
         <h1 className="text-3xl font-bold">New campaign</h1>
         <p className="text-muted-foreground">A short brief. We generate the full pack.</p>
       </div>
-      {blocked && (
+      {blocked && !packLimitReached && (
         <div className="rounded-md border border-accent/40 bg-accent/10 px-4 py-3 text-sm">
           <strong>{starterExpired ? "Starter access has ended." : "You don't have enough Campaign Credits."}</strong> Generating a full campaign pack costs {CREDIT_COSTS.full_campaign_pack} credits. <a href="/app/billing" className="underline">Top up or upgrade</a> to keep launching.
         </div>
       )}
-      {isFreePreview && existingPackCount >= 1 && (
+      {packLimitReached && (
         <UpgradeNudge reason="free_preview_second_pack_gate" variant="banner" />
       )}
+
       <Progress value={(step / totalSteps) * 100} />
       <div className="text-sm text-muted-foreground">Step {step} of {totalSteps} · This generation will use {CREDIT_COSTS.full_campaign_pack} Campaign Credits</div>
 
@@ -395,14 +425,22 @@ export default function AppCampaignNew() {
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                 {(Object.keys(CADENCE_LABELS) as CadenceType[]).map((t) => {
                   const on = cadence.cadence_type === t;
+                  const locked = t !== "one_off" && !recurringAllowed;
                   return (
-                    <button key={t} type="button" onClick={() => updateCadence("cadence_type", t)}
-                      className={`px-3 py-2 rounded-md text-sm border text-left ${on ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-muted"}`}>
-                      {CADENCE_LABELS[t]}
+                    <button key={t} type="button" disabled={locked}
+                      title={locked ? "Recurring cadence is available on Growth and Agency" : undefined}
+                      onClick={() => { if (!locked) updateCadence("cadence_type", t); }}
+                      className={`px-3 py-2 rounded-md text-sm border text-left ${on ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-muted"} ${locked ? "opacity-50 cursor-not-allowed" : ""}`}>
+                      {CADENCE_LABELS[t]}{locked ? " · Growth" : ""}
                     </button>
                   );
                 })}
               </div>
+              {!recurringAllowed && (
+                <p className="text-xs text-muted-foreground mt-2">
+                  Your plan runs one-off campaigns. Recurring cadence is included with Growth and Agency.
+                </p>
+              )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
