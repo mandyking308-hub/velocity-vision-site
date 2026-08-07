@@ -9,11 +9,21 @@
   <url><loc>https://velocity-outreach.com/templates</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://velocity-outreach.com/about</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://velocity-outreach.com/help</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://velocity-outreach.com/help/getting-started</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://velocity-outreach.com/contact</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://velocity-outreach.com/insights</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://velocity-outreach.com/work</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://velocity-outreach.com/services</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://velocity-outreach.com/industries</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  
   <url><loc>https://velocity-outreach.com/legal</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://velocity-outreach.com/legal/terms-of-service</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
+  <url><loc>https://velocity-outreach.com/legal/client-services-agreement</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
+  <url><loc>https://velocity-outreach.com/legal/data-processing-agreement</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
+  <url><loc>https://velocity-outreach.com/legal/privacy-policy</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
+  <url><loc>https://velocity-outreach.com/legal/acceptable-use-policy</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
+  <url><loc>https://velocity-outreach.com/legal/marketing-compliance-policy</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
+  <url><loc>https://velocity-outreach.com/legal/cookie-policy</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
+  <url><loc>https://velocity-outreach.com/legal/platform-security-policy</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
+  <url><loc>https://velocity-outreach.com/legal/service-level-agreement</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
+  <url><loc>https://velocity-outreach.com/legal/subprocessors</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
 </urlset>
