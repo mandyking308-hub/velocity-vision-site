@@ -19,7 +19,7 @@ import TrustStrip from "@/components/TrustStrip";
 import GlobalStrip from "@/components/GlobalStrip";
 import { planSlug } from "@/lib/planIntent";
 import { useDodoReadiness } from "@/hooks/useDodoReadiness";
-import { isProductLiveReady, type DodoProductKey } from "@/lib/dodoReadiness";
+import { isProductLiveReady, isAnyTopUpLiveReady, type DodoProductKey } from "@/lib/dodoReadiness";
 import { authNextForPlan } from "@/lib/safeNext";
 
 // Direct purchase-intent labels, used ONLY when live Dodo checkout is ready
