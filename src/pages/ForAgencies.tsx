@@ -18,7 +18,6 @@ import {
   Share2,
   Newspaper,
   GitBranch,
-  Users,
   CheckCircle2,
 } from "lucide-react";
 
