@@ -19,8 +19,10 @@ import {
   DODO_PRODUCT_CATALOG,
   dodoReturnUrls,
   isAllowedProductKey,
+  isSafeDodoCheckoutLink,
   loadDodoConfig,
 } from "../_shared/dodo.ts";
+
 
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL")!,
