@@ -19,8 +19,10 @@ import {
   DODO_PRODUCT_CATALOG,
   dodoReturnUrls,
   isAllowedProductKey,
+  isSafeDodoCheckoutLink,
   loadDodoConfig,
 } from "../_shared/dodo.ts";
+
 
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL")!,
@@ -103,11 +105,18 @@ Deno.serve(async (req) => {
     }
 
     const session = await response.json();
+    const checkoutUrl = session.checkout_url;
+    // Never hand the browser anything other than an official Dodo HTTPS link.
+    if (!isSafeDodoCheckoutLink(checkoutUrl)) {
+      console.error("dodo-create-checkout rejected an unsafe checkout link");
+      return json({ error: "unsafe_checkout_url" }, 502);
+    }
     return json({
-      checkoutUrl: session.checkout_url ?? null,
+      checkoutUrl,
       sessionId: session.session_id ?? null,
       mode: cfg.config.mode,
     });
+
   } catch (e) {
     console.error("dodo-create-checkout error:", e);
     return json({ error: "checkout_failed" }, 500);

@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { safeNextPath } from "@/lib/safeNext";
 import LegalAcceptanceCheckbox from "@/components/LegalAcceptanceCheckbox";
 import { recordLegalAcceptance } from "@/lib/recordLegalAcceptance";
 import { Helmet } from "react-helmet-async";
@@ -32,6 +33,9 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  // Strictly sanitised internal return path; null for anything unsafe.
+  const nextPath = safeNextPath(searchParams.get("next"));
 
   // Role-based redirect after login. Default: customers land in /app.
   // Only internal staff (founder/admin/sales/marketing) land in /crm.
@@ -45,10 +49,14 @@ const AuthPage = () => {
       const roleList = (roles?.map((r) => r.role) ?? []) as string[];
       const internalRoles = ["founder", "admin", "sales", "marketing"];
       const isInternal = roleList.some((r) => internalRoles.includes(r));
-      navigate(isInternal ? "/crm" : "/app", { replace: true });
+      if (isInternal) {
+        navigate("/crm", { replace: true });
+      } else {
+        navigate(nextPath ?? "/app", { replace: true });
+      }
     };
     checkRoleAndRedirect();
-  }, [user, navigate]);
+  }, [user, navigate, nextPath]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

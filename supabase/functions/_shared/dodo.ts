@@ -281,3 +281,54 @@ export function isSafeDodoPortalLink(link: unknown): link is string {
   const host = url.hostname.toLowerCase();
   return DODO_PORTAL_HOST_SUFFIXES.some((s) => host === s || host.endsWith(`.${s}`));
 }
+
+// ── Checkout link safety ──────────────────────────────────────────────────
+
+/** Hostnames a hosted Dodo checkout link is allowed to live on. */
+const DODO_CHECKOUT_HOST_SUFFIXES = ["dodopayments.com"];
+
+/**
+ * Pure guard: only an HTTPS URL on an official Dodo-hosted domain may ever be
+ * returned to (or followed by) the browser. Prevents a malformed or hostile
+ * provider response from becoming an open redirect.
+ */
+export function isSafeDodoCheckoutLink(link: unknown): link is string {
+  if (typeof link !== "string" || !link.trim()) return false;
+  let url: URL;
+  try {
+    url = new URL(link);
+  } catch {
+    return false;
+  }
+  if (url.protocol !== "https:") return false;
+  if (url.username || url.password) return false;
+  const host = url.hostname.toLowerCase();
+  return DODO_CHECKOUT_HOST_SUFFIXES.some((s) => host === s || host.endsWith(`.${s}`));
+}
+
+// ── Safe public readiness ─────────────────────────────────────────────────
+
+export interface DodoReadinessPayload {
+  provider: "dodo";
+  live: boolean;
+  ready: boolean;
+  products: Record<DodoProductKey, boolean>;
+}
+
+/**
+ * Pure, secret-free readiness snapshot. Never performs a network call and
+ * never leaks a key, product id, environment string or error detail.
+ * `live` is true ONLY when an API key exists AND DODO_ENVIRONMENT is
+ * explicitly `live_mode` AND at least one allow-listed product is mapped.
+ */
+export function computeDodoReadiness(getEnv: (key: string) => string | undefined): DodoReadinessPayload {
+  const cfg = loadDodoConfig(getEnv);
+  const live = cfg.ok && cfg.config.mode === "live_mode";
+  const map = cfg.ok ? cfg.config.productMap : {};
+  const products = {} as Record<DodoProductKey, boolean>;
+  for (const key of DODO_ALLOWED_PRODUCT_KEYS) {
+    products[key] = live && typeof map[key] === "string" && map[key].trim().length > 0;
+  }
+  const ready = live && Object.values(products).some(Boolean);
+  return { provider: "dodo", live: live && ready, ready, products };
+}
