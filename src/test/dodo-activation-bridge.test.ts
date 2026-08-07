@@ -282,3 +282,59 @@ describe("checkout return truth", () => {
     expect(billing).toContain("classifyCheckoutReturn");
   });
 });
+
+// ── Human Review campaign reference contract ─────────────────────────────
+import { isRefIdEligibleProduct, isValidCampaignRefId } from "../../supabase/functions/_shared/dodo";
+
+describe("checkout refId contract", () => {
+  it("only Human Review may carry a refId", () => {
+    expect(isRefIdEligibleProduct("vv_human_review_oneoff")).toBe(true);
+    for (const k of [
+      "vv_starter_oneoff", "vv_growth_monthly", "vv_agency_monthly",
+      "vv_topup_small", "vv_topup_medium", "vv_topup_large", "", null, undefined, 1,
+    ]) {
+      expect(isRefIdEligibleProduct(k)).toBe(false);
+    }
+  });
+
+  it("accepts only canonical campaign UUIDs", () => {
+    expect(isValidCampaignRefId("3f2504e0-4f89-41d3-9a0c-0305e82c3301")).toBe(true);
+    expect(isValidCampaignRefId(" 3f2504e0-4f89-41d3-9a0c-0305e82c3301 ")).toBe(true);
+    for (const v of [
+      null, undefined, "", "   ", 42, {}, "not-a-uuid",
+      "3f2504e0-4f89-41d3-9a0c-0305e82c330", // too short
+      "3f2504e0-4f89-41d3-9a0c-0305e82c3301x",
+      "'; drop table campaigns;--",
+      "3f2504e0_4f89_41d3_9a0c_0305e82c3301",
+    ]) {
+      expect(isValidCampaignRefId(v as any)).toBe(false);
+    }
+  });
+
+  const fn = read("supabase/functions/dodo-create-checkout/index.ts");
+
+  it("rejects a smuggled refId and unowned campaigns before any Dodo call", () => {
+    expect(fn).toContain('return json({ error: "ref_not_allowed" }, 400)');
+    expect(fn).toContain('return json({ error: "invalid_ref" }, 400)');
+    expect(fn).toContain('return json({ error: "forbidden_ref" }, 403)');
+    // ownership check must sit above the outbound provider request
+    expect(fn.indexOf("forbidden_ref")).toBeLessThan(fn.indexOf("/checkouts"));
+    // ownership is derived from the validated token user, never client input
+    expect(fn).toContain("owner_id.eq.${user.id},created_by.eq.${user.id}");
+  });
+
+  it("puts refId in the safe metadata only", () => {
+    expect(fn).toContain("...(refId ? { refId } : {})");
+  });
+
+  it("Human Review passes its campaignId; plans and top-ups pass none", () => {
+    expect(read("src/components/app/HumanReviewButton.tsx"))
+      .toContain('startCheckout("vv_human_review_oneoff", campaignId)');
+    expect(read("src/components/app/TopUpModal.tsx")).toContain("startCheckout(productKey)");
+    expect(read("src/pages/app/AppBilling.tsx")).toContain("startCheckout(productKey)");
+  });
+
+  it("webhook still fulfils human review from meta.refId", () => {
+    expect(read("supabase/functions/dodo-webhook/index.ts")).toContain("campaign_id: meta.refId");
+  });
+});

@@ -306,6 +306,23 @@ export function isSafeDodoCheckoutLink(link: unknown): link is string {
   return DODO_CHECKOUT_HOST_SUFFIXES.some((s) => host === s || host.endsWith(`.${s}`));
 }
 
+// ── Checkout reference (refId) contract ──────────────────────────────────
+
+/**
+ * Only Human Review is fulfilled against a campaign, so it is the ONLY product
+ * allowed to carry a refId. Every other product must be sent without one.
+ */
+export function isRefIdEligibleProduct(key: unknown): boolean {
+  return key === "vv_human_review_oneoff";
+}
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+/** Pure shape guard: a campaign reference must be a canonical UUID. */
+export function isValidCampaignRefId(value: unknown): value is string {
+  return typeof value === "string" && UUID_RE.test(value.trim());
+}
+
 // ── Safe public readiness ─────────────────────────────────────────────────
 
 export interface DodoReadinessPayload {
