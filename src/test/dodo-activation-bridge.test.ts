@@ -238,7 +238,7 @@ describe("new-purchase provider wiring", () => {
     expect(billing).toContain("LegalComplianceGate");
     expect(billing).toContain("parseBuyParam");
     // the buy param may only preselect the gate
-    expect(billing).toContain("setPendingPlan(plan as PlanId)");
+    expect(billing).toMatch(/setPendingPlan\((?:plan|requested) as PlanId\)/);
   });
 
   it("top-ups and human review use Dodo or the safe onboarding state", () => {

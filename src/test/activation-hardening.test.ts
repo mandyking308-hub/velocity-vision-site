@@ -132,7 +132,8 @@ describe("UI and execution cannot diverge", () => {
 
   it("re-checks the gate against a freshly fetched campaign before writing leads", () => {
     const runBody = src.slice(src.indexOf("async function runActivation"));
-    const gateIdx = runBody.indexOf("activationGate(");
+    // canExecuteActivation wraps activationGate and adds the campaign-row checks.
+    const gateIdx = runBody.indexOf("canExecuteActivation(");
     const insertIdx = runBody.indexOf('from("leads").insert');
     expect(gateIdx).toBeGreaterThan(-1);
     expect(insertIdx).toBeGreaterThan(-1);

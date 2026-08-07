@@ -49,7 +49,9 @@ describe("campaign preflight", () => {
     expect(runPreflight(readyInput({ safeContacts: 0 })).blockers.map((b) => b.id)).toContain("contacts");
     expect(runPreflight(readyInput({ senderState: "disconnected" })).blockers.map((b) => b.id)).toContain("sender");
     expect(runPreflight(readyInput({ remainingToday: 0 })).blockers.map((b) => b.id)).toContain("allowance");
-    expect(runPreflight(readyInput({ creditsAvailable: 1 })).blockers.map((b) => b.id)).toContain("credits");
+    // Retired rule: Campaign Credits fund full campaign-pack generation only. They never gate
+    // activation, which prepares leads and does not itself send.
+    expect(runPreflight(readyInput({ creditsAvailable: 0 })).blockers.map((b) => b.id)).not.toContain("credits");
     expect(runPreflight(readyInput({ legalAccepted: false })).blockers.map((b) => b.id)).toContain("legal");
     expect(runPreflight(readyInput({ unsubscribeReady: false })).blockers.map((b) => b.id)).toContain("unsubscribe");
   });

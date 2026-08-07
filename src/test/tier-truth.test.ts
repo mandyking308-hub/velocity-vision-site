@@ -114,7 +114,14 @@ describe("no unimplemented claims in user-visible copy", () => {
   });
 
   it("never claims seat management", () => {
-    for (const f of files) expect(read(f).toLowerCase()).not.toContain("seat management");
+    // Seat management is not implemented. The phrase may only appear as an explicit denial.
+    for (const f of files) {
+      const copy = read(f).toLowerCase();
+      for (const m of copy.matchAll(/seat management/g)) {
+        const around = copy.slice(Math.max(0, m.index! - 30), m.index!);
+        expect(around).toMatch(/no |not /);
+      }
+    }
   });
 
   it("never claims calendar sync or A/B testing on the public feature page", () => {
