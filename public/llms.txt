@@ -1,21 +1,28 @@
-# Velocity Influence
+# Velocity Vision
 
-> Velocity Influence is a global marketing and PR platform plus full-service agency. We help businesses and agencies run multi-channel campaigns end-to-end — strategy, performance media, PR, AI intelligence, and creative — from a single workspace.
+> Velocity Vision is self-serve B2B software: a commercial workspace where teams review their own authorised business data, prepare AI-assisted editable drafts, verify their own sender, approve activation themselves, and track replies, follow-up and early pipeline in one place.
 
-Operated by Global Solutions Management LLC (Delaware, USA).
+Operated by Global Solutions Management LLC (Delaware, USA). Website: velocity-outreach.com
+
+Velocity Vision is software, not an agency. It does not provide managed campaigns, PR, media buying or creative services; it does not scrape contacts or sell lists; it does not send anything automatically; and it does not guarantee compliance, deliverability, replies, pipeline or revenue. Customers supply their own lawfully obtained business data and remain responsible for lawful basis, sender identity, content review, suppression handling and every activation decision.
 
 ## Pages
 
-- [Home](/): Marketing platform plus agency for businesses and agencies.
-- [Services](/services): Strategy, performance media, PR, AI intelligence, and creative production.
-- [Industries](/industries): Healthcare, technology, finance, AI, professional services, retail.
-- [Work](/work): Case studies and client outcomes.
-- [Insights](/insights): Articles and reports on marketing, AI, and growth.
-- [For Agencies](/for-agencies): Multi-workspace platform with white-label client portals.
-- [About](/about): Who we are and how we operate.
-- [Contact](/contact): Talk to the team.
-- [Try the Demo](/demo): Explore the self-serve workspace without signing up.
+- [Home](/): What the self-serve workspace does, from authorised data to governed activation and early pipeline.
+- [Features](/features): Data Vault review, First-Campaign Copilot, Launchpad, preflight readiness checks, governed activation, Reply Intent Command Centre, meeting handoff, pipeline and Outcome Funnel.
+- [How It Works](/how-it-works): The step-by-step workflow — upload authorised data, review quality flags, generate editable drafts, verify sender, approve activation, manage replies and follow-up.
+- [Services](/services): The software capability areas included in the workspace, including agency client workspaces.
+- [Industries](/industries): Example B2B operating models and the safeguards that apply in each.
+- [For Businesses](/for-businesses): Single-workspace use for in-house commercial teams.
+- [For Agencies](/for-agencies): Isolated client workspaces, pooled Campaign Credits, account-wide send-usage visibility and cross-client pipeline records.
+- [Pricing](/pricing): Published plans, Campaign Credits, billing cadence, cancellation and refund information.
+- [Templates](/templates): Starting points for customer-reviewed campaign drafts.
+- [Insights](/insights): Articles on data-led B2B outreach and workspace operations.
+- [About](/about): Who operates Velocity Vision and how the product is positioned.
+- [Contact](/contact): Product support, commercial and multi-workspace enquiries.
+- [Help](/help): Product help and getting-started guidance.
+- [Try the Demo](/demo): Explore the workspace with sample data, without signing up.
 
 ## Optional
 
-- [Legal Centre](/legal): Terms, privacy, and compliance documents.
+- [Legal Centre](/legal): Terms, privacy, acceptable use, marketing compliance and related policies.
