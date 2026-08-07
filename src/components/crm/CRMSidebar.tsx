@@ -30,6 +30,13 @@ const demoNavItems = [
   { label: "Data Vault Demo", path: "/demo/data-vault", icon: Database },
 ];
 
+const founderItems = [
+  { label: "Founder View", path: "/crm/founder", icon: Crown },
+  { label: "Ops Manual", path: "/crm/manual", icon: Book },
+  { label: "Monetisation", path: "/crm/monetisation", icon: CreditCard },
+  { label: "Intelligence", path: "/crm/intelligence", icon: Brain },
+];
+
 const CRMSidebar = () => {
   const location = useLocation();
   const { signOut, user } = useAuth();
@@ -79,24 +86,15 @@ const CRMSidebar = () => {
           );
         })}
 
-        {showFounder && (
-          <>
-            {[
-              ["Founder View", "/crm/founder", Crown],
-              ["Ops Manual", "/crm/manual", Book],
-              ["Monetisation", "/crm/monetisation", CreditCard],
-              ["Intelligence", "/crm/intelligence", Brain],
-            ].map(([label, path, Icon]) => (
-              <Link key={path as string} to={path as string} className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors border border-accent/20",
-                location.pathname === path ? "bg-accent text-accent-foreground" : "text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/5"
-              )}>
-                <Icon size={18} className="shrink-0" />
-                {!collapsed && <span>{label as string}</span>}
-              </Link>
-            ))}
-          </>
-        )}
+        {showFounder && founderItems.map((item) => (
+          <Link key={item.path} to={item.path} className={cn(
+            "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors border border-accent/20",
+            location.pathname === item.path ? "bg-accent text-accent-foreground" : "text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/5"
+          )}>
+            <item.icon size={18} className="shrink-0" />
+            {!collapsed && <span>{item.label}</span>}
+          </Link>
+        ))}
       </nav>
 
       <div className="p-2 border-t border-primary-foreground/10 space-y-1">
