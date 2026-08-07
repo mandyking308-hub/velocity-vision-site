@@ -100,7 +100,7 @@ const plans: PlanDef[] = [
 ];
 
 
-const faqs = [
+const buildFaqs = (topUpsPurchasable: boolean) => [
   {
     q: "Is Free Preview really free?",
     a: "Yes. £0, no card required. You get 10 welcome Campaign Credits plus +2 per day (daily balance capped at 10) for 14 days. There is no automatic paid upgrade — you decide when, or whether, to buy credits or move to a paid plan.",
@@ -111,7 +111,9 @@ const faqs = [
   },
   {
     q: "Can I buy credits without subscribing?",
-    a: "Top-ups and paid upgrades are arranged during onboarding. The final price, currency, tax treatment, payment provider and applicable terms are confirmed before purchase.",
+    a: topUpsPurchasable
+      ? "Credit top-ups can be purchased from your billing settings when signed in, separately from a subscription. The final price, currency, tax treatment, payment provider and applicable terms are shown before you confirm payment."
+      : "Credit top-ups are handled through the published contact route rather than instant self-serve checkout at the moment. The final price, currency, tax treatment, payment provider and applicable terms are confirmed before any payment is taken.",
   },
   {
     q: "Can I send outreach on Free Preview?",
