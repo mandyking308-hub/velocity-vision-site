@@ -173,13 +173,14 @@ const buildFaqs = (topUpsPurchasable: boolean) => [
   },
   {
     q: "Can agencies share credits across clients?",
-    a: "Yes. Agency Workspace pools monthly Campaign Credits and account-level sending governance across isolated client workspaces.",
+    a: "Yes. Agency Workspace pools monthly Campaign Credits across isolated client workspaces, and shows account-wide send usage against the plan's daily send ceiling.",
   },
 ];
 
 const Pricing = () => {
   const { currency, setCurrency } = useCurrency();
   const { readiness } = useDodoReadiness();
+  const faqs = buildFaqs(isAnyTopUpLiveReady(readiness));
 
   return (
     <>
