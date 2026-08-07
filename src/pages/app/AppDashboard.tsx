@@ -230,7 +230,10 @@ export default function AppDashboard() {
     remainingToday: safety.remainingToday,
     pauseReasons: safety.pauseReasons,
     legalAccepted: legal.isCompliant,
-    unsubscribeReady: false,
+    unsubscribeReady: isUnsubscribeCapabilityReady({
+      handlerAvailable: UNSUBSCRIBE_HANDLER_DEPLOYED,
+      messageBody: (workingCampaign?.pack as any)?.emails?.[0]?.body ?? "",
+    }),
   }), [workingCampaign, vault, senderDetail, senderEmail, safety, legal.isCompliant]);
 
   const launchpadSignals = {
@@ -241,7 +244,7 @@ export default function AppDashboard() {
     preflightBlockers: dashboardPreflight.blockers.length,
     approved: Boolean(workingCampaign?.approved_at),
     isSample: workingCampaign?.is_sample === true,
-    activated: Boolean(workingCampaign?.id && activatedCampaignIds.has(workingCampaign.id)),
+    activated: workingCampaignActivated,
     campaignId: workingCampaign?.id ?? null,
     repliesWaiting: commercial.replies,
     urgentReplies: commercial.replies + commercial.bounces,

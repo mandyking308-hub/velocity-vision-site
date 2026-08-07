@@ -20,7 +20,7 @@ const groups = [
     ["Full campaign-pack generation", "Campaign Credits currently fund the live full campaign-pack generator. Sending and data review are governed separately."],
   ]},
   { label: "Activation preparation", features: [
-    ["Campaign preparation preflight", "Check selected campaign, content, eligible records, current legal acceptance, human approval and sample-data status before preparing leads."],
+    ["Preflight for campaign preparation", "Check selected campaign, content, eligible records, current legal acceptance, human approval and sample-data status before preparing leads."],
     ["Lead preparation, not sending", "Activation preparation creates campaign leads. It does not send email and does not consume Campaign Credits."],
     ["Customer-controlled overrides", "Records needing review or carrying risk remain visible for customer assessment; blocked or suppressed records remain excluded by current platform rules."],
   ]},
@@ -32,7 +32,7 @@ const groups = [
   { label: "Reply Intent Command Centre", features: [
     ["Reply triage", "Group recorded replies by interested, not now, not interested, referral, out of office, unsubscribe, bounce and other intent states."],
     ["Compliance-first precedence", "Unsubscribe and bounce wording takes precedence over sales-positive classifications. This is an operational safeguard, not legal advice."],
-    ["Referrals and OOO dates", "Surface referral details for review and record detected out-of-office return dates without auto-creating contacts or auto-sending follow-up."],
+    ["Referrals and Out-of-Office dates", "Surface referral details for review and record detected out-of-office return dates without auto-creating contacts or auto-sending follow-up."],
   ]},
   { label: "Meetings, pipeline and outcomes", features: [
     ["Meeting handoff", "Move an interested reply into handoff with notes and your own configurable booking link. No calendar connection or sync is claimed."],
