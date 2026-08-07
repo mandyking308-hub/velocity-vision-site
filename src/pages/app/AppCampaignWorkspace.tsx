@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Copy, Download, Sparkles, ArrowLeft } from "lucide-react";
+import { Copy, Download, Sparkles, ArrowLeft, Pause, Play, Clock, Repeat, ShieldCheck, FlaskConical } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { CampaignBrief, CampaignPack, getCampaignChannelConfig, mergeGeneratedPack, filterSupportedChannels } from "@/lib/campaignPack";
 import { toast } from "sonner";
@@ -13,30 +13,21 @@ import { useTranslation } from "react-i18next";
 import { useCredits } from "@/contexts/CreditsContext";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { CREDIT_COSTS } from "@/lib/credits";
-
 import EmailSequenceSender from "@/components/app/EmailSequenceSender";
 import UpgradeNudge from "@/components/app/UpgradeNudge";
 import FeedbackPrompt from "@/components/support/FeedbackPrompt";
 import LeadFormConfig from "@/components/app/LeadFormConfig";
-import {
-  CADENCE_LABELS, CadenceType, LIFECYCLE_TONE, REFRESH_LABELS, RefreshStrategy,
-  computeNextRun, deriveLifecycle, nextActionLabel, plainEnglish,
-} from "@/lib/cadence";
-import { Pause, Play, Clock, Repeat } from "lucide-react";
+import { CADENCE_LABELS, CadenceType, LIFECYCLE_TONE, REFRESH_LABELS, RefreshStrategy, computeNextRun, deriveLifecycle, nextActionLabel, plainEnglish } from "@/lib/cadence";
 import { formatCampaignPackMarkdown, slugify } from "@/lib/campaignPackExport";
 import { checkPackQuality } from "@/lib/campaignQuality";
 import { formatQualityFailure } from "@/lib/campaignQualityToast";
 import CampaignPreflight from "@/components/app/CampaignPreflight";
 import { CopilotPlanCard, CopilotSequenceEditor } from "@/components/app/CopilotPlanCard";
 import { readCopilotPlan } from "@/lib/copilotBrief";
-import { resolveUnsubscribeReadiness, UNSUBSCRIBE_HANDLER_DEPLOYED } from "@/lib/systemCapabilities";
 import { runPreflight } from "@/lib/campaignPreflight";
 import { computeReadiness } from "@/lib/senderReadiness";
 import { useLegalStatus } from "@/lib/legalCompliance";
-import { ShieldCheck, FlaskConical } from "lucide-react";
-import {
-  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 interface Campaign {
   id: string;
@@ -64,7 +55,6 @@ interface Campaign {
   is_sample?: boolean | null;
 }
 
-
 const copy = (text: string) => {
   navigator.clipboard.writeText(text);
   toast.success(i18n.t("common:toasts.copied"));
@@ -74,15 +64,16 @@ export default function AppCampaignWorkspace() {
   const { t } = useTranslation("app");
   const { id } = useParams();
   const navigate = useNavigate();
+  const { remaining, starterExpired, isFreePreview, refresh: refreshCredits } = useCredits();
+  const { currentId: workspaceId } = useWorkspace();
+  const legal = useLegalStatus();
+
   const [c, setC] = useState<Campaign | null>(null);
   const [leads, setLeads] = useState<any[]>([]);
   const [regenerating, setRegenerating] = useState(false);
   const [qualityDebug, setQualityDebug] = useState(false);
   const [approving, setApproving] = useState(false);
-  const [signals, setSignals] = useState<{ safeContacts: number; reviewContacts: number; senderState: any }>({
-    safeContacts: 0, reviewContacts: 0, senderState: null,
-  });
-  const legal = useLegalStatus();
+  const [signals, setSignals] = useState<{ safeContacts: number; reviewContacts: number; senderState: any }>({ safeContacts: 0, reviewContacts: 0, senderState: null });
 
   useEffect(() => {
     if (!id) return;
@@ -97,87 +88,76 @@ export default function AppCampaignWorkspace() {
   }, [id]);
 
   useEffect(() => {
+    if (!workspaceId) return;
     (async () => {
-      const [{ count: safeCount }, { count: reviewCount }, { data: conn }] = await Promise.all([
-        supabase.from("contacts").select("id", { count: "exact", head: true }).eq("quality_status", "valid"),
-        supabase.from("contacts").select("id", { count: "exact", head: true }).eq("quality_status", "needs_review"),
-        supabase.from("email_connections").select("*").order("is_default", { ascending: false }).limit(1),
+      const [{ count: eligibleCount }, { count: reviewCount }, { data: conn }] = await Promise.all([
+        supabase.from("contacts").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId).eq("quality_status", "valid"),
+        supabase.from("contacts").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId).eq("quality_status", "needs_review"),
+        supabase.from("email_connections").select("*").eq("workspace_id", workspaceId).order("is_default", { ascending: false }).limit(1),
       ]);
       setSignals({
-        safeContacts: safeCount ?? 0,
+        safeContacts: eligibleCount ?? 0,
         reviewContacts: reviewCount ?? 0,
         senderState: conn?.[0] ? computeReadiness(conn[0] as any).state : null,
       });
     })();
-  }, [id]);
+  }, [id, workspaceId]);
 
   useEffect(() => {
     (async () => {
       const { data: userData } = await supabase.auth.getUser();
       const uid = userData.user?.id;
       if (!uid) return;
-      const { data } = await (supabase.from("user_roles") as any)
-        .select("role")
-        .eq("user_id", uid)
-        .in("role", ["admin", "founder"]);
+      const { data } = await (supabase.from("user_roles") as any).select("role").eq("user_id", uid).in("role", ["admin", "founder"]);
       setQualityDebug(!!data?.length);
     })();
   }, []);
 
-  const { remaining, starterExpired, isFreePreview, refresh: refreshCredits } = useCredits();
-  const { currentId: workspaceId } = useWorkspace();
-
   const regenerate = async () => {
     if (!c?.brief || regenerating) return;
+    if (isFreePreview && c.pack) {
+      toast.info("Free Preview includes one full campaign pack", { description: "Compare paid plans to generate another full pack." });
+      return;
+    }
     if (remaining < CREDIT_COSTS.full_campaign_pack) {
-      toast.error("You don't have enough Campaign Credits", {
-        description: `Regenerating a full campaign pack costs ${CREDIT_COSTS.full_campaign_pack} credits. Top up or upgrade to continue.`,
+      toast.error("Not enough Campaign Credits", {
+        description: isFreePreview
+          ? "Free Preview cannot add a second full pack. Compare paid plans to continue."
+          : `Full campaign-pack generation costs ${CREDIT_COSTS.full_campaign_pack} credits. Add eligible paid-workspace credits or change plan to continue.`,
       });
       return;
     }
     if (starterExpired) {
-      toast.error("Starter access has ended", { description: "Upgrade or buy another Starter to keep generating." });
+      toast.error("Starter access has ended", { description: "Choose an eligible paid plan before generating another pack." });
       return;
     }
 
     setRegenerating(true);
+    let ledgerId: string | null = null;
     try {
-      let pack: CampaignPack | null = null;
-      let usedFallback = false;
-      let ledgerId: string | null = null;
-
-      try {
-        const { data: aiData, error: aiErr } = await supabase.functions.invoke("generate-campaign-pack", {
-          body: { brief: c.brief },
-        });
-        if (aiErr) throw aiErr;
-        if (!aiData?.pack) throw new Error("AI generation returned no pack");
-
-        pack = mergeGeneratedPack(c.brief, aiData.pack, aiData.generatedAs) as CampaignPack;
-        ledgerId = (aiData as any)?.ledgerId ?? null;
-      } catch (aiErr: any) {
-        const status = aiErr?.status ?? aiErr?.context?.status;
-        const body = aiErr?.context?.body ? String(aiErr.context.body) : String(aiErr?.message || "");
-        if (status === 402 || /insufficient_credits|starter_expired|no_plan/.test(body)) {
-          toast.error("You don't have enough Campaign Credits", {
-            description: `Regenerating a full campaign pack costs ${CREDIT_COSTS.full_campaign_pack} credits. Top up or upgrade to continue.`,
-          });
+      const { data: aiData, error: aiErr } = await supabase.functions.invoke("generate-campaign-pack", { body: { brief: c.brief } });
+      if (aiErr) {
+        const status = (aiErr as any)?.status ?? (aiErr as any)?.context?.status;
+        const body = (aiErr as any)?.context?.body ? String((aiErr as any).context.body) : String((aiErr as any)?.message || "");
+        if (status === 402 || /insufficient_credits|starter_expired|no_plan|free_preview_pack_limit/.test(body)) {
           await refreshCredits();
+          toast.info(/free_preview_pack_limit/.test(body) ? "Free Preview includes one full campaign pack" : "Campaign-pack generation is not currently available", {
+            description: /free_preview_pack_limit/.test(body) ? "Compare paid plans to generate another full pack." : "Review your plan and Campaign Credit balance, then try again.",
+          });
           return;
         }
-        console.warn("AI regeneration failed, checking deterministic fallback", aiErr);
-        pack = mergeGeneratedPack(c.brief, null);
-        usedFallback = true;
+        throw aiErr;
       }
+      if (!aiData?.pack) throw new Error("AI generation returned no pack");
 
-      if (!pack) throw new Error("Could not generate campaign pack");
-
+      const pack = mergeGeneratedPack(c.brief, aiData.pack, aiData.generatedAs) as CampaignPack;
+      ledgerId = (aiData as any)?.ledgerId ?? null;
       const quality = checkPackQuality(pack, c.brief);
       if (!quality.ok) {
         const { title, description } = formatQualityFailure(quality, qualityDebug);
         toast.error(title, { description });
         if (ledgerId) {
-          try { await supabase.rpc("refund_campaign_credits", { _ledger_id: ledgerId }); } catch (_e) { /* noop */ }
+          try { await supabase.rpc("refund_campaign_credits", { _ledger_id: ledgerId }); } catch { /* best effort */ }
           await refreshCredits();
         }
         return;
@@ -186,26 +166,23 @@ export default function AppCampaignWorkspace() {
       const { error } = await supabase.from("campaigns").update({ pack: pack as any }).eq("id", c.id);
       if (error) {
         if (ledgerId) {
-          try { await supabase.rpc("refund_campaign_credits", { _ledger_id: ledgerId }); } catch (_e) { /* noop */ }
+          try { await supabase.rpc("refund_campaign_credits", { _ledger_id: ledgerId }); } catch { /* best effort */ }
         }
         throw error;
       }
 
       if (ledgerId) {
-        try {
-          await supabase.rpc("finalise_campaign_credits", { _ledger_id: ledgerId, _ref_id: c.id, _label: `${c.name} regeneration` });
-        } catch (_e) { /* noop */ }
+        try { await supabase.rpc("finalise_campaign_credits", { _ledger_id: ledgerId, _ref_id: c.id, _label: `${c.name} regeneration` }); } catch { /* best effort */ }
       }
       await refreshCredits();
-
-      if (usedFallback) {
-        toast.warning("AI was unavailable, so a safe fallback pack was used and quality-checked.");
-      } else {
-        toast.success(t("campaigns.toasts.packRegenerated"));
-      }
       setC({ ...c, pack });
+      toast.success(t("campaigns.toasts.packRegenerated"));
     } catch (e: any) {
-      toast.error(e.message || "Could not regenerate campaign pack");
+      if (ledgerId) {
+        try { await supabase.rpc("refund_campaign_credits", { _ledger_id: ledgerId }); } catch { /* best effort */ }
+        await refreshCredits();
+      }
+      toast.error("Could not regenerate campaign pack", { description: e?.message || "Please try again later." });
     } finally {
       setRegenerating(false);
     }
@@ -215,34 +192,36 @@ export default function AppCampaignWorkspace() {
     if (!c?.pack || !c?.brief) return;
     const q = checkPackQuality(c.pack as any, c.brief as any);
     if (!q.ok) {
-      toast.error("Pack quality check failed. Regenerate before exporting.", {
-        description: q.issues.slice(0, 2).map((i) => i.message).join(" • "),
-      });
+      toast.error("Pack quality check failed. Regenerate before exporting.", { description: q.issues.slice(0, 2).map((i) => i.message).join(" • ") });
       return;
     }
     action();
   };
 
+  const cadenceFull = c ? {
+    cadence_type: (c.cadence_type || "one_off") as CadenceType,
+    cadence_interval: c.cadence_interval || 1,
+    cadence_unit: (c.cadence_unit || "week") as any,
+    start_at: c.start_at,
+    timezone: c.timezone || "UTC",
+    cadence_end_at: c.cadence_end_at,
+    cadence_max_runs: c.cadence_max_runs ?? null,
+    refresh_strategy: (c.refresh_strategy || "reuse") as RefreshStrategy,
+  } : null;
+
   const buildMd = () => {
-    if (!c?.pack) return "";
-    return formatCampaignPackMarkdown({
-      name: c.name,
-      slug: c.slug,
-      cadenceSummary: c.start_at ? plainEnglish(cadenceFull as any) : undefined,
-    }, c.brief, c.pack);
+    if (!c?.pack || !cadenceFull) return "";
+    return formatCampaignPackMarkdown({ name: c.name, slug: c.slug, cadenceSummary: c.start_at ? plainEnglish(cadenceFull as any) : undefined }, c.brief, c.pack);
   };
 
   const exportMarkdown = () => withQualityCheck(() => {
-    const md = buildMd();
-    const blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
+    const blob = new Blob([buildMd()], { type: "text/markdown;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = `campaign-pack-${slugify(c!.slug || c!.name)}.md`;
     document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
+    a.click(); a.remove(); URL.revokeObjectURL(url);
     toast.success("Campaign pack downloaded");
   });
 
@@ -251,17 +230,12 @@ export default function AppCampaignWorkspace() {
     toast.success("Full campaign pack copied");
   });
 
-  if (!c) return <p className="text-muted-foreground">Loading…</p>;
+  if (!c || !cadenceFull) return <p className="text-muted-foreground">Loading…</p>;
   const pack = c.pack;
   const brief = c.brief;
   const channelCfg = getCampaignChannelConfig(brief);
   const copilotPlan = readCopilotPlan(brief);
-  const lifecycleCfg = {
-    cadence_type: (c.cadence_type || "one_off") as CadenceType,
-    start_at: c.start_at, cadence_end_at: c.cadence_end_at,
-    cadence_max_runs: c.cadence_max_runs ?? null,
-  };
-  const lifecycle = deriveLifecycle(c.status, lifecycleCfg, c.runs_completed || 0);
+  const lifecycle = deriveLifecycle(c.status, { cadence_type: cadenceFull.cadence_type, start_at: c.start_at, cadence_end_at: c.cadence_end_at, cadence_max_runs: c.cadence_max_runs ?? null }, c.runs_completed || 0);
   const lifecycleTone = LIFECYCLE_TONE[lifecycle];
 
   const toggleStatus = async (newStatus: "paused" | "active") => {
@@ -271,37 +245,11 @@ export default function AppCampaignWorkspace() {
   };
 
   const advanceRun = async () => {
-    const cfg = {
-      cadence_type: (c.cadence_type || "one_off") as CadenceType,
-      cadence_interval: c.cadence_interval || 1,
-      cadence_unit: (c.cadence_unit || "week") as any,
-      start_at: c.start_at, timezone: c.timezone || "UTC",
-      cadence_end_at: c.cadence_end_at, cadence_max_runs: c.cadence_max_runs ?? null,
-      refresh_strategy: (c.refresh_strategy || "reuse") as RefreshStrategy,
-    };
-    const next = computeNextRun(cfg, new Date());
-    await (supabase.from("campaigns") as any).update({
-      last_run_at: new Date().toISOString(),
-      runs_completed: (c.runs_completed || 0) + 1,
-      next_run_at: next ? next.toISOString() : null,
-      status: next ? "active" : "completed",
-    }).eq("id", c.id);
+    const next = computeNextRun(cadenceFull as any, new Date());
+    const now = new Date().toISOString();
+    await (supabase.from("campaigns") as any).update({ last_run_at: now, runs_completed: (c.runs_completed || 0) + 1, next_run_at: next ? next.toISOString() : null, status: next ? "active" : "completed" }).eq("id", c.id);
     toast.success(t(next ? "campaigns.toasts.runLogged" : "campaigns.toasts.finalRunLogged"));
-    setC({
-      ...c, last_run_at: new Date().toISOString(),
-      runs_completed: (c.runs_completed || 0) + 1,
-      next_run_at: next ? next.toISOString() : null,
-      status: next ? "active" : "completed",
-    });
-  };
-
-  const cadenceFull = {
-    cadence_type: (c.cadence_type || "one_off") as CadenceType,
-    cadence_interval: c.cadence_interval || 1,
-    cadence_unit: (c.cadence_unit || "week") as any,
-    start_at: c.start_at, timezone: c.timezone || "UTC",
-    cadence_end_at: c.cadence_end_at, cadence_max_runs: c.cadence_max_runs ?? null,
-    refresh_strategy: (c.refresh_strategy || "reuse") as RefreshStrategy,
+    setC({ ...c, last_run_at: now, runs_completed: (c.runs_completed || 0) + 1, next_run_at: next ? next.toISOString() : null, status: next ? "active" : "completed" });
   };
 
   const preflight = runPreflight({
@@ -313,27 +261,19 @@ export default function AppCampaignWorkspace() {
     senderEmail: null,
     remainingToday: 0,
     pauseReasons: [],
-    creditsAvailable: 0,
-    creditsRequired: 0,
     legalAccepted: legal.isCompliant,
-    unsubscribeReady: resolveUnsubscribeReadiness({
-      handlerAvailable: UNSUBSCRIBE_HANDLER_DEPLOYED,
-      messageBody: (c?.pack as any)?.emails?.[0]?.body ?? null,
-    }).ready,
+    unsubscribeReady: false,
   });
 
   async function toggleApproval() {
-    if (!c) return;
     setApproving(true);
     try {
       const { data: u } = await supabase.auth.getUser();
       const next = c.approved_at ? null : new Date().toISOString();
-      const { error } = await (supabase.from("campaigns") as any)
-        .update({ approved_at: next, approved_by: next ? u.user?.id ?? null : null })
-        .eq("id", c.id);
+      const { error } = await (supabase.from("campaigns") as any).update({ approved_at: next, approved_by: next ? u.user?.id ?? null : null }).eq("id", c.id);
       if (error) throw error;
       setC({ ...c, approved_at: next });
-      toast.success(next ? "Approved for sending" : "Approval withdrawn");
+      toast.success(next ? "Human approval recorded" : "Approval withdrawn");
     } catch (e: any) {
       toast.error(e?.message || "Could not update approval");
     } finally {
@@ -341,17 +281,15 @@ export default function AppCampaignWorkspace() {
     }
   }
 
+  const startSimilar = () => navigate(`/app/campaigns/new?goal=${encodeURIComponent(c.goal || "")}&kind=${encodeURIComponent(c.campaign_kind || "")}`);
+  const wonCount = leads.filter((l) => l.status === "won" || l.status === "closed_won").length;
+
   return (
     <div className="space-y-4 max-w-6xl">
-      <button onClick={() => navigate("/app/campaigns")} className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
-        <ArrowLeft className="h-3 w-3" /> All campaigns
-      </button>
-      <FeedbackPrompt
-        promptKey={`campaign_pack_${c.id}`}
-        question="Was this campaign pack useful?"
-        feedbackType="loved"
-      />
-      {isFreePreview && c.pack && <UpgradeNudge reason="free_preview_first_pack_ready" variant="card" /> }
+      <button onClick={() => navigate("/app/campaigns")} className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1"><ArrowLeft className="h-3 w-3" /> All campaigns</button>
+      <FeedbackPrompt promptKey={`campaign_pack_${c.id}`} question="Was this campaign pack useful?" feedbackType="loved" />
+      {isFreePreview && c.pack && <UpgradeNudge reason="free_preview_first_pack_ready" variant="card" />}
+
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">{c.name}</h1>
@@ -361,259 +299,63 @@ export default function AppCampaignWorkspace() {
             {c.goal && <Badge variant="outline">{c.goal}</Badge>}
             {c.campaign_kind && <Badge variant="outline">{c.campaign_kind.replace("_", " ")}</Badge>}
           </div>
-          <div className="text-sm text-muted-foreground mt-2 flex items-center gap-1">
-            <Clock className="h-3.5 w-3.5" /> {nextActionLabel({
-              next_run_at: c.next_run_at, start_at: c.start_at,
-              cadence_type: cadenceFull.cadence_type, cadence_end_at: c.cadence_end_at,
-              timezone: c.timezone || "UTC",
-            } as any)}
-          </div>
+          <div className="text-sm text-muted-foreground mt-2 flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {nextActionLabel({ next_run_at: c.next_run_at, start_at: c.start_at, cadence_type: cadenceFull.cadence_type, cadence_end_at: c.cadence_end_at, timezone: c.timezone || "UTC" } as any)}</div>
           {c.start_at && <div className="text-xs text-muted-foreground mt-1">{plainEnglish(cadenceFull as any)}</div>}
-          {(c.runs_completed ?? 0) > 0 && (
-            <div className="text-xs text-muted-foreground mt-1">
-              {c.runs_completed} run{(c.runs_completed || 0) > 1 ? "s" : ""} completed · Asset strategy: {REFRESH_LABELS[cadenceFull.refresh_strategy]}
-            </div>
-          )}
+          {(c.runs_completed ?? 0) > 0 && <div className="text-xs text-muted-foreground mt-1">{c.runs_completed} recorded run{(c.runs_completed || 0) > 1 ? "s" : ""} · {REFRESH_LABELS[cadenceFull.refresh_strategy]}</div>}
         </div>
         <div className="flex gap-2 flex-wrap">
-          {lifecycle === "active" || lifecycle === "scheduled" ? (
-            <Button variant="outline" size="sm" onClick={() => toggleStatus("paused")}><Pause className="h-4 w-4 mr-1" />Pause</Button>
-          ) : lifecycle === "paused" ? (
-            <Button variant="outline" size="sm" onClick={() => toggleStatus("active")}><Play className="h-4 w-4 mr-1" />Resume</Button>
-          ) : null}
-          {(lifecycle === "active" || lifecycle === "scheduled") && cadenceFull.cadence_type !== "one_off" && (
-            <Button variant="outline" size="sm" onClick={advanceRun}><Repeat className="h-4 w-4 mr-1" />Mark run complete</Button>
-          )}
-          <Button variant="outline" size="sm" onClick={regenerate} disabled={regenerating}>
-            <Sparkles className="h-4 w-4 mr-1" />{regenerating ? "Regenerating…" : `Regenerate (${CREDIT_COSTS.full_campaign_pack} credits)`}
+          {(lifecycle === "active" || lifecycle === "scheduled") && <Button variant="outline" size="sm" onClick={() => toggleStatus("paused")}><Pause className="h-4 w-4 mr-1" />Pause</Button>}
+          {lifecycle === "paused" && <Button variant="outline" size="sm" onClick={() => toggleStatus("active")}><Play className="h-4 w-4 mr-1" />Resume</Button>}
+          {(lifecycle === "active" || lifecycle === "scheduled") && cadenceFull.cadence_type !== "one_off" && <Button variant="outline" size="sm" onClick={advanceRun}><Repeat className="h-4 w-4 mr-1" />Mark run complete</Button>}
+          <Button variant="outline" size="sm" onClick={regenerate} disabled={regenerating || (isFreePreview && !!c.pack)} title={isFreePreview && c.pack ? "Free Preview includes one full campaign pack" : undefined}>
+            <Sparkles className="h-4 w-4 mr-1" />{regenerating ? "Regenerating…" : isFreePreview && c.pack ? "Paid plan required for another pack" : `Regenerate (${CREDIT_COSTS.full_campaign_pack} credits)`}
           </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm"><Download className="h-4 w-4 mr-1" />Export</Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={exportMarkdown}>Download Markdown (.md)</DropdownMenuItem>
-              <DropdownMenuItem onClick={copyFullPack}>Copy full pack</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          
+          <DropdownMenu><DropdownMenuTrigger asChild><Button variant="outline" size="sm"><Download className="h-4 w-4 mr-1" />Export</Button></DropdownMenuTrigger><DropdownMenuContent align="end"><DropdownMenuItem onClick={exportMarkdown}>Download Markdown (.md)</DropdownMenuItem><DropdownMenuItem onClick={copyFullPack}>Copy full pack</DropdownMenuItem></DropdownMenuContent></DropdownMenu>
         </div>
       </div>
 
-      {c.is_sample && (
-        <Card className="border-amber-300 bg-amber-50/50 dark:bg-amber-950/20">
-          <CardContent className="p-4 text-sm flex items-start gap-3">
-            <FlaskConical className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
-            <div>
-              <div className="font-medium text-amber-800 dark:text-amber-300">Sample campaign</div>
-              <p className="text-amber-900/80 dark:text-amber-200/80">
-                Built from example data so you can see a finished campaign. It can never be activated — replace the
-                offer, audience and contacts with your own, then create a real campaign.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      {c.is_sample && <Card className="border-amber-300 bg-amber-50/50 dark:bg-amber-950/20"><CardContent className="p-4 text-sm flex items-start gap-3"><FlaskConical className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" /><div><div className="font-medium text-amber-800 dark:text-amber-300">Sample campaign</div><p className="text-amber-900/80 dark:text-amber-200/80">Built from example data for review only. It can never be activated with real recipients.</p></div></CardContent></Card>}
 
-      {pack && (
-        <CampaignPreflight
-          result={preflight}
-          title="Preflight & readiness centre"
-          footer={
-            <div className="flex flex-wrap items-center gap-2 pt-1">
-              <Button
-                size="sm"
-                variant={c.approved_at ? "outline" : "default"}
-                disabled={approving || !!c.is_sample}
-                onClick={toggleApproval}
-              >
-                <ShieldCheck className="h-4 w-4 mr-1" />
-                {c.approved_at ? "Withdraw approval" : "I've read this — approve for sending"}
-              </Button>
-              <Button size="sm" variant="outline" onClick={() => navigate("/app/activate")}>
-                Go to Activate
-              </Button>
-              <span className="text-xs text-muted-foreground">
-                Approval records who signed off. It never triggers a send on its own.
-              </span>
-            </div>
-          }
-        />
-      )}
+      {pack && <CampaignPreflight result={preflight} title="Activation-preparation preflight" footer={<div className="flex flex-wrap items-center gap-2 pt-1"><Button size="sm" variant={c.approved_at ? "outline" : "default"} disabled={approving || !!c.is_sample} onClick={toggleApproval}><ShieldCheck className="h-4 w-4 mr-1" />{c.approved_at ? "Withdraw approval" : "I've read this — record approval"}</Button><Button size="sm" variant="outline" onClick={() => navigate(`/app/activate?campaign=${c.id}`)}>Prepare campaign leads</Button><span className="text-xs text-muted-foreground">Approval records human sign-off. It never sends or publishes anything.</span></div>} />}
 
-      {!pack ? (
-
-        <Card><CardContent className="p-8 text-center">No pack generated yet.</CardContent></Card>
-      ) : (
+      {!pack ? <Card><CardContent className="p-8 text-center">No pack generated yet.</CardContent></Card> : (
         <Tabs defaultValue="overview" className="w-full">
           <TabsList className="flex flex-wrap h-auto">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="strategy">Strategy</TabsTrigger>
-            <TabsTrigger value="landing">Landing</TabsTrigger>
-            <TabsTrigger value="offer">Offer</TabsTrigger>
+            <TabsTrigger value="overview">Overview</TabsTrigger><TabsTrigger value="strategy">Strategy</TabsTrigger><TabsTrigger value="landing">Landing</TabsTrigger><TabsTrigger value="offer">Offer</TabsTrigger>
             {channelCfg.includeEmail && <TabsTrigger value="emails">Emails</TabsTrigger>}
             {channelCfg.includeSocial && <TabsTrigger value="social">Social</TabsTrigger>}
             {channelCfg.includePress && pack.press && <TabsTrigger value="press">Press</TabsTrigger>}
             {channelCfg.includeVideo && pack.video && <TabsTrigger value="video">Video</TabsTrigger>}
-            {channelCfg.includePaidAds && pack.paidAds && <TabsTrigger value="paidads">Paid ads</TabsTrigger>}
-            <TabsTrigger value="capture">Lead capture</TabsTrigger>
-            <TabsTrigger value="pipeline">Pipeline</TabsTrigger>
-            <TabsTrigger value="performance">Performance</TabsTrigger>
+            {channelCfg.includePaidAds && pack.paidAds && <TabsTrigger value="paidads">Paid ad drafts</TabsTrigger>}
+            <TabsTrigger value="capture">Lead capture</TabsTrigger><TabsTrigger value="pipeline">Pipeline</TabsTrigger><TabsTrigger value="performance">Recorded outcomes</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview" className="space-y-4 mt-4">
-            <Section title="Campaign summary">
-              <p><strong>Offer:</strong> {brief?.offer}</p>
-              <p><strong>Audience:</strong> {brief?.audience}</p>
-              <p><strong>Goal:</strong> {brief?.goal}</p>
-              <p><strong>Deadline:</strong> {brief?.deadline || "—"}</p>
-              <p><strong>Channels:</strong> {filterSupportedChannels(brief?.channels).join(", ")}</p>
-            </Section>
-            {copilotPlan && <CopilotPlanCard plan={copilotPlan} />}
-          </TabsContent>
+          <TabsContent value="overview" className="space-y-4 mt-4"><Section title="Campaign summary"><p><strong>Offer:</strong> {brief?.offer}</p><p><strong>Audience:</strong> {brief?.audience}</p><p><strong>Goal:</strong> {brief?.goal}</p><p><strong>Deadline:</strong> {brief?.deadline || "—"}</p><p><strong>Channels:</strong> {filterSupportedChannels(brief?.channels).join(", ")}</p></Section>{copilotPlan && <CopilotPlanCard plan={copilotPlan} />}</TabsContent>
 
-          <TabsContent value="strategy" className="space-y-4 mt-4">
-            <Section title="Positioning"><p>{pack.strategy.positioning}</p></Section>
-            <Section title="Big idea"><p>{pack.strategy.bigIdea}</p></Section>
-            <Section title="Messaging pillars"><ul className="list-disc pl-5">{pack.strategy.messagingPillars.map((p, i) => <li key={i}>{p}</li>)}</ul></Section>
-            <Section title="Success metric"><p>{pack.strategy.successMetric}</p></Section>
-          </TabsContent>
+          <TabsContent value="strategy" className="space-y-4 mt-4"><Section title="Positioning"><p>{pack.strategy.positioning}</p></Section><Section title="Big idea"><p>{pack.strategy.bigIdea}</p></Section><Section title="Messaging pillars"><ul className="list-disc pl-5">{pack.strategy.messagingPillars.map((p, i) => <li key={i}>{p}</li>)}</ul></Section><Section title="Success metric"><p>{pack.strategy.successMetric}</p></Section></TabsContent>
 
-          <TabsContent value="landing" className="space-y-4 mt-4">
-            <Section title="Headline" copyText={pack.landing.headline}><p className="text-xl font-semibold">{pack.landing.headline}</p></Section>
-            <Section title="Subheadline" copyText={pack.landing.subheadline}><p>{pack.landing.subheadline}</p></Section>
-            {pack.landing.sections.map((s, i) => (
-              <Section key={i} title={s.title} copyText={s.body}><p>{s.body}</p></Section>
-            ))}
-            <Section title="CTA"><Badge>{pack.landing.cta}</Badge></Section>
-          </TabsContent>
+          <TabsContent value="landing" className="space-y-4 mt-4"><Section title="Headline" copyText={pack.landing.headline}><p className="text-xl font-semibold">{pack.landing.headline}</p></Section><Section title="Subheadline" copyText={pack.landing.subheadline}><p>{pack.landing.subheadline}</p></Section>{pack.landing.sections.map((s, i) => <Section key={i} title={s.title} copyText={s.body}><p>{s.body}</p></Section>)}<Section title="CTA"><Badge>{pack.landing.cta}</Badge></Section></TabsContent>
 
-          <TabsContent value="offer" className="space-y-4 mt-4">
-            <Section title="Framing" copyText={pack.offer.framing}><p>{pack.offer.framing}</p></Section>
-            <Section title="Benefits"><ul className="list-disc pl-5">{pack.offer.benefits.map((b, i) => <li key={i}>{b}</li>)}</ul></Section>
-            <Section title="Objection handling"><div className="space-y-2">{pack.offer.objections.map((o, i) => (
-              <div key={i} className="border-l-2 border-primary pl-3"><p className="font-medium">{o.objection}</p><p className="text-muted-foreground">{o.response}</p></div>
-            ))}</div></Section>
-          </TabsContent>
+          <TabsContent value="offer" className="space-y-4 mt-4"><Section title="Framing" copyText={pack.offer.framing}><p>{pack.offer.framing}</p></Section><Section title="Benefits"><ul className="list-disc pl-5">{pack.offer.benefits.map((b, i) => <li key={i}>{b}</li>)}</ul></Section><Section title="Objection handling"><div className="space-y-2">{pack.offer.objections.map((o, i) => <div key={i} className="border-l-2 border-primary pl-3"><p className="font-medium">{o.objection}</p><p className="text-muted-foreground">{o.response}</p></div>)}</div></Section></TabsContent>
 
-          {channelCfg.includeEmail && (
-            <TabsContent value="emails" className="space-y-3 mt-4">
-              {copilotPlan && (
-                <CopilotSequenceEditor
-                  campaignId={c.id}
-                  plan={copilotPlan}
-                  brief={brief}
-                  pack={pack}
-                  onSaved={({ brief: nb, pack: np }) => setC({ ...c, brief: nb, pack: np })}
-                />
-              )}
-              <EmailSequenceSender emails={pack.emails} campaignId={c.id} workspaceId={workspaceId} leads={leads} />
-            </TabsContent>
-          )}
+          {channelCfg.includeEmail && <TabsContent value="emails" className="space-y-3 mt-4">{copilotPlan && <CopilotSequenceEditor campaignId={c.id} plan={copilotPlan} brief={brief} pack={pack} onSaved={({ brief: nb, pack: np }) => setC({ ...c, brief: nb, pack: np })} />}<EmailSequenceSender emails={pack.emails} campaignId={c.id} workspaceId={workspaceId} leads={leads} /></TabsContent>}
 
+          {channelCfg.includeSocial && <TabsContent value="social" className="space-y-4 mt-4"><Section title="Launch post drafts"><div className="grid md:grid-cols-2 gap-3">{pack.social.launchPosts.map((p, i) => <PostCard key={i} p={p} />)}</div></Section><Section title="Follow-up post drafts"><div className="grid md:grid-cols-2 gap-3">{pack.social.followUps.map((p, i) => <PostCard key={i} p={p} />)}</div></Section><Section title="Hook variations"><ul className="list-disc pl-5">{pack.social.hooks.map((h, i) => <li key={i}>{h}</li>)}</ul></Section><Section title="CTA variations"><ul className="list-disc pl-5">{pack.social.ctas.map((x, i) => <li key={i}>{x}</li>)}</ul></Section><Section title="Launch-week draft sequence"><div className="space-y-2">{pack.social.launchWeek.map((d, i) => <div key={i} className="flex gap-3 p-2 border rounded-md"><Badge variant="outline" className="h-6">{d.day}</Badge><div><p className="font-medium text-sm">{d.theme}</p><p className="text-sm text-muted-foreground">{d.post}</p></div></div>)}</div></Section><p className="text-xs text-muted-foreground">These are editable drafts. Velocity Vision does not publish them automatically.</p></TabsContent>}
 
-          {channelCfg.includeSocial && <TabsContent value="social" className="space-y-4 mt-4">
-            <Section title="Launch posts">
-              <div className="grid md:grid-cols-2 gap-3">
-                {pack.social.launchPosts.map((p, i) => <PostCard key={i} p={p} />)}
-              </div>
-            </Section>
-            <Section title="Follow-up posts">
-              <div className="grid md:grid-cols-2 gap-3">
-                {pack.social.followUps.map((p, i) => <PostCard key={i} p={p} />)}
-              </div>
-            </Section>
-            <Section title="Hook variations"><ul className="list-disc pl-5">{pack.social.hooks.map((h, i) => <li key={i}>{h}</li>)}</ul></Section>
-            <Section title="CTA variations"><ul className="list-disc pl-5">{pack.social.ctas.map((c, i) => <li key={i}>{c}</li>)}</ul></Section>
-            <Section title="Launch week sequence">
-              <div className="space-y-2">{pack.social.launchWeek.map((d, i) => (
-                <div key={i} className="flex gap-3 p-2 border border-border rounded-md">
-                  <Badge variant="outline" className="h-6">{d.day}</Badge>
-                  <div><p className="font-medium text-sm">{d.theme}</p><p className="text-sm text-muted-foreground">{d.post}</p></div>
-                </div>
-              ))}</div>
-            </Section>
-            <Section title="Repost / remix ideas"><ul className="list-disc pl-5">{pack.social.repostIdeas.map((r, i) => <li key={i}>{r}</li>)}</ul></Section>
-          </TabsContent>}
+          {channelCfg.includePress && pack.press && <TabsContent value="press" className="space-y-4 mt-4"><Section title="Headline" copyText={pack.press.headline}><p className="text-xl font-semibold">{pack.press.headline}</p></Section><Section title="Subheadline"><p>{pack.press.subheadline}</p></Section><Section title="Opening paragraph" copyText={pack.press.opening}><p>{pack.press.opening}</p></Section><Section title="Body" copyText={pack.press.body.join("\n\n")}>{pack.press.body.map((b, i) => <p key={i} className="mb-2">{b}</p>)}</Section><Section title="Quote" copyText={pack.press.quote}><p className="italic">{pack.press.quote}</p></Section><Section title="Boilerplate" copyText={pack.press.boilerplate}><p>{pack.press.boilerplate}</p></Section><Section title="Contact"><p>{pack.press.contactLine}</p></Section><p className="text-xs text-muted-foreground">Draft only. Distribution remains through the customer's chosen route.</p></TabsContent>}
 
-          {channelCfg.includePress && pack.press && <TabsContent value="press" className="space-y-4 mt-4">
-            <Section title="Headline" copyText={pack.press.headline}><p className="text-xl font-semibold">{pack.press.headline}</p></Section>
-            <Section title="Subheadline"><p>{pack.press.subheadline}</p></Section>
-            <Section title="Opening paragraph" copyText={pack.press.opening}><p>{pack.press.opening}</p></Section>
-            <Section title="Body" copyText={pack.press.body.join("\n\n")}>{pack.press.body.map((b, i) => <p key={i} className="mb-2">{b}</p>)}</Section>
-            <Section title="Quote" copyText={pack.press.quote}><p className="italic">{pack.press.quote}</p></Section>
-            <Section title="Boilerplate" copyText={pack.press.boilerplate}><p>{pack.press.boilerplate}</p></Section>
-            <Section title="Contact"><p>{pack.press.contactLine}</p></Section>
-          </TabsContent>}
+          {channelCfg.includeVideo && pack.video && <TabsContent value="video" className="space-y-4 mt-4"><Section title="Video hooks"><ol className="list-decimal pl-5 space-y-1">{pack.video.hooks.map((h, i) => <li key={i}>{h}</li>)}</ol></Section><Section title="30-second script" copyText={pack.video.script30}><pre className="whitespace-pre-wrap font-sans text-sm">{pack.video.script30}</pre></Section><Section title="60-second script" copyText={pack.video.script60}><pre className="whitespace-pre-wrap font-sans text-sm">{pack.video.script60}</pre></Section><Section title="Talking-head version"><p>{pack.video.talkingHead}</p></Section><Section title="B-roll version"><p>{pack.video.bRoll}</p></Section><Section title="Shot list"><ul className="list-disc pl-5">{pack.video.shotList.map((s, i) => <li key={i}>{s}</li>)}</ul></Section><Section title="Storyboard outline"><ul className="list-disc pl-5">{pack.video.storyboard.map((s, i) => <li key={i}>{s}</li>)}</ul></Section><Section title="On-screen text"><ul className="list-disc pl-5">{pack.video.onScreenText.map((s, i) => <li key={i}>{s}</li>)}</ul></Section><Section title="Caption / subtitle" copyText={pack.video.captionText}><p>{pack.video.captionText}</p></Section><Section title="CTA endings"><ul className="list-disc pl-5">{pack.video.ctaEndings.map((s, i) => <li key={i}>{s}</li>)}</ul></Section></TabsContent>}
 
-          {channelCfg.includeVideo && pack.video && <TabsContent value="video" className="space-y-4 mt-4">
-            <Section title="3 video hooks"><ol className="list-decimal pl-5 space-y-1">{pack.video.hooks.map((h, i) => <li key={i}>{h}</li>)}</ol></Section>
-            <Section title="30-second script" copyText={pack.video.script30}><pre className="whitespace-pre-wrap font-sans text-sm">{pack.video.script30}</pre></Section>
-            <Section title="60-second script" copyText={pack.video.script60}><pre className="whitespace-pre-wrap font-sans text-sm">{pack.video.script60}</pre></Section>
-            <Section title="Talking-head version"><p>{pack.video.talkingHead}</p></Section>
-            <Section title="B-roll version"><p>{pack.video.bRoll}</p></Section>
-            <Section title="Shot list"><ul className="list-disc pl-5">{pack.video.shotList.map((s, i) => <li key={i}>{s}</li>)}</ul></Section>
-            <Section title="Storyboard outline"><ul className="list-disc pl-5">{pack.video.storyboard.map((s, i) => <li key={i}>{s}</li>)}</ul></Section>
-            <Section title="On-screen text"><ul className="list-disc pl-5">{pack.video.onScreenText.map((s, i) => <li key={i}>{s}</li>)}</ul></Section>
-            <Section title="Caption / subtitle" copyText={pack.video.captionText}><p>{pack.video.captionText}</p></Section>
-            <Section title="CTA endings"><ul className="list-disc pl-5">{pack.video.ctaEndings.map((s, i) => <li key={i}>{s}</li>)}</ul></Section>
-          </TabsContent>}
+          {channelCfg.includePaidAds && pack.paidAds && <TabsContent value="paidads" className="space-y-4 mt-4"><Section title="Campaign angle" copyText={pack.paidAds.campaignAngle}><p>{pack.paidAds.campaignAngle}</p></Section><Section title="Headline drafts"><ul className="list-disc pl-5">{pack.paidAds.headlines.map((h, i) => <li key={i}>{h}</li>)}</ul></Section><Section title="Primary text drafts"><ul className="list-disc pl-5 space-y-2">{pack.paidAds.primaryText.map((x, i) => <li key={i}>{x}</li>)}</ul></Section><Section title="Descriptions"><ul className="list-disc pl-5">{pack.paidAds.descriptions.map((d, i) => <li key={i}>{d}</li>)}</ul></Section><Section title="Audience note"><p>{pack.paidAds.audienceNote}</p></Section><Section title="Compliance note"><p className="text-sm text-muted-foreground">{pack.paidAds.complianceNote}</p></Section><p className="text-xs text-muted-foreground">Velocity Vision prepares draft ad copy only; it does not buy media, create ad-platform campaigns or optimise spend.</p></TabsContent>}
 
-          {channelCfg.includePaidAds && pack.paidAds && <TabsContent value="paidads" className="space-y-4 mt-4">
-            <Section title="Campaign angle" copyText={pack.paidAds.campaignAngle}><p>{pack.paidAds.campaignAngle}</p></Section>
-            <Section title="Headlines"><ul className="list-disc pl-5">{pack.paidAds.headlines.map((h, i) => <li key={i}>{h}</li>)}</ul></Section>
-            <Section title="Primary text options"><ul className="list-disc pl-5 space-y-2">{pack.paidAds.primaryText.map((t, i) => <li key={i}>{t}</li>)}</ul></Section>
-            <Section title="Descriptions"><ul className="list-disc pl-5">{pack.paidAds.descriptions.map((d, i) => <li key={i}>{d}</li>)}</ul></Section>
-            <Section title="Audience note"><p>{pack.paidAds.audienceNote}</p></Section>
-            <Section title="Compliance note"><p className="text-sm text-muted-foreground">{pack.paidAds.complianceNote}</p></Section>
-          </TabsContent>}
+          <TabsContent value="capture" className="space-y-4 mt-4"><LeadFormConfig campaignId={c.id} slug={c.slug} published={c.lead_form_published ?? true} initial={c.lead_form_config || {}} packDefaults={{ headline: pack.landing?.headline, subheadline: pack.landing?.subheadline, formTitle: pack.leadCapture?.formTitle, ctaLabel: pack.leadCapture?.ctaLabel, thankYou: pack.leadCapture?.thankYou, fields: pack.leadCapture?.fields as any }} /></TabsContent>
 
-          <TabsContent value="capture" className="space-y-4 mt-4">
-            <LeadFormConfig
-              campaignId={c.id}
-              slug={c.slug}
-              published={c.lead_form_published ?? true}
-              initial={c.lead_form_config || {}}
-              packDefaults={{
-                headline: pack.landing?.headline,
-                subheadline: pack.landing?.subheadline,
-                formTitle: pack.leadCapture?.formTitle,
-                ctaLabel: pack.leadCapture?.ctaLabel,
-                thankYou: pack.leadCapture?.thankYou,
-                fields: pack.leadCapture?.fields as any,
-              }}
-            />
-          </TabsContent>
-
-          <TabsContent value="pipeline" className="mt-4">
-            <Section title={`Leads from this campaign (${leads.length})`}>
-              {leads.length === 0 ? (
-                <p className="text-muted-foreground text-sm">No leads yet. Share your capture URL or launch the social pack.</p>
-              ) : (
-                <div className="space-y-2">{leads.map((l) => (
-                  <div key={l.id} className="flex justify-between items-center p-2 border border-border rounded-md text-sm">
-                    <div><div className="font-medium">{l.name || l.email || "Anonymous"}</div><div className="text-xs text-muted-foreground">{new Date(l.created_at).toLocaleString()}</div></div>
-                    <Badge>{l.status}</Badge>
-                  </div>
-                ))}</div>
-              )}
-            </Section>
-          </TabsContent>
+          <TabsContent value="pipeline" className="mt-4"><Section title={`Leads from this campaign (${leads.length})`}>{leads.length === 0 ? <p className="text-muted-foreground text-sm">No campaign leads recorded yet. Prepare eligible records in Activate or share an approved capture link.</p> : <div className="space-y-2">{leads.map((l) => <div key={l.id} className="flex justify-between items-center p-2 border rounded-md text-sm"><div><div className="font-medium">{l.name || l.email || "Anonymous"}</div><div className="text-xs text-muted-foreground">{new Date(l.created_at).toLocaleString()}</div></div><Badge>{l.status}</Badge></div>)}</div>}</Section></TabsContent>
 
           <TabsContent value="performance" className="space-y-4 mt-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <Stat label="Leads" value={leads.length} />
-              <Stat label="Qualified" value={leads.filter((l) => l.status === "qualified").length} />
-              <Stat label="Won" value={leads.filter((l) => l.status === "won").length} />
-              <Stat label="Conversion" value={leads.length ? `${Math.round((leads.filter((l) => l.status === "won").length / leads.length) * 100)}%` : "—"} />
-            </div>
-            <Section title="What's working">
-              <p className="text-sm">{leads.length === 0 ? "Launch the campaign first — we'll surface insights here as soon as leads come in." : "Your top-converting channel and post will appear here once attribution kicks in."}</p>
-            </Section>
-            <Section title="Next step">
-              <p className="text-sm mb-3">{leads.length > 0 ? "Clone this campaign and tweak the offer for a new audience." : "Share your social pack to start filling the pipeline."}</p>
-              <Button size="sm" onClick={() => navigate(`/app/campaigns/new?goal=${c.goal}&kind=${c.campaign_kind}`)}>Clone this campaign</Button>
-            </Section>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3"><Stat label="Recorded leads" value={leads.length} /><Stat label="Qualified" value={leads.filter((l) => l.status === "qualified").length} /><Stat label="Recorded won" value={wonCount} /><Stat label="Lead-to-won" value={leads.length ? `${Math.round((wonCount / leads.length) * 100)}%` : "—"} /></div>
+            <Section title="How to read this"><p className="text-sm text-muted-foreground">These counts come from stored campaign lead states only. Velocity Vision does not infer a winning channel, run A/B tests or attribute revenue automatically.</p></Section>
+            <Section title="Next step"><p className="text-sm mb-3">Use this campaign's type and goal as a starting point for a new campaign, then review every field and generated draft.</p><Button size="sm" onClick={startSimilar}>Start similar campaign</Button></Section>
           </TabsContent>
         </Tabs>
       )}
@@ -622,36 +364,13 @@ export default function AppCampaignWorkspace() {
 }
 
 function Section({ title, children, copyText }: { title: string; children: React.ReactNode; copyText?: string }) {
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-3">
-        <CardTitle className="text-base">{title}</CardTitle>
-        {copyText && <Button variant="ghost" size="sm" onClick={() => copy(copyText)}><Copy className="h-3 w-3" /></Button>}
-      </CardHeader>
-      <CardContent className="pt-0">{children}</CardContent>
-    </Card>
-  );
+  return <Card><CardHeader className="flex flex-row items-center justify-between pb-3"><CardTitle className="text-base">{title}</CardTitle>{copyText && <Button variant="ghost" size="sm" onClick={() => copy(copyText)}><Copy className="h-3 w-3" /></Button>}</CardHeader><CardContent className="pt-0">{children}</CardContent></Card>;
 }
 
 function PostCard({ p }: { p: any }) {
-  return (
-    <div className="p-3 border border-border rounded-md space-y-2">
-      <div className="flex justify-between items-center">
-        <Badge variant="outline">{p.platform}</Badge>
-        <Button variant="ghost" size="sm" onClick={() => copy(p.long)}><Copy className="h-3 w-3" /></Button>
-      </div>
-      <p className="text-sm font-medium">{p.hook}</p>
-      <p className="text-xs text-muted-foreground whitespace-pre-wrap">{p.short}</p>
-      <p className="text-xs"><span className="font-semibold">CTA:</span> {p.cta}</p>
-    </div>
-  );
+  return <div className="p-3 border rounded-md space-y-2"><div className="flex justify-between items-center"><Badge variant="outline">{p.platform}</Badge><Button variant="ghost" size="sm" onClick={() => copy(p.long)}><Copy className="h-3 w-3" /></Button></div><p className="text-sm font-medium">{p.hook}</p><p className="text-xs text-muted-foreground whitespace-pre-wrap">{p.short}</p><p className="text-xs"><span className="font-semibold">CTA:</span> {p.cta}</p></div>;
 }
 
 function Stat({ label, value }: { label: string; value: string | number }) {
-  return (
-    <Card><CardContent className="p-4">
-      <div className="text-xs text-muted-foreground">{label}</div>
-      <div className="text-2xl font-bold">{value}</div>
-    </CardContent></Card>
-  );
+  return <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">{label}</div><div className="text-2xl font-bold">{value}</div></CardContent></Card>;
 }
