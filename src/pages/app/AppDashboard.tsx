@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  Rocket, FolderOpen, Users, BarChart3, LayoutTemplate, Settings, Briefcase, ArrowRight,
-  Database, ShieldCheck, Send, Megaphone, Mail, Newspaper, Video, FileText, MessageSquare,
-  TrendingUp, AlertTriangle, Upload, Sparkles, Wand2, Zap, CheckCircle2, Clock, Repeat, Pause, RefreshCw,
+  ArrowRight, BarChart3, Briefcase, CheckCircle2, Clock, Database, FolderOpen,
+  Mail, MessageSquare, Rocket, Send, Settings, ShieldCheck, Sparkles, TrendingUp,
+  Upload, Users, Wand2, AlertTriangle,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -14,783 +14,389 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCredits } from "@/contexts/CreditsContext";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import CreditMeter from "@/components/app/CreditMeter";
-import FollowUpReminders from "@/components/app/FollowUpReminders";
-import SendSafetyPanel from "@/components/app/SendSafetyPanel";
-import SenderStatusCard from "@/components/app/SenderStatusCard";
+import FreePreviewStatusCard from "@/components/app/FreePreviewStatusCard";
 import FirstCampaignLaunchpad from "@/components/app/FirstCampaignLaunchpad";
 import OutcomeFunnelPanel from "@/components/app/OutcomeFunnelPanel";
-import type { FunnelFilters, FunnelLead, FunnelOpportunity } from "@/lib/outcomeFunnel";
 import CampaignPreflight from "@/components/app/CampaignPreflight";
-import FreePreviewStatusCard from "@/components/app/FreePreviewStatusCard";
-import PriorityStrip from "@/components/app/PriorityStrip";
+import SendSafetyPanel from "@/components/app/SendSafetyPanel";
+import SenderStatusCard from "@/components/app/SenderStatusCard";
+import FollowUpReminders from "@/components/app/FollowUpReminders";
+import type { FunnelFilters, FunnelLead, FunnelOpportunity } from "@/lib/outcomeFunnel";
 import { computeSafety, DEFAULT_SENDER_STATE, type SenderState } from "@/lib/sendSafety";
-import { isUnsubscribeCapabilityReady, resolveUnsubscribeReadiness, UNSUBSCRIBE_HANDLER_DEPLOYED } from "@/lib/systemCapabilities";
 import { runPreflight } from "@/lib/campaignPreflight";
 import { computeReadiness } from "@/lib/senderReadiness";
 import { useLegalStatus } from "@/lib/legalCompliance";
-import type { PlanId } from "@/lib/credits";
 import { deriveFollowUpState } from "@/lib/leadStates";
-import { Card as UICard, CardContent as UICardContent } from "@/components/ui/card";
-
+import type { PlanId } from "@/lib/credits";
+import { CADENCE_LABELS, nextActionLabel, type CadenceType } from "@/lib/cadence";
 
 interface VaultStats {
-  total_contacts: number;
-  total_companies: number;
+  contacts: number;
+  companies: number;
   imports: number;
-  clean: number;
-  needs_review: number;
+  eligible: number;
+  review: number;
   risky: number;
   blocked: number;
-  duplicates: number;
-  safe_to_activate: number;
 }
 
-interface PipelineStats {
+interface CommercialStats {
   leads: number;
   opportunities: number;
-  pipeline_value: number;
+  pipelineValue: number;
   won: number;
-  lost: number;
-  by_stage: Record<string, number>;
   stuck: number;
-  next_action_due: number;
-}
-
-interface InteractionStats {
-  replies_due: number;
-  followups_today: number;
-  dormant: number;
+  overdueActions: number;
+  replies: number;
+  followups: number;
   warm: number;
   bounces: number;
 }
 
-import { CADENCE_LABELS, CadenceType, LIFECYCLE_TONE, deriveLifecycle, nextActionLabel } from "@/lib/cadence";
-
-interface CadenceRow {
-  id: string; name: string; status: string;
+type CampaignRow = {
+  id: string;
+  name: string;
+  status: string | null;
+  created_at: string;
   cadence_type: CadenceType | null;
-  start_at: string | null; cadence_end_at: string | null;
-  next_run_at: string | null; timezone: string | null;
-  runs_completed: number | null;
+  start_at: string | null;
+  cadence_end_at: string | null;
+  next_run_at: string | null;
+  timezone: string | null;
   goal?: string | null;
   brief?: any;
   pack?: any;
   approved_at?: string | null;
   is_sample?: boolean | null;
-}
+};
 
+const EMPTY_VAULT: VaultStats = { contacts: 0, companies: 0, imports: 0, eligible: 0, review: 0, risky: 0, blocked: 0 };
+const EMPTY_COMMERCIAL: CommercialStats = { leads: 0, opportunities: 0, pipelineValue: 0, won: 0, stuck: 0, overdueActions: 0, replies: 0, followups: 0, warm: 0, bounces: 0 };
 
 export default function AppDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { remaining, planConfig } = useCredits();
-  const { workspaces, currentId, loading: wsLoading } = useWorkspace();
+  const { workspaces, currentId, loading: workspaceLoading } = useWorkspace();
   const legal = useLegalStatus();
-  const [firstName, setFirstName] = useState("");
 
-  const [activeCampaigns, setActiveCampaigns] = useState(0);
-  const [latestCampaignId, setLatestCampaignId] = useState<string | null>(null);
-  const [campaignRows, setCampaignRows] = useState<CadenceRow[]>([]);
+  const [firstName, setFirstName] = useState("");
+  const [vault, setVault] = useState<VaultStats>(EMPTY_VAULT);
+  const [commercial, setCommercial] = useState<CommercialStats>(EMPTY_COMMERCIAL);
+  const [campaigns, setCampaigns] = useState<CampaignRow[]>([]);
   const [funnelLeads, setFunnelLeads] = useState<FunnelLead[]>([]);
-  const [activatedCampaignIds, setActivatedCampaignIds] = useState<Set<string>>(new Set());
   const [funnelOpps, setFunnelOpps] = useState<FunnelOpportunity[]>([]);
   const [campaignNames, setCampaignNames] = useState<Record<string, string>>({});
-  const [funnelFilters, setFunnelFilters] = useState<FunnelFilters>({ campaignId: "all" });
+  const [filters, setFilters] = useState<FunnelFilters>({ campaignId: "all" });
+  const [activatedCampaignIds, setActivatedCampaignIds] = useState<Set<string>>(new Set());
+
   const [sender, setSender] = useState<SenderState>(DEFAULT_SENDER_STATE);
   const [senderEmail, setSenderEmail] = useState<string | null>(null);
   const [senderConnectionId, setSenderConnectionId] = useState<string | null>(null);
   const [senderDetail, setSenderDetail] = useState<any>(null);
-  const [sendsUsedToday, setSendsUsedToday] = useState(0);
-  const [sendsScheduledToday, setSendsScheduledToday] = useState(0);
+  const [usedToday, setUsedToday] = useState(0);
+  const [scheduledToday, setScheduledToday] = useState(0);
 
-  const [vault, setVault] = useState<VaultStats>({
-    total_contacts: 0, total_companies: 0, imports: 0, clean: 0,
-    needs_review: 0, risky: 0, blocked: 0, duplicates: 0, safe_to_activate: 0,
-  });
-  const [pipeline, setPipeline] = useState<PipelineStats>({
-    leads: 0, opportunities: 0, pipeline_value: 0, won: 0, lost: 0, by_stage: {}, stuck: 0, next_action_due: 0,
-  });
-  const [inter, setInter] = useState<InteractionStats>({
-    replies_due: 0, followups_today: 0, dormant: 0, warm: 0, bounces: 0,
-  });
-
-  // Workspace-scoped dashboard queries. We wait for the workspace context to hydrate
-  // and for an active workspace id before pulling any workspace-sensitive metrics, so
-  // the dashboard never blends numbers across workspaces.
   useEffect(() => {
-    if (!user) return;
-    if (wsLoading) return;
-    // No workspace yet → the empty-state gate below renders. Skip metric fetch.
+    if (!user || workspaceLoading) return;
     if (!currentId) {
-      setActiveCampaigns(0); setLatestCampaignId(null); setCampaignRows([]); setActivatedCampaignIds(new Set());
-      setVault({ total_contacts: 0, total_companies: 0, imports: 0, clean: 0, needs_review: 0, risky: 0, blocked: 0, duplicates: 0, safe_to_activate: 0 });
-      setPipeline({ leads: 0, opportunities: 0, pipeline_value: 0, won: 0, lost: 0, by_stage: {}, stuck: 0, next_action_due: 0 });
-      setInter({ replies_due: 0, followups_today: 0, dormant: 0, warm: 0, bounces: 0 });
+      setVault(EMPTY_VAULT);
+      setCommercial(EMPTY_COMMERCIAL);
+      setCampaigns([]);
+      setFunnelLeads([]);
+      setFunnelOpps([]);
+      setCampaignNames({});
+      setActivatedCampaignIds(new Set());
       return;
     }
 
     (async () => {
-      // 1. Profile (user-level, not workspace scoped).
-      const { data: profile } = await supabase.from("profiles").select("first_name").eq("user_id", user.id).maybeSingle();
-      setFirstName(profile?.first_name || "");
-
-      // 2. Workspace-scoped primary tables.
-      const [
-        { data: campaigns },
-        { data: leads },
-        { data: opps },
-        { data: sends },
-        { data: uploads, count: importsCount },
-      ] = await Promise.all([
-        supabase.from("campaigns")
-          .select("id, name, status, created_at, cadence_type, start_at, cadence_end_at, next_run_at, timezone, runs_completed, goal, brief, pack, approved_at, is_sample")
-          .eq("workspace_id", currentId)
-          .order("created_at", { ascending: false }),
-
-        supabase.from("leads")
-          .select("id, status, source, campaign_id, follow_up_at, follow_up_state, replied_at, snoozed_until, last_email_sent_at, last_contacted_at, last_interaction_at, opportunity_id, reply_category, reply_triaged_at, meeting_booked_at, created_at")
-          .eq("workspace_id", currentId),
-        supabase.from("opportunities")
-          .select("id, stage, estimated_value, stage_changed_at, next_action_at, source_campaign_id, source_lead_id")
-          .eq("workspace_id", currentId),
-        supabase.from("email_sends")
-          .select("status, sent_at, campaign_id")
-          .eq("workspace_id", currentId),
-        supabase.from("data_uploads")
-          .select("id", { count: "exact" })
-          .eq("workspace_id", currentId),
+      const profilePromise = supabase.from("profiles").select("first_name").eq("user_id", user.id).maybeSingle();
+      const campaignsPromise = supabase.from("campaigns")
+        .select("id, name, status, created_at, cadence_type, start_at, cadence_end_at, next_run_at, timezone, goal, brief, pack, approved_at, is_sample")
+        .eq("workspace_id", currentId)
+        .order("created_at", { ascending: false });
+      const leadsPromise = supabase.from("leads")
+        .select("id, status, source, campaign_id, follow_up_at, follow_up_state, replied_at, snoozed_until, last_email_sent_at, last_contacted_at, last_interaction_at, opportunity_id, reply_category, reply_triaged_at, reply_snippet, meeting_booked_at, created_at")
+        .eq("workspace_id", currentId);
+      const oppsPromise = supabase.from("opportunities")
+        .select("id, stage, estimated_value, stage_changed_at, next_action_at, source_campaign_id, source_lead_id, created_at")
+        .eq("workspace_id", currentId);
+      const sendsPromise = supabase.from("email_sends").select("status, sent_at, scheduled_at, campaign_id").eq("workspace_id", currentId);
+      const connPromise = supabase.from("email_connections").select("*").eq("user_id", user.id).eq("workspace_id", currentId).order("is_default", { ascending: false });
+      const importsPromise = supabase.from("data_uploads").select("id", { count: "exact", head: true }).eq("workspace_id", currentId);
+      const contactCounts = Promise.all([
+        supabase.from("contacts").select("*", { count: "exact", head: true }).eq("workspace_id", currentId),
+        supabase.from("contacts").select("*", { count: "exact", head: true }).eq("workspace_id", currentId).eq("quality_status", "valid"),
+        supabase.from("contacts").select("*", { count: "exact", head: true }).eq("workspace_id", currentId).eq("quality_status", "needs_review"),
+        supabase.from("contacts").select("*", { count: "exact", head: true }).eq("workspace_id", currentId).eq("quality_status", "risky"),
+        supabase.from("contacts").select("*", { count: "exact", head: true }).eq("workspace_id", currentId).in("quality_status", ["blocked", "suppressed"]),
+        supabase.from("companies").select("*", { count: "exact", head: true }).eq("workspace_id", currentId),
       ]);
 
-      const active = (campaigns || []).filter((c: any) => c.status === "active" || c.status === "planning").length;
-      setActiveCampaigns(active);
-      setLatestCampaignId(campaigns?.[0]?.id || null);
-      setCampaignRows((campaigns || []) as CadenceRow[]);
+      const [profile, campRes, leadRes, oppRes, sendRes, connRes, importRes, contactRes] = await Promise.all([
+        profilePromise, campaignsPromise, leadsPromise, oppsPromise, sendsPromise, connPromise, importsPromise, contactCounts,
+      ]);
 
-      // 3. Contacts / companies — scoped directly by workspace_id.
-      let contactsTotal = 0, contactsClean = 0, contactsReview = 0, contactsRisky = 0, contactsBlocked = 0, companiesTotal = 0;
-      {
-        const [t, c1, c2, c3, c4, co] = await Promise.all([
-          supabase.from("contacts").select("*", { count: "exact", head: true }).eq("workspace_id", currentId),
-          supabase.from("contacts").select("*", { count: "exact", head: true }).eq("workspace_id", currentId).eq("quality_status", "valid"),
-          supabase.from("contacts").select("*", { count: "exact", head: true }).eq("workspace_id", currentId).eq("quality_status", "needs_review"),
-          supabase.from("contacts").select("*", { count: "exact", head: true }).eq("workspace_id", currentId).eq("quality_status", "risky"),
-          supabase.from("contacts").select("*", { count: "exact", head: true }).eq("workspace_id", currentId).eq("quality_status", "blocked"),
-          supabase.from("companies").select("*", { count: "exact", head: true }).eq("workspace_id", currentId),
-        ]);
-        contactsTotal = t.count ?? 0;
-        contactsClean = c1.count ?? 0;
-        contactsReview = c2.count ?? 0;
-        contactsRisky = c3.count ?? 0;
-        contactsBlocked = c4.count ?? 0;
-        companiesTotal = co.count ?? 0;
-      }
-      setVault({
-        total_contacts: contactsTotal,
-        total_companies: companiesTotal,
-        imports: importsCount ?? 0,
-        clean: contactsClean,
-        needs_review: contactsReview,
-        risky: contactsRisky,
-        blocked: contactsBlocked,
-        duplicates: 0,
-        safe_to_activate: contactsClean,
-      });
-
-      const ls = leads || [];
-      setFunnelLeads(ls as any);
-      // Campaign-specific activation evidence. A global lead/send count must
-      // never mark a different (newer) campaign as live.
-      setActivatedCampaignIds(new Set<string>([
-        ...ls.map((l: any) => l.campaign_id).filter(Boolean),
-        ...(sends || []).map((s: any) => s.campaign_id).filter(Boolean),
+      setFirstName(profile.data?.first_name || "");
+      const campaignRows = (campRes.data || []) as CampaignRow[];
+      const leadRows = (leadRes.data || []) as any[];
+      const oppRows = (oppRes.data || []) as any[];
+      const sendRows = (sendRes.data || []) as any[];
+      setCampaigns(campaignRows);
+      setFunnelLeads(leadRows as FunnelLead[]);
+      setFunnelOpps(oppRows as FunnelOpportunity[]);
+      setCampaignNames(Object.fromEntries(campaignRows.map((c) => [c.id, c.name])));
+      setActivatedCampaignIds(new Set([
+        ...leadRows.map((l) => l.campaign_id).filter(Boolean),
+        ...sendRows.map((s) => s.campaign_id).filter(Boolean),
       ] as string[]));
-      setFunnelOpps((opps || []) as any);
-      setCampaignNames(
-        Object.fromEntries((campaigns || []).map((c: any) => [c.id, c.name])) as Record<string, string>,
-      );
+
+      setVault({
+        contacts: contactRes[0].count ?? 0,
+        eligible: contactRes[1].count ?? 0,
+        review: contactRes[2].count ?? 0,
+        risky: contactRes[3].count ?? 0,
+        blocked: contactRes[4].count ?? 0,
+        companies: contactRes[5].count ?? 0,
+        imports: importRes.count ?? 0,
+      });
+
       const now = Date.now();
-      const dayMs = 24 * 60 * 60 * 1000;
-      const states = ls.map((l: any) => deriveFollowUpState(l));
-      const replies_due = states.filter((s) => s === "replied").length;
-      const followups_today = states.filter((s) => s === "due" || s === "overdue").length;
-      const warm = states.filter((s) => s === "warm" || s === "replied").length;
-      const dormant = states.filter((s) => s === "dormant").length;
-      const bounces = (sends || []).filter((s: any) => s.status === "failed" || s.status === "bounced").length;
-      setInter({ replies_due, followups_today, dormant, warm, bounces });
-
-      const opp = opps || [];
-      const by_stage: Record<string, number> = {};
-      let pipeline_value = 0;
-      let stuck = 0;
-      let nextActionDue = 0;
-      opp.forEach((o: any) => {
-        by_stage[o.stage] = (by_stage[o.stage] || 0) + 1;
-        const isOpen = o.stage !== "lost" && o.stage !== "won";
-        if (isOpen) {
-          pipeline_value += Number(o.estimated_value || 0);
-          if (o.stage_changed_at && (now - new Date(o.stage_changed_at).getTime()) > 14 * dayMs) stuck++;
-          if (o.next_action_at && new Date(o.next_action_at).getTime() < now) nextActionDue++;
-        }
+      const states = leadRows.map((l) => deriveFollowUpState(l));
+      const openOpps = oppRows.filter((o) => o.stage !== "won" && o.stage !== "lost");
+      setCommercial({
+        leads: leadRows.length,
+        opportunities: oppRows.length,
+        pipelineValue: openOpps.reduce((sum, o) => sum + Number(o.estimated_value || 0), 0),
+        won: oppRows.filter((o) => o.stage === "won").length,
+        stuck: openOpps.filter((o) => o.stage_changed_at && now - new Date(o.stage_changed_at).getTime() > 14 * 86400000).length,
+        overdueActions: openOpps.filter((o) => o.next_action_at && new Date(o.next_action_at).getTime() < now).length,
+        replies: states.filter((s) => s === "replied").length,
+        followups: states.filter((s) => s === "due" || s === "overdue").length,
+        warm: states.filter((s) => s === "warm" || s === "replied").length,
+        bounces: sendRows.filter((s) => s.status === "failed" || s.status === "bounced").length,
       });
-      setPipeline({
-        leads: ls.length,
-        opportunities: opp.length,
-        pipeline_value,
-        won: opp.filter((o: any) => o.stage === "won").length,
-        lost: opp.filter((o: any) => o.stage === "lost").length,
-        by_stage,
-        stuck,
-        next_action_due: nextActionDue,
-      });
-    })();
-  }, [user, currentId, wsLoading]);
 
-  // Sender/email — connections are user-level (account-level) but scoped to the active
-  // workspace when they carry a workspace_id. Sends are workspace-scoped.
-  useEffect(() => {
-    if (!user) return;
-    if (wsLoading || !currentId) {
-      setSenderEmail(null);
-      setSender(DEFAULT_SENDER_STATE);
-      setSendsUsedToday(0);
-      setSendsScheduledToday(0);
-      return;
-    }
-    (async () => {
-      const [{ data: conns }, { data: sends }] = await Promise.all([
-        supabase.from("email_connections").select("*").eq("user_id", user.id).eq("workspace_id", currentId).order("is_default", { ascending: false }),
-        supabase.from("email_sends").select("status, sent_at, scheduled_at").eq("workspace_id", currentId),
-      ]);
-      const def = (conns || [])[0];
-      const today = new Date(); today.setHours(0,0,0,0);
-      const used = (sends || []).filter((x: any) => x.sent_at && new Date(x.sent_at) >= today).length;
-      const sched = (sends || []).filter((x: any) => x.scheduled_at && new Date(x.scheduled_at) >= today && !x.sent_at).length;
-      setSendsUsedToday(used);
-      setSendsScheduledToday(sched);
-      if (def) {
-        setSenderEmail(def.from_email);
-        setSenderConnectionId(def.id);
-        setSenderDetail({
-          verification_status: def.verification_status,
-          mx_status: def.mx_status,
-          spf_status: def.spf_status,
-          dkim_status: def.dkim_status,
-          dmarc_status: def.dmarc_status,
-          sending_enabled: def.sending_enabled,
-          dns_checked_at: def.dns_checked_at,
-        });
-        const lastSend = (sends || []).filter((x: any) => x.status === "sent").map((x: any) => x.sent_at).filter(Boolean).sort().pop() || null;
-        const totalSends = (sends || []).length || 1;
-        const bounces = (sends || []).filter((x: any) => x.status === "bounced" || x.status === "failed").length;
-        const newly = def.last_verified_at ? (Date.now() - new Date(def.last_verified_at).getTime()) < 7 * 86400000 : true;
-        const verified = def.verification_status === "verified" && def.sending_enabled === true;
-        setSender({
-          connected: def.status === "connected",
-          domain_authenticated: verified,
-          reconnect_required: def.status === "reconnect_required" || def.verification_status === "reconnect_required",
-          newly_connected: newly,
-          last_send_at: lastSend,
-          bounce_rate: bounces / totalSends,
-          unsubscribe_rate: 0,
-        });
-      } else {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      setUsedToday(sendRows.filter((s) => s.sent_at && new Date(s.sent_at) >= today).length);
+      setScheduledToday(sendRows.filter((s) => s.scheduled_at && new Date(s.scheduled_at) >= today && !s.sent_at).length);
+
+      const def = connRes.data?.[0] || null;
+      if (!def) {
+        setSender(DEFAULT_SENDER_STATE);
         setSenderEmail(null);
         setSenderConnectionId(null);
         setSenderDetail(null);
-        setSender(DEFAULT_SENDER_STATE);
+      } else {
+        setSenderEmail(def.from_email);
+        setSenderConnectionId(def.id);
+        setSenderDetail(def);
+        const readiness = computeReadiness(def as any);
+        const verified = def.verification_status === "verified" && def.sending_enabled === true;
+        const sent = sendRows.filter((s) => s.status === "sent");
+        const bounces = sendRows.filter((s) => s.status === "failed" || s.status === "bounced").length;
+        setSender({
+          connected: def.status === "connected",
+          domain_authenticated: verified || readiness.canSendWarmup,
+          reconnect_required: def.status === "reconnect_required" || def.verification_status === "reconnect_required",
+          newly_connected: def.last_verified_at ? Date.now() - new Date(def.last_verified_at).getTime() < 7 * 86400000 : true,
+          last_send_at: sent.map((s) => s.sent_at).filter(Boolean).sort().pop() || null,
+          bounce_rate: bounces / Math.max(sendRows.length, 1),
+          unsubscribe_rate: 0,
+        });
       }
     })();
-  }, [user, currentId, wsLoading]);
+  }, [user, currentId, workspaceLoading]);
 
-
-  const plan = (planConfig.id as PlanId) || "starter";
-  const safety = computeSafety({
+  const plan = (planConfig.id as PlanId) || "free_preview";
+  const safety = useMemo(() => computeSafety({
     plan,
-    vault: { valid: vault.clean, needs_review: vault.needs_review, risky: vault.risky, blocked: vault.blocked, duplicates: vault.duplicates },
+    vault: { valid: vault.eligible, needs_review: vault.review, risky: vault.risky, blocked: vault.blocked },
     sender,
-    sendsUsedToday,
-    sendsScheduledToday,
-    sendCreditsRemaining: remaining,
-  });
-  const safeSendToday = safety.safeAllowance;
-  const recommendedSend = safety.recommendedToday;
+    sendsUsedToday: usedToday,
+    sendsScheduledToday: scheduledToday,
+  }), [plan, vault, sender, usedToday, scheduledToday]);
 
-  // Working campaign for launchpad + preflight: the most recent campaign.
-  const workingCampaign = campaignRows[0] ?? null;
-  // Derived from the actual copy that would be sent, never assumed.
-  const dashboardUnsubscribe = resolveUnsubscribeReadiness({
-    handlerAvailable: UNSUBSCRIBE_HANDLER_DEPLOYED,
-    messageBody: (workingCampaign?.pack as any)?.emails?.[0]?.body ?? null,
-  });
-  // Activation proof must belong to THIS campaign.
-  const workingCampaignActivated =
-    Boolean(workingCampaign?.id) && activatedCampaignIds.has(workingCampaign!.id);
-  const dashboardPreflight = runPreflight({
+  const workingCampaign = campaigns[0] || null;
+  const dashboardPreflight = useMemo(() => runPreflight({
+    scope: "campaign",
     campaign: workingCampaign,
-    safeContacts: vault.safe_to_activate,
-    reviewContacts: vault.needs_review,
+    safeContacts: vault.eligible,
+    reviewContacts: vault.review,
     senderState: senderDetail ? computeReadiness(senderDetail as any).state : null,
     senderEmail,
     remainingToday: safety.remainingToday,
     pauseReasons: safety.pauseReasons,
-    creditsAvailable: remaining,
-    creditsRequired: Math.max(1, Math.min(vault.safe_to_activate, safety.recommendedToday || 1)),
     legalAccepted: legal.isCompliant,
-    unsubscribeReady: isUnsubscribeCapabilityReady({
-      handlerAvailable: UNSUBSCRIBE_HANDLER_DEPLOYED,
-      messageBody: (workingCampaign?.pack as any)?.emails?.[0]?.body ?? null,
-    }),
-  });
+    unsubscribeReady: false,
+  }), [workingCampaign, vault, senderDetail, senderEmail, safety, legal.isCompliant]);
 
   const launchpadSignals = {
     hasBrief: Boolean(workingCampaign?.goal || workingCampaign?.brief),
-    approvedContacts: vault.safe_to_activate,
+    approvedContacts: vault.eligible,
     hasContent: Boolean((workingCampaign?.pack as any)?.emails?.[0]?.subject),
     senderReady: sender.connected && sender.domain_authenticated,
     preflightBlockers: dashboardPreflight.blockers.length,
     approved: Boolean(workingCampaign?.approved_at),
     isSample: workingCampaign?.is_sample === true,
-    activated: workingCampaignActivated,
+    activated: Boolean(workingCampaign?.id && activatedCampaignIds.has(workingCampaign.id)),
     campaignId: workingCampaign?.id ?? null,
-    repliesWaiting: inter.replies_due,
-    urgentReplies: inter.replies_due + inter.bounces,
-    reviewContacts: vault.needs_review,
+    repliesWaiting: commercial.replies,
+    urgentReplies: commercial.replies + commercial.bounces,
+    reviewContacts: vault.review,
   };
 
-
-
-  // Gate: no workspace → send to a clean create-first-workspace prompt.
-  if (!wsLoading && workspaces.length === 0) {
-    return (
-      <div className="max-w-2xl mx-auto py-12">
-        <UICard className="border-primary/30 bg-gradient-to-br from-primary/5 to-accent/5">
-          <UICardContent className="p-10 text-center space-y-4">
-            <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-              <Sparkles className="h-7 w-7 text-primary" />
-            </div>
-            <h1 className="text-2xl font-bold">Create your first workspace</h1>
-            <p className="text-sm text-muted-foreground">
-              Your workspace keeps contacts, campaigns, assets, replies, billing and pipeline
-              organised. Create one for your business, or one per client if you run agency work.
-            </p>
-            <Button size="lg" onClick={() => navigate("/app/workspaces")}>
-              <Briefcase className="h-4 w-4 mr-2" /> Create workspace
-            </Button>
-          </UICardContent>
-        </UICard>
-      </div>
-    );
+  if (!workspaceLoading && workspaces.length === 0) {
+    return <div className="max-w-2xl mx-auto py-12">
+      <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-accent/5">
+        <CardContent className="p-10 text-center space-y-4">
+          <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto"><Sparkles className="h-7 w-7 text-primary" /></div>
+          <h1 className="text-2xl font-bold">Create your first workspace</h1>
+          <p className="text-sm text-muted-foreground">Your workspace keeps contacts, campaigns, replies and early pipeline organised. Agency plans can create isolated client workspaces; plan billing remains account-level.</p>
+          <Button size="lg" onClick={() => navigate("/app/workspaces")}><Briefcase className="h-4 w-4 mr-2" /> Create workspace</Button>
+        </CardContent>
+      </Card>
+    </div>;
   }
 
+  const activeCampaigns = campaigns.filter((c) => c.status === "active" || c.status === "planning" || c.status === "scheduled").length;
+
   return (
-    <div className="space-y-8 max-w-7xl">
-      {/* A0. Priority strip — most urgent commercial actions, always on top */}
-      <PriorityStrip
-        repliesDue={inter.replies_due}
-        overdue={inter.followups_today}
-        stuck={pipeline.stuck}
-        senderConnected={sender.connected}
-        senderVerified={sender.domain_authenticated}
-        creditsRemaining={remaining}
-      />
-
-      {/* A. Top summary bar */}
+    <div className="space-y-7 max-w-7xl">
       <div className="rounded-xl border border-border bg-gradient-to-br from-primary/5 via-background to-accent/5 p-6">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              Welcome back{firstName ? `, ${firstName}` : ""}
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              Your AI-powered commercial workspace. AI drafts outreach and reviews quality — you approve, activate and move deals forward.
-            </p>
+            <h1 className="text-3xl font-bold tracking-tight">Welcome back{firstName ? `, ${firstName}` : ""}</h1>
+            <p className="text-muted-foreground mt-1">Review authorised data, prepare editable campaign drafts, record approvals, manage replies and follow stored outcomes from one customer-controlled workspace.</p>
           </div>
-          <div className="grid grid-cols-3 gap-3 lg:gap-4 min-w-[320px]">
-            <PillStat label="Credits" value={remaining} hint={planConfig.name} />
-            <PillStat label="Safe send today" value={safeSendToday} hint="warm contacts" />
-            <PillStat label="Active campaigns" value={activeCampaigns} />
+          <div className="grid grid-cols-3 gap-3 min-w-[320px]">
+            <PillStat label="Campaign Credits" value={remaining} hint={planConfig.name} />
+            <PillStat label="Send allowance today" value={safety.remainingToday} hint={`plan max ${safety.planCeiling}`} />
+            <PillStat label="Active / scheduled" value={activeCampaigns} />
           </div>
         </div>
-        <div className="flex flex-wrap gap-2 mt-6">
-        <Button size="lg" onClick={() => navigate("/app/campaigns/copilot")}>
-            <Sparkles className="h-4 w-4 mr-2" /> Build my first campaign
-          </Button>
-          <Button size="lg" variant="outline" onClick={() => navigate("/app/activate")}>
-            <Send className="h-4 w-4 mr-2" /> Activate a safe segment
-          </Button>
-          <Button size="lg" variant="outline" onClick={() => navigate("/app/data-vault/upload")}>
-            <Upload className="h-4 w-4 mr-2" /> Upload contacts
-          </Button>
-          <Button size="lg" variant="outline" onClick={() => navigate("/app/campaigns/new")}>
-            <Wand2 className="h-4 w-4 mr-2" /> Create assets
-          </Button>
-          {latestCampaignId && (
-            <Button size="lg" variant="ghost" onClick={() => navigate(`/app/campaigns/${latestCampaignId}`)}>
-              Open latest campaign <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
-          )}
+        <div className="flex flex-wrap gap-2 mt-5">
+          <Button size="lg" onClick={() => navigate("/app/campaigns/copilot")}><Sparkles className="h-4 w-4 mr-2" /> First-Campaign Copilot</Button>
+          <Button size="lg" variant="outline" onClick={() => navigate("/app/activate")}><ShieldCheck className="h-4 w-4 mr-2" /> Prepare campaign leads</Button>
+          <Button size="lg" variant="outline" onClick={() => navigate("/app/data-vault/upload")}><Upload className="h-4 w-4 mr-2" /> Upload data</Button>
+          {workingCampaign && <Button size="lg" variant="ghost" onClick={() => navigate(`/app/campaigns/${workingCampaign.id}`)}>Open latest campaign <ArrowRight className="h-4 w-4 ml-2" /></Button>}
         </div>
       </div>
 
-
-
-      {/* Free Preview status + expiry nudges (renders nothing for paid plans) */}
       <FreePreviewStatusCard />
-
-      {/* A2. Guided first campaign launchpad — live status, next genuine blocker */}
       <FirstCampaignLaunchpad signals={launchpadSignals} />
+      <CampaignPreflight result={dashboardPreflight} title="Activation-preparation preflight" compact />
 
-      {/* A2b. Truthful outcome funnel — stored events only */}
-      <OutcomeFunnelPanel
-        leads={funnelLeads}
-        opportunities={funnelOpps}
-        campaigns={campaignNames}
-        filters={funnelFilters}
-        onFiltersChange={setFunnelFilters}
-      />
-
-      {/* A3. Preflight scorecard for the working campaign */}
-      <CampaignPreflight result={dashboardPreflight} title="Sender & campaign preflight" compact />
-
-
-
-      {/* B. Database Health */}
-      <SectionHeader
-        icon={Database}
-        title="Database Health (AI quality review)"
-        desc="AI flags what's clean, risky, duplicated or blocked. You decide what's safe to activate. Contacts and companies are shown for the active workspace via its imports."
-        cta={{ label: "Review data", to: "/app/data-vault" }}
-      />
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-        <BigStat label="Contacts" value={vault.total_contacts} icon={Users} tone="default" />
-        <BigStat label="Companies" value={vault.total_companies} icon={Briefcase} tone="default" />
-        <BigStat label="Imports" value={vault.imports} icon={Upload} tone="default" />
-        <BigStat label="Clean" value={vault.clean} icon={CheckCircle2} tone="good" />
-        <BigStat label="AI-ready segment" value={vault.safe_to_activate} icon={ShieldCheck} tone="good" />
-        <BigStat label="Needs review" value={vault.needs_review} icon={AlertTriangle} tone="warn" />
-        <BigStat label="Risky" value={vault.risky} icon={AlertTriangle} tone="warn" />
-        <BigStat label="Blocked / suppressed" value={vault.blocked} icon={AlertTriangle} tone="danger" />
-        <BigStat label="Duplicates" value={vault.duplicates} icon={AlertTriangle} tone="warn" />
-        <div className="col-span-2 md:col-span-3 lg:col-span-1">
-          <Card className="h-full bg-primary/5 border-primary/30">
-            <CardContent className="p-4 flex flex-col justify-between h-full">
-              <div className="text-xs font-medium text-primary">Recommended</div>
-              <div className="text-sm mt-1">Activate <b>{vault.safe_to_activate}</b> safe contacts now.</div>
-              <Button size="sm" className="mt-2" onClick={() => navigate("/app/activate")}>Activate <ArrowRight className="h-3.5 w-3.5 ml-1" /></Button>
-            </CardContent>
-          </Card>
+      <Section title="Data Vault" icon={Database} description="Workspace quality labels support review; they do not establish lawful basis or legal approval." link="/app/data-vault" linkLabel="Review data">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+          <Stat label="Contacts" value={vault.contacts} icon={Users} />
+          <Stat label="Companies" value={vault.companies} icon={Briefcase} />
+          <Stat label="Imports" value={vault.imports} icon={Upload} />
+          <Stat label="Eligible under checks" value={vault.eligible} icon={CheckCircle2} tone="good" />
+          <Stat label="Needs review" value={vault.review} icon={AlertTriangle} tone="warn" />
+          <Stat label="Risky" value={vault.risky} icon={AlertTriangle} tone="warn" />
+          <Stat label="Blocked / suppressed" value={vault.blocked} icon={AlertTriangle} tone="danger" />
         </div>
-      </div>
+      </Section>
 
-      {/* C. Activation Readiness + Send Safety Engine */}
-      <SectionHeader
-        icon={ShieldCheck}
-        title="Activation Readiness & Send Safety (governed AI activation)"
-        desc="Store generously. Activate carefully. Sender verification and daily caps gate every send — you approve activation."
-        cta={{ label: "Open pre-flight", to: "/app/activate" }}
-      />
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2">
-          <SendSafetyPanel s={safety} used={sendsUsedToday} scheduled={sendsScheduledToday} />
+      <Section title="Sending readiness" icon={Send} description="Live sending is separate from activation preparation. Paid-plan ceilings, mailbox state and safety checks govern each real send." link="/app/settings/email" linkLabel="Email settings">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-2"><SendSafetyPanel s={safety} used={usedToday} scheduled={scheduledToday} /></div>
+          <SenderStatusCard state={sender} health={safety.health} scheduledToday={scheduledToday} fromEmail={senderEmail} connectionId={senderConnectionId} detail={senderDetail} />
         </div>
-        <SenderStatusCard state={sender} health={safety.health} scheduledToday={sendsScheduledToday} fromEmail={senderEmail} connectionId={senderConnectionId} detail={senderDetail} />
-      </div>
+      </Section>
 
-      {/* C2. Campaign cadence / upcoming activity */}
-      <SectionHeader
-        icon={Clock}
-        title="Campaign cadence & upcoming activity"
-        desc="Your outreach rhythm — what's running, what's next, what needs attention."
-        cta={{ label: "Open campaigns", to: "/app/campaigns" }}
-      />
-      <CadenceSection rows={campaignRows} navigate={navigate} />
+      <Section title="Campaign cadence" icon={Clock} description="Cadence dates organise recurring work on eligible plans. Every run remains customer-controlled." link="/app/campaigns" linkLabel="Open campaigns">
+        {campaigns.length === 0 ? <Empty text="No campaigns yet." action="Create campaign" onClick={() => navigate("/app/campaigns/new")} /> : (
+          <div className="grid md:grid-cols-2 gap-3">
+            {campaigns.slice(0, 6).map((c) => (
+              <Card key={c.id} className="cursor-pointer hover:border-primary/40" onClick={() => navigate(`/app/campaigns/${c.id}`)}>
+                <CardContent className="p-4 flex items-start justify-between gap-3">
+                  <div><div className="font-medium">{c.name}</div><div className="text-xs text-muted-foreground mt-1">{CADENCE_LABELS[c.cadence_type || "one_off"]} · {nextActionLabel({ next_run_at: c.next_run_at, start_at: c.start_at, cadence_type: c.cadence_type || "one_off", cadence_end_at: c.cadence_end_at, timezone: c.timezone || "UTC" } as any)}</div></div>
+                  <Badge variant="outline">{c.status || "draft"}</Badge>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </Section>
 
+      <Section title="Replies and follow-up" icon={MessageSquare} description="Reply records available to the workspace, plus customer-controlled follow-up and triage." link="/app/follow-up" linkLabel="Open follow-up">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <Stat label="Replies needing action" value={commercial.replies} icon={MessageSquare} tone="warn" />
+          <Stat label="Due / overdue" value={commercial.followups} icon={Mail} tone="warn" />
+          <Stat label="Warm / replied" value={commercial.warm} icon={TrendingUp} tone="good" />
+          <Stat label="Bounces / failed" value={commercial.bounces} icon={AlertTriangle} tone="danger" />
+        </div>
+        <div className="mt-3"><FollowUpReminders /></div>
+      </Section>
 
+      <Section title="Pipeline and recorded outcomes" icon={TrendingUp} description="Stored opportunity records only — no automated attribution, benchmark or revenue guarantee." link="/app/pipeline" linkLabel="Open pipeline">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-4">
+          <Stat label="Leads" value={commercial.leads} icon={Users} />
+          <Stat label="Opportunities" value={commercial.opportunities} icon={Briefcase} />
+          <Stat label="Open value" value={`£${commercial.pipelineValue.toLocaleString()}`} icon={TrendingUp} />
+          <Stat label="Stuck 14d+" value={commercial.stuck} icon={AlertTriangle} tone="warn" />
+          <Stat label="Actions overdue" value={commercial.overdueActions} icon={Clock} tone="danger" />
+          <Stat label="Recorded won" value={commercial.won} icon={CheckCircle2} tone="good" />
+        </div>
+        <OutcomeFunnelPanel leads={funnelLeads} opportunities={funnelOpps} campaigns={campaignNames} filters={filters} onFiltersChange={setFilters} />
+      </Section>
 
-      {/* D. Create outreach assets */}
-      <SectionHeader
-        icon={Sparkles}
-        title="Create AI-assisted outreach assets"
-        desc="AI drafts your outreach from your data and brief. You review, edit and approve before anything is sent."
-        cta={{ label: "Create assets from my data", to: "/app/campaigns/new" }}
-      />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <AssetCard icon={Megaphone} title="Social media pack" desc="Launch posts, follow-ups, hooks, CTAs and platform variants." onClick={() => navigate("/app/campaigns/new?focus=social")} />
-        <AssetCard icon={Mail} title="Email sequence" desc="Structured outreach and follow-up emails ready for activation." onClick={() => navigate("/app/campaigns/new?focus=email")} />
-        <AssetCard icon={Newspaper} title="Press release" desc="Announcement copy ready for outreach and publicity." onClick={() => navigate("/app/campaigns/new?focus=press")} />
-        <AssetCard icon={Video} title="Video pack" desc="Scripts, hooks, shot list and CTA endings." onClick={() => navigate("/app/campaigns/new?focus=video")} />
-        <AssetCard icon={FileText} title="Landing page copy" desc="Conversion-focused page structure for this audience." onClick={() => navigate("/app/campaigns/new?focus=landing")} />
-        <AssetCard icon={MessageSquare} title="Offer / follow-up copy" desc="Reply-ready follow-ups and offer messaging." onClick={() => navigate("/app/campaigns/new?focus=followup")} />
-      </div>
-
-      {/* E. Replies and follow-up */}
-      <SectionHeader
-        icon={MessageSquare}
-        title="Replies and follow-up (AI follow-up suggestions)"
-        desc="Who replied, who's overdue, what's warm. AI drafts next-step follow-ups — you approve every send."
-        cta={{ label: "Open follow-up queue", to: "/app/follow-up" }}
-      />
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <Link to="/app/follow-up?tab=replied"><BigStat label="Replies need action" value={inter.replies_due} icon={MessageSquare} tone="warn" /></Link>
-        <Link to="/app/follow-up?tab=overdue"><BigStat label="Follow-ups due / overdue" value={inter.followups_today} icon={Mail} tone="warn" /></Link>
-        <Link to="/app/follow-up?tab=warm"><BigStat label="Warm contacts" value={inter.warm} icon={Zap} tone="good" /></Link>
-        <Link to="/app/follow-up?tab=dormant"><BigStat label="Dormant" value={inter.dormant} icon={AlertTriangle} /></Link>
-        <Link to="/app/follow-up?tab=bounced"><BigStat label="Bounces" value={inter.bounces} icon={AlertTriangle} tone="danger" /></Link>
-      </div>
-      <FollowUpReminders />
-
-      {/* F. Leads & early pipeline */}
-      <SectionHeader
-        icon={TrendingUp}
-        title="Leads & early pipeline"
-        desc="Track replies, warm contacts and early opportunities before sales handoff. Pipeline visibility, not CRM bloat."
-        cta={{ label: "Open pipeline", to: "/app/pipeline" }}
-      />
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
-        <BigStat label="Leads" value={pipeline.leads} icon={Users} />
-        <BigStat label="Opportunities" value={pipeline.opportunities} icon={Briefcase} />
-        <BigStat label="Pipeline value" value={`£${pipeline.pipeline_value.toLocaleString()}`} icon={TrendingUp} tone="good" />
-        <BigStat label="Stuck 14d+" value={pipeline.stuck} icon={AlertTriangle} tone="warn" />
-        <BigStat label="Actions overdue" value={pipeline.next_action_due} icon={Clock} tone="danger" />
-        <BigStat label="Won" value={pipeline.won} icon={CheckCircle2} tone="good" />
-      </div>
-      {Object.keys(pipeline.by_stage).length > 0 && (
-        <Card>
-          <CardContent className="p-4">
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-2 text-sm">
-              {Object.entries(pipeline.by_stage).map(([k, v]) => (
-                <div key={k} className="rounded-md border border-border p-2">
-                  <div className="text-xs text-muted-foreground capitalize">{k.replace(/_/g, " ")}</div>
-                  <div className="text-lg font-bold">{v}</div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* G. Next best actions */}
-      <SectionHeader icon={Wand2} title="What should I do next?" desc="Smart recommendations based on your data and pipeline." />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        {buildNextActions(vault, inter, pipeline, remaining).map((a, i) => (
-          <Card key={i} className="hover:shadow-md transition cursor-pointer" onClick={() => navigate(a.to)}>
-            <CardContent className="p-4 flex items-start gap-3">
-              <div className={`h-9 w-9 rounded-md flex items-center justify-center ${a.toneClass}`}>
-                <a.icon className="h-4 w-4" />
-              </div>
-              <div className="flex-1">
-                <div className="font-medium text-sm">{a.title}</div>
-                <div className="text-xs text-muted-foreground mt-0.5">{a.desc}</div>
-              </div>
-              <ArrowRight className="h-4 w-4 text-muted-foreground self-center" />
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <Section title="Next actions" icon={Wand2} description="Suggested navigation based on stored workspace state. You decide what to do next.">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {buildActions(vault, commercial, remaining, safety.remainingToday, plan).map((a) => (
+            <Card key={a.title} className="cursor-pointer hover:border-primary/40" onClick={() => navigate(a.to)}>
+              <CardContent className="p-4 flex gap-3"><a.icon className="h-5 w-5 text-primary mt-0.5" /><div><div className="font-medium text-sm">{a.title}</div><div className="text-xs text-muted-foreground mt-1">{a.desc}</div></div><ArrowRight className="h-4 w-4 text-muted-foreground ml-auto self-center" /></CardContent>
+            </Card>
+          ))}
+        </div>
+      </Section>
 
       <CreditMeter />
 
-      {/* Foundations / nav */}
-      <SectionHeader icon={LayoutTemplate} title="Workspace" desc="Everything else, one click away." />
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-        {[
-          { title: "Data Vault", icon: Database, to: "/app/data-vault" },
-          { title: "Campaigns", icon: FolderOpen, to: "/app/campaigns" },
-          { title: "Leads & pipeline", icon: Users, to: "/app/leads" },
-          { title: "Performance", icon: BarChart3, to: "/app/performance" },
-          { title: "Templates", icon: LayoutTemplate, to: "/app/templates" },
-          { title: "Workspaces", icon: Briefcase, to: "/app/workspaces" },
-          { title: "Billing", icon: Settings, to: "/app/billing" },
-          { title: "Settings", icon: Settings, to: "/app/settings" },
-        ].map((c) => (
-          <Link key={c.to} to={c.to}>
-            <Card className="h-full hover:shadow-md transition">
-              <CardContent className="p-4 flex items-center gap-3">
-                <c.icon className="h-5 w-5 text-primary" />
-                <span className="font-medium text-sm">{c.title}</span>
-                <ArrowRight className="h-4 w-4 text-muted-foreground ml-auto" />
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-      </div>
+      <Section title="Workspace" icon={FolderOpen}>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {[
+            ["Data Vault", "/app/data-vault", Database], ["Campaigns", "/app/campaigns", Rocket],
+            ["Follow-Up", "/app/follow-up", MessageSquare], ["Pipeline", "/app/pipeline", TrendingUp],
+            ["Performance", "/app/performance", BarChart3], ["Workspaces", "/app/workspaces", Briefcase],
+            ["Billing", "/app/billing", Settings], ["Settings", "/app/settings", Settings],
+          ].map(([label, to, Icon]: any[]) => <Link key={to} to={to}><Card className="h-full hover:border-primary/40"><CardContent className="p-4 flex items-center gap-2"><Icon className="h-4 w-4 text-primary" /><span className="text-sm font-medium">{label}</span><ArrowRight className="h-3.5 w-3.5 ml-auto text-muted-foreground" /></CardContent></Card></Link>)}
+        </div>
+      </Section>
     </div>
   );
 }
 
-/* ---------- Sub-components ---------- */
-
-function SectionHeader({ icon: Icon, title, desc, cta }: { icon: any; title: string; desc?: string; cta?: { label: string; to: string } }) {
-  return (
-    <div className="flex items-end justify-between gap-3 mt-2">
-      <div>
-        <h2 className="text-xl font-semibold tracking-tight flex items-center gap-2">
-          <Icon className="h-5 w-5 text-primary" /> {title}
-        </h2>
-        {desc && <p className="text-sm text-muted-foreground mt-0.5">{desc}</p>}
-      </div>
-      {cta && (
-        <Button variant="ghost" size="sm" asChild>
-          <Link to={cta.to}>{cta.label} <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
-        </Button>
-      )}
-    </div>
-  );
+function Section({ title, icon: Icon, description, link, linkLabel, children }: { title: string; icon: any; description?: string; link?: string; linkLabel?: string; children: React.ReactNode }) {
+  return <section className="space-y-3"><div className="flex items-end justify-between gap-3"><div><h2 className="text-xl font-semibold flex items-center gap-2"><Icon className="h-5 w-5 text-primary" />{title}</h2>{description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}</div>{link && <Button variant="ghost" size="sm" asChild><Link to={link}>{linkLabel || "Open"}<ArrowRight className="h-3.5 w-3.5 ml-1" /></Link></Button>}</div>{children}</section>;
 }
 
 function PillStat({ label, value, hint }: { label: string; value: number | string; hint?: string }) {
-  return (
-    <div className="rounded-lg border border-border bg-background/60 px-3 py-2 text-center">
-      <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div>
-      <div className="text-xl font-bold">{value}</div>
-      {hint && <div className="text-[10px] text-muted-foreground">{hint}</div>}
-    </div>
-  );
+  return <div className="rounded-lg border bg-background/70 px-3 py-2 text-center"><div className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div><div className="text-xl font-bold">{value}</div>{hint && <div className="text-[10px] text-muted-foreground">{hint}</div>}</div>;
 }
 
-const TONE: Record<string, string> = {
-  default: "text-foreground",
-  good: "text-emerald-600",
-  warn: "text-amber-600",
-  danger: "text-rose-600",
-};
-
-function BigStat({ label, value, icon: Icon, tone = "default" }: { label: string; value: number | string; icon?: any; tone?: keyof typeof TONE }) {
-  return (
-    <Card>
-      <CardContent className="p-4">
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          {Icon && <Icon className="h-3.5 w-3.5" />}{label}
-        </div>
-        <div className={`text-2xl font-bold mt-1 ${TONE[tone]}`}>{value}</div>
-      </CardContent>
-    </Card>
-  );
+function Stat({ label, value, icon: Icon, tone }: { label: string; value: number | string; icon?: any; tone?: "good" | "warn" | "danger" }) {
+  const cls = tone === "good" ? "text-emerald-600" : tone === "warn" ? "text-amber-600" : tone === "danger" ? "text-rose-600" : "";
+  return <Card><CardContent className="p-4"><div className="flex items-center gap-1.5 text-xs text-muted-foreground">{Icon && <Icon className="h-3.5 w-3.5" />}{label}</div><div className={`text-2xl font-bold mt-1 ${cls}`}>{value}</div></CardContent></Card>;
 }
 
-function MiniStat({ label, value, tone = "default" }: { label: string; value: number | string; tone?: keyof typeof TONE }) {
-  return (
-    <div className="rounded-md border border-border p-2">
-      <div className="text-[11px] text-muted-foreground">{label}</div>
-      <div className={`text-lg font-bold ${TONE[tone]}`}>{value}</div>
-    </div>
-  );
+function Empty({ text, action, onClick }: { text: string; action: string; onClick: () => void }) {
+  return <Card><CardContent className="p-5 flex items-center justify-between gap-3"><p className="text-sm text-muted-foreground">{text}</p><Button size="sm" onClick={onClick}>{action}</Button></CardContent></Card>;
 }
 
-function AssetCard({ icon: Icon, title, desc, onClick }: { icon: any; title: string; desc: string; onClick: () => void }) {
-  return (
-    <Card className="hover:shadow-md transition cursor-pointer h-full" onClick={onClick}>
-      <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
-          <div className="h-9 w-9 rounded-md bg-primary/10 text-primary flex items-center justify-center">
-            <Icon className="h-5 w-5" />
-          </div>
-          <ArrowRight className="h-4 w-4 text-muted-foreground" />
-        </div>
-        <CardTitle className="text-base mt-2">{title}</CardTitle>
-        <CardDescription className="text-xs">{desc}</CardDescription>
-      </CardHeader>
-    </Card>
-  );
+function buildActions(v: VaultStats, c: CommercialStats, credits: number, sendsRemaining: number, plan: PlanId) {
+  const actions: Array<{ title: string; desc: string; to: string; icon: any }> = [];
+  if (v.contacts === 0) actions.push({ title: "Upload authorised business data", desc: "Start the Data Vault review workflow.", to: "/app/data-vault/upload", icon: Upload });
+  if (v.review > 0) actions.push({ title: `Review ${v.review} flagged record${v.review === 1 ? "" : "s"}`, desc: "Resolve incomplete or ambiguous data before activation preparation.", to: "/app/data-vault", icon: ShieldCheck });
+  if (v.eligible > 0) actions.push({ title: `Prepare up to ${v.eligible} eligible record${v.eligible === 1 ? "" : "s"}`, desc: "Activation preparation creates campaign leads; it does not send email or spend Campaign Credits.", to: "/app/activate", icon: ShieldCheck });
+  if (c.replies > 0) actions.push({ title: `${c.replies} repl${c.replies === 1 ? "y" : "ies"} need attention`, desc: "Review the stored reply queue and choose the next action.", to: "/app/follow-up", icon: MessageSquare });
+  if (c.overdueActions > 0) actions.push({ title: `${c.overdueActions} opportunity action${c.overdueActions === 1 ? "" : "s"} overdue`, desc: "Update the recorded pipeline next action.", to: "/app/pipeline", icon: Clock });
+  if (credits <= 0) actions.push({ title: "Campaign Credits unavailable", desc: plan === "free_preview" ? "Free Preview remains capped at one full pack; compare paid plans for further full-pack generation." : "Add eligible paid-workspace credits or change plan before the next full campaign-pack generation.", to: "/app/billing", icon: Sparkles });
+  if (sendsRemaining <= 0 && plan !== "free_preview") actions.push({ title: "No send allowance currently available", desc: "Review mailbox and send-safety status before attempting a real send.", to: "/app/settings/email", icon: Send });
+  if (actions.length === 0) actions.push({ title: "Open your latest campaign", desc: "Review content, replies, cadence and recorded outcomes.", to: "/app/campaigns", icon: Rocket });
+  return actions.slice(0, 8);
 }
-
-function buildNextActions(v: VaultStats, i: InteractionStats, p: PipelineStats, credits: number) {
-  const acts: Array<{ title: string; desc: string; icon: any; to: string; toneClass: string }> = [];
-  // Credit truthfulness: differentiate no-plan / exhausted / low.
-  if (credits <= 0) acts.push({ title: "No campaign credits available", desc: "Choose a plan or buy a top-up to keep generating.", icon: Zap, to: "/app/billing", toneClass: "bg-rose-100 text-rose-700" });
-  else if (credits < 20) acts.push({ title: "Credits running low", desc: "Top up so activation isn't interrupted.", icon: Zap, to: "/app/billing", toneClass: "bg-amber-100 text-amber-700" });
-  if (v.total_contacts === 0) acts.push({ title: "Upload your first contact list", desc: "Get data into the vault to unlock activation.", icon: Upload, to: "/app/data-vault/upload", toneClass: "bg-primary/10 text-primary" });
-  if (v.total_contacts > 0 && v.clean + v.needs_review + v.risky + v.blocked === 0) acts.push({ title: "Review data quality", desc: "AI flags what's safe to activate.", icon: ShieldCheck, to: "/app/data-vault", toneClass: "bg-primary/10 text-primary" });
-  if (i.replies_due > 0) acts.push({ title: `${i.replies_due} replies need action`, desc: "Respond to warm replies before they cool.", icon: MessageSquare, to: "/app/follow-up?tab=replied", toneClass: "bg-emerald-100 text-emerald-700" });
-  if (i.followups_today > 0) acts.push({ title: `${i.followups_today} follow-ups due / overdue`, desc: "Catch up your outreach queue.", icon: Mail, to: "/app/follow-up?tab=overdue", toneClass: "bg-amber-100 text-amber-700" });
-  if (i.warm > 0) acts.push({ title: `${i.warm} warm contacts ready for pipeline`, desc: "Move qualified leads into opportunities.", icon: TrendingUp, to: "/app/follow-up?tab=warm", toneClass: "bg-primary/10 text-primary" });
-  if (p.stuck > 0) acts.push({ title: `${p.stuck} deals stuck 14+ days`, desc: "Unblock or update next-action dates.", icon: AlertTriangle, to: "/app/pipeline", toneClass: "bg-amber-100 text-amber-700" });
-  if (p.next_action_due > 0) acts.push({ title: `${p.next_action_due} opportunity actions overdue`, desc: "Chase proposals and negotiations.", icon: Clock, to: "/app/pipeline", toneClass: "bg-rose-100 text-rose-700" });
-  if (v.risky > 0) acts.push({ title: `Review ${v.risky} risky contacts`, desc: "Decide what's safe to activate.", icon: AlertTriangle, to: "/app/data-vault", toneClass: "bg-amber-100 text-amber-700" });
-  if (v.safe_to_activate > 0) acts.push({ title: `Send to ${Math.min(50, v.safe_to_activate)} safe contacts`, desc: "Activate a warm segment today.", icon: Send, to: "/app/activate", toneClass: "bg-emerald-100 text-emerald-700" });
-  if (acts.length === 0) acts.push({ title: "Authenticate sender domain", desc: "Improve deliverability with SPF / DKIM.", icon: ShieldCheck, to: "/app/settings/email", toneClass: "bg-primary/10 text-primary" });
-  return acts.slice(0, 9);
-}
-
-function CadenceSection({ rows, navigate }: { rows: CadenceRow[]; navigate: (to: string) => void }) {
-  if (rows.length === 0) {
-    return (
-      <Card>
-        <CardContent className="p-6 text-sm text-muted-foreground flex items-center justify-between gap-3">
-          <span>No campaigns scheduled yet. Set a cadence to make this workspace run on rhythm.</span>
-          <Button size="sm" onClick={() => navigate("/app/campaigns/new")}>
-            <Rocket className="h-4 w-4 mr-2" /> Start a campaign
-          </Button>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  const now = Date.now();
-  const dayMs = 86_400_000;
-  const enriched = rows.map((r) => {
-    const lc = deriveLifecycle(r.status, {
-      cadence_type: (r.cadence_type || "one_off") as CadenceType,
-      start_at: r.start_at, cadence_end_at: r.cadence_end_at,
-    }, r.runs_completed || 0);
-    const nextMs = r.next_run_at ? new Date(r.next_run_at).getTime() : r.start_at ? new Date(r.start_at).getTime() : Infinity;
-    const endMs = r.cadence_end_at ? new Date(r.cadence_end_at).getTime() : Infinity;
-    return { r, lc, nextMs, endMs };
-  });
-
-  const startingSoon = enriched.filter((x) => x.lc === "scheduled" && x.nextMs - now <= 14 * dayMs).sort((a, b) => a.nextMs - b.nextMs).slice(0, 5);
-  const dueNext = enriched.filter((x) => x.lc === "active" && isFinite(x.nextMs) && x.nextMs - now <= 14 * dayMs).sort((a, b) => a.nextMs - b.nextMs).slice(0, 5);
-  const endingSoon = enriched.filter((x) => x.lc !== "completed" && x.lc !== "expired" && isFinite(x.endMs) && x.endMs - now <= 14 * dayMs && x.endMs >= now).sort((a, b) => a.endMs - b.endMs).slice(0, 5);
-  const paused = enriched.filter((x) => x.lc === "paused").slice(0, 5);
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <CadenceList icon={Rocket} title="Starting soon" empty="Nothing scheduled in the next 14 days." items={startingSoon} action="Review" navigate={navigate} />
-      <CadenceList icon={Repeat} title="Due for next run" empty="No recurring runs due in the next 14 days." items={dueNext} action="Open" navigate={navigate} />
-      <CadenceList icon={RefreshCw} title="Ending soon" empty="No campaigns expiring in the next 14 days." items={endingSoon} action="Extend" navigate={navigate} />
-      <CadenceList icon={Pause} title="Paused" empty="No paused campaigns." items={paused} action="Resume" navigate={navigate} />
-    </div>
-  );
-}
-
-function CadenceList({
-  icon: Icon, title, empty, items, action, navigate,
-}: {
-  icon: any; title: string; empty: string;
-  items: { r: CadenceRow; lc: keyof typeof LIFECYCLE_TONE }[];
-  action: string; navigate: (to: string) => void;
-}) {
-  return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base flex items-center gap-2"><Icon className="h-4 w-4 text-primary" />{title}</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-2">
-        {items.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{empty}</p>
-        ) : items.map(({ r, lc }) => {
-          const tone = LIFECYCLE_TONE[lc];
-          return (
-            <div key={r.id} className="flex items-start justify-between gap-3 p-2 rounded-md border border-border">
-              <div className="min-w-0 flex-1">
-                <div className="text-sm font-medium truncate">{r.name}</div>
-                <div className="text-xs text-muted-foreground mt-0.5">
-                  {CADENCE_LABELS[(r.cadence_type || "one_off") as CadenceType]} · {nextActionLabel({
-                    next_run_at: r.next_run_at, start_at: r.start_at,
-                    cadence_type: (r.cadence_type || "one_off") as CadenceType,
-                    cadence_end_at: r.cadence_end_at, timezone: r.timezone || "UTC",
-                  } as any)}
-                </div>
-              </div>
-              <div className="flex flex-col items-end gap-1">
-                <Badge className={tone.cls}>{tone.label}</Badge>
-                <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={() => navigate(`/app/campaigns/${r.id}`)}>{action} <ArrowRight className="h-3 w-3 ml-1" /></Button>
-              </div>
-            </div>
-          );
-        })}
-      </CardContent>
-    </Card>
-  );
-}
-
