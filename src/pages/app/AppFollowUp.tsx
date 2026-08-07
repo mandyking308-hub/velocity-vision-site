@@ -8,11 +8,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import LeadActionPanel, { type ActionLead } from "@/components/app/LeadActionPanel";
-import { bucketCounts, deriveFollowUpState, STATE_LABEL, STATE_TONE, type FollowUpState } from "@/lib/leadStates";
-import { MessageSquare, Mail, AlertTriangle, Zap, Flame, Snowflake, Filter, RefreshCw, Send, Upload } from "lucide-react";
+import { bucketCounts, deriveFollowUpState, type FollowUpState } from "@/lib/leadStates";
+import { MessageSquare, Mail, AlertTriangle, Zap, Flame, Snowflake, Filter, RefreshCw, Send, Upload, Inbox } from "lucide-react";
 import JourneyEmptyState from "@/components/app/JourneyEmptyState";
 import ReplyCommandCentre from "@/components/app/ReplyCommandCentre";
-import { Inbox } from "lucide-react";
 
 const TAB_KEYS: { id: "action" | "triage" | FollowUpState; labelKey: string; icon: any }[] = [
   { id: "action", labelKey: "needsAction", icon: AlertTriangle },
@@ -53,24 +52,13 @@ export default function AppFollowUp() {
   useEffect(() => { load(); }, [currentId]);
 
   const counts = useMemo(() => bucketCounts(leads), [leads]);
-  const needsAction = useMemo(
-    () => leads.filter((l) => ["overdue", "due", "replied"].includes(deriveFollowUpState(l))),
-    [leads]
-  );
-
-  // Triage queue: anything that has replied or already carries a reply record,
-  // untriaged first so nothing sits unread.
-  const triageQueue = useMemo(
-    () => leads
-      .filter((l: any) => l.replied_at || l.reply_category || deriveFollowUpState(l) === "replied")
-      .sort((a: any, b: any) => (a.reply_triaged_at ? 1 : 0) - (b.reply_triaged_at ? 1 : 0)),
-    [leads],
-  );
+  const needsAction = useMemo(() => leads.filter((l) => ["overdue", "due", "replied"].includes(deriveFollowUpState(l))), [leads]);
+  const triageQueue = useMemo(() => leads
+    .filter((l: any) => l.replied_at || l.reply_category || deriveFollowUpState(l) === "replied")
+    .sort((a: any, b: any) => (a.reply_triaged_at ? 1 : 0) - (b.reply_triaged_at ? 1 : 0)), [leads]);
 
   const filtered = useMemo(() => {
-    const base = tab === "action" ? needsAction
-      : tab === "triage" ? triageQueue
-      : leads.filter((l) => deriveFollowUpState(l) === tab);
+    const base = tab === "action" ? needsAction : tab === "triage" ? triageQueue : leads.filter((l) => deriveFollowUpState(l) === tab);
     return base
       .filter((l) => (campaign === "all" ? true : l.campaign_id === campaign))
       .filter((l) => {
@@ -83,17 +71,14 @@ export default function AppFollowUp() {
   if (!loading && leads.length === 0) {
     return (
       <div className="space-y-5 max-w-7xl">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t("followUp.title")}</h1>
-          <p className="text-muted-foreground">{t("followUp.subtitle")}</p>
-        </div>
+        <div><h1 className="text-3xl font-bold tracking-tight">{t("followUp.title")}</h1><p className="text-muted-foreground">{t("followUp.subtitle")}</p></div>
         <JourneyEmptyState
           icon={MessageSquare}
           flow="Step 4 of the journey — Activate → Reply → Pipeline"
           title={t("followUp.empty.title")}
           description={t("followUp.empty.description")}
           steps={[
-            { to: "/app/activate", label: "Activate a safe segment", icon: Send },
+            { to: "/app/activate", label: "Prepare an eligible segment", icon: Send },
             { to: "/app/data-vault/upload", label: "Upload contacts first", icon: Upload },
             { to: "/app/campaigns", label: "View campaigns", variant: "ghost" },
           ]}
@@ -105,17 +90,15 @@ export default function AppFollowUp() {
   return (
     <div className="space-y-5 max-w-7xl">
       <div className="flex items-end justify-between gap-3">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t("followUp.title")}</h1>
-          <p className="text-muted-foreground">{t("followUp.subtitle")}</p>
-        </div>
+        <div><h1 className="text-3xl font-bold tracking-tight">{t("followUp.title")}</h1><p className="text-muted-foreground">{t("followUp.subtitle")}</p></div>
         <Button variant="outline" size="sm" onClick={load}><RefreshCw className="h-4 w-4 mr-1" /> {tc("actions.refresh")}</Button>
       </div>
 
       <Card className="border-primary/20 bg-primary/5">
         <CardContent className="p-3 text-xs text-muted-foreground space-y-1">
-          <p><strong className="text-foreground">Replies return to your connected inbox.</strong> Inbound reply sync: <Badge variant="outline" className="ml-1">coming next</Badge></p>
-          <p>Use the action queue to track what needs follow-up. Promote warm replies into pipeline when ready — nothing is moved into pipeline automatically without your approval.</p>
+          <p><strong className="text-foreground">Reply handling depends on the connected sender/provider.</strong></p>
+          <p>Use this workspace to triage replies that are recorded or synced. Check the connected inbox when completeness matters; do not assume every inbound message has been captured here.</p>
+          <p>Promote a warm reply into pipeline only when you choose to — nothing is moved automatically without customer action.</p>
         </CardContent>
       </Card>
 
@@ -131,18 +114,10 @@ export default function AppFollowUp() {
 
       <div className="flex flex-wrap items-center gap-2 border-b">
         {TAB_KEYS.map((tk) => {
-          const n = tk.id === "action" ? needsAction.length
-            : tk.id === "triage" ? triageQueue.length
-            : counts[tk.id as FollowUpState];
+          const n = tk.id === "action" ? needsAction.length : tk.id === "triage" ? triageQueue.length : counts[tk.id as FollowUpState];
           const active = tab === tk.id;
           return (
-            <button
-              key={tk.id}
-              onClick={() => setTab(tk.id)}
-              className={`flex items-center gap-1.5 px-3 py-2 text-sm border-b-2 -mb-px transition ${
-                active ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"
-              }`}
-            >
+            <button key={tk.id} onClick={() => setTab(tk.id)} className={`flex items-center gap-1.5 px-3 py-2 text-sm border-b-2 -mb-px transition ${active ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
               <tk.icon className="h-4 w-4" /> {tk.id === "triage" ? "Reply triage" : t(`followUp.stats.${tk.labelKey}`)}
               <Badge variant="outline" className="ml-1 h-5">{n}</Badge>
             </button>
@@ -151,9 +126,7 @@ export default function AppFollowUp() {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <div className="flex-1 min-w-[200px]">
-          <Input placeholder={t("followUp.filters.search")} value={q} onChange={(e) => setQ(e.target.value)} />
-        </div>
+        <div className="flex-1 min-w-[200px]"><Input placeholder={t("followUp.filters.search")} value={q} onChange={(e) => setQ(e.target.value)} /></div>
         <Select value={campaign} onValueChange={setCampaign}>
           <SelectTrigger className="w-[220px]"><Filter className="h-4 w-4 mr-1" /><SelectValue /></SelectTrigger>
           <SelectContent>
@@ -168,36 +141,17 @@ export default function AppFollowUp() {
       ) : tab === "triage" ? (
         <ReplyCommandCentre leads={filtered as any} onChanged={load} />
       ) : filtered.length === 0 ? (
-        <Card><CardContent className="p-6 text-sm text-muted-foreground">
-          {tab === "action" ? t("followUp.empty.caughtUp") : t("followUp.empty.tryFilter")}
-        </CardContent></Card>
+        <Card><CardContent className="p-6 text-sm text-muted-foreground">{tab === "action" ? t("followUp.empty.caughtUp") : t("followUp.empty.tryFilter")}</CardContent></Card>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-          {filtered.map((l) => (
-            <LeadActionPanel
-              key={l.id}
-              lead={l}
-              onChanged={load}
-              campaignName={l.campaign_id ? campaigns[l.campaign_id] : null}
-            />
-          ))}
+          {filtered.map((l) => <LeadActionPanel key={l.id} lead={l} onChanged={load} campaignName={l.campaign_id ? campaigns[l.campaign_id] : null} />)}
         </div>
       )}
-
     </div>
   );
 }
 
-
-
-const TONE: Record<string, string> = {
-  default: "text-foreground", good: "text-emerald-600", warn: "text-amber-600", danger: "text-rose-600",
-};
+const TONE: Record<string, string> = { default: "text-foreground", good: "text-emerald-600", warn: "text-amber-600", danger: "text-rose-600" };
 function Stat({ label, value, tone = "default" }: { label: string; value: number; tone?: keyof typeof TONE }) {
-  return (
-    <Card><CardContent className="p-3">
-      <div className="text-[11px] uppercase text-muted-foreground">{label}</div>
-      <div className={`text-2xl font-bold ${TONE[tone]}`}>{value}</div>
-    </CardContent></Card>
-  );
+  return <Card><CardContent className="p-3"><div className="text-[11px] uppercase text-muted-foreground">{label}</div><div className={`text-2xl font-bold ${TONE[tone]}`}>{value}</div></CardContent></Card>;
 }
