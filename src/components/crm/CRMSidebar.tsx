@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Building2, Users, Target, TrendingUp,
-  CheckSquare, LogOut, ChevronLeft, ChevronRight, Globe, Megaphone, BarChart3, Crown, CreditCard, Shield, Scale, Book, Brain, LifeBuoy, MessageSquare
+  CheckSquare, LogOut, ChevronLeft, ChevronRight, Globe, Megaphone, BarChart3, Crown, CreditCard, Shield, Scale, Book, Brain, LifeBuoy, MessageSquare, Database, UserPlus
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
@@ -25,10 +25,16 @@ const navItems = [
   { label: "Feedback", path: "/crm/feedback", icon: MessageSquare },
 ];
 
+const demoNavItems = [
+  { label: "Demo Dashboard", path: "/demo/crm", icon: LayoutDashboard },
+  { label: "Data Vault Demo", path: "/demo/data-vault", icon: Database },
+];
+
 const CRMSidebar = () => {
   const location = useLocation();
   const { signOut, user } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
+  const isDemo = location.pathname.startsWith("/demo");
 
   const { data: roles } = useQuery({
     queryKey: ["sidebar-roles", user?.id],
@@ -37,121 +43,78 @@ const CRMSidebar = () => {
       const { data } = await supabase.from("user_roles").select("role").eq("user_id", user.id);
       return data?.map((r) => r.role) ?? [];
     },
-    enabled: !!user,
+    enabled: !!user && !isDemo,
   });
 
-  const showFounder = roles?.some((r) => r === "founder" || r === "admin") ?? false;
+  const showFounder = !isDemo && (roles?.some((r) => r === "founder" || r === "admin") ?? false);
+  const items = isDemo ? demoNavItems : navItems;
 
   return (
     <aside className={cn(
       "h-screen bg-primary border-r border-border/20 flex flex-col transition-all duration-300 sticky top-0",
       collapsed ? "w-16" : "w-60"
     )}>
-      {/* Logo */}
       <div className="p-4 flex items-center justify-between border-b border-primary-foreground/10">
         {!collapsed && (
-          <Link to="/crm" className="font-display text-lg font-bold text-primary-foreground">
-            Velocity<span className="text-accent">.</span>
+          <Link to={isDemo ? "/demo/crm" : "/crm"} className="font-display text-lg font-bold text-primary-foreground notranslate" translate="no">
+            Velocity<span className="text-accent"> Vision</span>{isDemo ? <span className="text-xs ml-2 font-normal text-primary-foreground/60">Demo</span> : null}
           </Link>
         )}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="text-primary-foreground/60 hover:text-primary-foreground p-1"
-        >
+        <button onClick={() => setCollapsed(!collapsed)} className="text-primary-foreground/60 hover:text-primary-foreground p-1" aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}>
           {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
         </button>
       </div>
 
-      {/* Nav */}
       <nav className="flex-1 py-4 space-y-1 px-2">
-        {navItems.map((item) => {
+        {items.map((item) => {
           const active = location.pathname === item.path;
           return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-                active
-                  ? "bg-accent text-accent-foreground"
-                  : "text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/5"
-              )}
-            >
+            <Link key={item.path} to={item.path} className={cn(
+              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+              active ? "bg-accent text-accent-foreground" : "text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/5"
+            )}>
               <item.icon size={18} className="shrink-0" />
               {!collapsed && <span>{item.label}</span>}
             </Link>
           );
         })}
+
         {showFounder && (
           <>
-            <Link
-              to="/crm/founder"
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors mt-2 border border-accent/20",
-                location.pathname === "/crm/founder"
-                  ? "bg-accent text-accent-foreground"
-                  : "text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/5"
-              )}
-            >
-              <Crown size={18} className="shrink-0" />
-              {!collapsed && <span>Founder View</span>}
-            </Link>
-            <Link
-              to="/crm/manual"
-              className={cn(
+            {[
+              ["Founder View", "/crm/founder", Crown],
+              ["Ops Manual", "/crm/manual", Book],
+              ["Monetisation", "/crm/monetisation", CreditCard],
+              ["Intelligence", "/crm/intelligence", Brain],
+            ].map(([label, path, Icon]) => (
+              <Link key={path as string} to={path as string} className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors border border-accent/20",
-                location.pathname === "/crm/manual"
-                  ? "bg-accent text-accent-foreground"
-                  : "text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/5"
-              )}
-            >
-              <Book size={18} className="shrink-0" />
-              {!collapsed && <span>Ops Manual</span>}
-            </Link>
-            <Link
-              to="/crm/monetisation"
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors border border-accent/20",
-                location.pathname === "/crm/monetisation"
-                  ? "bg-accent text-accent-foreground"
-                  : "text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/5"
-              )}
-            >
-              <CreditCard size={18} className="shrink-0" />
-              {!collapsed && <span>Monetisation</span>}
-            </Link>
-            <Link
-              to="/crm/intelligence"
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors border border-accent/20",
-                location.pathname === "/crm/intelligence"
-                  ? "bg-accent text-accent-foreground"
-                  : "text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/5"
-              )}
-            >
-              <Brain size={18} className="shrink-0" />
-              {!collapsed && <span>Intelligence</span>}
-            </Link>
+                location.pathname === path ? "bg-accent text-accent-foreground" : "text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/5"
+              )}>
+                <Icon size={18} className="shrink-0" />
+                {!collapsed && <span>{label as string}</span>}
+              </Link>
+            ))}
           </>
         )}
       </nav>
 
-      {/* Bottom */}
       <div className="p-2 border-t border-primary-foreground/10 space-y-1">
-        <Link
-          to="/"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/5 transition-colors"
-        >
+        <Link to="/" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/5 transition-colors">
           <Globe size={18} className="shrink-0" />
           {!collapsed && <span>Public Site</span>}
         </Link>
-        <button
-          onClick={signOut}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/5 transition-colors w-full"
-        >
-          <LogOut size={18} className="shrink-0" />
-          {!collapsed && <span>Sign Out</span>}
-        </button>
+        {isDemo ? (
+          <Link to="/auth" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/5 transition-colors">
+            <UserPlus size={18} className="shrink-0" />
+            {!collapsed && <span>Start Workspace</span>}
+          </Link>
+        ) : (
+          <button onClick={signOut} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/5 transition-colors w-full">
+            <LogOut size={18} className="shrink-0" />
+            {!collapsed && <span>Sign Out</span>}
+          </button>
+        )}
       </div>
     </aside>
   );
