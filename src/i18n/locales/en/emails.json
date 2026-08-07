@@ -2,7 +2,7 @@
   "welcome": {
     "subject": "Welcome to Velocity Vision",
     "greeting": "Hi {{name}},",
-    "body": "Your workspace is live. Upload your first audience to launch a campaign in minutes.",
+    "body": "Your workspace is ready. Upload your authorised business data to prepare and review your first campaign.",
     "cta": "Open your dashboard"
   },
   "receipt": {
@@ -15,7 +15,7 @@
     "body": "{{count}} replies need your follow-up today."
   },
   "activation": {
-    "subject": "Your campaign is ready to activate",
-    "body": "{{count}} contacts are cleaned, verified and ready to go."
+    "subject": "Your campaign is ready for activation review",
+    "body": "{{count}} records have reached the current campaign readiness stage. Review preflight and sender controls before activation."
   }
 }
