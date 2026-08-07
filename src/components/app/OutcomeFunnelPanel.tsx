@@ -4,10 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { BarChart3 } from "lucide-react";
 import { computeFunnel, sourceBreakdown, type FunnelFilters, type FunnelLead, type FunnelOpportunity } from "@/lib/outcomeFunnel";
 
-/**
- * Outcome funnel. Counts only stored events — no benchmarks, no modelled
- * attribution. Where data is missing a stage reads zero.
- */
+/** Outcome funnel: stored events only — no benchmarks, modelled attribution or A/B testing. */
 export default function OutcomeFunnelPanel({
   leads,
   opportunities = [],
@@ -34,16 +31,11 @@ export default function OutcomeFunnelPanel({
             <h3 className="font-semibold text-sm">Outcomes</h3>
           </div>
           {onFiltersChange && Object.keys(campaigns).length > 0 && (
-            <Select
-              value={active.campaignId || "all"}
-              onValueChange={(v) => onFiltersChange({ ...active, campaignId: v })}
-            >
+            <Select value={active.campaignId || "all"} onValueChange={(v) => onFiltersChange({ ...active, campaignId: v })}>
               <SelectTrigger className="h-8 w-[200px] text-xs"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All campaigns</SelectItem>
-                {Object.entries(campaigns).map(([id, name]) => (
-                  <SelectItem key={id} value={id}>{name}</SelectItem>
-                ))}
+                {Object.entries(campaigns).map(([id, name]) => <SelectItem key={id} value={id}>{name}</SelectItem>)}
               </SelectContent>
             </Select>
           )}
@@ -73,8 +65,7 @@ export default function OutcomeFunnelPanel({
         )}
 
         <p className="text-[11px] text-muted-foreground">
-          Counts come from your stored records only. Stages with no data read zero — nothing is estimated or
-          benchmarked. Controlled A/B delivery is planned after launch.
+          Counts come from stored records only. Stages with no data read zero. Nothing is estimated or benchmarked, and no automated attribution or A/B testing is performed.
         </p>
       </CardContent>
     </Card>
