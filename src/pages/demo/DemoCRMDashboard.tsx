@@ -10,6 +10,7 @@ import CampaignPreflight from "@/components/app/CampaignPreflight";
 import ReplyCommandCentre from "@/components/app/ReplyCommandCentre";
 import OutcomeFunnelPanel from "@/components/app/OutcomeFunnelPanel";
 import { runPreflight } from "@/lib/campaignPreflight";
+import { isUnsubscribeCapabilityReady, UNSUBSCRIBE_HANDLER_DEPLOYED } from "@/lib/systemCapabilities";
 import type { LaunchpadSignals } from "@/lib/launchpad";
 import type { FunnelLead, FunnelOpportunity } from "@/lib/outcomeFunnel";
 
@@ -47,7 +48,10 @@ const DEMO_PREFLIGHT = runPreflight({
   remainingToday: 20,
   pauseReasons: [],
   legalAccepted: true,
-  unsubscribeReady: true,
+  unsubscribeReady: isUnsubscribeCapabilityReady({
+    handlerAvailable: UNSUBSCRIBE_HANDLER_DEPLOYED,
+    messageBody: "Illustrative draft copy for the demo. You can unsubscribe at any time.",
+  }),
 });
 
 const DEMO_REPLIES = [
