@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -126,40 +127,63 @@ const AuthPage = () => {
           </p>
         </div>
 
-
         <div className="bg-card rounded-xl p-8 shadow-elevated border border-border/50">
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <div className="grid grid-cols-2 gap-3">
-                <Input
-                  placeholder="First name"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  required={!isLogin}
-                />
-                <Input
-                  placeholder="Last name"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  required={!isLogin}
-                />
+                <div>
+                  <Label htmlFor="first-name" className="sr-only">First name</Label>
+                  <Input
+                    id="first-name"
+                    name="first-name"
+                    autoComplete="given-name"
+                    placeholder="First name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required={!isLogin}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="last-name" className="sr-only">Last name</Label>
+                  <Input
+                    id="last-name"
+                    name="last-name"
+                    autoComplete="family-name"
+                    placeholder="Last name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    required={!isLogin}
+                  />
+                </div>
               </div>
             )}
-            <Input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <Input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-            />
+            <div>
+              <Label htmlFor="auth-email" className="sr-only">Email</Label>
+              <Input
+                id="auth-email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="auth-password" className="sr-only">Password</Label>
+              <Input
+                id="auth-password"
+                name="password"
+                type="password"
+                autoComplete={isLogin ? "current-password" : "new-password"}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+              />
+            </div>
 
             {/* Legal acceptance — mandatory on signup, unticked by default */}
             {!isLogin && (
