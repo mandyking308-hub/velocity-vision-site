@@ -19,7 +19,9 @@ import {
   DODO_PRODUCT_CATALOG,
   dodoReturnUrls,
   isAllowedProductKey,
+  isRefIdEligibleProduct,
   isSafeDodoCheckoutLink,
+  isValidCampaignRefId,
   loadDodoConfig,
 } from "../_shared/dodo.ts";
 
@@ -47,11 +49,35 @@ Deno.serve(async (req) => {
       return json({ error: "invalid_product_key" }, 400);
     }
 
+    // refId is accepted ONLY for Human Review, and only as a canonical UUID.
+    // Any refId on another product is rejected to keep the contract tight.
+    const rawRefId = (body as Record<string, unknown>).refId;
+    const hasRefId = rawRefId !== undefined && rawRefId !== null && rawRefId !== "";
+    if (hasRefId && !isRefIdEligibleProduct(productKey)) {
+      return json({ error: "ref_not_allowed" }, 400);
+    }
+    if (isRefIdEligibleProduct(productKey) && !isValidCampaignRefId(rawRefId)) {
+      return json({ error: "invalid_ref" }, 400);
+    }
+    const refId = hasRefId ? (rawRefId as string).trim() : null;
+
     const token = req.headers.get("Authorization")?.replace("Bearer ", "");
     const { data: { user } } = token
       ? await supabase.auth.getUser(token)
       : { data: { user: null } };
     if (!user) return json({ error: "unauthorized" }, 401);
+
+    // Ownership is derived from the validated bearer token only — never from
+    // anything the client sent. No Dodo call happens before this passes.
+    if (refId) {
+      const { data: campaign } = await supabase
+        .from("campaigns")
+        .select("id")
+        .eq("id", refId)
+        .or(`owner_id.eq.${user.id},created_by.eq.${user.id}`)
+        .maybeSingle();
+      if (!campaign) return json({ error: "forbidden_ref" }, 403);
+    }
 
     // Config gate — no external request when anything is missing.
     const cfg = loadDodoConfig((k) => Deno.env.get(k));
@@ -94,6 +120,7 @@ Deno.serve(async (req) => {
           productKey,
           productKind: entry.kind,
           provider: "dodo",
+          ...(refId ? { refId } : {}),
         },
       }),
     });

@@ -12,11 +12,15 @@ import { CHECKOUT_ACTIVATING_COPY, type DodoProductKey } from "@/lib/dodoReadine
 export function useDodoCheckout() {
   const [starting, setStarting] = useState(false);
 
-  const startCheckout = useCallback(async (productKey: DodoProductKey) => {
+  /**
+   * `refId` is the only extra context allowed, and the server accepts it for
+   * Human Review only. Never a price, currency, provider product id or URL.
+   */
+  const startCheckout = useCallback(async (productKey: DodoProductKey, refId?: string) => {
     setStarting(true);
     try {
       const { data, error } = await supabase.functions.invoke("dodo-create-checkout", {
-        body: { productKey },
+        body: refId ? { productKey, refId } : { productKey },
       });
       const url = (data as any)?.checkoutUrl;
       if (error || !isSafeDodoCheckoutLink(url)) {

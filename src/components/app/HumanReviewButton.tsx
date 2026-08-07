@@ -74,7 +74,7 @@ export default function HumanReviewButton({ campaignId }: Props) {
             toast.info(CHECKOUT_ACTIVATING_COPY, { description: "No payment was taken." });
             return;
           }
-          await startCheckout("vv_human_review_oneoff");
+          await startCheckout("vv_human_review_oneoff", campaignId);
         }}
       />
     </>
