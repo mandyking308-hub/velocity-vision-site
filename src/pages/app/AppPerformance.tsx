@@ -17,12 +17,8 @@ export default function AppPerformance() {
       const { data: leads } = await (currentId ? leadsQ.eq("workspace_id", currentId) : leadsQ);
       const grouped = (campaigns || []).map((c: any) => {
         const cl = (leads || []).filter((l: any) => l.campaign_id === c.id);
-        return {
-          ...c,
-          leads: cl.length,
-          won: cl.filter((l: any) => l.status === "won").length,
-          conv: cl.length ? Math.round((cl.filter((l: any) => l.status === "won").length / cl.length) * 100) : 0,
-        };
+        const won = cl.filter((l: any) => l.status === "won" || l.status === "closed_won").length;
+        return { ...c, leads: cl.length, won, winRate: cl.length ? Math.round((won / cl.length) * 100) : 0 };
       });
       setRows(grouped);
     })();
@@ -35,34 +31,34 @@ export default function AppPerformance() {
     <div className="space-y-6 max-w-5xl">
       <div>
         <h1 className="text-3xl font-bold">Performance</h1>
-        <p className="text-muted-foreground">A monthly snapshot across every campaign.</p>
+        <p className="text-muted-foreground">Stored campaign and lead outcomes only. No automated attribution, benchmarking or A/B testing.</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Stat label="Campaigns" value={rows.length} />
-        <Stat label="Total leads" value={totalLeads} />
-        <Stat label="Total won" value={totalWon} />
-        <Stat label="Avg conversion" value={totalLeads ? `${Math.round((totalWon / totalLeads) * 100)}%` : "—"} />
+        <Stat label="Recorded leads" value={totalLeads} />
+        <Stat label="Recorded won" value={totalWon} />
+        <Stat label="Recorded lead-to-won rate" value={totalLeads ? `${Math.round((totalWon / totalLeads) * 100)}%` : "—"} />
       </div>
 
       <Card>
-        <CardHeader><CardTitle>Per-campaign breakdown</CardTitle></CardHeader>
+        <CardHeader><CardTitle>Per-campaign recorded outcomes</CardTitle></CardHeader>
         <CardContent>
           {rows.length === 0 ? (
-            <p className="text-muted-foreground text-sm">No campaigns yet.</p>
+            <p className="text-muted-foreground text-sm">No campaign records yet.</p>
           ) : (
             <div className="space-y-2">
               {rows.map((r) => (
                 <Link key={r.id} to={`/app/campaigns/${r.id}`}>
-                  <div className="flex items-center justify-between p-3 border border-border rounded-md hover:bg-muted transition">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 border border-border rounded-md hover:bg-muted transition">
                     <div>
                       <div className="font-medium">{r.name}</div>
-                      <div className="text-xs text-muted-foreground">{new Date(r.created_at).toLocaleDateString()}</div>
+                      <div className="text-xs text-muted-foreground">Created {new Date(r.created_at).toLocaleDateString()} · {r.status || "recorded"}</div>
                     </div>
                     <div className="flex gap-4 text-sm items-center">
                       <span>Leads: <strong>{r.leads}</strong></span>
                       <span>Won: <strong>{r.won}</strong></span>
-                      <Badge variant={r.conv > 10 ? "default" : "outline"}>{r.conv}%</Badge>
+                      <Badge variant="outline">{r.leads ? `${r.winRate}% recorded` : "No lead data"}</Badge>
                     </div>
                   </div>
                 </Link>
@@ -73,11 +69,10 @@ export default function AppPerformance() {
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>Next-step prompts</CardTitle></CardHeader>
-        <CardContent className="text-sm space-y-2">
-          <p>• Clone your top-converting campaign for a new audience.</p>
-          <p>• Re-run the social pack from your highest-engagement launch.</p>
-          <p>• Move qualified leads through the pipeline this week.</p>
+        <CardHeader><CardTitle>How to read this page</CardTitle></CardHeader>
+        <CardContent className="text-sm text-muted-foreground space-y-2">
+          <p>Counts reflect records stored in your workspace. Missing events remain zero rather than being estimated.</p>
+          <p>Velocity Vision does not infer a “winning channel”, attribute revenue automatically or run A/B experiments. Use the underlying campaign, reply and pipeline records when deciding your next action.</p>
         </CardContent>
       </Card>
     </div>
