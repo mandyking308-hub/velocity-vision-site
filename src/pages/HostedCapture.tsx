@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
 import SEO from "@/components/SEO";
 import { toast } from "sonner";
+import { Helmet } from "react-helmet-async";
 
 interface PublicCampaign {
   id: string;
@@ -23,6 +24,12 @@ interface PublicCampaign {
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+const CaptureNoIndex = () => (
+  <Helmet>
+    <meta name="robots" content="noindex,nofollow" />
+  </Helmet>
+);
 
 export default function HostedCapture() {
   const { slug } = useParams();
@@ -80,26 +87,33 @@ export default function HostedCapture() {
 
   if (notFound) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-6">
-        <div className="text-center max-w-md">
-          <h1 className="text-2xl font-bold mb-2">Page not found</h1>
-          <p className="text-muted-foreground">This campaign isn't live or the link is incorrect.</p>
+      <>
+        <CaptureNoIndex />
+        <div className="min-h-screen flex items-center justify-center bg-background p-6">
+          <div className="text-center max-w-md">
+            <h1 className="text-2xl font-bold mb-2">Page not found</h1>
+            <p className="text-muted-foreground">This campaign isn't live or the link is incorrect.</p>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   if (!campaign) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-      </div>
+      <>
+        <CaptureNoIndex />
+        <div className="min-h-screen flex items-center justify-center bg-background">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        </div>
+      </>
     );
   }
 
   return (
     <>
       <SEO title={`${campaign.name} — Velocity Vision`} description={campaign.subheadline || campaign.headline} path={`/c/${campaign.slug}`} />
+      <CaptureNoIndex />
       <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
         <header className="border-b border-border bg-background/80 backdrop-blur">
           <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -158,7 +172,11 @@ export default function HostedCapture() {
                     {submitting ? "Submitting…" : campaign.ctaLabel}
                   </Button>
                   <p className="text-[11px] text-center text-muted-foreground">
-                    By submitting you agree to be contacted about this campaign.
+                    By submitting, you agree to be contacted about this campaign. See the{" "}
+                    <a href="/legal/privacy-policy" className="underline underline-offset-2 hover:text-foreground">
+                      Privacy Policy
+                    </a>
+                    .
                   </p>
                 </form>
               )}
