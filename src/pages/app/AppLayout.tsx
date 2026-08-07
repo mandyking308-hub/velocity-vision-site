@@ -9,7 +9,6 @@ import { CreditsProvider } from "@/contexts/CreditsContext";
 import { CreditPill } from "@/components/app/CreditMeter";
 import SetupWizard from "@/components/app/SetupWizard";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useLanguageSync } from "@/hooks/useLanguageSync";
 import { GTranslateSlot } from "@/components/GTranslate";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
@@ -100,7 +99,6 @@ function Shell() {
   const { signOut } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation("app");
-  useLanguageSync();
   const [drawerOpen, setDrawerOpen] = useState(false);
   return (
     <div className="min-h-screen flex w-full bg-background">
@@ -145,7 +143,6 @@ function Shell() {
     </div>
   );
 }
-
 
 export default function AppLayout() {
   return (
