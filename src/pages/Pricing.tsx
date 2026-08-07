@@ -394,7 +394,7 @@ const Pricing = () => {
                     Plan limits and top-ups
                   </h2>
                   <p className="text-sm opacity-90">
-                    Daily caps and risky-record controls are operational safeguards. They do not guarantee deliverability or compliance. Additional credits may be requested through onboarding.
+                    Daily caps and risky-record controls are operational safeguards. They do not guarantee deliverability or compliance. Additional Campaign Credits can be added later; the price, currency, tax and payment provider are confirmed before any payment.
                   </p>
                 </div>
                 <div className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground">

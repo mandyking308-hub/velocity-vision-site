@@ -16,7 +16,7 @@ const routes = [
   {
     icon: Building2,
     title: "Enterprise & agency volume",
-    desc: "Multi-workspace rollouts, agency-scale send governance, custom commercial terms.",
+    desc: "Multi-workspace rollouts, pooled Campaign Credits, account-wide usage visibility and custom commercial questions.",
     action: "Send a volume enquiry",
     to: "#contact-form",
     topic: "enterprise_volume",

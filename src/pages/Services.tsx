@@ -85,11 +85,11 @@ const capabilities = [
     icon: Layers,
     title: "Agency workspaces",
     overview:
-      "Give agencies separate client workspaces with isolated data, customer-controlled activation and pooled account-level limits.",
+      "Give agencies separate client workspaces with isolated data, customer-controlled activation, pooled Campaign Credits and account-wide visibility of send usage.",
     features: [
       "Isolated client workspaces",
       "Pooled Campaign Credits",
-      "Account-level sending governance",
+      "Account-wide send-usage visibility and the plan's daily send ceiling",
       "Cross-workspace visibility",
     ],
     workflow: "Create → Isolate → Govern → Review",

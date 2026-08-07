@@ -33,7 +33,7 @@ const industries = [
     icon: Building2,
     title: "Agencies and fractional teams",
     need: "Keep each client's data, drafts, activation controls and pipeline activity separated while maintaining account-level visibility.",
-    use: "Agency Workspace provides isolated client workspaces, pooled Campaign Credits and pooled sending governance.",
+    use: "Agency Workspace provides isolated client workspaces, pooled Campaign Credits, account-wide send-usage visibility and the plan's daily send ceiling.",
     safeguard: "Each agency remains responsible for client authority, lawful data, sender identity and every activation decision.",
   },
   {
