@@ -24,6 +24,7 @@ import FollowUpReminders from "@/components/app/FollowUpReminders";
 import type { FunnelFilters, FunnelLead, FunnelOpportunity } from "@/lib/outcomeFunnel";
 import { computeSafety, DEFAULT_SENDER_STATE, type SenderState } from "@/lib/sendSafety";
 import { runPreflight } from "@/lib/campaignPreflight";
+import { isUnsubscribeCapabilityReady, UNSUBSCRIBE_HANDLER_DEPLOYED } from "@/lib/systemCapabilities";
 import { computeReadiness } from "@/lib/senderReadiness";
 import { useLegalStatus } from "@/lib/legalCompliance";
 import { deriveFollowUpState } from "@/lib/leadStates";
@@ -220,6 +221,7 @@ export default function AppDashboard() {
   }), [plan, vault, sender, usedToday, scheduledToday]);
 
   const workingCampaign = campaigns[0] || null;
+  const workingCampaignActivated = Boolean(workingCampaign?.id) && activatedCampaignIds.has(workingCampaign!.id);
   const dashboardPreflight = useMemo(() => runPreflight({
     scope: "campaign",
     campaign: workingCampaign,
