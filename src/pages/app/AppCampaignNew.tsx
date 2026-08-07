@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,232 +6,193 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Progress } from "@/components/ui/progress";
-import { CheckCircle2, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ArrowLeft, ArrowRight, CalendarClock, Sparkles, ShieldCheck } from "lucide-react";
+import { toast } from "sonner";
+
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
-import { CampaignBrief, CampaignGoal, CampaignKind, CampaignLanguage, CampaignPack, CAMPAIGN_LANGUAGES, makeSlug, mergeGeneratedPack } from "@/lib/campaignPack";
+import { useCredits } from "@/contexts/CreditsContext";
+import {
+  CAMPAIGN_LANGUAGES,
+  type CampaignBrief,
+  type CampaignGoal,
+  type CampaignKind,
+  type CampaignLanguage,
+  mergeGeneratedPack,
+} from "@/lib/campaignPack";
 import { checkPackQuality } from "@/lib/campaignQuality";
 import { formatQualityFailure } from "@/lib/campaignQualityToast";
-import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
-import { useCredits } from "@/contexts/CreditsContext";
-import UpgradeNudge from "@/components/app/UpgradeNudge";
 import { CREDIT_COSTS, canUseRecurringCadence } from "@/lib/credits";
 import {
-  CadenceConfig, CADENCE_LABELS, CadenceType, COMMON_TIMEZONES, REFRESH_LABELS,
-  RefreshStrategy, computeNextRun, defaultCadence, plainEnglish,
+  COMMON_TIMEZONES,
+  defaultCadence,
+  plainEnglish,
+  type CadenceConfig,
+  type CadenceType,
+  type CadenceUnit,
 } from "@/lib/cadence";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import UpgradeNudge from "@/components/app/UpgradeNudge";
 
-
-const GOALS: { id: CampaignGoal; label: string; desc: string }[] = [
-  { id: "leads", label: "Leads", desc: "Capture qualified prospects" },
-  { id: "sales", label: "Sales", desc: "Close revenue directly" },
-  { id: "signups", label: "Sign-ups", desc: "Grow your user base" },
-  { id: "bookings", label: "Bookings", desc: "Fill your calendar" },
-  { id: "awareness", label: "Awareness", desc: "Reach more people" },
+const GOALS: { value: CampaignGoal; label: string }[] = [
+  { value: "leads", label: "Generate leads" },
+  { value: "sales", label: "Support sales outreach" },
+  { value: "signups", label: "Drive sign-ups" },
+  { value: "bookings", label: "Encourage bookings" },
+  { value: "awareness", label: "Build awareness" },
 ];
 
-const KINDS: { id: CampaignKind; label: string }[] = [
-  { id: "lead_gen", label: "Lead generation" },
-  { id: "launch", label: "Offer launch" },
-  { id: "promo", label: "Promotion" },
-  { id: "nurture", label: "Nurture" },
-  { id: "re_engagement", label: "Re-engagement" },
-  { id: "pr_push", label: "PR push" },
+const KINDS: { value: CampaignKind; label: string }[] = [
+  { value: "lead_gen", label: "Lead generation" },
+  { value: "launch", label: "Offer launch" },
+  { value: "promo", label: "Promotion" },
+  { value: "nurture", label: "Nurture" },
+  { value: "re_engagement", label: "Re-engagement" },
+  { value: "pr_push", label: "PR announcement" },
 ];
 
-const OUTPUTS = [
-  { id: "full", label: "Full campaign bundle" },
-  { id: "social", label: "Social media pack" },
-  { id: "email", label: "Email sequence" },
-  { id: "landing", label: "Landing page copy" },
-  { id: "press", label: "Press release" },
-  { id: "video", label: "Video pack" },
-];
+const CHANNELS = ["Email", "LinkedIn", "Instagram", "X", "Facebook", "TikTok", "PR", "Video", "Paid ads"];
 
-const CHANNELS = ["LinkedIn", "Instagram", "X", "Facebook", "TikTok", "Email", "PR", "Paid ads"];
+function normaliseKind(raw: string | null): CampaignKind {
+  return KINDS.some((x) => x.value === raw) ? (raw as CampaignKind) : "lead_gen";
+}
+function normaliseGoal(raw: string | null): CampaignGoal {
+  return GOALS.some((x) => x.value === raw) ? (raw as CampaignGoal) : "leads";
+}
 
 export default function AppCampaignNew() {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { currentId: workspaceId } = useWorkspace();
-  const { remaining, starterExpired, isFreePreview, plan, refresh: refreshCredits } = useCredits();
-  const [existingPackCount, setExistingPackCount] = useState(0);
-  useEffect(() => {
-    if (!isFreePreview || !user) return;
-    supabase.from("campaigns").select("id", { count: "exact", head: true })
-      .eq("created_by", user.id).not("pack", "is", null)
-      .then(({ count }) => {
-        const n = count ?? 0;
-        setExistingPackCount(n);
-        if (n >= 1) {
-          import("@/lib/upgradeEvents").then(({ trackUpgradeEvent }) =>
-            trackUpgradeEvent("free_preview_campaign_gate_hit", { reason: "second_pack", plan: "free_preview" }));
-        }
-      });
-  }, [isFreePreview, user]);
   const [params] = useSearchParams();
-  const { i18n, t } = useTranslation("app");
-  const defaultLang: CampaignLanguage = (i18n.language?.startsWith("es") ? "es" : "en");
-  const [step, setStep] = useState(1);
-  const [saving, setSaving] = useState(false);
-  const [qualityDebug, setQualityDebug] = useState(false);
-  const [brief, setBrief] = useState<CampaignBrief>({
-    name: "",
-    goal: (params.get("goal") as CampaignGoal) || "leads",
-    kind: (params.get("kind") as CampaignKind) || "lead_gen",
-    offer: "",
-    audience: "",
-    industry: "",
-    geography: "",
-    pricePoint: "",
-    tone: "Professional, warm",
-    cta: "Book a call",
-    channels: ["LinkedIn", "Email"],
-    deadline: "",
-    notes: "",
-    outputs: ["full"],
-    language: defaultLang,
-  });
-  const [cadence, setCadence] = useState<CadenceConfig>(defaultCadence());
-  useEffect(() => {
-    if (!user) return;
-    (async () => {
-      const { data } = await (supabase.from("user_roles") as any)
-        .select("role")
-        .eq("user_id", user.id)
-        .in("role", ["admin", "founder"]);
-      setQualityDebug(!!data?.length);
-    })();
-  }, [user]);
-  const updateCadence = <K extends keyof CadenceConfig>(k: K, v: CadenceConfig[K]) =>
-    setCadence((c) => ({ ...c, [k]: v }));
+  const { currentId } = useWorkspace();
+  const { plan, remaining, isFreePreview, starterExpired, refresh: refreshCredits } = useCredits();
+  const [generating, setGenerating] = useState(false);
+  const [freePackUsed, setFreePackUsed] = useState(false);
 
-  const totalSteps = 6;
-  const next = () => setStep((s) => Math.min(s + 1, totalSteps));
-  const back = () => setStep((s) => Math.max(s - 1, 1));
-  const update = <K extends keyof CampaignBrief>(k: K, v: CampaignBrief[K]) => setBrief((b) => ({ ...b, [k]: v }));
+  const [name, setName] = useState("New campaign");
+  const [goal, setGoal] = useState<CampaignGoal>(normaliseGoal(params.get("goal")));
+  const [kind, setKind] = useState<CampaignKind>(normaliseKind(params.get("kind")));
+  const [offer, setOffer] = useState("");
+  const [audience, setAudience] = useState("");
+  const [industry, setIndustry] = useState("");
+  const [geography, setGeography] = useState("");
+  const [pricePoint, setPricePoint] = useState("");
+  const [tone, setTone] = useState("Clear, credible and human");
+  const [cta, setCta] = useState("");
+  const [deadline, setDeadline] = useState("");
+  const [notes, setNotes] = useState("");
+  const [language, setLanguage] = useState<CampaignLanguage>("en");
+  const [channels, setChannels] = useState<string[]>(["Email", "LinkedIn"]);
+  const [cadence, setCadence] = useState<CadenceConfig>(() => defaultCadence());
+
+  const recurringAllowed = canUseRecurringCadence(plan);
+  const supportedLanguages = CAMPAIGN_LANGUAGES.filter((x) => x.supported);
+
+  useEffect(() => {
+    if (!isFreePreview || !currentId) {
+      setFreePackUsed(false);
+      return;
+    }
+    (async () => {
+      const { data } = await supabase.from("campaigns").select("id, pack").eq("workspace_id", currentId).not("pack", "is", null).limit(1);
+      setFreePackUsed((data?.length ?? 0) > 0);
+    })();
+  }, [isFreePreview, currentId]);
+
+  useEffect(() => {
+    if (!recurringAllowed && cadence.cadence_type !== "one_off") {
+      setCadence((c) => ({ ...c, cadence_type: "one_off" }));
+    }
+  }, [recurringAllowed, cadence.cadence_type]);
+
+  const brief = useMemo<CampaignBrief>(() => ({
+    name: name.trim() || "New campaign",
+    goal,
+    kind,
+    offer: offer.trim(),
+    audience: audience.trim(),
+    industry: industry.trim(),
+    geography: geography.trim(),
+    pricePoint: pricePoint.trim(),
+    tone: tone.trim(),
+    cta: cta.trim(),
+    channels,
+    deadline,
+    notes: notes.trim(),
+    outputs: ["email", "social", "press", "video", ...(channels.includes("Paid ads") ? ["paid ads"] : [])],
+    language,
+  }), [name, goal, kind, offer, audience, industry, geography, pricePoint, tone, cta, channels, deadline, notes, language]);
+
+  const canGenerate = Boolean(currentId && brief.offer && brief.audience && brief.cta && channels.length > 0 && !generating);
+
+  const toggleChannel = (channel: string, checked: boolean) => {
+    setChannels((current) => checked ? Array.from(new Set([...current, channel])) : current.filter((x) => x !== channel));
+  };
+
+  const updateCadenceType = (value: CadenceType) => {
+    if (value !== "one_off" && !recurringAllowed) {
+      toast.info("Recurring cadence is available on Growth and Agency", { description: "Starter and Free Preview support one-off campaigns only." });
+      return;
+    }
+    setCadence((c) => ({ ...c, cadence_type: value }));
+  };
 
   const generate = async () => {
-    if (!user) return;
-    // Schedule guard — never accept a past-dated one-off schedule.
-    if (
-      cadence.cadence_type === "one_off" &&
-      cadence.start_at &&
-      new Date(cadence.start_at).getTime() <= Date.now()
-    ) {
-      toast.error("Choose a future campaign date and time.");
-      setStep(5);
-      return;
-    }
-    // Hard credit gate — never insert a campaign if the user cannot pay for it.
-    if (remaining < CREDIT_COSTS.full_campaign_pack) {
-      toast.error("You don't have enough Campaign Credits", {
-        description: `Generating a full campaign pack costs ${CREDIT_COSTS.full_campaign_pack} credits. Top up or upgrade to continue.`,
-      });
-      return;
-    }
+    if (!canGenerate || !currentId) return;
     if (starterExpired) {
-      toast.error("Starter access has ended", { description: "Upgrade or buy another Starter to keep generating." });
+      toast.error("Starter access has ended", { description: "Choose an eligible paid plan before generating another campaign pack." });
       return;
     }
-    // Free Preview includes exactly one full campaign pack (also enforced in
-    // the database, which rejects a second reservation without spending credits).
-    if (isFreePreview && existingPackCount >= 1) {
-      toast.error("Free Preview includes one full campaign pack", {
-        description: "Upgrade to Starter or Growth to generate more packs. Your first pack stays available to review.",
+    if (isFreePreview && freePackUsed) {
+      toast.info("Free Preview includes one full campaign pack", { description: "Compare paid plans to generate another full pack." });
+      return;
+    }
+    if (remaining < CREDIT_COSTS.full_campaign_pack) {
+      toast.info("Not enough Campaign Credits", {
+        description: isFreePreview
+          ? "Free Preview receives daily free credits up to its balance cap. Wait for the next daily grant or compare paid plans; Free Preview does not accept top-ups."
+          : `Full campaign-pack generation costs ${CREDIT_COSTS.full_campaign_pack} credits. Add eligible paid-workspace credits or change plan to continue.`,
       });
       return;
     }
-    // Recurring cadence is a Growth/Agency capability (mirrored by a DB trigger).
-    if (cadence.cadence_type !== "one_off" && !canUseRecurringCadence(plan)) {
-      toast.error("Recurring cadence is available on Growth and Agency", {
-        description: "Your plan supports one-off campaigns. Upgrade to schedule repeating campaigns.",
-      });
-      setStep(5);
-      return;
-    }
-    setSaving(true);
-    try {
-      // 1) Server-side credit gate + AI generation (credits are reserved
-      // inside the edge function BEFORE the AI call, and auto-refunded
-      // if generation fails). No client-side consume() needed.
-      let pack: CampaignPack | null = null;
-      let usedFallback = false;
-      let ledgerId: string | null = null;
-      try {
-        const { data: aiData, error: aiErr } = await supabase.functions.invoke("generate-campaign-pack", {
-          body: { brief },
-        });
-        if (aiErr) throw aiErr;
-        if (aiData?.pack) {
-          pack = mergeGeneratedPack(brief, aiData.pack, aiData.generatedAs) as CampaignPack;
-          ledgerId = (aiData as any)?.ledgerId ?? null;
-        }
-      } catch (aiErr: any) {
-        const status = aiErr?.status ?? aiErr?.context?.status;
-        const code = aiErr?.context?.body ? String(aiErr.context.body) : String(aiErr?.message || "");
-        if (/free_preview_pack_limit/.test(code)) {
-          toast.error("Free Preview includes one full campaign pack", {
-            description: "Upgrade to generate more. Your first pack stays available to review.",
-          });
-          setSaving(false);
-          await refreshCredits();
-          return;
-        }
-        if (status === 402 || /insufficient_credits|starter_expired|no_plan/.test(code)) {
-          toast.error("You don't have enough Campaign Credits", {
-            description: `Generating a full campaign pack costs ${CREDIT_COSTS.full_campaign_pack} credits. Top up or upgrade to continue.`,
-          });
-          setSaving(false);
-          await refreshCredits();
-          return;
-        }
-        console.warn("AI generation failed, using deterministic fallback", aiErr);
-      }
-      if (!pack) {
-        pack = mergeGeneratedPack(brief, null);
-        usedFallback = true;
-      }
 
-      // 2) Quality guard. Refund the server-side reservation if the guard fails.
+    setGenerating(true);
+    let ledgerId: string | null = null;
+    try {
+      const { data: aiData, error: aiErr } = await supabase.functions.invoke("generate-campaign-pack", { body: { brief } });
+      if (aiErr) {
+        const status = (aiErr as any)?.status ?? (aiErr as any)?.context?.status;
+        const body = (aiErr as any)?.context?.body ? String((aiErr as any).context.body) : String((aiErr as any)?.message || "");
+        if (status === 402 || /insufficient_credits|starter_expired|no_plan|free_preview_pack_limit/.test(body)) {
+          await refreshCredits();
+          if (/free_preview_pack_limit/.test(body)) setFreePackUsed(true);
+          toast.info(/free_preview_pack_limit/.test(body) ? "Free Preview includes one full campaign pack" : "Campaign-pack generation is not currently available", {
+            description: /free_preview_pack_limit/.test(body)
+              ? "Compare paid plans to generate another full pack."
+              : isFreePreview
+                ? "Wait for the next eligible daily free-credit grant or compare paid plans."
+                : "Review your plan and Campaign Credit balance, then try again.",
+          });
+          return;
+        }
+        throw aiErr;
+      }
+      if (!aiData?.pack) throw new Error("Campaign-pack generation returned no pack");
+
+      ledgerId = aiData?.ledgerId ?? null;
+      const pack = mergeGeneratedPack(brief, aiData.pack, aiData.generatedAs);
       const quality = checkPackQuality(pack, brief);
       if (!quality.ok) {
-        const { title, description } = formatQualityFailure(quality, qualityDebug);
-        toast.error(title, { description });
+        const { title, description } = formatQualityFailure(quality, false);
         if (ledgerId) {
-          try { await supabase.rpc("refund_campaign_credits", { _ledger_id: ledgerId }); } catch (_e) { /* noop */ }
-          await refreshCredits();
+          try { await supabase.rpc("refund_campaign_credits", { _ledger_id: ledgerId }); } catch { /* best effort */ }
         }
-        setSaving(false);
+        await refreshCredits();
+        toast.error(title, { description });
         return;
       }
 
-      // 3) Persist campaign.
-      const slug = makeSlug(brief.name || "campaign");
-      const nextRun = computeNextRun(cadence);
-      const startIsFuture = cadence.start_at && new Date(cadence.start_at) > new Date();
-      const insertRow: any = {
-        name: brief.name,
-        description: brief.offer,
-        goal: brief.goal,
-        campaign_kind: brief.kind,
-        status: startIsFuture ? "scheduled" : "active",
-        type: "email",
-        owner_id: user.id,
-        created_by: user.id,
-        workspace_id: workspaceId,
-        company_id: null,
-        brief,
-        language: brief.language || "en",
-        pack,
-        slug,
-        objective: `${brief.goal} — ${brief.cta}`,
-        target_audience_description: brief.audience,
+      const cadencePayload = {
         cadence_type: cadence.cadence_type,
         cadence_interval: cadence.cadence_interval,
         cadence_unit: cadence.cadence_unit,
@@ -239,391 +200,132 @@ export default function AppCampaignNew() {
         timezone: cadence.timezone,
         cadence_end_at: cadence.cadence_end_at,
         cadence_max_runs: cadence.cadence_max_runs,
-        next_run_at: nextRun ? nextRun.toISOString() : cadence.start_at,
         refresh_strategy: cadence.refresh_strategy,
+        next_run_at: cadence.start_at,
       };
-      const { data, error } = await (supabase.from("campaigns") as any)
-        .insert(insertRow)
-        .select("id")
-        .single();
-      if (error) {
+
+      const { data: created, error: insertError } = await supabase.from("campaigns").insert({
+        name: brief.name,
+        goal: brief.goal,
+        campaign_kind: brief.kind,
+        brief: brief as any,
+        pack: pack as any,
+        workspace_id: currentId,
+        status: "draft",
+        ...cadencePayload,
+      } as any).select("id").single();
+
+      if (insertError || !created?.id) {
         if (ledgerId) {
-          try { await supabase.rpc("refund_campaign_credits", { _ledger_id: ledgerId }); } catch (_e) { /* noop */ }
+          try { await supabase.rpc("refund_campaign_credits", { _ledger_id: ledgerId }); } catch { /* best effort */ }
         }
-        throw error;
+        throw insertError || new Error("Campaign could not be saved");
       }
+
       if (ledgerId) {
-        try {
-          await supabase.rpc("finalise_campaign_credits", { _ledger_id: ledgerId, _ref_id: data.id, _label: brief.name });
-        } catch (_e) { /* noop — spend row is already recorded */ }
+        try { await supabase.rpc("finalise_campaign_credits", { _ledger_id: ledgerId, _ref_id: created.id, _label: brief.name }); } catch { /* best effort */ }
       }
       await refreshCredits();
-      if (usedFallback) {
-        toast.success("Campaign pack ready (fallback template used)");
-      } else {
-        toast.success(t("campaigns.toasts.packGenerated"));
+      if (isFreePreview) setFreePackUsed(true);
+      toast.success("Campaign pack generated and saved as a draft");
+      navigate(`/app/campaigns/${created.id}`);
+    } catch (error: any) {
+      if (ledgerId) {
+        try { await supabase.rpc("refund_campaign_credits", { _ledger_id: ledgerId }); } catch { /* best effort */ }
+        await refreshCredits();
       }
-      navigate(`/app/campaigns/${data.id}`);
-    } catch (e: any) {
-      toast.error(e.message || t("campaigns.toasts.generateFailed"));
+      toast.error("Could not generate the campaign pack", { description: error?.message || "Please try again later." });
     } finally {
-      setSaving(false);
+      setGenerating(false);
     }
   };
 
-
-  const recurringAllowed = canUseRecurringCadence(plan);
-  const packLimitReached = isFreePreview && existingPackCount >= 1;
-  const blocked =
-    remaining < CREDIT_COSTS.full_campaign_pack ||
-    starterExpired ||
-    packLimitReached;
-  const schedulePastError =
-    cadence.cadence_type === "one_off" &&
-    !!cadence.start_at &&
-    new Date(cadence.start_at).getTime() <= Date.now();
-
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="space-y-6 max-w-5xl">
+      <button onClick={() => navigate("/app/campaigns")} className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1"><ArrowLeft className="h-3.5 w-3.5" /> All campaigns</button>
       <div>
-        <h1 className="text-3xl font-bold">New campaign</h1>
-        <p className="text-muted-foreground">A short brief. We generate the full pack.</p>
+        <h1 className="text-3xl font-bold">Create a campaign</h1>
+        <p className="text-muted-foreground mt-1">Define the brief, choose the campaign language and channels, then generate one editable full campaign pack. The server reserves Campaign Credits before generation; there is no uncharged fallback pack.</p>
       </div>
-      {blocked && !packLimitReached && (
-        <div className="rounded-md border border-accent/40 bg-accent/10 px-4 py-3 text-sm">
-          <strong>{starterExpired ? "Starter access has ended." : "You don't have enough Campaign Credits."}</strong> Generating a full campaign pack costs {CREDIT_COSTS.full_campaign_pack} credits. <a href="/app/billing" className="underline">Top up or upgrade</a> to keep launching.
-        </div>
-      )}
-      {packLimitReached && (
-        <UpgradeNudge reason="free_preview_second_pack_gate" variant="banner" />
-      )}
 
-      <Progress value={(step / totalSteps) * 100} />
-      <div className="text-sm text-muted-foreground">Step {step} of {totalSteps} · This generation will use {CREDIT_COSTS.full_campaign_pack} Campaign Credits</div>
+      {isFreePreview && freePackUsed && <UpgradeNudge reason="free_preview_second_pack_gate" variant="card" />}
 
-      {step === 1 && (
-        <Card>
-          <CardHeader><CardTitle>What's the goal?</CardTitle></CardHeader>
-          <CardContent>
-            <RadioGroup value={brief.goal} onValueChange={(v) => update("goal", v as CampaignGoal)} className="space-y-2">
-              {GOALS.map((g) => (
-                <label key={g.id} className="flex items-start gap-3 p-3 rounded-md border border-border cursor-pointer hover:bg-muted">
-                  <RadioGroupItem value={g.id} className="mt-1" />
-                  <div>
-                    <div className="font-medium">{g.label}</div>
-                    <div className="text-sm text-muted-foreground">{g.desc}</div>
-                  </div>
-                </label>
-              ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
-      )}
-
-      {step === 2 && (
-        <Card>
-          <CardHeader><CardTitle>Tell us about the business</CardTitle></CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Field
-              label="Campaign name"
-              v={brief.name}
-              on={(v) => update("name", v)}
-              id="campaign-name"
-              name="campaign_name"
-              placeholder="e.g. July outreach campaign"
-              required
-              testId="campaign-name-input"
-            />
-            <Field label="Key CTA" v={brief.cta} on={(v) => update("cta", v)} />
-            <Field label="Offer / product / service" v={brief.offer} on={(v) => update("offer", v)} full />
-            <Field label="Target audience" v={brief.audience} on={(v) => update("audience", v)} />
-            <Field label="Industry" v={brief.industry} on={(v) => update("industry", v)} />
-            <Field label="Geography" v={brief.geography} on={(v) => update("geography", v)} />
-            <Field label="Price point" v={brief.pricePoint} on={(v) => update("pricePoint", v)} />
-            <Field label="Tone of voice" v={brief.tone} on={(v) => update("tone", v)} />
-            <Field label="Deadline / timing" v={brief.deadline} on={(v) => update("deadline", v)} />
-            <div className="md:col-span-2">
-              <Label className="mb-2 block">Preferred channels</Label>
-              <div className="flex flex-wrap gap-2">
-                {CHANNELS.map((c) => {
-                  const on = brief.channels.includes(c);
-                  return (
-                    <button key={c} type="button" onClick={() => update("channels", on ? brief.channels.filter((x) => x !== c) : [...brief.channels, c])}
-                      className={`px-3 py-1 rounded-full text-sm border ${on ? "bg-primary text-primary-foreground border-primary" : "border-border"}`}>
-                      {c}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-            <div className="md:col-span-2">
-              <Label className="mb-2 block">Output language</Label>
-              <Select value={brief.language || "en"} onValueChange={(v) => update("language", v as CampaignLanguage)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {CAMPAIGN_LANGUAGES.map((l) => (
-                    <SelectItem key={l.value} value={l.value}>
-                      {l.label}{!l.supported && " — falls back to English"}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <p className="text-xs text-muted-foreground mt-1">
-                English and Spanish generate natively. Other languages store metadata and render English copy for now.
-              </p>
-            </div>
-            <div className="md:col-span-2">
-              <Label>Notes / existing assets</Label>
-              <Textarea value={brief.notes} onChange={(e) => update("notes", e.target.value)} rows={3} />
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {step === 3 && (
-        <Card>
-          <CardHeader><CardTitle>What kind of campaign?</CardTitle></CardHeader>
-          <CardContent>
-            <RadioGroup value={brief.kind} onValueChange={(v) => update("kind", v as CampaignKind)} className="grid grid-cols-2 gap-2">
-              {KINDS.map((k) => (
-                <label key={k.id} className="flex items-center gap-3 p-3 rounded-md border border-border cursor-pointer hover:bg-muted">
-                  <RadioGroupItem value={k.id} />
-                  <span>{k.label}</span>
-                </label>
-              ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
-      )}
-
-      {step === 4 && (
-        <Card>
-          <CardHeader><CardTitle>What should we generate?</CardTitle></CardHeader>
-          <CardContent className="space-y-2">
-            {OUTPUTS.map((o) => {
-              const on = brief.outputs.includes(o.id);
-              return (
-                <label key={o.id} className="flex items-center gap-3 p-3 rounded-md border border-border cursor-pointer hover:bg-muted">
-                  <Checkbox checked={on} onCheckedChange={(v) => update("outputs", v ? [...brief.outputs, o.id] : brief.outputs.filter((x) => x !== o.id))} />
-                  <span>{o.label}</span>
-                </label>
-              );
-            })}
-          </CardContent>
-        </Card>
-      )}
-
-      {step === 5 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Timing and cadence</CardTitle>
-            <p className="text-sm text-muted-foreground mt-1">When does this start, and does it repeat?</p>
-          </CardHeader>
+      <div className="grid lg:grid-cols-3 gap-5">
+        <Card className="lg:col-span-2">
+          <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Sparkles className="h-5 w-5 text-primary" /> Campaign brief</CardTitle></CardHeader>
           <CardContent className="space-y-4">
+            <div className="grid sm:grid-cols-2 gap-3">
+              <Field label="Campaign name"><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={160} /></Field>
+              <Field label="Campaign type"><Select value={kind} onValueChange={(v) => setKind(v as CampaignKind)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{KINDS.map((x) => <SelectItem key={x.value} value={x.value}>{x.label}</SelectItem>)}</SelectContent></Select></Field>
+              <Field label="Goal"><Select value={goal} onValueChange={(v) => setGoal(v as CampaignGoal)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{GOALS.map((x) => <SelectItem key={x.value} value={x.value}>{x.label}</SelectItem>)}</SelectContent></Select></Field>
+              <Field label="Campaign language"><Select value={language} onValueChange={(v) => setLanguage(v as CampaignLanguage)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{supportedLanguages.map((x) => <SelectItem key={x.value} value={x.value}>{x.label}</SelectItem>)}</SelectContent></Select></Field>
+            </div>
+            <Field label="Offer / proposition *"><Textarea value={offer} onChange={(e) => setOffer(e.target.value)} rows={3} maxLength={1500} placeholder="What are you offering, and what should the reader understand?" /></Field>
+            <Field label="Audience *"><Textarea value={audience} onChange={(e) => setAudience(e.target.value)} rows={3} maxLength={1500} placeholder="Describe the business audience using data you are authorised to process." /></Field>
+            <div className="grid sm:grid-cols-2 gap-3">
+              <Field label="Industry"><Input value={industry} onChange={(e) => setIndustry(e.target.value)} maxLength={200} /></Field>
+              <Field label="Geography"><Input value={geography} onChange={(e) => setGeography(e.target.value)} maxLength={200} /></Field>
+              <Field label="Price point / commercial context"><Input value={pricePoint} onChange={(e) => setPricePoint(e.target.value)} maxLength={200} /></Field>
+              <Field label="Deadline"><Input type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} /></Field>
+            </div>
+            <Field label="Tone"><Input value={tone} onChange={(e) => setTone(e.target.value)} maxLength={240} /></Field>
+            <Field label="Single call to action *"><Input value={cta} onChange={(e) => setCta(e.target.value)} maxLength={300} placeholder="e.g. Reply if a short walkthrough would be useful" /></Field>
+            <Field label="Additional notes"><Textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} maxLength={1500} /></Field>
+
             <div>
-              <Label className="mb-2 block">Cadence</Label>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {(Object.keys(CADENCE_LABELS) as CadenceType[]).map((t) => {
-                  const on = cadence.cadence_type === t;
-                  const locked = t !== "one_off" && !recurringAllowed;
-                  return (
-                    <button key={t} type="button" disabled={locked}
-                      title={locked ? "Recurring cadence is available on Growth and Agency" : undefined}
-                      onClick={() => { if (!locked) updateCadence("cadence_type", t); }}
-                      className={`px-3 py-2 rounded-md text-sm border text-left ${on ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-muted"} ${locked ? "opacity-50 cursor-not-allowed" : ""}`}>
-                      {CADENCE_LABELS[t]}{locked ? " · Growth" : ""}
-                    </button>
-                  );
-                })}
+              <Label>Channels *</Label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+                {CHANNELS.map((channel) => <label key={channel} className="flex items-center gap-2 rounded border p-2 text-sm"><Checkbox checked={channels.includes(channel)} onCheckedChange={(v) => toggleChannel(channel, !!v)} />{channel}</label>)}
               </div>
-              {!recurringAllowed && (
-                <p className="text-xs text-muted-foreground mt-2">
-                  Your plan runs one-off campaigns. Recurring cadence is included with Growth and Agency.
-                </p>
-              )}
+              <p className="text-xs text-muted-foreground mt-2">Generated materials are editable drafts. Velocity Vision does not publish social posts, buy media or send outreach automatically.</p>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <Label>Start date</Label>
-                <Input type="date" value={cadence.start_at ? cadence.start_at.slice(0, 10) : ""}
-                  onChange={(e) => {
-                    const time = cadence.start_at ? cadence.start_at.slice(11, 16) : "09:00";
-                    updateCadence("start_at", e.target.value ? new Date(`${e.target.value}T${time}:00`).toISOString() : null);
-                  }} />
-              </div>
-              <div>
-                <Label>Start time</Label>
-                <Input type="time" value={cadence.start_at ? cadence.start_at.slice(11, 16) : "09:00"}
-                  onChange={(e) => {
-                    const day = cadence.start_at ? cadence.start_at.slice(0, 10) : new Date().toISOString().slice(0, 10);
-                    updateCadence("start_at", new Date(`${day}T${e.target.value}:00`).toISOString());
-                  }} />
-              </div>
-              <div>
-                <Label>Timezone</Label>
-                <Select value={cadence.timezone} onValueChange={(v) => updateCadence("timezone", v)}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {COMMON_TIMEZONES.map((tz) => <SelectItem key={tz} value={tz}>{tz}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {cadence.cadence_type === "custom" && (
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Repeat every</Label>
-                  <Input type="number" min={1} value={cadence.cadence_interval}
-                    onChange={(e) => updateCadence("cadence_interval", Math.max(1, parseInt(e.target.value) || 1))} />
-                </div>
-                <div>
-                  <Label>Unit</Label>
-                  <Select value={cadence.cadence_unit} onValueChange={(v) => updateCadence("cadence_unit", v as any)}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="day">Day(s)</SelectItem>
-                      <SelectItem value="week">Week(s)</SelectItem>
-                      <SelectItem value="month">Month(s)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            )}
-
-            {cadence.cadence_type !== "one_off" && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label>End date (optional)</Label>
-                  <Input type="date" value={cadence.cadence_end_at ? cadence.cadence_end_at.slice(0, 10) : ""}
-                    onChange={(e) => updateCadence("cadence_end_at", e.target.value ? new Date(`${e.target.value}T23:59:00`).toISOString() : null)} />
-                </div>
-                <div>
-                  <Label>Max runs (optional)</Label>
-                  <Input type="number" min={1} value={cadence.cadence_max_runs ?? ""}
-                    onChange={(e) => updateCadence("cadence_max_runs", e.target.value ? parseInt(e.target.value) : null)} />
-                </div>
-                <div className="md:col-span-2">
-                  <Label>Asset strategy for each new run</Label>
-                  <Select value={cadence.refresh_strategy} onValueChange={(v) => updateCadence("refresh_strategy", v as RefreshStrategy)}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {(Object.keys(REFRESH_LABELS) as RefreshStrategy[]).map((s) => (
-                        <SelectItem key={s} value={s}>{REFRESH_LABELS[s]}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            )}
-
-            <div className="rounded-md bg-muted/60 p-3 text-sm">
-              <div className="font-medium mb-1">Schedule preview</div>
-              <div className="text-muted-foreground">{plainEnglish(cadence)}</div>
-            </div>
-
-            {schedulePastError && (
-              <div
-                role="alert"
-                className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive"
-              >
-                Choose a future campaign date and time.
-              </div>
-            )}
           </CardContent>
         </Card>
-      )}
 
-      {step === 6 && (
-        <Card>
-          <CardHeader><CardTitle>Review and generate</CardTitle></CardHeader>
-          <CardContent className="space-y-2 text-sm">
-            <Row label="Name" v={brief.name} />
-            <Row label="Goal" v={brief.goal} />
-            <Row label="Type" v={brief.kind.replace("_", " ")} />
-            <Row label="Offer" v={brief.offer} />
-            <Row label="Audience" v={brief.audience} />
-            <Row label="Industry" v={brief.industry} />
-            <Row label="Geography" v={brief.geography} />
-            <Row label="Channels" v={brief.channels.join(", ")} />
-            <Row label="Outputs" v={brief.outputs.join(", ")} />
-            <Row label="Cadence" v={CADENCE_LABELS[cadence.cadence_type]} />
-            <Row label="Schedule" v={plainEnglish(cadence)} />
-          </CardContent>
-        </Card>
-      )}
+        <div className="space-y-4">
+          <Card>
+            <CardHeader><CardTitle className="text-base flex items-center gap-2"><CalendarClock className="h-4 w-4 text-primary" /> Cadence</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <Field label="Cadence type"><Select value={cadence.cadence_type} onValueChange={(v) => updateCadenceType(v as CadenceType)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="one_off">One-off</SelectItem><SelectItem value="weekly" disabled={!recurringAllowed}>Weekly</SelectItem><SelectItem value="monthly" disabled={!recurringAllowed}>Monthly</SelectItem><SelectItem value="custom" disabled={!recurringAllowed}>Custom recurring</SelectItem></SelectContent></Select></Field>
+              {cadence.cadence_type === "custom" && <div className="grid grid-cols-2 gap-2"><Field label="Every"><Input type="number" min={1} max={52} value={cadence.cadence_interval} onChange={(e) => setCadence((c) => ({ ...c, cadence_interval: Math.max(1, Number(e.target.value) || 1) }))} /></Field><Field label="Unit"><Select value={cadence.cadence_unit} onValueChange={(v) => setCadence((c) => ({ ...c, cadence_unit: v as CadenceUnit }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="day">Day</SelectItem><SelectItem value="week">Week</SelectItem><SelectItem value="month">Month</SelectItem></SelectContent></Select></Field></div>}
+              <Field label="First review date"><Input type="datetime-local" value={cadence.start_at ? toLocalInput(cadence.start_at) : ""} onChange={(e) => setCadence((c) => ({ ...c, start_at: e.target.value ? new Date(e.target.value).toISOString() : null }))} /></Field>
+              <Field label="Time zone"><Select value={cadence.timezone} onValueChange={(v) => setCadence((c) => ({ ...c, timezone: v }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{COMMON_TIMEZONES.map((tz) => <SelectItem key={tz} value={tz}>{tz}</SelectItem>)}</SelectContent></Select></Field>
+              <p className="text-xs text-muted-foreground">{plainEnglish(cadence)}</p>
+              {!recurringAllowed && <p className="text-xs text-muted-foreground">Recurring cadence is available on Growth and Agency. Starter and Free Preview are one-off only.</p>}
+            </CardContent>
+          </Card>
 
+          <Card>
+            <CardHeader><CardTitle className="text-base flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /> Before generation</CardTitle></CardHeader>
+            <CardContent className="space-y-2 text-sm text-muted-foreground">
+              <p>Full campaign-pack generation costs <strong className="text-foreground">{CREDIT_COSTS.full_campaign_pack} Campaign Credits</strong>.</p>
+              <p>Current balance: <strong className="text-foreground">{remaining}</strong>.</p>
+              <p>Free Preview is capped at one full campaign pack and cannot buy top-ups.</p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
 
-      <div className="flex justify-between">
-        <Button variant="outline" onClick={back} disabled={step === 1}>
-          <ChevronLeft className="h-4 w-4 mr-1" /> Back
-        </Button>
-        {step < totalSteps ? (
-          <Button
-            data-testid="campaign-next-button"
-            onClick={() => {
-              if (step === 5 && schedulePastError) {
-                toast.error("Choose a future campaign date and time.");
-                return;
-              }
-              next();
-            }}
-            disabled={
-              (step === 2 && (!brief.name || !brief.offer || !brief.audience)) ||
-              (step === 5 && schedulePastError)
-            }
-          >
-            Continue <ChevronRight className="h-4 w-4 ml-1" />
-          </Button>
-        ) : (
-          <Button data-testid="campaign-create-button" onClick={generate} disabled={saving || blocked || schedulePastError}>
-            <Sparkles className="h-4 w-4 mr-2" /> {saving ? "Generating…" : "Generate campaign pack"}
-          </Button>
-        )}
+      <Alert>
+        <ShieldCheck className="h-4 w-4" />
+        <AlertTitle>Generation creates drafts, not a live campaign</AlertTitle>
+        <AlertDescription>After generation, review the pack and record human approval. Activation preparation and live sending are separate customer-controlled steps with their own checks.</AlertDescription>
+      </Alert>
+
+      <div className="flex justify-end gap-2">
+        <Button variant="outline" onClick={() => navigate("/app/campaigns")}>Cancel</Button>
+        <Button size="lg" onClick={generate} disabled={!canGenerate || (isFreePreview && freePackUsed)}>{generating ? "Generating…" : <>Generate full pack <ArrowRight className="h-4 w-4 ml-2" /></>}</Button>
       </div>
     </div>
   );
 }
 
-function Field({
-  label, v, on, full, id, name, placeholder, required, testId,
-}: {
-  label: string;
-  v: string;
-  on: (v: string) => void;
-  full?: boolean;
-  id?: string;
-  name?: string;
-  placeholder?: string;
-  required?: boolean;
-  testId?: string;
-}) {
-  const autoId = id || `field-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
-  return (
-    <div className={full ? "md:col-span-2" : ""}>
-      <Label htmlFor={autoId}>
-        {label}{required && <span className="text-destructive ml-0.5">*</span>}
-      </Label>
-      <Input
-        id={autoId}
-        name={name}
-        placeholder={placeholder}
-        aria-label={label}
-        aria-required={required || undefined}
-        data-testid={testId}
-        value={v}
-        onChange={(e) => on(e.target.value)}
-      />
-    </div>
-  );
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return <div className="space-y-1.5"><Label>{label}</Label>{children}</div>;
 }
 
-function Row({ label, v }: { label: string; v: string }) {
-  return (
-    <div className="flex justify-between gap-4 py-1 border-b border-border last:border-0">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="text-right font-medium">{v || <CheckCircle2 className="h-4 w-4 inline text-muted-foreground" />}</span>
-    </div>
-  );
+function toLocalInput(iso: string) {
+  const d = new Date(iso);
+  const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 16);
 }
