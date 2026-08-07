@@ -11,8 +11,10 @@ import LegalComplianceGate from "@/components/LegalComplianceGate";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Check, ArrowUpRight, CheckCircle2 } from "lucide-react";
-import { useStripeCheckout } from "@/hooks/useStripeCheckout";
-import { PRICE_IDS } from "@/lib/stripe";
+import { useDodoCheckout } from "@/hooks/useDodoCheckout";
+import { useDodoReadiness } from "@/hooks/useDodoReadiness";
+import { CHECKOUT_ACTIVATING_COPY, isProductLiveReady, type DodoProductKey } from "@/lib/dodoReadiness";
+import { parseBuyParam } from "@/lib/safeNext";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useCurrency } from "@/hooks/useCurrency";
@@ -31,11 +33,12 @@ const PLAN_TO_SKU: Record<PlanId, SkuId> = {
   growth: "vv_growth_monthly",
   agency: "vv_agency_monthly",
 };
-const PLAN_TO_PRICE: Record<PlanId, string> = {
-  free_preview: PRICE_IDS.growth, // Recommended upgrade path from Free Preview.
-  starter: PRICE_IDS.starter,
-  growth: PRICE_IDS.growth,
-  agency: PRICE_IDS.agency,
+// Internal Dodo product keys for NEW purchases. Never a provider product id.
+const PLAN_TO_DODO_PRODUCT: Record<PlanId, DodoProductKey> = {
+  free_preview: "vv_growth_monthly", // Recommended upgrade path from Free Preview.
+  starter: "vv_starter_oneoff",
+  growth: "vv_growth_monthly",
+  agency: "vv_agency_monthly",
 };
 
 
@@ -90,7 +93,8 @@ export default function AppBilling() {
   const [emailConn, setEmailConn] = useState<any[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
   const [stripeSub, setStripeSub] = useState<any>(null);
-  const { openCheckout, element } = useStripeCheckout();
+  const { readiness } = useDodoReadiness();
+  const { startCheckout } = useDodoCheckout();
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
   const [pendingPlan, setPendingPlan] = useState<PlanId | null>(null);
@@ -162,15 +166,32 @@ export default function AppBilling() {
 
   const buyPlan = (id: PlanId) => setPendingPlan(id);
 
+  // `?buy=starter|growth|agency` may only PRESELECT the legal confirmation.
+  // It never initiates a payment without the user confirming the gate.
+  useEffect(() => {
+    const plan = parseBuyParam(params.get("buy"));
+    if (!plan) return;
+    setPendingPlan(plan as PlanId);
+    params.delete("buy");
+    setParams(params, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // NEW purchases go through Dodo when that specific product is live-ready.
+  // There is deliberately no Stripe fallback for a new purchase.
   const confirmBuyPlan = async () => {
     if (!pendingPlan) return;
     const id = pendingPlan;
     setPendingPlan(null);
-    openCheckout({
-      priceId: PLAN_TO_PRICE[id],
-      title: `Subscribe to ${PLANS[id].name}`,
-      returnPath: `/app/billing?checkout=${id}`,
-    });
+    const productKey = PLAN_TO_DODO_PRODUCT[id];
+    if (!isProductLiveReady(readiness, productKey)) {
+      toast.info(CHECKOUT_ACTIVATING_COPY, {
+        description: "No payment was taken. We'll arrange onboarding with you directly.",
+      });
+      navigate(`/contact?plan=${id === "free_preview" ? "growth" : id}`);
+      return;
+    }
+    await startCheckout(productKey);
   };
 
   const planEntries = (Object.keys(PLANS) as PlanId[]);
@@ -391,7 +412,6 @@ export default function AppBilling() {
       </section>
 
       <TopUpModal open={topupOpen} onOpenChange={setTopupOpen} />
-      {element}
       <LegalComplianceGate
         open={pendingPlan !== null}
         onOpenChange={(v) => { if (!v) setPendingPlan(null); }}
