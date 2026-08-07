@@ -1,10 +1,4 @@
 {
-  "language": {
-    "label": "Language",
-    "english": "English",
-    "spanish": "Español",
-    "french": "Français"
-  },
   "actions": {
     "save": "Save",
     "cancel": "Cancel",
