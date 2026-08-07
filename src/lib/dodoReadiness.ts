@@ -62,3 +62,12 @@ export const PLAN_SLUG_TO_PRODUCT: Record<string, DodoProductKey> = {
 /** Copy shown wherever online checkout is not yet activated. */
 export const CHECKOUT_ACTIVATING_COPY =
   "Online checkout is being activated — contact us for onboarding.";
+
+/** True only when at least one top-up product can actually be bought online now. */
+export function isAnyTopUpLiveReady(readiness: DodoReadiness | null | undefined): boolean {
+  return (
+    isProductLiveReady(readiness, "vv_topup_small") ||
+    isProductLiveReady(readiness, "vv_topup_medium") ||
+    isProductLiveReady(readiness, "vv_topup_large")
+  );
+}

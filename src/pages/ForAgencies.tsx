@@ -18,7 +18,6 @@ import {
   Share2,
   Newspaper,
   GitBranch,
-  Users,
   CheckCircle2,
 } from "lucide-react";
 
@@ -35,13 +34,13 @@ const workspaceControls = [
   },
   {
     icon: ShieldCheck,
-    title: "Pooled sending governance",
-    desc: "Apply account-level and workspace-level limits without treating those controls as legal approval or a deliverability guarantee.",
+    title: "Account-wide send visibility",
+    desc: "See daily send usage across client workspaces against the plan's account-level daily send ceiling. These are operational safeguards, not legal approval or a deliverability guarantee.",
   },
   {
-    icon: Users,
-    title: "Team access",
-    desc: "Manage authorised users and keep client activity associated with the correct workspace and customer instruction.",
+    icon: GitBranch,
+    title: "Cross-client pipeline and Outcome Funnel",
+    desc: "Review stored follow-up, opportunity and outcome records across client workspaces to see how activated work progressed.",
   },
   {
     icon: Inbox,

@@ -19,7 +19,7 @@ import TrustStrip from "@/components/TrustStrip";
 import GlobalStrip from "@/components/GlobalStrip";
 import { planSlug } from "@/lib/planIntent";
 import { useDodoReadiness } from "@/hooks/useDodoReadiness";
-import { isProductLiveReady, type DodoProductKey } from "@/lib/dodoReadiness";
+import { isProductLiveReady, isAnyTopUpLiveReady, type DodoProductKey } from "@/lib/dodoReadiness";
 import { authNextForPlan } from "@/lib/safeNext";
 
 // Direct purchase-intent labels, used ONLY when live Dodo checkout is ready
@@ -100,7 +100,7 @@ const plans: PlanDef[] = [
 ];
 
 
-const faqs = [
+const buildFaqs = (topUpsPurchasable: boolean) => [
   {
     q: "Is Free Preview really free?",
     a: "Yes. £0, no card required. You get 10 welcome Campaign Credits plus +2 per day (daily balance capped at 10) for 14 days. There is no automatic paid upgrade — you decide when, or whether, to buy credits or move to a paid plan.",
@@ -111,7 +111,9 @@ const faqs = [
   },
   {
     q: "Can I buy credits without subscribing?",
-    a: "Top-ups and paid upgrades are arranged during onboarding. The final price, currency, tax treatment, payment provider and applicable terms are confirmed before purchase.",
+    a: topUpsPurchasable
+      ? "Credit top-ups can be purchased from your billing settings when signed in, separately from a subscription. The final price, currency, tax treatment, payment provider and applicable terms are shown before you confirm payment."
+      : "Credit top-ups are handled through the published contact route rather than instant self-serve checkout at the moment. The final price, currency, tax treatment, payment provider and applicable terms are confirmed before any payment is taken.",
   },
   {
     q: "Can I send outreach on Free Preview?",
@@ -143,7 +145,7 @@ const faqs = [
   },
   {
     q: "What sending limits apply?",
-    a: "Starter and Growth use per-workspace limits, while Agency Workspace uses pooled account-level governance across client workspaces. Daily caps and risky-record controls are operational safeguards; they do not guarantee deliverability or legal compliance.",
+    a: "Daily send ceilings apply to the signed-in account on an eligible paid plan. Agency Workspace additionally gives an account-wide view of send usage across isolated client workspaces. Daily caps and risky-record controls are operational safeguards; they do not guarantee deliverability or legal compliance.",
   },
   {
     q: "Which plans renew automatically?",
@@ -171,13 +173,14 @@ const faqs = [
   },
   {
     q: "Can agencies share credits across clients?",
-    a: "Yes. Agency Workspace pools monthly Campaign Credits and account-level sending governance across isolated client workspaces.",
+    a: "Yes. Agency Workspace pools monthly Campaign Credits across isolated client workspaces, and shows account-wide send usage against the plan's daily send ceiling.",
   },
 ];
 
 const Pricing = () => {
   const { currency, setCurrency } = useCurrency();
   const { readiness } = useDodoReadiness();
+  const faqs = buildFaqs(isAnyTopUpLiveReady(readiness));
 
   return (
     <>
@@ -391,7 +394,7 @@ const Pricing = () => {
                     Plan limits and top-ups
                   </h2>
                   <p className="text-sm opacity-90">
-                    Daily caps and risky-record controls are operational safeguards. They do not guarantee deliverability or compliance. Additional credits may be requested through onboarding.
+                    Daily caps and risky-record controls are operational safeguards. They do not guarantee deliverability or compliance. Additional Campaign Credits can be added later; the price, currency, tax and payment provider are confirmed before any payment.
                   </p>
                 </div>
                 <div className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground">
