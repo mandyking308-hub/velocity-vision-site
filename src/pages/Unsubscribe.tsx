@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import SEO from "@/components/SEO";
 import { supabase } from "@/integrations/supabase/client";
+import { Helmet } from "react-helmet-async";
 
 type State = "loading" | "valid" | "already" | "invalid" | "done" | "error";
 
@@ -50,6 +51,9 @@ const Unsubscribe = () => {
   return (
     <>
       <SEO title="Unsubscribe — Velocity Vision" description="Manage your email preferences for Velocity Vision." path="/unsubscribe" />
+      <Helmet>
+        <meta name="robots" content="noindex,nofollow" />
+      </Helmet>
       <main className="min-h-screen flex items-center justify-center px-6 bg-background">
         <div className="w-full max-w-md bg-card border border-border/50 rounded-2xl shadow-card p-8 text-center">
           <p className="text-accent font-semibold text-xs uppercase tracking-widest mb-3">Velocity Vision</p>
