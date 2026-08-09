@@ -13,9 +13,9 @@ export const SAMPLE_BRIEF: CampaignBrief = {
   offer:
     "A short operations review for small commercial teams that produces a written summary of where their outreach and follow-up process loses time.",
   audience:
-    "Operations and commercial leads at UK service businesses with 5–50 staff who run outreach manually across spreadsheets and inboxes.",
+    "Operations and commercial leads at US service businesses with 5–50 staff who run outreach manually across spreadsheets and inboxes.",
   industry: "Professional services",
-  geography: "United Kingdom",
+  geography: "United States",
   pricePoint: "Fixed fee, quoted after the review",
   tone: "Direct, practical, no hype",
   cta: "Reply to arrange a short call",

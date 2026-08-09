@@ -327,7 +327,7 @@ export default function AppCampaignCopilot() {
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="cp-geo">Where are they? (optional)</Label>
-                  <Input id="cp-geo" value={input.geography} onChange={(e) => set("geography", e.target.value)} placeholder="United Kingdom" />
+                  <Input id="cp-geo" value={input.geography} onChange={(e) => set("geography", e.target.value)} placeholder="United States" />
                   {prefilled.includes("location") && <p className="text-xs text-muted-foreground">From your workspace.</p>}
                 </div>
               </div>
