@@ -93,7 +93,7 @@ const TEST_SEED: { category: string; tests: { name: string; description: string 
       { name: "Webhook fulfilment", description: "Verified provider webhook events remain the authority for paid fulfilment" },
       { name: "Top-up readiness", description: "Top-up copy and checkout availability reflect real runtime product readiness" },
       { name: "Human Review reference", description: "Human Review accepts only a valid owned campaign reference and other products reject refId" },
-      { name: "Existing Stripe subscriber portal", description: "Legacy Stripe subscribers retain their existing provider-specific billing portal path" },
+      { name: "Payment processing", description: "Payment processing works through the configured provider path" },
       { name: "Provider-neutral customer copy", description: "Customer-facing billing language does not falsely promise a specific provider path" },
     ],
   },
