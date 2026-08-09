@@ -1,12 +1,18 @@
 // Locale-aware formatting helpers. All functions are safe to call on the
 // server (edge functions) and the client — they only depend on the standard
 // Intl APIs.
-import i18n, { LANGUAGE_DEFAULTS, type SupportedLanguage } from "@/i18n";
+import i18n from "@/i18n";
 
-/** Resolve the current UI language as a short code (en/es/fr). */
+/** English-only UI — multilingual display is handled globally by GTranslate. */
+export type SupportedLanguage = "en";
+const LANGUAGE_DEFAULTS: Record<SupportedLanguage, { locale: string }> = {
+  en: { locale: "en-GB" },
+};
+
+/** Resolve the current UI language (English-only). */
 export function currentLanguage(): SupportedLanguage {
   const raw = (i18n.language || "en").slice(0, 2);
-  return (["en", "es", "fr"].includes(raw) ? raw : "en") as SupportedLanguage;
+  return raw === "en" ? "en" : "en";
 }
 
 /** Resolve the BCP-47 locale to use for Intl formatting. */
