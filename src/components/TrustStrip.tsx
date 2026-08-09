@@ -7,7 +7,7 @@ const pricingItems: { icon: LucideIcon; label: string }[] = [
   { icon: Database, label: "Workspace Separation" },
   { icon: KeyRound, label: "Encrypted Secret Handling" },
   { icon: FileCheck, label: "DPA Available" },
-  { icon: Scale, label: "GDPR / UK GDPR Privacy Framework" },
+  { icon: Scale, label: "GDPR / CCPA Privacy Framework" },
 ];
 
 const legalItems: { icon: LucideIcon; label: string }[] = [
