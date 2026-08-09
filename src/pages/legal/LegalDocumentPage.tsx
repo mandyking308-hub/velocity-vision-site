@@ -44,7 +44,7 @@ const docs: Record<string, LegalDoc> = {
           "In these Terms:",
           "“Velocity Vision”, “Platform”, “Service”, “we”, “us” or “our” means the Velocity Vision platform operated by Global Solutions Management LLC.",
           "“Global Solutions Management LLC” means Global Solutions Management LLC, a company incorporated in the State of Delaware, United States.",
-          "“Customer”, “you” or “your” means the person, company, agency, organisation, partnership, charity, trust, public body, fund, brand, client, estate, project or other legal entity that accesses, purchases, subscribes to, creates, joins, administers or uses Velocity Vision.",
+          "“Customer”, “you” or “your” means the person, company, agency, organization, partnership, charity, trust, public body, fund, brand, client, estate, project or other legal entity that accesses, purchases, subscribes to, creates, joins, administers or uses Velocity Vision.",
           "“User” means any person who accesses or uses Velocity Vision through, under or in connection with a Customer account, workspace, invitation, login, role, permission, integration, client workspace or agency workspace.",
           "“Workspace” means any account area, dashboard, Data Vault, client workspace, agency workspace, project space, business workspace or other environment made available through Velocity Vision.",
           "“Customer Data” means any data, file, record, list, note, instruction, prompt, content, contact, company record, recipient data, uploaded material, imported material, generated material, exported material, client material, sender information, billing information or workspace content provided, uploaded, imported, entered, generated, activated or used by or for Customer through Velocity Vision.",
@@ -56,9 +56,9 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "2. Business Use Only",
         paragraphs: [
-          "Velocity Vision is provided for lawful business, professional, commercial, agency, organisational and entrepreneurial use only. It is not intended for personal, household or consumer use.",
-          "By accessing or using Velocity Vision, you confirm that you are acting in a business, professional, commercial, agency, organisational or entrepreneurial capacity and not as a consumer.",
-          "If you use Velocity Vision on behalf of a company, agency, partnership, client, charity, trust, public body, fund, estate, project, brand or other organisation, you represent and warrant that you have authority to bind that organisation to these Terms.",
+          "Velocity Vision is provided for lawful business, professional, commercial, agency, organizational and entrepreneurial use only. It is not intended for personal, household or consumer use.",
+          "By accessing or using Velocity Vision, you confirm that you are acting in a business, professional, commercial, agency, organizational or entrepreneurial capacity and not as a consumer.",
+          "If you use Velocity Vision on behalf of a company, agency, partnership, client, charity, trust, public body, fund, estate, project, brand or other organization, you represent and warrant that you have authority to bind that organization to these Terms.",
           "If you do not agree to these Terms, or if you do not have authority to accept them, you must not access or use Velocity Vision.",
         ],
       },
@@ -80,7 +80,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "5. Service Provider and Platform Scope",
         paragraphs: [
-          "Velocity Vision is an AI-powered commercial workspace designed to help businesses organise contact data, review data readiness, prepare AI-assisted outreach assets, manage templates, support governed activation, plan cadence, organise replies, support follow-up and move warm contacts into pipeline.",
+          "Velocity Vision is an AI-powered commercial workspace designed to help businesses organize contact data, review data readiness, prepare AI-assisted outreach assets, manage templates, support governed activation, plan cadence, organize replies, support follow-up and move warm contacts into pipeline.",
           "Velocity Vision is software. It is not a law firm, compliance adviser, tax adviser, accountant, financial adviser, investment adviser, medical adviser, insurance adviser, broker, marketing agency, email service provider of record, lead-generation agency, managed campaign provider, data broker, records archive, regulated advisory service or guaranteed revenue service.",
           "Velocity Vision does not guarantee replies, leads, meetings, sales, revenue, funding, deliverability, inbox placement, domain reputation, sender reputation, legal compliance, regulatory compliance, campaign performance, commercial outcomes, investment outcomes or suitability for any particular business, industry, country, recipient group or use case.",
         ],
@@ -125,11 +125,11 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "8. Accounts, Users and Authority",
         paragraphs: [
-          "You must provide accurate account, workspace, billing, tax, contact and organisation information and keep it up to date.",
+          "You must provide accurate account, workspace, billing, tax, contact and organization information and keep it up to date.",
           "You are responsible for all activity under your account, workspaces, users, permissions, invitations, payment methods, sender connections, integrations, credentials and client workspaces.",
           "This includes activity by employees, contractors, invited users, administrators, agencies, clients, consultants, representatives, outsourced providers, end clients and anyone using your login, device, access link, workspace, API connection, sender connection, payment method or integration.",
           "You must:",
-          "We may treat all activity under your account, workspace, payment method, sender connection, integration or credentials as authorised by you unless and until you notify us of suspected compromise and we have had a reasonable opportunity to act.",
+          "We may treat all activity under your account, workspace, payment method, sender connection, integration or credentials as authorized by you unless and until you notify us of suspected compromise and we have had a reasonable opportunity to act.",
         ],
         bullets: [
           "keep login credentials secure;",
@@ -160,7 +160,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "11. Platform Functionality",
         paragraphs: [
-          "Velocity Vision may include tools for data upload, mapping, storage, deduplication, enrichment support, quality review, quality status assignment, segmentation, sender verification, activation checks, AI-assisted templates, outreach packs, social posts, press releases, video scripts, multilingual variants, cadence planning, reply organisation, follow-up states, pipeline tracking, billing, credit usage, exports, reports, dashboards and integrations.",
+          "Velocity Vision may include tools for data upload, mapping, storage, deduplication, enrichment support, quality review, quality status assignment, segmentation, sender verification, activation checks, AI-assisted templates, outreach packs, social posts, press releases, video scripts, multilingual variants, cadence planning, reply organization, follow-up states, pipeline tracking, billing, credit usage, exports, reports, dashboards and integrations.",
           "Features may be added, changed, suspended, limited, renamed, redesigned, replaced or removed at any time.",
           "We may modify safety controls, usage limits, activation gates, quality checks, pricing logic, billing rules, credit consumption, interface flows, sender controls, verification steps, product labels, integrations, workspace limits or technical requirements to protect Velocity Vision, customers, users, recipients, senders, infrastructure, third-party providers, payment systems, legal compliance, platform reputation or our business.",
           "No product description, roadmap, beta feature, public page, help article, onboarding note, support response, marketing statement or sales statement creates an obligation to maintain any feature unless expressly stated in a signed written agreement accepted by Global Solutions Management LLC.",
@@ -179,7 +179,7 @@ const docs: Record<string, LegalDoc> = {
         paragraphs: [
           "You are responsible for all Customer Data.",
           "This includes all data, files, records, lists, contacts, prompts, instructions, notes, tags, uploads, imports, pasted content, exported content, generated content, campaign materials, sender details, client materials, relationship data, company records, recipient information, billing information and workspace content that you or your users place into, create through, process through, activate through or export from Velocity Vision.",
-          "You represent and warrant that you have all rights, permissions, notices, consents, lawful bases, contractual rights, regulatory permissions and internal authorisations required to collect, store, upload, import, process, analyse, enrich, segment, use, retain, export, transfer and contact the data you place into Velocity Vision.",
+          "You represent and warrant that you have all rights, permissions, notices, consents, lawful bases, contractual rights, regulatory permissions and internal authorizations required to collect, store, upload, import, process, analyse, enrich, segment, use, retain, export, transfer and contact the data you place into Velocity Vision.",
           "You must not upload or process:",
           "You are responsible for maintaining records of source, permission, consent, legitimate interest assessment, privacy notice, suppression status, opt-out history, contact restrictions, lawful basis and compliance evidence where required by law.",
         ],
@@ -189,18 +189,18 @@ const docs: Record<string, LegalDoc> = {
           "data collected without a lawful basis;",
           "purchased, rented or third-party lists that cannot lawfully be used;",
           "data about minors;",
-          "sensitive personal data unless expressly authorised and legally permitted;",
+          "sensitive personal data unless expressly authorized and legally permitted;",
           "health data;",
           "biometric data;",
           "genetic data;",
-          "criminal offence data;",
+          "criminal offense data;",
           "financial account data;",
           "government identifier data;",
           "special category data;",
-          "data subject to professional secrecy or privilege unless you are authorised to process it;",
+          "data subject to professional secrecy or privilege unless you are authorized to process it;",
           "data subject to contractual restrictions that prevent SaaS processing;",
           "data subject to regulatory restrictions that prevent transfer, storage, outreach or platform use;",
-          "data that you are not authorised to transfer, store, process, export, retain or use.",
+          "data that you are not authorized to transfer, store, process, export, retain or use.",
         ],
       },
       {
@@ -214,7 +214,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "15. Data Vault and Storage",
         paragraphs: [
-          "The Data Vault is a workspace tool for organising and using customer-provided business and contact data. It is not a compliance archive, legal record system, regulated records repository, certified backup system, litigation hold system, accounting record system, public filing system or guaranteed evidence store.",
+          "The Data Vault is a workspace tool for organizing and using customer-provided business and contact data. It is not a compliance archive, legal record system, regulated records repository, certified backup system, litigation hold system, accounting record system, public filing system or guaranteed evidence store.",
           "You are responsible for keeping independent copies of important data, legal records, accounting records, compliance evidence, consent records, suppression lists, contracts, approvals, exports and business-critical files.",
           "We may apply storage limits, file-size limits, fair-use limits, retention rules, export limits, download limits, security restrictions, workspace limits, data-type restrictions and technical controls depending on your plan, usage, risk profile or platform requirements.",
           "We are not responsible for Customer’s failure to export, back up, secure, retain, evidence or preserve Customer Data.",
@@ -261,7 +261,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "19. AI-Assisted Features, Templates and Generated Outputs",
         paragraphs: [
-          "Velocity Vision includes AI-assisted tools that may help draft, structure, summarise, classify, translate, segment, organise, review, suggest or generate content and workflow actions.",
+          "Velocity Vision includes AI-assisted tools that may help draft, structure, summarise, classify, translate, segment, organize, review, suggest or generate content and workflow actions.",
           "Generated Outputs may include outreach copy, email drafts, social posts, press releases, video scripts, follow-up messages, campaign briefs, multilingual variants, summaries, pipeline notes, data quality observations, prompts, reports, templates or other materials.",
           "All Generated Outputs are drafts. Customer must review, edit, approve and verify outputs before using, sending, publishing, exporting, relying on or activating them.",
           "Customer is responsible for ensuring that all Generated Outputs are:",
@@ -318,7 +318,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "22. Regulated, High-Risk and Restricted Uses",
         paragraphs: [
-          "Velocity Vision must not be used for regulated, high-risk, sensitive or legally restricted use unless Customer has all required authorisations and the use is expressly permitted under Customer’s plan and applicable written agreement.",
+          "Velocity Vision must not be used for regulated, high-risk, sensitive or legally restricted use unless Customer has all required authorizations and the use is expressly permitted under Customer’s plan and applicable written agreement.",
           "Restricted uses include, without limitation, uses involving:",
           "We may restrict or refuse any use that we reasonably consider high-risk, unlawful, unsafe, reputationally harmful, operationally burdensome, incompatible with the platform or unsuitable for Velocity Vision.",
         ],
@@ -352,14 +352,14 @@ const docs: Record<string, LegalDoc> = {
         heading: "23. Subscriptions, Credits, Billing and Taxes",
         paragraphs: [
           "Plans, subscriptions, credits, top-ups, billing cycles, included features, usage limits, currencies, renewal terms and applicable fees are shown at checkout, in billing settings, in product notices or in an applicable order form.",
-          "By purchasing a plan, subscription, credit package or paid feature, you authorise us and our payment processors to charge the payment method provided for applicable fees, taxes, renewals, top-ups, overages and other charges.",
-          "Unless expressly stated otherwise, subscriptions renew automatically until cancelled. You are responsible for cancelling before the renewal date if you do not want to renew.",
+          "By purchasing a plan, subscription, credit package or paid feature, you authorize us and our payment processors to charge the payment method provided for applicable fees, taxes, renewals, top-ups, overages and other charges.",
+          "Unless expressly stated otherwise, subscriptions renew automatically until canceled. You are responsible for canceling before the renewal date if you do not want to renew.",
           "Campaign Credits are product-usage units for credit-priced AI generation. The current live credit-priced action is full campaign-pack generation. Credits are not charged per email sent, per contact activated, or for ordinary export. If additional actions become credit-priced in future, their credit cost must be disclosed in the product before consumption.",
           "Credits are not money, stored value, electronic money, gift cards or currency. Credits have no cash value, are not transferable, are not redeemable for cash and may expire, be limited, be withdrawn or be subject to plan rules.",
           "Stored data may remain available when credits run out, but chargeable actions may pause until credits are added, the plan is upgraded or billing is restored.",
           "Unless required by law or expressly stated in writing by Global Solutions Management LLC, fees, subscriptions and credit purchases are non-refundable once the paid period begins, credits are made available or services are activated.",
           "You are responsible for all taxes, VAT, sales tax, use tax, withholding, duties, levies, exchange-rate effects, bank fees, card fees, foreign transaction fees and payment-provider charges.",
-          "Prices may be displayed in one or more currencies. Currency conversion tools, estimates or localised price displays are provided for convenience only. The final amount charged may depend on checkout currency, payment processor rates, card issuer rates, taxes, location, exchange-rate changes and payment-provider charges.",
+          "Prices may be displayed in one or more currencies. Currency conversion tools, estimates or localized price displays are provided for convenience only. The final amount charged may depend on checkout currency, payment processor rates, card issuer rates, taxes, location, exchange-rate changes and payment-provider charges.",
           "We may suspend, restrict or terminate access for failed payments, expired payment methods, chargebacks, payment disputes, fraud signals, overdue invoices, tax issues or billing abuse.",
         ],
       },
@@ -443,7 +443,7 @@ const docs: Record<string, LegalDoc> = {
           "generate or distribute unlawful, defamatory, discriminatory, harassing, hateful, exploitative, sexually abusive, violent, infringing or deceptive content;",
           "use the platform for illegal goods or services;",
           "target vulnerable persons unlawfully or exploitatively;",
-          "conduct regulated activity without required authorisation;",
+          "conduct regulated activity without required authorization;",
           "upload malicious code or unsafe files;",
           "overload, degrade or abuse the platform;",
           "create multiple accounts to avoid limits, suspension, billing, risk controls or enforcement;",
@@ -455,14 +455,14 @@ const docs: Record<string, LegalDoc> = {
         heading: "29. Competitor, Benchmarking and Model Training Restrictions",
         paragraphs: [
           "Customer must not use Velocity Vision to build, train, fine-tune, benchmark, evaluate, test or improve any competing product, AI model, dataset, platform, workflow, template library, automation system, commercial database or outreach tool without our prior written consent.",
-          "Customer must not scrape, copy, extract, monitor, harvest or use platform content, prompts, templates, workflows, outputs, interface patterns, scoring logic, safety logic, product logic or system behaviour for competitive analysis, model training, dataset creation, product replication, reverse engineering or benchmarking.",
+          "Customer must not scrape, copy, extract, monitor, harvest or use platform content, prompts, templates, workflows, outputs, interface patterns, scoring logic, safety logic, product logic or system behavior for competitive analysis, model training, dataset creation, product replication, reverse engineering or benchmarking.",
         ],
       },
       {
         heading: "30. Sanctions, Export Control and Restricted Territories",
         paragraphs: [
           "You must comply with all applicable sanctions, export control, trade control, anti-bribery, anti-corruption and anti-money laundering laws.",
-          "You must not use Velocity Vision if you are located in, organised under the laws of, ordinarily resident in, owned or controlled by, or acting on behalf of any person or entity subject to sanctions, embargoes or trade restrictions that would prohibit access to the platform.",
+          "You must not use Velocity Vision if you are located in, organized under the laws of, ordinarily resident in, owned or controlled by, or acting on behalf of any person or entity subject to sanctions, embargoes or trade restrictions that would prohibit access to the platform.",
           "You must not use Velocity Vision to support prohibited transactions, restricted parties, sanctioned entities, embargoed territories, unlawful exports, unlawful re-exports or unlawful circumvention of trade controls.",
           "You represent and warrant that you and your users are not prohibited from using Velocity Vision under applicable sanctions, export control or trade laws.",
           "We may restrict, suspend or terminate access where sanctions, export control, trade compliance or payment risk is identified or suspected.",
@@ -506,8 +506,8 @@ const docs: Record<string, LegalDoc> = {
         paragraphs: [
           "Velocity Vision may rely on, connect to or integrate with third-party providers for hosting, authentication, payments, analytics, email connectivity, AI processing, data storage, monitoring, communications, translation, CRM tools, domain services, DNS, CDNs, logging, support tools or other infrastructure.",
           "Third-party services are not controlled by Global Solutions Management LLC. They may have their own terms, policies, pricing, security practices, outages, rate limits, account restrictions, suspensions, data practices and compliance requirements.",
-          "You authorise us to transmit, process and receive data through third-party services as reasonably necessary to provide the platform, operate integrations, process payments, support AI-assisted features and maintain security.",
-          "We are not responsible for third-party service failures, outages, errors, policy changes, pricing changes, data handling, deliverability decisions, payment interruptions, email provider restrictions, account suspensions, integration failures or external platform behaviour outside our reasonable control.",
+          "You authorize us to transmit, process and receive data through third-party services as reasonably necessary to provide the platform, operate integrations, process payments, support AI-assisted features and maintain security.",
+          "We are not responsible for third-party service failures, outages, errors, policy changes, pricing changes, data handling, deliverability decisions, payment interruptions, email provider restrictions, account suspensions, integration failures or external platform behavior outside our reasonable control.",
           "You are responsible for complying with the terms and policies of any third-party services you connect to or use with Velocity Vision.",
           "We may disconnect, suspend, restrict or disable third-party integrations at any time where required by law, provider rules, technical constraints, security concerns, abuse signals, payment issues or operational risk.",
         ],
@@ -561,7 +561,7 @@ const docs: Record<string, LegalDoc> = {
           "managing workspace permissions;",
           "reviewing exports and downloads;",
           "securing data after export;",
-          "ensuring users are trained and authorised;",
+          "ensuring users are trained and authorized;",
           "maintaining backups of important data;",
           "applying appropriate internal policies;",
           "promptly notifying us of suspected compromise.",
@@ -770,9 +770,9 @@ const docs: Record<string, LegalDoc> = {
           "war, invasion, armed conflict, terrorism, sabotage, civil unrest, riot, insurrection, national emergency or military action;",
           "government action, regulatory action, court order, sanctions, export controls, import restrictions, embargoes, trade restrictions, law changes, enforcement action, licensing restrictions or orders from any public authority;",
           "interruption, failure, degradation or restriction of internet infrastructure, telecommunications networks, data centres, cloud providers, hosting providers, CDN providers, DNS providers, domain registrars, email providers, payment processors, banking networks, card networks, authentication providers, analytics providers, AI providers, API providers, CRM providers, translation providers, monitoring providers or other third-party services;",
-          "third-party platform changes, API changes, rate limits, account restrictions, policy changes, technical restrictions, suspension decisions, deliverability decisions, spam filtering, blacklist events, sender reputation issues, domain reputation issues, email provider enforcement or external platform behaviour outside our reasonable control;",
+          "third-party platform changes, API changes, rate limits, account restrictions, policy changes, technical restrictions, suspension decisions, deliverability decisions, spam filtering, blacklist events, sender reputation issues, domain reputation issues, email provider enforcement or external platform behavior outside our reasonable control;",
           "cyberattack, denial-of-service attack, malware, ransomware, credential compromise, security incident, vulnerability exploitation, unauthorised access, infrastructure attack or malicious third-party activity;",
-          "labour disputes, strikes, lockouts, shortages, supply-chain failures, utility failures, power failures, hardware failures, software defects, emergency maintenance or inability to obtain necessary services, equipment, personnel, permissions, licences or infrastructure;",
+          "labor disputes, strikes, lockouts, shortages, supply-chain failures, utility failures, power failures, hardware failures, software defects, emergency maintenance or inability to obtain necessary services, equipment, personnel, permissions, licenses or infrastructure;",
           "payment disruption, chargeback network disruption, banking failure, processor outage, fraud controls, tax authority restriction, currency restriction, foreign exchange restriction or inability to process payments through ordinary channels;",
           "any other event, circumstance or cause beyond our reasonable control, whether foreseeable or unforeseeable, that prevents, delays, restricts, degrades or materially increases the burden, risk or cost of providing the platform.",
         ],
@@ -927,7 +927,7 @@ const docs: Record<string, LegalDoc> = {
           `In this Customer Agreement:`,
           `"Velocity Vision", "Platform", "Service", "we", "us" or "our" means the ${PLATFORM} platform operated by Global Solutions Management LLC.`,
           `"Global Solutions Management LLC" means Global Solutions Management LLC, a company incorporated in the State of Delaware, United States.`,
-          `"Customer", "you" or "your" means the person, company, agency, organisation, partnership, charity, trust, public body, fund, brand, client, estate, project or other legal entity that purchases, subscribes to, renews, upgrades, tops up, administers or uses any paid ${PLATFORM} feature.`,
+          `"Customer", "you" or "your" means the person, company, agency, organization, partnership, charity, trust, public body, fund, brand, client, estate, project or other legal entity that purchases, subscribes to, renews, upgrades, tops up, administers or uses any paid ${PLATFORM} feature.`,
           `"User" means any person who accesses or uses ${PLATFORM} through, under or in connection with Customer's account, workspace, invitation, login, role, permission, integration, client workspace or agency workspace.`,
           `"Workspace" means any account area, dashboard, Data Vault, client workspace, agency workspace, project space, business workspace or other environment made available through ${PLATFORM}.`,
           `"Plan" means a paid subscription, package, workspace tier, agency tier, credit package, top-up, promotional package, trial conversion, founder plan, annual plan, monthly plan, custom plan or other commercial access arrangement offered by ${PLATFORM}.`,
@@ -960,9 +960,9 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "4. Business Use Only",
         paragraphs: [
-          `${PLATFORM} is provided for lawful business, professional, commercial, agency, organisational and entrepreneurial use only. It is not intended for personal, household or consumer use.`,
-          `By purchasing or using a paid Plan, Customer confirms that it is acting in a business, professional, commercial, agency, organisational or entrepreneurial capacity and not as a consumer.`,
-          `If Customer purchases or uses ${PLATFORM} on behalf of a company, agency, partnership, client, charity, trust, public body, fund, estate, project, brand or other organisation, the person accepting this Customer Agreement represents and warrants that they have authority to bind that organisation.`,
+          `${PLATFORM} is provided for lawful business, professional, commercial, agency, organizational and entrepreneurial use only. It is not intended for personal, household or consumer use.`,
+          `By purchasing or using a paid Plan, Customer confirms that it is acting in a business, professional, commercial, agency, organizational or entrepreneurial capacity and not as a consumer.`,
+          `If Customer purchases or uses ${PLATFORM} on behalf of a company, agency, partnership, client, charity, trust, public body, fund, estate, project, brand or other organization, the person accepting this Customer Agreement represents and warrants that they have authority to bind that organization.`,
           `If Customer does not agree to this Customer Agreement, or if the person accepting does not have authority to bind Customer, Customer must not purchase, subscribe to, access or use paid features of ${PLATFORM}.`,
         ],
       },
@@ -985,7 +985,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "7. Plans and Workspace Access",
         paragraphs: [
-          `A Plan may include Workspace access, Data Vault usage, templates, AI-assisted generation, governed activation, cadence planning, reply organisation, follow-up support, pipeline tools, reporting, exports, agency workspaces, support access, Credits and other platform features.`,
+          `A Plan may include Workspace access, Data Vault usage, templates, AI-assisted generation, governed activation, cadence planning, reply organization, follow-up support, pipeline tools, reporting, exports, agency workspaces, support access, Credits and other platform features.`,
           `Available features, pricing, currencies, limits, support levels, Credit allocations, renewal terms and usage rights may differ by Plan, region, account status, payment status, risk profile, checkout configuration, promotional offer or written order.`,
           `Starter, Growth, Agency Workspace, founder, promotional, annual, monthly, beta, trial and custom Plans may have different rights, restrictions, limits and pricing.`,
           `Workspace access is subject to successful payment, verification, compliance with all platform policies and our right to suspend or restrict access under this Customer Agreement and the Platform Terms of Service.`,
@@ -1024,11 +1024,11 @@ const docs: Record<string, LegalDoc> = {
         ],
       },
       {
-        heading: "11. Payment Authorisation",
+        heading: "11. Payment Authorization",
         paragraphs: [
-          `By purchasing, subscribing, renewing, upgrading, topping up or using paid features, Customer authorises Global Solutions Management LLC and its payment processors to charge the payment method provided for subscriptions, renewals, upgrades, top-ups, overages, taxes, payment-provider charges and other applicable fees.`,
+          `By purchasing, subscribing, renewing, upgrading, topping up or using paid features, Customer authorizes Global Solutions Management LLC and its payment processors to charge the payment method provided for subscriptions, renewals, upgrades, top-ups, overages, taxes, payment-provider charges and other applicable fees.`,
           `Customer must provide accurate billing, payment, tax, company and contact information and keep it up to date.`,
-          `Customer represents and warrants that it is authorised to use the payment method provided and that all payments are lawful.`,
+          `Customer represents and warrants that it is authorized to use the payment method provided and that all payments are lawful.`,
           `We may use third-party payment processors. Payment processors may have their own terms, privacy notices, risk controls, fraud checks, account restrictions, processing delays, currency conversion rates and fees.`,
           `We are not responsible for payment processor outages, payment failures, bank declines, card issuer decisions, foreign exchange charges, card fees, banking fees, payment network issues or payment provider restrictions outside our reasonable control.`,
         ],
@@ -1036,7 +1036,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "12. Pricing, Currency and Taxes",
         paragraphs: [
-          `Prices may be displayed in one or more currencies. Currency conversion tools, estimates or localised price displays are provided for convenience only.`,
+          `Prices may be displayed in one or more currencies. Currency conversion tools, estimates or localized price displays are provided for convenience only.`,
           `The final amount charged may depend on checkout currency, payment processor rates, card issuer rates, bank rates, taxes, location, exchange-rate changes and payment-provider charges.`,
           `Customer is responsible for all taxes, VAT, GST, sales tax, use tax, withholding, duties, levies, assessments, bank fees, card fees, foreign transaction fees, exchange-rate effects and payment-provider charges unless we are legally required to collect them.`,
           `If Customer is required by law to withhold tax from payments, Customer must gross up the payment so that Global Solutions Management LLC receives the full amount that would have been received without withholding, unless prohibited by mandatory law.`,
@@ -1048,8 +1048,8 @@ const docs: Record<string, LegalDoc> = {
         heading: "13. Renewals",
         paragraphs: [
           `Unless expressly stated otherwise at checkout or in a signed written agreement, subscription Plans renew automatically according to the billing cycle shown at purchase.`,
-          `Customer authorises us and our payment processors to charge the payment method on file for renewal fees, taxes and applicable charges.`,
-          `Customer is responsible for cancelling before the renewal date if it does not want to renew.`,
+          `Customer authorizes us and our payment processors to charge the payment method on file for renewal fees, taxes and applicable charges.`,
+          `Customer is responsible for canceling before the renewal date if it does not want to renew.`,
           `Failure to use the platform, failure to activate campaigns, dissatisfaction with results, non-deliverability, non-use of Credits, change of business plans, user error, customer-side configuration problems, customer data issues or lack of commercial outcome does not cancel renewal obligations or create a refund right.`,
         ],
       },
@@ -1059,7 +1059,7 @@ const docs: Record<string, LegalDoc> = {
           `Customer may cancel a subscription through the available billing settings or by any cancellation method we expressly make available.`,
           `Cancellation stops future renewal but does not automatically refund past charges, current billing periods, used Credits, unused Credits, top-ups, setup fees, annual fees, promotional fees or fees for services already activated, unless required by law or expressly stated in writing by Global Solutions Management LLC.`,
           `Access may continue until the end of the paid period unless immediate termination, suspension, downgrade or restriction is required for non-payment, chargeback, fraud, legal risk, security risk, provider risk, sanctions risk, policy breach or platform protection.`,
-          `If a Plan is cancelled, downgraded or paused, access to features, Credits, activation, exports, users, agency workspaces, integrations, stored data or support may change at the end of the paid period or earlier where permitted under this Customer Agreement or the Platform Terms of Service.`,
+          `If a Plan is canceled, downgraded or paused, access to features, Credits, activation, exports, users, agency workspaces, integrations, stored data or support may change at the end of the paid period or earlier where permitted under this Customer Agreement or the Platform Terms of Service.`,
         ],
       },
       {
@@ -1199,7 +1199,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "24. AI-Assisted Features and Generated Outputs",
         paragraphs: [
-          `${PLATFORM} may include AI-assisted tools that help draft, structure, summarise, classify, translate, segment, organise, review, suggest or generate content and workflow actions.`,
+          `${PLATFORM} may include AI-assisted tools that help draft, structure, summarise, classify, translate, segment, organize, review, suggest or generate content and workflow actions.`,
           `Generated Outputs are drafts only.`,
           `Customer is responsible for ensuring that all Generated Outputs are accurate, lawful, non-deceptive, non-infringing, appropriate for the recipient, appropriate for the jurisdiction, appropriate for the channel, appropriate for the industry, consistent with Customer's brand and policies, and compliant with applicable laws, regulations, professional duties and platform rules.`,
           `Generated Outputs may be incomplete, inaccurate, outdated, repetitive, biased, unsuitable, non-compliant, unsafe, offensive, misleading or similar to outputs generated for other users.`,
@@ -1219,7 +1219,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "26. Regulated, High-Risk and Restricted Uses",
         paragraphs: [
-          `${PLATFORM} must not be used for regulated, high-risk, sensitive or legally restricted use unless Customer has all required authorisations and the use is expressly permitted under Customer's Plan and applicable written agreement.`,
+          `${PLATFORM} must not be used for regulated, high-risk, sensitive or legally restricted use unless Customer has all required authorizations and the use is expressly permitted under Customer's Plan and applicable written agreement.`,
           `Restricted uses include, without limitation, uses involving:`,
         ],
         bullets: [
@@ -1335,7 +1335,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "32. No Outcome Guarantee",
         paragraphs: [
-          `Commercial outcomes depend on Customer's data quality, sender reputation, domain reputation, message quality, offer strength, lawful permissions, audience behaviour, market conditions, timing, third-party systems, customer response, recipient decisions and external factors outside our control.`,
+          `Commercial outcomes depend on Customer's data quality, sender reputation, domain reputation, message quality, offer strength, lawful permissions, audience behavior, market conditions, timing, third-party systems, customer response, recipient decisions and external factors outside our control.`,
           `We do not guarantee:`,
         ],
         bullets: [
@@ -1387,7 +1387,7 @@ const docs: Record<string, LegalDoc> = {
         heading: "35. Competitor and Training Restrictions",
         paragraphs: [
           `Customer must not use ${PLATFORM} to build, train, fine-tune, benchmark, evaluate, test or improve any competing product, AI model, dataset, platform, workflow, template library, automation system, commercial database or outreach tool without our prior written consent.`,
-          `Customer must not scrape, copy, extract, monitor, harvest or use platform content, prompts, templates, workflows, outputs, interface patterns, scoring logic, safety logic, product logic or system behaviour for competitive analysis, model training, dataset creation, product replication, reverse engineering or benchmarking.`,
+          `Customer must not scrape, copy, extract, monitor, harvest or use platform content, prompts, templates, workflows, outputs, interface patterns, scoring logic, safety logic, product logic or system behavior for competitive analysis, model training, dataset creation, product replication, reverse engineering or benchmarking.`,
         ],
       },
       {
@@ -1447,7 +1447,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "40. Termination",
         paragraphs: [
-          `Customer may terminate by cancelling the applicable Plan using the available cancellation method.`,
+          `Customer may terminate by canceling the applicable Plan using the available cancellation method.`,
           `We may terminate this Customer Agreement, any Plan, any account, any Workspace or any paid feature where permitted under this Customer Agreement, the Platform Terms of Service, applicable law or a signed written agreement.`,
           `After termination, Customer may lose access to Workspaces, Generated Outputs, Customer Data, reports, integrations, Credits, support and paid features.`,
           `Termination does not affect fees already incurred, taxes, payment obligations, indemnity obligations, confidentiality obligations, data compliance obligations, acceptable use obligations, outreach compliance obligations or provisions that by their nature survive.`,
@@ -1466,7 +1466,7 @@ const docs: Record<string, LegalDoc> = {
         heading: "42. Downgrades and Loss of Features",
         paragraphs: [
           `If Customer downgrades, cancels, pauses, fails to pay or moves to a lower Plan, access to features, users, data volumes, exports, agency workspaces, integrations, Credits, support, reports, activation tools and stored data may be reduced, disabled, restricted or removed.`,
-          `Customer is responsible for exporting data before downgrading or cancelling where export is available and required.`,
+          `Customer is responsible for exporting data before downgrading or canceling where export is available and required.`,
           `We are not liable for loss of functionality, loss of access, loss of Credits, loss of historical reports, loss of integrations or loss of data availability caused by downgrade, cancellation, non-payment, Plan change or termination, except where mandatory law requires otherwise.`,
         ],
       },
@@ -1503,7 +1503,7 @@ const docs: Record<string, LegalDoc> = {
         paragraphs: [
           `${PLATFORM} may rely on, connect to or integrate with third-party providers for hosting, authentication, payments, analytics, email connectivity, AI processing, data storage, monitoring, communications, translation, CRM tools, domain services, DNS, CDNs, logging, support tools or other infrastructure.`,
           `Third-party services are not controlled by Global Solutions Management LLC. They may have their own terms, policies, pricing, security practices, outages, rate limits, account restrictions, suspensions, data practices and compliance requirements.`,
-          `We are not responsible for third-party service failures, outages, errors, policy changes, pricing changes, data handling, deliverability decisions, payment interruptions, email provider restrictions, account suspensions, integration failures or external platform behaviour outside our reasonable control.`,
+          `We are not responsible for third-party service failures, outages, errors, policy changes, pricing changes, data handling, deliverability decisions, payment interruptions, email provider restrictions, account suspensions, integration failures or external platform behavior outside our reasonable control.`,
           `Customer is responsible for complying with the terms and policies of any third-party services it connects to or uses with ${PLATFORM}.`,
         ],
       },
@@ -1546,7 +1546,7 @@ const docs: Record<string, LegalDoc> = {
         heading: "48. Force Majeure and External Service Events",
         paragraphs: [
           `Global Solutions Management LLC will not be liable for any delay, failure, interruption, suspension, loss, degradation, unavailability, data processing delay, delivery failure, support delay, billing disruption, feature limitation or non-performance caused by events, circumstances or conditions beyond its reasonable control.`,
-          `Force majeure and external service events include, without limitation, natural disasters, public health emergencies, war, terrorism, civil unrest, government action, regulatory action, sanctions, export controls, law changes, court orders, cloud provider failures, hosting failures, DNS failures, CDN failures, payment processor failures, banking failures, AI provider failures, API provider failures, email provider failures, CRM provider failures, internet failures, cyberattacks, denial-of-service attacks, malware, ransomware, labour disputes, supply-chain issues, utility failures, emergency maintenance, third-party policy changes, account restrictions, spam filtering, blacklist events, sender reputation issues, domain reputation issues and any other event beyond our reasonable control.`,
+          `Force majeure and external service events include, without limitation, natural disasters, public health emergencies, war, terrorism, civil unrest, government action, regulatory action, sanctions, export controls, law changes, court orders, cloud provider failures, hosting failures, DNS failures, CDN failures, payment processor failures, banking failures, AI provider failures, API provider failures, email provider failures, CRM provider failures, internet failures, cyberattacks, denial-of-service attacks, malware, ransomware, labor disputes, supply-chain issues, utility failures, emergency maintenance, third-party policy changes, account restrictions, spam filtering, blacklist events, sender reputation issues, domain reputation issues and any other event beyond our reasonable control.`,
           `Force majeure and external service events do not create any right to a refund, credit, service credit, damages, compensation, chargeback, termination payment or extension unless expressly required by law or expressly stated in a separate signed written agreement accepted by Global Solutions Management LLC.`,
           `Force majeure and external service events do not relieve Customer of payment obligations for fees already incurred, subscriptions already activated, Credits already made available, taxes, chargebacks, usage charges, indemnity obligations, confidentiality obligations, data compliance obligations, acceptable use obligations, outreach compliance obligations or obligations that by their nature should continue.`,
         ],
@@ -1563,7 +1563,7 @@ const docs: Record<string, LegalDoc> = {
         heading: "50. Sanctions, Export Control and Anti-Corruption",
         paragraphs: [
           `Customer must comply with all applicable sanctions, export control, trade control, anti-bribery, anti-corruption and anti-money laundering laws.`,
-          `Customer must not use ${PLATFORM} if Customer or any User is located in, organised under the laws of, ordinarily resident in, owned or controlled by, or acting on behalf of any person or entity subject to sanctions, embargoes or trade restrictions that would prohibit access to the platform.`,
+          `Customer must not use ${PLATFORM} if Customer or any User is located in, organized under the laws of, ordinarily resident in, owned or controlled by, or acting on behalf of any person or entity subject to sanctions, embargoes or trade restrictions that would prohibit access to the platform.`,
           `Customer must not use ${PLATFORM} to support prohibited transactions, restricted parties, sanctioned entities, embargoed territories, unlawful exports, unlawful re-exports or unlawful circumvention of trade controls.`,
           `Customer represents and warrants that Customer and its Users are not prohibited from using ${PLATFORM} under applicable sanctions, export control or trade laws.`,
           `We may restrict, suspend or terminate access where sanctions, export control, trade compliance, anti-corruption or payment risk is identified or suspected.`,
@@ -1772,7 +1772,7 @@ const docs: Record<string, LegalDoc> = {
           "“DPA” means this Data Processing Agreement.",
           "“Velocity Vision”, “Platform”, “Service”, “we”, “us” or “our” means the Velocity Vision platform operated by Global Solutions Management LLC.",
           "“Global Solutions Management LLC” means Global Solutions Management LLC, a company incorporated in the State of Delaware, United States.",
-          "“Customer”, “you” or “your” means the person, company, agency, organisation, partnership, charity, trust, public body, fund, brand, client, estate, project or other legal entity that uses Velocity Vision and determines the purposes and means of processing Customer Personal Data.",
+          "“Customer”, “you” or “your” means the person, company, agency, organization, partnership, charity, trust, public body, fund, brand, client, estate, project or other legal entity that uses Velocity Vision and determines the purposes and means of processing Customer Personal Data.",
           "“Customer Personal Data” means Personal Data that Customer uploads, imports, enters, provides, generates, activates, exports, processes or otherwise makes available through Velocity Vision and that Global Solutions Management LLC processes on behalf of Customer as Processor, Service Provider, Contractor or equivalent role.",
           "“Personal Data” means any information relating to an identified or identifiable individual, or any equivalent term under applicable Data Protection Laws.",
           "“Data Protection Laws” means all privacy, data protection, cybersecurity, electronic communications, direct marketing, AI-related and similar laws that apply to the processing of Customer Personal Data, including where applicable the GDPR, UK GDPR, Data Protection Act 2018, PECR, Swiss FADP, CCPA/CPRA, US state privacy laws, EU AI Act, ePrivacy rules and other applicable privacy, marketing, AI and data protection laws.",
@@ -1852,7 +1852,7 @@ const docs: Record<string, LegalDoc> = {
           "support templates;",
           "support activation controls;",
           "schedule or route workflow actions;",
-          "organise replies;",
+          "organize replies;",
           "support follow-up;",
           "support pipeline tracking;",
           "provide reporting;",
@@ -1912,8 +1912,8 @@ const docs: Record<string, LegalDoc> = {
           "prospects;",
           "customers;",
           "business contacts;",
-          "employees of organisations;",
-          "officers of organisations;",
+          "employees of organizations;",
+          "officers of organizations;",
           "contractors;",
           "suppliers;",
           "agency client contacts;",
@@ -1929,7 +1929,7 @@ const docs: Record<string, LegalDoc> = {
         heading: "8. Prohibited and Restricted Data",
         paragraphs: [
           "Customer must not upload, import, process, generate, activate, export or store through Velocity Vision:",
-          "Restricted Data may only be processed if expressly authorised in a separate signed written agreement accepted by Global Solutions Management LLC and if Customer has all required legal rights, notices, consents, lawful bases, approvals and safeguards.",
+          "Restricted Data may only be processed if expressly authorized in a separate signed written agreement accepted by Global Solutions Management LLC and if Customer has all required legal rights, notices, consents, lawful bases, approvals and safeguards.",
           "We may suspend, restrict, delete, quarantine, return, block, refuse or report processing of data that we reasonably believe is prohibited, restricted, unlawful, unsafe, non-compliant or unsuitable for Velocity Vision.",
         ],
         bullets: [
@@ -1937,14 +1937,14 @@ const docs: Record<string, LegalDoc> = {
           "health data;",
           "biometric data;",
           "genetic data;",
-          "criminal offence data;",
+          "criminal offense data;",
           "financial account data;",
           "payment card data;",
           "government identifier data;",
           "precise geolocation data;",
           "special category data under GDPR or UK GDPR;",
           "sensitive personal information under CCPA or similar laws;",
-          "data subject to professional secrecy or privilege unless Customer is authorised to process it;",
+          "data subject to professional secrecy or privilege unless Customer is authorized to process it;",
           "data subject to confidentiality obligations that prohibit SaaS processing;",
           "data subject to contractual restrictions that prohibit SaaS processing;",
           "data subject to sector-specific restrictions that prohibit the intended processing;",
@@ -2007,9 +2007,9 @@ const docs: Record<string, LegalDoc> = {
           "internal approvals;",
           "regulated-sector obligations;",
           "determining whether use of Velocity Vision is lawful in each relevant jurisdiction.",
-          "it has all rights, permissions, notices, consents, lawful bases and authorisations required to process Customer Personal Data through Velocity Vision;",
+          "it has all rights, permissions, notices, consents, lawful bases and authorizations required to process Customer Personal Data through Velocity Vision;",
           "its instructions comply with Data Protection Laws;",
-          "it will not upload or process prohibited or restricted data unless expressly authorised in writing;",
+          "it will not upload or process prohibited or restricted data unless expressly authorized in writing;",
           "it will not use Velocity Vision for unlawful outreach, unlawful profiling, unlawful automated decision-making, unlawful AI deployment or unlawful marketing;",
           "it will respond to data subject requests unless applicable law requires Global Solutions Management LLC to respond directly.",
         ],
@@ -2022,8 +2022,8 @@ const docs: Record<string, LegalDoc> = {
         ],
         bullets: [
           "process Customer Personal Data only in accordance with documented Customer instructions;",
-          "ensure persons authorised to process Customer Personal Data are subject to confidentiality obligations;",
-          "implement appropriate technical and organisational measures;",
+          "ensure persons authorized to process Customer Personal Data are subject to confidentiality obligations;",
+          "implement appropriate technical and organizational measures;",
           "assist Customer with data subject requests where reasonably possible and required by Data Protection Laws;",
           "assist Customer with security, breach, DPIA and regulatory obligations where reasonably possible and required by Data Protection Laws;",
           "use Subprocessors in accordance with this DPA;",
@@ -2056,7 +2056,7 @@ const docs: Record<string, LegalDoc> = {
           "Velocity Vision may use AI-assisted tools and AI Subprocessors to provide features such as data quality review, segmentation support, template generation, outreach pack generation, summaries, follow-up suggestions, translations, multilingual variants, campaign assets, reports, prompt handling and workflow support.",
           "Customer instructs Global Solutions Management LLC to process Customer Personal Data through AI-assisted features when Customer uses, enables or configures those features.",
           "Customer is responsible for:",
-          "Global Solutions Management LLC will not use Customer Personal Data to train a publicly available foundation model or general-purpose AI model except where Customer expressly authorises that use or where the data has been aggregated, anonymised or de-identified in accordance with applicable law so that it no longer identifies Customer or data subjects.",
+          "Global Solutions Management LLC will not use Customer Personal Data to train a publicly available foundation model or general-purpose AI model except where Customer expressly authorizes that use or where the data has been aggregated, anonymised or de-identified in accordance with applicable law so that it no longer identifies Customer or data subjects.",
           "AI-generated outputs may contain Personal Data if Customer’s inputs contain Personal Data or if Customer instructs the platform to generate outputs using Personal Data. Customer remains responsible for reviewing, approving, lawfully using and lawfully retaining those outputs.",
         ],
         bullets: [
@@ -2086,7 +2086,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "15. Automated Decision-Making, Profiling and High-Risk AI",
         paragraphs: [
-          "Customer must not use Velocity Vision for legally significant automated decision-making, profiling, eligibility decisions, employment decisions, credit decisions, housing decisions, education access decisions, insurance decisions, healthcare decisions, criminal justice decisions, biometric identification, vulnerable-person targeting or other high-risk AI uses unless expressly authorised in a separate signed written agreement accepted by Global Solutions Management LLC.",
+          "Customer must not use Velocity Vision for legally significant automated decision-making, profiling, eligibility decisions, employment decisions, credit decisions, housing decisions, education access decisions, insurance decisions, healthcare decisions, criminal justice decisions, biometric identification, vulnerable-person targeting or other high-risk AI uses unless expressly authorized in a separate signed written agreement accepted by Global Solutions Management LLC.",
           "Customer remains solely responsible for determining whether its use of Customer Personal Data, AI-assisted features, Generated Outputs, segmentation, scoring, quality review or activation creates profiling, automated decision-making, high-risk AI use, regulated AI use or other legally restricted activity.",
           "We may suspend, restrict or refuse any AI Processing that we reasonably believe creates legal, regulatory, ethical, reputational, security, operational or data protection risk.",
         ],
@@ -2102,15 +2102,15 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "17. Confidentiality and Access Controls",
         paragraphs: [
-          "Global Solutions Management LLC will ensure that personnel authorised to process Customer Personal Data are subject to confidentiality obligations.",
+          "Global Solutions Management LLC will ensure that personnel authorized to process Customer Personal Data are subject to confidentiality obligations.",
           "Access to Customer Personal Data will be limited to personnel, contractors and Subprocessors who need access for platform operation, support, security, billing, legal compliance, incident response, troubleshooting, maintenance or other permitted purposes.",
           "Customer is responsible for controlling access by its own users, employees, contractors, clients, agency users, administrators and invited users.",
         ],
       },
       {
-        heading: "18. Technical and Organisational Measures",
+        heading: "18. Technical and Organizational Measures",
         paragraphs: [
-          "Global Solutions Management LLC will maintain technical and organisational measures appropriate to the nature, scope, context and risk of the processing.",
+          "Global Solutions Management LLC will maintain technical and organizational measures appropriate to the nature, scope, context and risk of the processing.",
           "Measures may include, as appropriate:",
           "Customer acknowledges that no internet service, SaaS platform, AI service, email integration, hosting provider or cloud environment is completely secure, error-free or immune from attack.",
           "Customer is responsible for:",
@@ -2160,7 +2160,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "20. Subprocessors",
         paragraphs: [
-          "Customer gives Global Solutions Management LLC general authorisation to appoint Subprocessors to provide Velocity Vision.",
+          "Customer gives Global Solutions Management LLC general authorization to appoint Subprocessors to provide Velocity Vision.",
           "Subprocessors may be used for:",
           "Global Solutions Management LLC will impose data protection obligations on Subprocessors that are materially consistent with this DPA and appropriate to the nature of the services provided.",
           "Global Solutions Management LLC remains responsible for Subprocessors’ processing of Customer Personal Data to the extent required by applicable Data Protection Laws and subject to the limitations of liability in the Platform Terms of Service, Customer Agreement and this DPA.",
@@ -2212,7 +2212,7 @@ const docs: Record<string, LegalDoc> = {
         heading: "23. International Transfers",
         paragraphs: [
           "Customer Personal Data may be processed in the United States, United Kingdom, European Economic Area and other jurisdictions where Global Solutions Management LLC or its Subprocessors operate.",
-          "Customer authorises Global Solutions Management LLC and its Subprocessors to process Customer Personal Data in these jurisdictions as necessary to provide Velocity Vision.",
+          "Customer authorizes Global Solutions Management LLC and its Subprocessors to process Customer Personal Data in these jurisdictions as necessary to provide Velocity Vision.",
           "Customer is responsible for ensuring that Customer Personal Data may lawfully be transferred to, accessed from, processed in and stored in all relevant jurisdictions.",
           "Where Data Protection Laws require a transfer mechanism, transfers may rely on one or more of the following, as applicable:",
         ],
@@ -2289,7 +2289,7 @@ const docs: Record<string, LegalDoc> = {
           "security assessments;",
           "breach assessments;",
           "records of processing;",
-          "regulatory enquiries;",
+          "regulatory inquiries;",
           "processor compliance information.",
         ],
       },
@@ -2428,7 +2428,7 @@ const docs: Record<string, LegalDoc> = {
         paragraphs: [
           "Velocity Vision may be accessed globally, but not all data types, outreach activities, AI features, transfers, storage locations, integrations or use cases are lawful in every jurisdiction.",
           "Customer is responsible for determining whether use of Velocity Vision is lawful in every country, state, province, territory, sector and recipient location relevant to Customer, Customer Personal Data, Customer users, Customer clients, data subjects, recipients and campaigns.",
-          "Customer must not use Velocity Vision where doing so would breach local privacy, marketing, AI, data localisation, secrecy, export control, sanctions, sector-specific or professional rules.",
+          "Customer must not use Velocity Vision where doing so would breach local privacy, marketing, AI, data localization, secrecy, export control, sanctions, sector-specific or professional rules.",
           "We may restrict, suspend or refuse processing where we reasonably believe there is legal, regulatory, sanctions, security, payment, operational, reputational or third-party provider risk.",
         ],
       },
@@ -2486,8 +2486,8 @@ const docs: Record<string, LegalDoc> = {
           "data subject requests;",
           "agency client data;",
           "end-client instructions;",
-          "regulated data uploaded without authorisation;",
-          "prohibited data uploaded without authorisation;",
+          "regulated data uploaded without authorization;",
+          "prohibited data uploaded without authorization;",
           "Customer-side security incidents;",
           "Customer integrations;",
           "Customer exports;",
@@ -2539,7 +2539,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "48. Contact",
         paragraphs: [
-          "For privacy and data processing enquiries, use the Contact page and select the route that matches your request.",
+          "For privacy and data processing inquiries, use the Contact page and select the route that matches your request.",
           "Global Solutions Management LLC Delaware, United States Operator of Velocity Vision",
         ],
       },
@@ -2610,9 +2610,9 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "5. Business Use Only",
         paragraphs: [
-          `${PLATFORM} is designed for lawful business, professional, commercial, agency, organisational and entrepreneurial use.`,
+          `${PLATFORM} is designed for lawful business, professional, commercial, agency, organizational and entrepreneurial use.`,
           "It is not intended for personal, household or consumer use.",
-          "Customers must not upload personal, household, children's, sensitive, regulated or restricted data unless expressly authorised in writing and lawful for the intended processing.",
+          "Customers must not upload personal, household, children's, sensitive, regulated or restricted data unless expressly authorized in writing and lawful for the intended processing.",
         ],
       },
       {
@@ -2755,8 +2755,8 @@ const docs: Record<string, LegalDoc> = {
           "support tickets;",
           "contact form submissions;",
           "feedback;",
-          "service enquiries;",
-          "legal enquiries;",
+          "service inquiries;",
+          "legal inquiries;",
           "privacy requests;",
           "attachments provided to support;",
           "communication history;",
@@ -2789,7 +2789,7 @@ const docs: Record<string, LegalDoc> = {
         paragraphs: ["We may collect personal information from:"],
         bullets: [
           "you directly;",
-          "your employer or organisation;",
+          "your employer or organization;",
           "customer administrators;",
           "agency customers;",
           "invited workspace users;",
@@ -2830,7 +2830,7 @@ const docs: Record<string, LegalDoc> = {
           "to improve product quality, safety and usability;",
           "to comply with legal, tax, accounting, regulatory and sanctions obligations;",
           "to enforce agreements and platform policies;",
-          "to respond to disputes, legal requests and regulatory enquiries;",
+          "to respond to disputes, legal requests and regulatory inquiries;",
           "to manage corporate transactions;",
           "to protect our rights, business, infrastructure, personnel and legal position.",
         ],
@@ -2867,7 +2867,7 @@ const docs: Record<string, LegalDoc> = {
           "Inputs, prompts, context, Customer Personal Data and generated outputs may be processed by us and by service providers as necessary to provide, secure, monitor, troubleshoot and improve these features.",
           "Customers are responsible for deciding whether personal information may lawfully be used with AI-assisted features and for reviewing, approving and lawfully using generated outputs.",
           "AI-generated outputs are drafts. They may be inaccurate, incomplete, outdated, repetitive, biased, unsuitable or non-compliant. Customers should not rely on AI-generated outputs as legal, tax, accounting, financial, medical, employment, investment, regulatory or professional advice.",
-          "We do not use Customer Personal Data to train a publicly available foundation model or general-purpose AI model unless the customer expressly authorises that use or the data has been aggregated, anonymised or de-identified so that it no longer identifies the customer or data subjects.",
+          "We do not use Customer Personal Data to train a publicly available foundation model or general-purpose AI model unless the customer expressly authorizes that use or the data has been aggregated, anonymised or de-identified so that it no longer identifies the customer or data subjects.",
         ],
       },
       {
@@ -2884,7 +2884,7 @@ const docs: Record<string, LegalDoc> = {
           `${PLATFORM} is designed as an AI-assisted, customer-controlled commercial workspace.`,
           "We do not intend to use customer-uploaded contact data to make legally significant automated decisions about individuals on our own behalf.",
           `Customers are responsible for determining whether their use of ${PLATFORM} involves profiling, automated decision-making, high-risk AI, regulated AI, targeted advertising, direct marketing, employment decisions, credit decisions, housing decisions, education decisions, insurance decisions or other regulated use.`,
-          `Customers must not use ${PLATFORM} for legally significant automated decision-making or high-risk AI use unless expressly authorised in writing and lawful for the intended use.`,
+          `Customers must not use ${PLATFORM} for legally significant automated decision-making or high-risk AI use unless expressly authorized in writing and lawful for the intended use.`,
         ],
       },
       {
@@ -2925,7 +2925,7 @@ const docs: Record<string, LegalDoc> = {
           "banks;",
           "acquirers, investors, successors or transaction parties in connection with corporate transactions;",
           "affiliates, contractors, service providers and subprocessors where necessary and lawful.",
-          "We require service providers that process personal information on our behalf to process it for authorised purposes and to use appropriate confidentiality and data protection measures.",
+          "We require service providers that process personal information on our behalf to process it for authorized purposes and to use appropriate confidentiality and data protection measures.",
         ],
       },
       {
@@ -2969,7 +2969,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "19. Global Privacy Control and Browser Signals",
         paragraphs: [
-          "Where required by applicable law and technically feasible, we may recognise legally required opt-out preference signals, such as Global Privacy Control, for website-level selling, sharing or targeted advertising choices.",
+          "Where required by applicable law and technically feasible, we may recognize legally required opt-out preference signals, such as Global Privacy Control, for website-level selling, sharing or targeted advertising choices.",
           `Because ${PLATFORM} is primarily a business software platform and customer-uploaded data is controlled by customers, some requests or signals relating to customer workspace data may need to be directed to the relevant customer.`,
           "We do not guarantee that all browser-based signals will apply to authenticated workspace activity, customer-controlled processing or third-party services.",
         ],
@@ -2988,7 +2988,7 @@ const docs: Record<string, LegalDoc> = {
           "Global Solutions Management LLC is incorporated in Delaware, United States.",
           "Personal information may be processed in the United States, United Kingdom, European Economic Area and other jurisdictions where we or our service providers operate.",
           "These jurisdictions may have data protection laws that differ from those in your location.",
-          "Where required by applicable law, we use recognised transfer mechanisms such as adequacy decisions, standard contractual clauses, UK transfer mechanisms, Swiss transfer mechanisms, data privacy frameworks or other lawful safeguards.",
+          "Where required by applicable law, we use recognized transfer mechanisms such as adequacy decisions, standard contractual clauses, UK transfer mechanisms, Swiss transfer mechanisms, data privacy frameworks or other lawful safeguards.",
           `Customers remain responsible for determining whether their own use of ${PLATFORM}, including customer-uploaded data, outreach activity, AI-assisted features and integrations, is lawful in each relevant jurisdiction.`,
         ],
       },
@@ -3004,7 +3004,7 @@ const docs: Record<string, LegalDoc> = {
         heading: "23. EU, UK and International Representative Information",
         paragraphs: [
           "Where required by applicable law, we may appoint a representative, data protection contact or other local contact point and publish the relevant details.",
-          "If no separate representative details are published, privacy enquiries should be submitted through the Contact page using the route that matches the request.",
+          "If no separate representative details are published, privacy inquiries should be submitted through the Contact page using the route that matches the request.",
           "Nothing in this section creates a representative appointment, data protection officer appointment or local establishment unless expressly stated by Global Solutions Management LLC.",
         ],
       },
@@ -3034,7 +3034,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "25. Security",
         paragraphs: [
-          "We use reasonable technical and organisational measures designed to protect personal information.",
+          "We use reasonable technical and organizational measures designed to protect personal information.",
           "Measures may include encrypted transmission, hosted access controls, role-based permissions, authentication controls, monitoring, logging, backups, vulnerability management, provider controls, confidentiality obligations and operational procedures.",
           "No internet service, SaaS platform, AI service, email integration, hosting provider or cloud environment is completely secure, error-free or immune from attack.",
           "Customers and users are responsible for:",
@@ -3056,21 +3056,21 @@ const docs: Record<string, LegalDoc> = {
         heading: "26. Children's Data",
         paragraphs: [
           `${PLATFORM} is not directed to children and is not intended for use by children.`,
-          `Customers and users must not upload, import, process, generate, activate, export or store children's data through ${PLATFORM} unless expressly authorised in a separate written agreement and lawful for the intended use.`,
-          "If we become aware that children's data has been uploaded without authorisation, we may delete, restrict, quarantine or suspend processing.",
+          `Customers and users must not upload, import, process, generate, activate, export or store children's data through ${PLATFORM} unless expressly authorized in a separate written agreement and lawful for the intended use.`,
+          "If we become aware that children's data has been uploaded without authorization, we may delete, restrict, quarantine or suspend processing.",
         ],
       },
       {
         heading: "27. Sensitive and Restricted Data",
         paragraphs: [
-          `Customers must not upload, import, process, generate, activate, export or store sensitive or restricted data through ${PLATFORM} unless expressly authorised in writing and lawful for the intended use.`,
+          `Customers must not upload, import, process, generate, activate, export or store sensitive or restricted data through ${PLATFORM} unless expressly authorized in writing and lawful for the intended use.`,
           "Restricted data includes:",
         ],
         bullets: [
           "health data;",
           "biometric data;",
           "genetic data;",
-          "criminal offence data;",
+          "criminal offense data;",
           "financial account data;",
           "payment card data;",
           "government identifiers;",
@@ -3116,11 +3116,11 @@ const docs: Record<string, LegalDoc> = {
         ],
       },
       {
-        heading: "30. Identity Verification and Authorised Agents",
+        heading: "30. Identity Verification and Authorized Agents",
         paragraphs: [
           "We may need to verify your identity before responding to a privacy request.",
           "Verification may require information that reasonably matches our records, account access, email confirmation, billing confirmation or other reasonable steps.",
-          "If you use an authorised agent, we may require proof of authority and may also require you to verify your identity directly unless prohibited by law.",
+          "If you use an authorized agent, we may require proof of authority and may also require you to verify your identity directly unless prohibited by law.",
           "We may refuse requests that are fraudulent, unverifiable, excessive, repetitive, abusive, technically infeasible, legally restricted or outside the scope of applicable rights.",
         ],
       },
@@ -3207,7 +3207,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "39. Contact",
         paragraphs: [
-          "For privacy rights, data enquiries, security concerns or questions about this Privacy Policy, use the Contact page and select the route that matches your request.",
+          "For privacy rights, data inquiries, security concerns or questions about this Privacy Policy, use the Contact page and select the route that matches your request.",
           `Global Solutions Management LLC — Delaware, United States — Operator of ${PLATFORM}.`,
         ],
       },
@@ -3231,7 +3231,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "1. Purpose",
         paragraphs: [
-          `${PLATFORM} is a self-serve, AI-powered commercial workspace for organising contact data, preparing AI-assisted outreach assets, supporting governed activation, managing follow-up and moving warm contacts into pipeline.`,
+          `${PLATFORM} is a self-serve, AI-powered commercial workspace for organizing contact data, preparing AI-assisted outreach assets, supporting governed activation, managing follow-up and moving warm contacts into pipeline.`,
           `This Acceptable Use Policy protects ${PLATFORM}, customers, users, recipients, senders, data subjects, rights holders, regulators, infrastructure, payment systems, AI systems, third-party providers, the business of Global Solutions Management LLC and all Protected Parties.`,
           `Customers and users must use ${PLATFORM} lawfully, safely, honestly and responsibly.`,
           `${PLATFORM} may refuse, restrict or terminate any use that creates legal, regulatory, security, payment, sanctions, AI, privacy, marketing, deliverability, reputational, operational or third-party provider risk.`,
@@ -3250,9 +3250,9 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "3. Business Use Only",
         paragraphs: [
-          `${PLATFORM} may be used only for lawful business, professional, commercial, agency, organisational and entrepreneurial purposes.`,
+          `${PLATFORM} may be used only for lawful business, professional, commercial, agency, organizational and entrepreneurial purposes.`,
           `${PLATFORM} must not be used for personal, household, consumer, unlawful, abusive, deceptive, exploitative, high-risk or unsafe purposes.`,
-          `You must not use ${PLATFORM} if you are not authorised to accept and comply with this Acceptable Use Policy.`,
+          `You must not use ${PLATFORM} if you are not authorized to accept and comply with this Acceptable Use Policy.`,
         ],
       },
       {
@@ -3357,7 +3357,7 @@ const docs: Record<string, LegalDoc> = {
         heading: "8. No List Washing or Suppression Abuse",
         paragraphs: [
           `You must not use ${PLATFORM} to clean, validate, enrich, reactivate, recycle, test, suppress, evade, match, compare or "wash" contact lists in order to contact people who have opted out, unsubscribed, objected, complained, suppressed their details or otherwise restricted contact.`,
-          "You must not upload suppression lists, unsubscribe lists, objection lists or do-not-contact records except where you are authorised to process them and only for lawful suppression and compliance purposes.",
+          "You must not upload suppression lists, unsubscribe lists, objection lists or do-not-contact records except where you are authorized to process them and only for lawful suppression and compliance purposes.",
           "You must not use suppression data to target, profile, reverse engineer, enrich, resell, share or contact individuals.",
         ],
       },
@@ -3369,18 +3369,18 @@ const docs: Record<string, LegalDoc> = {
           "health data;",
           "biometric data;",
           "genetic data;",
-          "criminal offence data;",
+          "criminal offense data;",
           "payment card data;",
           "financial account data;",
           "government identifier data;",
           "precise geolocation data;",
           "special category data under GDPR or UK GDPR;",
           "sensitive personal information under CCPA or similar laws;",
-          "data subject to professional secrecy or privilege unless authorised in writing;",
+          "data subject to professional secrecy or privilege unless authorized in writing;",
           "data subject to confidentiality obligations that prohibit SaaS processing;",
-          "data subject to export, sanctions, data localisation or secrecy restrictions;",
+          "data subject to export, sanctions, data localization or secrecy restrictions;",
           "data that creates legal, regulatory, operational, reputational or security risk.",
-          "Restricted data may only be processed if expressly authorised in a separate signed written agreement accepted by Global Solutions Management LLC and lawful for the intended use.",
+          "Restricted data may only be processed if expressly authorized in a separate signed written agreement accepted by Global Solutions Management LLC and lawful for the intended use.",
           "We may delete, restrict, quarantine, block, refuse or report processing of restricted data where we reasonably believe it creates risk.",
         ],
       },
@@ -3394,7 +3394,7 @@ const docs: Record<string, LegalDoc> = {
           "use deceptive headers;",
           "use misleading subject lines;",
           "use false sender details;",
-          "impersonate another person or organisation;",
+          "impersonate another person or organization;",
           "spoof domains;",
           "spoof email addresses;",
           "hide your identity;",
@@ -3503,7 +3503,7 @@ const docs: Record<string, LegalDoc> = {
           "manipulate vulnerable people;",
           "evade legal obligations;",
           "make legally significant decisions about individuals;",
-          "create high-risk AI use without written authorisation;",
+          "create high-risk AI use without written authorization;",
           "automate outreach in a way that removes required human review;",
           "bypass customer-controlled activation;",
           "create content that violates this Acceptable Use Policy.",
@@ -3513,8 +3513,8 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "15. High-Risk AI and Automated Decision Restrictions",
         paragraphs: [
-          `You must not use ${PLATFORM} for high-risk AI, prohibited AI practices, automated decision-making, profiling, eligibility decisions, employment decisions, credit decisions, housing decisions, education access decisions, insurance decisions, healthcare decisions, criminal justice decisions, biometric identification, vulnerable-person targeting or legally significant decision-making unless expressly authorised in a separate signed written agreement accepted by Global Solutions Management LLC and lawful for the intended use.`,
-          `You must not use ${PLATFORM} to create or operate any AI system that is prohibited, restricted or high-risk under applicable law unless expressly authorised in writing and fully compliant.`,
+          `You must not use ${PLATFORM} for high-risk AI, prohibited AI practices, automated decision-making, profiling, eligibility decisions, employment decisions, credit decisions, housing decisions, education access decisions, insurance decisions, healthcare decisions, criminal justice decisions, biometric identification, vulnerable-person targeting or legally significant decision-making unless expressly authorized in a separate signed written agreement accepted by Global Solutions Management LLC and lawful for the intended use.`,
+          `You must not use ${PLATFORM} to create or operate any AI system that is prohibited, restricted or high-risk under applicable law unless expressly authorized in writing and fully compliant.`,
           "We may suspend, restrict, refuse, delete or terminate any AI-related use that we reasonably believe creates legal, regulatory, ethical, reputational, operational, security or data protection risk.",
         ],
       },
@@ -3569,7 +3569,7 @@ const docs: Record<string, LegalDoc> = {
         heading: "17. Regulated and Restricted Sectors",
         paragraphs: [
           "Certain sectors may be restricted, blocked or subject to additional requirements.",
-          `You must not use ${PLATFORM} for regulated, sensitive or high-risk sectors unless you have all required permissions, licences, legal bases, approvals and compliance processes.`,
+          `You must not use ${PLATFORM} for regulated, sensitive or high-risk sectors unless you have all required permissions, licenses, legal bases, approvals and compliance processes.`,
           "Restricted or high-risk sectors include:",
         ],
         bullets: [
@@ -3615,19 +3615,19 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "18. Political, Public-Issue and Sensitive Influence",
         paragraphs: [
-          `You must not use ${PLATFORM} for political campaigning, voter targeting, public-issue persuasion, lobbying, government influence, public-sector influence, fundraising for political or sensitive causes, or targeting based on sensitive characteristics unless expressly authorised in writing and lawful in every relevant jurisdiction.`,
+          `You must not use ${PLATFORM} for political campaigning, voter targeting, public-issue persuasion, lobbying, government influence, public-sector influence, fundraising for political or sensitive causes, or targeting based on sensitive characteristics unless expressly authorized in writing and lawful in every relevant jurisdiction.`,
           `You must not use ${PLATFORM} to target individuals based on sensitive personal data, protected characteristics, vulnerability, financial distress, health status, political views, religious beliefs, trade union status, sexuality, ethnicity or similar sensitive traits.`,
           "We may refuse or restrict any use involving political, public-issue, sensitive influence or vulnerable-person targeting.",
         ],
       },
       {
         heading: "19. Dangerous, Illegal and Harmful Activity",
-        paragraphs: [`You must not use ${PLATFORM} to promote, facilitate, organise, support or conceal:`],
+        paragraphs: [`You must not use ${PLATFORM} to promote, facilitate, organize, support or conceal:`],
         bullets: [
           "illegal goods or services;",
           "terrorism;",
           "violent extremism;",
-          "organised crime;",
+          "organized crime;",
           "human trafficking;",
           "sexual exploitation;",
           "child exploitation;",
@@ -3687,7 +3687,7 @@ const docs: Record<string, LegalDoc> = {
         heading: "21. Competitor, Benchmarking and Model Training Restrictions",
         paragraphs: [
           `You must not use ${PLATFORM} to build, train, fine-tune, benchmark, evaluate, test or improve any competing product, AI model, dataset, platform, workflow, template library, automation system, commercial database or outreach tool without our prior written consent.`,
-          "You must not scrape, copy, extract, monitor, harvest or use platform content, prompts, templates, workflows, outputs, interface patterns, scoring logic, safety logic, product logic or system behaviour for competitive analysis, model training, dataset creation, product replication, reverse engineering or benchmarking.",
+          "You must not scrape, copy, extract, monitor, harvest or use platform content, prompts, templates, workflows, outputs, interface patterns, scoring logic, safety logic, product logic or system behavior for competitive analysis, model training, dataset creation, product replication, reverse engineering or benchmarking.",
         ],
       },
       {
@@ -3707,7 +3707,7 @@ const docs: Record<string, LegalDoc> = {
           "evade billing controls;",
           "misrepresent tax or billing information;",
           "hide payment risk;",
-          "use the platform after failed payment without authorisation.",
+          "use the platform after failed payment without authorization.",
           "We may correct credit errors, reverse abusive credits, suspend accounts, restrict features, recover unpaid amounts and refuse future service.",
         ],
       },
@@ -3721,7 +3721,7 @@ const docs: Record<string, LegalDoc> = {
           "mix client data without lawful permission;",
           "use one client's data for another client's benefit without lawful permission;",
           "misrepresent client authority;",
-          "upload client data without authorisation;",
+          "upload client data without authorization;",
           "activate outreach without client approval where approval is required;",
           `conceal ${PLATFORM}'s role;`,
           `represent that ${PLATFORM} has approved or legally cleared client campaigns;`,
@@ -3744,17 +3744,17 @@ const docs: Record<string, LegalDoc> = {
         heading: "25. Sanctions, Export Controls and Restricted Jurisdictions",
         paragraphs: [
           "You must comply with all applicable sanctions, export control, trade control, anti-bribery, anti-corruption and anti-money laundering laws.",
-          `You must not use ${PLATFORM} if you or any user is located in, organised under the laws of, ordinarily resident in, owned or controlled by, or acting on behalf of any person or entity subject to sanctions, embargoes or trade restrictions that would prohibit access to or use of ${PLATFORM}.`,
+          `You must not use ${PLATFORM} if you or any user is located in, organized under the laws of, ordinarily resident in, owned or controlled by, or acting on behalf of any person or entity subject to sanctions, embargoes or trade restrictions that would prohibit access to or use of ${PLATFORM}.`,
           `You must not use ${PLATFORM} to support prohibited transactions, restricted parties, sanctioned entities, embargoed territories, unlawful exports, unlawful re-exports, unlawful circumvention of trade controls, bribery, corruption, money laundering or sanctions evasion.`,
           "We may restrict, suspend, block or terminate access where sanctions, export control, trade compliance, payment or jurisdictional risk is identified or suspected.",
         ],
       },
       {
-        heading: "26. Data Localisation, Secrecy and Regulated Transfer Restrictions",
+        heading: "26. Data Localization, Secrecy and Regulated Transfer Restrictions",
         paragraphs: [
-          `You must not use ${PLATFORM} where applicable law, contract, professional duty, sector rule, data localisation law, secrecy obligation, export control law or confidentiality restriction prohibits the transfer, storage, access, processing, AI processing, support access or use of data through the platform.`,
+          `You must not use ${PLATFORM} where applicable law, contract, professional duty, sector rule, data localization law, secrecy obligation, export control law or confidentiality restriction prohibits the transfer, storage, access, processing, AI processing, support access or use of data through the platform.`,
           `You are responsible for determining whether your data may lawfully be processed in the United States or any other jurisdiction where ${PLATFORM} or its providers operate.`,
-          "We may refuse, restrict, suspend or terminate processing where we reasonably believe data localisation, secrecy, transfer, confidentiality or jurisdictional restrictions create risk.",
+          "We may refuse, restrict, suspend or terminate processing where we reasonably believe data localization, secrecy, transfer, confidentiality or jurisdictional restrictions create risk.",
         ],
       },
       {
@@ -3851,7 +3851,7 @@ const docs: Record<string, LegalDoc> = {
           "disconnecting integrations;",
           "disabling workspaces;",
           "restricting credits;",
-          "cancelling credits;",
+          "canceling credits;",
           "downgrading plans;",
           "suspending accounts;",
           "terminating accounts;",
@@ -3876,7 +3876,7 @@ const docs: Record<string, LegalDoc> = {
         heading: "34. Reporting and Cooperation",
         paragraphs: [
           "You must promptly report suspected misuse, security issues, unlawful activity, unauthorised access, compromised credentials, data misuse, sender abuse, client workspace misuse or policy violations.",
-          "You must cooperate with reasonable investigations, verification requests, legal requests, security reviews, payment reviews, compliance reviews and provider enquiries.",
+          "You must cooperate with reasonable investigations, verification requests, legal requests, security reviews, payment reviews, compliance reviews and provider inquiries.",
           "Failure to cooperate may result in restriction, suspension or termination.",
         ],
       },
@@ -3917,7 +3917,7 @@ const docs: Record<string, LegalDoc> = {
           "your breach of third-party rights;",
           "your evasion of platform controls;",
           "your sanctions or export control breach;",
-          "your data localisation or secrecy breach;",
+          "your data localization or secrecy breach;",
           "your deliverability or sender reputation abuse;",
           "your list washing or suppression abuse.",
           "We may control the defence of any matter subject to indemnity. You must cooperate with us and must not settle any claim in a way that imposes obligations, admissions, restrictions or liability on any Protected Party without our prior written consent.",
@@ -3972,7 +3972,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: `1. Purpose`,
         paragraphs: [
-          `Velocity Vision provides self-serve software tools that may help customers organise contact data, prepare AI-assisted outreach assets, review data readiness, manage templates, support governed activation, manage follow-up and move warm contacts into pipeline.`,
+          `Velocity Vision provides self-serve software tools that may help customers organize contact data, prepare AI-assisted outreach assets, review data readiness, manage templates, support governed activation, manage follow-up and move warm contacts into pipeline.`,
           `This Marketing Compliance Policy protects Velocity Vision, customers, users, recipients, senders, data subjects, rights holders, regulators, infrastructure, payment systems, AI systems, email providers, hosting providers, integration providers, third-party platforms, the business of Global Solutions Management LLC and all Protected Parties.`,
           `Velocity Vision does not provide legal advice, compliance sign-off, deliverability consulting, sender-of-record services, advertiser-of-record services, managed campaign services, marketing agency services, professional review, regulatory clearance, list-brokerage services or guaranteed lead-generation services.`,
           `Customers are responsible for ensuring that every outreach activity, contact source, message, sender identity, advertiser identity, opt-out process, suppression process, follow-up action, generated output, export, activation and campaign complies with applicable law.`,
@@ -4052,7 +4052,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: `6. Business Use Only`,
         paragraphs: [
-          `Velocity Vision is designed for lawful business, professional, commercial, agency, organisational and entrepreneurial use only.`,
+          `Velocity Vision is designed for lawful business, professional, commercial, agency, organizational and entrepreneurial use only.`,
           `Velocity Vision is not intended for personal, household or consumer use.`,
           `Customer must not use Velocity Vision for personal spam, consumer scams, household messaging, personal contact-list exploitation, unlawful consumer targeting or any marketing activity that is inconsistent with the Platform Terms of Service, Customer Agreement, Acceptable Use Policy or this Marketing Compliance Policy.`,
         ],
@@ -4308,7 +4308,7 @@ const docs: Record<string, LegalDoc> = {
           `* does not use deceptive headers;`,
           `* does not use deceptive subject lines;`,
           `* does not use misleading preview text;`,
-          `* identifies the sender or promoted organisation where required;`,
+          `* identifies the sender or promoted organization where required;`,
           `* identifies the advertiser or beneficiary where required;`,
           `* identifies the commercial nature of the message where required;`,
           `* includes a valid opt-out or unsubscribe mechanism where required;`,
@@ -4367,7 +4367,7 @@ const docs: Record<string, LegalDoc> = {
         paragraphs: [
           `Suppression data may only be used for lawful compliance and suppression purposes.`,
           `Customer must not sell, rent, share, activate, enrich, profile, target, monetise, reverse engineer, reuse or exploit suppression lists, opt-out lists, unsubscribe lists, objection lists or do-not-contact lists for unrelated marketing.`,
-          `Customer must not upload suppression data unless it is authorised to process it and does so for lawful suppression and compliance purposes.`,
+          `Customer must not upload suppression data unless it is authorized to process it and does so for lawful suppression and compliance purposes.`,
           `Customer must not use suppression data to identify people for renewed targeting, alternative-channel outreach, client resale, enrichment or campaign recycling.`,
         ],
       },
@@ -4457,10 +4457,10 @@ const docs: Record<string, LegalDoc> = {
         ],
       },
       {
-        heading: `26. AI Personalisation and Manipulation`,
+        heading: `26. AI Personalization and Manipulation`,
         paragraphs: [
-          `Customer must not use Velocity Vision or generated outputs for deceptive personalisation, manipulative targeting, fake familiarity, false relationship claims, synthetic identity deception, deepfake-style deception, fake endorsements, fake testimonials, fake scarcity, fake urgency, vulnerable-person manipulation or pressure tactics that are unlawful, misleading or inappropriate.`,
-          `Customer is responsible for ensuring that any personalisation based on Customer Personal Data is lawful, fair, transparent and appropriate.`,
+          `Customer must not use Velocity Vision or generated outputs for deceptive personalization, manipulative targeting, fake familiarity, false relationship claims, synthetic identity deception, deepfake-style deception, fake endorsements, fake testimonials, fake scarcity, fake urgency, vulnerable-person manipulation or pressure tactics that are unlawful, misleading or inappropriate.`,
+          `Customer is responsible for ensuring that any personalization based on Customer Personal Data is lawful, fair, transparent and appropriate.`,
           `Customer must not use AI-assisted features to create marketing that unlawfully exploits vulnerability, protected characteristics, health status, financial distress, age, disability, ethnicity, religion, political views, sexuality, trade union status or other sensitive traits.`,
         ],
       },
@@ -4496,7 +4496,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: `28. Regulated and Restricted Sectors`,
         paragraphs: [
-          `Customer must not use Velocity Vision for marketing in regulated, sensitive or high-risk sectors unless Customer has all required permissions, licences, legal bases, approvals, disclosures, warnings and compliance processes.`,
+          `Customer must not use Velocity Vision for marketing in regulated, sensitive or high-risk sectors unless Customer has all required permissions, licenses, legal bases, approvals, disclosures, warnings and compliance processes.`,
           `Restricted or high-risk sectors include:`,
           `* health;`,
           `* medical services;`,
@@ -4540,7 +4540,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: `29. Political, Public-Issue and Sensitive Influence`,
         paragraphs: [
-          `Customer must not use Velocity Vision for political campaigning, voter targeting, public-issue persuasion, lobbying, government influence, public-sector influence, fundraising for political or sensitive causes, or targeting based on sensitive characteristics unless expressly authorised in writing and lawful in every relevant jurisdiction.`,
+          `Customer must not use Velocity Vision for political campaigning, voter targeting, public-issue persuasion, lobbying, government influence, public-sector influence, fundraising for political or sensitive causes, or targeting based on sensitive characteristics unless expressly authorized in writing and lawful in every relevant jurisdiction.`,
           `Customer must not use Velocity Vision to target individuals based on sensitive personal data, protected characteristics, vulnerability, financial distress, health status, political views, religious beliefs, trade union status, sexuality, ethnicity or similar sensitive traits.`,
           `We may refuse or restrict any use involving political, public-issue, sensitive influence or vulnerable-person targeting.`,
         ],
@@ -4602,7 +4602,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: `33. Telephone, SMS and Messaging Restrictions`,
         paragraphs: [
-          `Customer must not use Velocity Vision to prepare, export, organise or support telephone, SMS, MMS, messaging-app or similar outreach unless Customer has all required consent, lawful basis, notices, opt-out processes, sender identification, do-not-call screening, timing controls, recordkeeping and channel-specific compliance.`,
+          `Customer must not use Velocity Vision to prepare, export, organize or support telephone, SMS, MMS, messaging-app or similar outreach unless Customer has all required consent, lawful basis, notices, opt-out processes, sender identification, do-not-call screening, timing controls, recordkeeping and channel-specific compliance.`,
           `Customer is responsible for compliance with calling, texting, messaging, do-not-call, quiet-hours, consent, revocation and recording laws where applicable.`,
           `Velocity Vision does not approve or certify any telephone, SMS, messaging-app or telemarketing use.`,
         ],
@@ -4627,7 +4627,7 @@ const docs: Record<string, LegalDoc> = {
           `* prevent cross-client data mixing;`,
           `* prevent cross-client suppression misuse;`,
           `* prevent unauthorised client access;`,
-          `* ensure client senders are authorised;`,
+          `* ensure client senders are authorized;`,
           `* ensure client claims are substantiated;`,
           `* ensure client campaigns are lawful;`,
           `* flow down relevant obligations to clients and users.`,
@@ -4725,7 +4725,7 @@ const docs: Record<string, LegalDoc> = {
           `* disconnecting integrations;`,
           `* disabling workspaces;`,
           `* restricting credits;`,
-          `* cancelling credits;`,
+          `* canceling credits;`,
           `* downgrading plans;`,
           `* suspending accounts;`,
           `* terminating accounts;`,
@@ -4788,9 +4788,9 @@ const docs: Record<string, LegalDoc> = {
           `* its senders and advertisers are accurately identified;`,
           `* its claims are truthful and substantiated;`,
           `* its opt-out and suppression processes are effective;`,
-          `* its users are authorised and trained;`,
+          `* its users are authorized and trained;`,
           `* its client instructions are lawful;`,
-          `* its agency client activity is authorised;`,
+          `* its agency client activity is authorized;`,
           `* its AI-assisted marketing use is lawful;`,
           `* its exports and downstream use are lawful;`,
           `* it will not use Velocity Vision to evade legal, platform, provider or recipient restrictions.`,
@@ -5182,7 +5182,7 @@ const docs: Record<string, LegalDoc> = {
         paragraphs: [
           `Cookie and usage data may help us understand how users interact with AI-assisted features, generated outputs, workflows, templates, exports and activation controls.`,
           `We may use operational data, usage data, analytics data, aggregated data, anonymised data or de-identified data to maintain, secure, analyse, improve and develop Velocity Vision.`,
-          `We do not use Customer Personal Data to train a publicly available foundation model or general-purpose AI model unless the customer expressly authorises that use or the data has been aggregated, anonymised or de-identified so that it no longer identifies the customer or data subjects.`,
+          `We do not use Customer Personal Data to train a publicly available foundation model or general-purpose AI model unless the customer expressly authorizes that use or the data has been aggregated, anonymised or de-identified so that it no longer identifies the customer or data subjects.`,
         ],
       },
       {
@@ -5306,7 +5306,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: `27. Global Privacy Control and Opt-Out Signals`,
         paragraphs: [
-          `Where required by applicable law and technically feasible, we may recognise legally required opt-out preference signals, such as Global Privacy Control, for website-level sale, sharing or targeted advertising choices.`,
+          `Where required by applicable law and technically feasible, we may recognize legally required opt-out preference signals, such as Global Privacy Control, for website-level sale, sharing or targeted advertising choices.`,
           `Because Velocity Vision is primarily a business software platform and customer-uploaded data is controlled by customers, some requests or signals relating to customer workspace data may need to be directed to the relevant customer.`,
           `We do not guarantee that all browser-based signals will apply to authenticated workspace activity, customer-controlled processing, customer integrations, third-party services or downstream use.`,
         ],
@@ -5442,7 +5442,7 @@ const docs: Record<string, LegalDoc> = {
         paragraphs: [
           `Global Solutions Management LLC is incorporated in Delaware, United States.`,
           `Cookie and tracking data may be processed in the United States, United Kingdom, European Economic Area and other jurisdictions where we or our providers operate.`,
-          `Where required by applicable law, we use recognised transfer mechanisms such as adequacy decisions, standard contractual clauses, UK transfer mechanisms, Swiss transfer mechanisms, data privacy frameworks or other lawful safeguards.`,
+          `Where required by applicable law, we use recognized transfer mechanisms such as adequacy decisions, standard contractual clauses, UK transfer mechanisms, Swiss transfer mechanisms, data privacy frameworks or other lawful safeguards.`,
           `Users should review the Privacy Policy for more information about international transfers.`,
         ],
       },
@@ -5600,7 +5600,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: `1. Purpose`,
         paragraphs: [
-          `Velocity Vision is designed to protect customer workspaces, uploaded data, sender controls, activation workflows, replies, pipeline records, billing flows, platform operations, AI-assisted features, integrations and platform integrity using reasonable technical and organisational measures appropriate to a self-serve SaaS platform.`,
+          `Velocity Vision is designed to protect customer workspaces, uploaded data, sender controls, activation workflows, replies, pipeline records, billing flows, platform operations, AI-assisted features, integrations and platform integrity using reasonable technical and organizational measures appropriate to a self-serve SaaS platform.`,
           `Security is a shared responsibility.`,
           `Global Solutions Management LLC is responsible for reasonable security measures within the Velocity Vision platform environment under its reasonable control.`,
           `Customers are responsible for their own accounts, users, passwords, devices, browsers, networks, connected email accounts, sender accounts, integrations, exports, downloads, agency users, client workspaces, customer-side systems, internal approvals, data handling, business continuity and compliance processes.`,
@@ -5699,7 +5699,7 @@ const docs: Record<string, LegalDoc> = {
           `protect email accounts`,
           `protect connected sender accounts`,
           `restrict administrator access`,
-          `invite only authorised users`,
+          `invite only authorized users`,
           `remove users who no longer need access`,
           `monitor workspace activity`,
           `review client workspace access`,
@@ -5722,13 +5722,13 @@ const docs: Record<string, LegalDoc> = {
           `Velocity Vision may use account-based access controls, workspace roles, permission settings, session controls, audit logs and provider-level controls to help manage access.`,
           `Customer is responsible for configuring user access appropriately and ensuring that each user has only the access needed for their role.`,
           `Customer is responsible for reviewing access after staff changes, client changes, contractor changes, project changes, role changes and suspected compromise.`,
-          `Agency customers are responsible for separating client access, preventing cross-client access and removing client users when no longer authorised.`,
+          `Agency customers are responsible for separating client access, preventing cross-client access and removing client users when no longer authorized.`,
         ],
       },
       {
         heading: `11. Administrative Access`,
         paragraphs: [
-          `Administrative access to platform systems is intended to be limited to authorised personnel, contractors or providers with a legitimate operational, support, security, billing, compliance, legal, abuse-prevention or maintenance need.`,
+          `Administrative access to platform systems is intended to be limited to authorized personnel, contractors or providers with a legitimate operational, support, security, billing, compliance, legal, abuse-prevention or maintenance need.`,
           `Administrative access may be used for:`,
           `Where appropriate, administrative access may be subject to internal controls, confidentiality obligations, logging, review or provider-level restrictions.`,
         ],
@@ -5763,13 +5763,13 @@ const docs: Record<string, LegalDoc> = {
           `The agency account holder is responsible for all security activity, misuse, compromise and access decisions in client workspaces.`,
         ],
         bullets: [
-          `invite only authorised users`,
+          `invite only authorized users`,
           `maintain client-specific access controls`,
           `prevent cross-client data exposure`,
           `prevent cross-client export misuse`,
-          `remove users promptly when access is no longer authorised`,
+          `remove users promptly when access is no longer authorized`,
           `avoid sharing credentials across clients`,
-          `ensure client senders are authorised`,
+          `ensure client senders are authorized`,
           `protect client data`,
           `maintain client approvals`,
           `report suspected client workspace compromise promptly.`,
@@ -5892,7 +5892,7 @@ const docs: Record<string, LegalDoc> = {
         heading: `23. AI Security and Generated Outputs`,
         paragraphs: [
           `Velocity Vision may use AI-assisted tools and AI providers to support drafting, classification, segmentation, summarisation, quality review, templates, generated outputs, translations and workflow support.`,
-          `Customer must not submit sensitive, regulated, prohibited or restricted data into AI-assisted features unless expressly authorised in writing and lawful for the intended use.`,
+          `Customer must not submit sensitive, regulated, prohibited or restricted data into AI-assisted features unless expressly authorized in writing and lawful for the intended use.`,
           `Customer must review generated outputs before use and must not rely on AI outputs as legal, compliance, security, professional or regulated advice.`,
           `We may restrict AI-assisted features where we reasonably believe there is security, privacy, legal, provider, abuse, data protection, ethical, reputational or operational risk.`,
         ],
@@ -5957,7 +5957,7 @@ const docs: Record<string, LegalDoc> = {
           `A compromise of a customer integration, customer email account, customer sender account, customer API key, customer token, customer device or customer-side system is Customer’s responsibility unless directly caused by our breach of this Platform Security Policy.`,
         ],
         bullets: [
-          `authorising integrations`,
+          `authorizing integrations`,
           `securing connected accounts`,
           `reviewing integration permissions`,
           `removing unused integrations`,
@@ -6084,7 +6084,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: `33. Prohibited Security Testing`,
         paragraphs: [
-          `Unless expressly authorised in writing by Global Solutions Management LLC, you must not:`,
+          `Unless expressly authorized in writing by Global Solutions Management LLC, you must not:`,
           `Unauthorised security testing may result in suspension, termination, legal action, provider notification or law enforcement notification where appropriate.`,
         ],
         bullets: [
@@ -6135,7 +6135,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: `35. Security Research Safe Boundaries`,
         paragraphs: [
-          `Any security research must be limited to accounts, workspaces and data that the researcher owns or has express written authorisation to test.`,
+          `Any security research must be limited to accounts, workspaces and data that the researcher owns or has express written authorization to test.`,
           `Researchers must not access, copy, retain, publish, transmit, alter, delete or disclose other users’ data, customer data, platform secrets, source code, credentials, tokens, keys, logs, non-public information or provider information.`,
           `If a researcher accidentally accesses data that is not theirs, they must stop immediately, preserve confidentiality and report the issue without copying, storing, sharing or using the data.`,
         ],
@@ -6263,14 +6263,14 @@ const docs: Record<string, LegalDoc> = {
         ],
         bullets: [
           `it will use reasonable security measures for its own accounts and users`,
-          `its users are authorised`,
-          `its administrators are authorised`,
-          `its connected integrations are authorised`,
-          `its sender accounts are authorised`,
-          `its payment methods are authorised`,
+          `its users are authorized`,
+          `its administrators are authorized`,
+          `its connected integrations are authorized`,
+          `its sender accounts are authorized`,
+          `its payment methods are authorized`,
           `its exports are lawful and secure`,
-          `its client workspace access is authorised`,
-          `its agency users are authorised`,
+          `its client workspace access is authorized`,
+          `its agency users are authorized`,
           `it will promptly remove unauthorised users`,
           `it will promptly report suspected compromise`,
           `it will not bypass platform security controls`,
@@ -6381,7 +6381,7 @@ const docs: Record<string, LegalDoc> = {
           `This document may be displayed in your browser's preferred language using an automated machine-translation layer, including GTranslate, Google Translate or similar translation technology. Translations are provided for convenience only. The English version controls if there is any conflict, ambiguity, inconsistency, error or difference between versions.`,
           `${PLATFORM} is a self-serve, AI-powered commercial workspace.`,
           `This Service Level Agreement sets out service targets, support targets, exclusions, customer responsibilities, service-credit restrictions and liability protections that apply to paid production workspaces unless a separate signed written agreement expressly states otherwise.`,
-          `This Service Level Agreement is intended to protect the availability, stability, security, integrity and commercial operation of ${PLATFORM} while recognising that SaaS platforms depend on customer systems, third-party providers, internet infrastructure, payment providers, email providers, AI providers, hosting providers, integrations, browsers, devices and external networks.`,
+          `This Service Level Agreement is intended to protect the availability, stability, security, integrity and commercial operation of ${PLATFORM} while recognizing that SaaS platforms depend on customer systems, third-party providers, internet infrastructure, payment providers, email providers, AI providers, hosting providers, integrations, browsers, devices and external networks.`,
         ],
       },
       {
@@ -6442,7 +6442,7 @@ const docs: Record<string, LegalDoc> = {
         heading: "7. Covered Service",
         paragraphs: [
           `Unless expressly stated otherwise, any availability target applies only to paid production workspace access to the core ${PLATFORM} platform.`,
-          `Core platform access means the ability of an authorised paid production user to access the primary workspace interface of ${PLATFORM}, excluding all exclusions in this Service Level Agreement.`,
+          `Core platform access means the ability of an authorized paid production user to access the primary workspace interface of ${PLATFORM}, excluding all exclusions in this Service Level Agreement.`,
           `Core platform access does not include:`,
         ],
         bullets: [
@@ -6756,7 +6756,7 @@ const docs: Record<string, LegalDoc> = {
           `war;`,
           `terrorism;`,
           `civil unrest;`,
-          `labour dispute;`,
+          `labor dispute;`,
           `utility failure;`,
           `internet failure;`,
           `telecom failure;`,
@@ -6871,7 +6871,7 @@ const docs: Record<string, LegalDoc> = {
           `General product, billing, account, workspace, feature, configuration or usage support.`,
           `Target initial response: three business days.`,
           `Severity 4 — Guidance, Data, Export, Feature or Non-Critical Requests`,
-          `Feature guidance, exports, data questions, non-critical issues, how-to requests, enhancement requests, roadmap questions, template questions, AI-output questions or general enquiries.`,
+          `Feature guidance, exports, data questions, non-critical issues, how-to requests, enhancement requests, roadmap questions, template questions, AI-output questions or general inquiries.`,
           `Handled in ordinary support queues without a guaranteed response time.`,
         ],
       },
@@ -7075,12 +7075,12 @@ const docs: Record<string, LegalDoc> = {
         paragraphs: [`Customer represents and warrants that:`],
         bullets: [
           `it will use ${PLATFORM} in accordance with platform terms;`,
-          `its users are authorised;`,
+          `its users are authorized;`,
           `its account information is accurate;`,
           `its billing information is accurate;`,
-          `its payment method is authorised;`,
-          `its connected integrations are authorised;`,
-          `its sender accounts are authorised;`,
+          `its payment method is authorized;`,
+          `its connected integrations are authorized;`,
+          `its sender accounts are authorized;`,
           `its data is lawful;`,
           `its exports are lawful and secure;`,
           `it will provide accurate support information;`,
@@ -7208,7 +7208,7 @@ const docs: Record<string, LegalDoc> = {
           `Database, storage and authentication platform — used to store workspace data, manage user authentication and enforce access controls.`,
           `Payments and billing — used to process paid plans, subscriptions, credits, top-ups, tax handling and invoicing.`,
           `AI processing — used to power AI-assisted drafting, summarisation, classification, translation, segmentation and other Generated Outputs. AI providers process customer prompts and data only as needed to return outputs and are contractually restricted from training public models on customer personal data unless expressly permitted.`,
-          `Email delivery and connectivity — used to send transactional messages and, where customers connect their own sender accounts, to route customer outreach through customer-authorised providers.`,
+          `Email delivery and connectivity — used to send transactional messages and, where customers connect their own sender accounts, to route customer outreach through customer-authorized providers.`,
           `Translation layer — used to render the public site and legal documents in the visitor's preferred language for convenience. The English version controls.`,
           `Analytics and product telemetry — used, where enabled and consented, to understand aggregate product usage, performance and stability.`,
           `Error monitoring and logging — used to detect, diagnose and resolve platform errors, security events and reliability issues.`,
