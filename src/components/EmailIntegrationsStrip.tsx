@@ -85,7 +85,7 @@ export default function EmailIntegrationsStrip({ variant = "full" }: Props) {
             Customer mailbox connections
           </p>
           <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
-            Connect an authorised mailbox and keep replies in the customer's inbox
+            Connect an authorized mailbox and keep replies in the customer's inbox
           </h2>
           <p className="text-muted-foreground">
             Supported connection routes use Nylas or SMTP configuration. Before activation, the customer verifies the sender, reviews the selected records and approves the cadence and content. Connection controls do not guarantee deliverability, inbox placement or legal compliance.

@@ -18,7 +18,7 @@ import { parseBuyParam } from "@/lib/safeNext";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useCurrency } from "@/hooks/useCurrency";
-import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
+import { formatPrice, priceFor, taxNotice, type SkuId } from "@/lib/currency";
 import PricingCurrencySelector from "@/components/PricingCurrencySelector";
 import { billingTroubleCopy, classifyCheckoutReturn, isBillingTrouble, resolveBillingPortalFunction } from "@/lib/checkoutReturn";
 import FeedbackPrompt from "@/components/support/FeedbackPrompt";
@@ -59,7 +59,7 @@ export default function AppBilling() {
   const [pendingPlan, setPendingPlan] = useState<PlanId | null>(null);
   const [showCheckoutFeedback, setShowCheckoutFeedback] = useState(false);
 
-  const displayPlanPrice = (id: PlanId) => id === "free_preview" ? "£0" : priceFor(PLAN_TO_SKU[id], currency).formatted;
+  const displayPlanPrice = (id: PlanId) => id === "free_preview" ? formatPrice(0, currency) : priceFor(PLAN_TO_SKU[id], currency).formatted;
 
   const openBillingPortal = async () => {
     setPortalLoading(true);

@@ -2,9 +2,9 @@ import { motion } from "framer-motion";
 import { Database, ShieldCheck, Send, Mail, Share2, Newspaper, Video, Inbox, GitBranch, BarChart3, Users } from "lucide-react";
 
 const cards = [
-  { icon: Database, title: "Data Vault", desc: "Upload customer-authorised CSV or spreadsheet records, map fields and organise companies, contacts and segments in one workspace." },
+  { icon: Database, title: "Data Vault", desc: "Upload customer-authorized CSV or spreadsheet records, map fields and organize companies, contacts and segments in one workspace." },
   { icon: ShieldCheck, title: "Quality review", desc: "Identify duplicates, missing fields and records requiring review. Software flags support customer assessment; they are not legal or compliance approval." },
-  { icon: Send, title: "Governed activation", desc: "Verify the customer's sender, apply plan limits and require an explicit authorised-user decision before activation." },
+  { icon: Send, title: "Governed activation", desc: "Verify the customer's sender, apply plan limits and require an explicit authorized-user decision before activation." },
   { icon: Mail, title: "Email drafts and cadence settings", desc: "Prepare editable sequence drafts and configure timing. The customer reviews the content, audience and activation settings." },
   { icon: Share2, title: "Social content drafts", desc: "Generate editable posts, hooks and platform variants from a customer brief for review before scheduling or publishing." },
   { icon: Newspaper, title: "Press release drafts", desc: "Create structured announcement drafts from the same customer brief for review and distribution through the customer's chosen route." },
@@ -25,7 +25,7 @@ const CampaignCapabilities = () => (
       <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="max-w-3xl mb-14">
         <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Inside the workspace</p>
         <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">Customer-controlled software for data review, draft creation, activation, follow-up and early pipeline</h2>
-        <p className="text-muted-foreground text-lg leading-relaxed">Velocity Vision organises customer-provided data, editable AI-assisted drafts, governed activation controls and operational records in one self-serve workspace.</p>
+        <p className="text-muted-foreground text-lg leading-relaxed">Velocity Vision organizes customer-provided data, editable AI-assisted drafts, governed activation controls and operational records in one self-serve workspace.</p>
         <p className="text-muted-foreground text-sm leading-relaxed mt-4">Velocity Vision does not scrape contacts, sell lists, provide managed campaigns, send automatically or guarantee legal compliance, deliverability, replies, sales, pipeline or revenue.</p>
       </motion.div>
 

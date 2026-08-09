@@ -6,13 +6,14 @@ import {
   writeStoredCurrency,
   readStoredCountry,
   writeStoredCountry,
-  countryToCurrency,
 } from "@/lib/currency";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Active currency + country for the current user/visitor.
- * Resolution order: URL override → stored selection → profile → IP/geo → browser locale → USD fallback.
+ * US baseline: the default display currency is USD. Only an explicit choice may
+ * move away from USD — URL override → stored selection → profile preference.
+ * IP/geo and browser locale never auto-switch the default currency.
  * URL overrides (for demos/QA): ?ccy=USD ?cc=US
  */
 export function useCurrency() {
@@ -24,14 +25,13 @@ export function useCurrency() {
 
   const [currency, setCurrencyState] = useState<Currency>(() => {
     const url = typeof window !== "undefined" ? new URL(window.location.href).searchParams.get("ccy") : null;
-    return resolveCurrency({
-      explicit: url || readStoredCurrency(),
-      billingCountry: typeof window !== "undefined" ? readStoredCountry() : null,
-      locale: typeof navigator !== "undefined" ? navigator.language : undefined,
-    });
+    // US baseline: default USD. Only an explicit stored/URL choice overrides it.
+    return resolveCurrency({ explicit: url || readStoredCurrency() });
   });
 
-  // Auto-detect country via Cloudflare trace (zero-auth, no key).
+  // Detect visitor country via Cloudflare trace (zero-auth, no key) for
+  // display/diagnostics only. US baseline: geo never changes the currency —
+  // only an explicit user selection or URL override may do that.
   useEffect(() => {
     if (country) return;
     let cancelled = false;
@@ -44,11 +44,6 @@ export function useCurrency() {
         const cc = match[1];
         setCountryState(cc);
         writeStoredCountry(cc);
-        // Only auto-adjust currency if user hasn't picked one explicitly.
-        if (!readStoredCurrency()) {
-          const derived = countryToCurrency(cc);
-          if (derived) setCurrencyState(derived);
-        }
       } catch {
         /* offline / blocked — keep defaults */
       }
@@ -73,10 +68,9 @@ export function useCurrency() {
           setCountryState(profile.billing_country);
           writeStoredCountry(profile.billing_country);
         }
+        // US baseline: only the explicit stored/profile preference wins over USD.
         const resolved = resolveCurrency({
           explicit: readStoredCurrency() || (profile as any).preferred_currency,
-          billingCountry: profile.billing_country,
-          locale: navigator.language,
         });
         setCurrencyState(resolved);
       } catch { /* anonymous */ }

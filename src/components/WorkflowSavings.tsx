@@ -234,7 +234,7 @@ const WorkflowSavings = () => {
                   {growthPrice.formatted} per month
                 </p>
                 <p className="text-xs text-primary-foreground/65 mt-2 leading-relaxed">
-                  This is a price reference, not a savings calculation. Review the included functionality and decide which current costs, if any, are genuinely replaced in your own organisation.
+                  This is a price reference, not a savings calculation. Review the included functionality and decide which current costs, if any, are genuinely replaced in your own organization.
                 </p>
               </div>
 

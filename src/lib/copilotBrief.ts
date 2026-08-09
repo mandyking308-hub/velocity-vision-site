@@ -35,7 +35,7 @@ export interface CopilotInput {
   proof: string;
   /** Things the draft must avoid — claims, wording, timing. Optional. */
   constraints: string;
-  /** Required. The user confirms the audience data is authorised business data. */
+  /** Required. The user confirms the audience data is authorized business data. */
   dataSourceConfirmed: boolean;
 }
 
@@ -80,7 +80,7 @@ export const COPILOT_VARIABLES: { token: string; label: string; fallback: string
 ];
 
 export const COPILOT_DATA_SOURCE_LABEL =
-  "I confirm this campaign will only contact business contacts I am authorised to email, from data my organisation obtained lawfully.";
+  "I confirm this campaign will only contact business contacts I am authorized to email, from data my organization obtained lawfully.";
 
 export const COPILOT_DRAFT_STORAGE_KEY = "vv.copilot.draft.v1";
 
@@ -124,7 +124,7 @@ export function validateCopilotInput(input: CopilotInput): CopilotIssue[] {
     issues.push({ field: "channels", message: "Choose at least one channel." });
   }
   if (!input.dataSourceConfirmed) {
-    issues.push({ field: "dataSourceConfirmed", message: "Confirm your audience data is authorised business data before we build a draft." });
+    issues.push({ field: "dataSourceConfirmed", message: "Confirm your audience data is authorized business data before we build a draft." });
   }
   return issues;
 }
@@ -265,7 +265,7 @@ export function buildComplianceNote(input: Pick<CopilotInput, "dataSourceConfirm
   const base = source === "sample"
     ? "Sample campaign. The contacts and content are examples only — this campaign cannot be activated or sent."
     : input.dataSourceConfirmed
-      ? "The account holder confirmed this audience is authorised business data obtained lawfully by their organisation."
+      ? "The account holder confirmed this audience is authorized business data obtained lawfully by their organization."
       : "Data source not yet confirmed.";
   const extra = [
     "Every email carries an unsubscribe link and your sending address.",

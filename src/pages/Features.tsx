@@ -10,7 +10,7 @@ import { ArrowRight } from "lucide-react";
 
 const groups = [
   { label: "Data Vault and record review", features: [
-    ["Upload and field mapping", "Upload customer-authorised CSV or spreadsheet records, map fields and organise companies and contacts."],
+    ["Upload and field mapping", "Upload customer-authorized CSV or spreadsheet records, map fields and organize companies and contacts."],
     ["Quality and duplicate flags", "Surface missing fields, invalid formats, duplicates and records requiring customer review. These labels are operational aids, not legal approval."],
     ["Customer-reviewed segments", "Create segments from reviewed records without treating a software label as lawful-basis or recipient-suitability approval."],
   ]},
@@ -42,17 +42,17 @@ const groups = [
   { label: "Cadence and reusable work", features: [
     ["One-off campaigns", "Starter, Growth and Agency support one-off customer-controlled campaigns."],
     ["Recurring cadence", "Growth and Agency add weekly, monthly or custom recurring cadence and reusable recurring templates/segments."],
-    ["No automatic sending", "Cadence dates organise recurring work. Every run remains customer-controlled and still passes the applicable send-time checks."],
+    ["No automatic sending", "Cadence dates organize recurring work. Every run remains customer-controlled and still passes the applicable send-time checks."],
   ]},
   { label: "Agency Workspace", features: [
-    ["Isolated client workspaces", "Keep authorised client data, drafts, sender settings, replies and pipeline records separated by workspace."],
+    ["Isolated client workspaces", "Keep authorized client data, drafts, sender settings, replies and pipeline records separated by workspace."],
     ["Pooled Campaign Credits", "Use the Agency plan's 250 monthly Campaign Credits across isolated client workspaces."],
     ["Account-wide visibility", "Review account-wide daily send usage plus cross-client pipeline and Outcome Funnel records. No seat management or cross-seat pooled-send enforcement is claimed."],
   ]},
   { label: "Billing and optional review", features: [
-    ["Published plans", "Free Preview £0; Starter £149 one-off; Growth £249/month; Agency £499/month, with the current included credits and send ceilings shown on Pricing."],
+    ["Published plans", "Free Preview $0; Starter $189 one-off; Growth $315/month; Agency $629/month, with the current included credits and send ceilings shown on Pricing."],
     ["Paid-workspace top-ups", "Credit top-ups are only for eligible paid workspaces. Free Preview cannot buy top-ups and remains capped at one full campaign pack."],
-    ["Premium Human Review", "Where available, the £199 one-off add-on provides senior-strategist review, written recommendations and one asynchronous revision pass. It is separate from complimentary onboarding/setup guidance."],
+    ["Premium Human Review", "Where available, the $249 one-off add-on provides senior-strategist review, written recommendations and one asynchronous revision pass. It is separate from complimentary onboarding/setup guidance."],
   ]},
 ];
 

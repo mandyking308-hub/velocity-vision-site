@@ -2,12 +2,23 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Check } from "lucide-react";
+import { useCurrency } from "@/hooks/useCurrency";
+import { formatPrice, priceFor, type SkuId } from "@/lib/currency";
 
-const plans = [
+const plans: Array<{
+  name: string;
+  slug: string;
+  sku: SkuId;
+  unit: string;
+  desc: string;
+  bullets: string[];
+  recurring?: boolean;
+  cta: string;
+}> = [
   {
     name: "Starter",
     slug: "starter",
-    price: "£149",
+    sku: "vv_starter_oneoff",
     unit: "one-off",
     desc: "One-off access for one customer-controlled campaign workflow.",
     bullets: [
@@ -23,7 +34,7 @@ const plans = [
   {
     name: "Growth",
     slug: "growth",
-    price: "£249",
+    sku: "vv_growth_monthly",
     unit: "per month",
     desc: "Monthly self-serve workspace for ongoing customer-controlled activity.",
     bullets: [
@@ -39,7 +50,7 @@ const plans = [
   {
     name: "Agency Workspace",
     slug: "agency",
-    price: "£499",
+    sku: "vv_agency_monthly",
     unit: "per month",
     desc: "Monthly self-serve workspace with isolated client workspaces.",
     bullets: [
@@ -55,7 +66,10 @@ const plans = [
 ];
 
 
-const PricingTeaser = () => (
+const PricingTeaser = () => {
+  const { currency } = useCurrency();
+
+  return (
   <section className="section-padding bg-splash-duo relative overflow-hidden">
     <div aria-hidden className="blob blob-blue w-80 h-80 -top-24 -left-20 animate-floaty" />
     <div aria-hidden className="blob blob-pink w-96 h-96 -bottom-32 -right-24 animate-drifty" />
@@ -80,10 +94,10 @@ const PricingTeaser = () => (
 
       <div className="mb-6 rounded-xl border border-accent/40 bg-accent/5 px-4 py-4 text-sm text-foreground/90 max-w-4xl space-y-1">
         <p>
-          Free Preview is available at £0 with no card and no automatic paid upgrade.
+          Free Preview is available at {formatPrice(0, currency)} with no card and no automatic paid upgrade.
         </p>
         <p>
-          Starter is one-off with 30 days of access. Growth and Agency Workspace renew monthly until cancelled. The final currency, tax treatment, payment provider and product terms are confirmed before purchase.
+          Starter is one-off with 30 days of access. Growth and Agency Workspace renew monthly until canceled. Prices shown in {currency}; the final currency, tax treatment, payment provider and product terms are confirmed before purchase.
         </p>
       </div>
 
@@ -107,7 +121,7 @@ const PricingTeaser = () => (
             </h3>
             <p className="mb-2">
               <span className="text-3xl font-display font-bold text-foreground">
-                {plan.price}
+                {priceFor(plan.sku, currency).formatted}
               </span>
               <span className="text-muted-foreground text-sm ml-1">{plan.unit}</span>
             </p>
@@ -146,6 +160,7 @@ const PricingTeaser = () => (
       </div>
     </div>
   </section>
-);
+  );
+};
 
 export default PricingTeaser;
