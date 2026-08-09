@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CreditCard, Mail, Briefcase, Scale } from "lucide-react";
 import BookingLinkSettings from "@/components/app/BookingLinkSettings";
+import BufferSettingsCard from "@/components/app/BufferSettingsCard";
 
 const items = [
   { title: "Email connections", desc: "Connect your sender and verify SPF / DKIM for deliverability.", icon: Mail, to: "/app/settings/email" },
@@ -29,6 +30,9 @@ export default function AppSettings() {
             </Card>
           </Link>
         ))}
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <BufferSettingsCard />
       </div>
       <BookingLinkSettings />
     </div>
