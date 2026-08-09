@@ -35,7 +35,7 @@ const DEMO_PREFLIGHT = runPreflight({
     name: "Spring Lead Sprint",
     goal: "Introduce the product to selected B2B prospects",
     status: "draft",
-    pack: { emails: [{ subject: "A clearer way to organise outreach", body: "Illustrative draft copy for the demo." }] },
+    pack: { emails: [{ subject: "A clearer way to organize outreach", body: "Illustrative draft copy for the demo." }] },
     brief: { cta: "Reply if a short walkthrough would be useful", audience: "B2B founders and commercial leads", offer: "Velocity Vision workspace" },
     approved_at: HOURS_AGO(2),
     is_sample: true,
@@ -98,7 +98,7 @@ const DEMO_FUNNEL_OPPS: FunnelOpportunity[] = [
 ];
 
 const packCards = [
-  { icon: Mail, title: "Email sequence", body: "Subject: A clearer way to organise outreach\n\nIllustrative first-touch and follow-up drafts, ready for customer review." },
+  { icon: Mail, title: "Email sequence", body: "Subject: A clearer way to organize outreach\n\nIllustrative first-touch and follow-up drafts, ready for customer review." },
   { icon: Share2, title: "Social drafts", body: "Illustrative LinkedIn hooks and post variants. Draft only — nothing is published automatically." },
   { icon: Newspaper, title: "Press draft", body: "Illustrative announcement structure and press-release copy for customer editing." },
   { icon: Video, title: "Video script", body: "Illustrative short-form hook, 30-second script and shot-list starting point." },
@@ -153,7 +153,7 @@ export default function DemoCRMDashboard() {
             </Card>
             <Card>
               <CardHeader><CardTitle className="text-base flex items-center gap-2"><CalendarCheck className="h-4 w-4" />Customer control</CardTitle></CardHeader>
-              <CardContent className="text-sm text-muted-foreground">Cadence dates organise recurring work. Every draft, activation and send remains customer-controlled; Velocity does not auto-publish or auto-send.</CardContent>
+              <CardContent className="text-sm text-muted-foreground">Cadence dates organize recurring work. Every draft, activation and send remains customer-controlled; Velocity does not auto-publish or auto-send.</CardContent>
             </Card>
           </div>
 

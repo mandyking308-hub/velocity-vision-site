@@ -81,7 +81,7 @@ export default function AppDataVault() {
   if ((data?.dupes ?? 0) > 0) actions.push({ icon: Copy, title: `Resolve ${data!.dupes} duplicates`, description: "Merge or skip them based on your records.", to: "/app/data-vault?quality=duplicates", cta: "Resolve" });
   if ((data?.needs ?? 0) > 0) actions.push({ icon: ListChecks, title: `Review ${data!.needs} incomplete contacts`, description: "Check missing or ambiguous fields.", to: "/app/data-vault?quality=needs_review", cta: "Review" });
   if ((data?.eligible ?? 0) > 0) actions.push({ icon: Send, title: "Prepare eligible records for a campaign", description: "Activation preparation creates campaign leads; it does not send email.", to: "/app/activate", cta: "Prepare" });
-  actions.push({ icon: Upload, title: "Import your next list", description: "Upload another authorised CSV or spreadsheet.", to: "/app/data-vault/upload", cta: "Upload" });
+  actions.push({ icon: Upload, title: "Import your next list", description: "Upload another authorized CSV or spreadsheet.", to: "/app/data-vault/upload", cta: "Upload" });
 
   const empty = !isLoading && (data?.contacts ?? 0) === 0;
   const clearFilter = () => { const next = new URLSearchParams(params); next.delete("quality"); setParams(next, { replace: true }); };
@@ -89,13 +89,13 @@ export default function AppDataVault() {
   return (
     <div className="space-y-6 max-w-6xl">
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
-        <div><h1 className="text-3xl font-bold tracking-tight">Data Vault</h1><p className="text-muted-foreground mt-1">Review customer-authorised business data, quality flags, duplicates and exclusions before deciding what to use.</p></div>
+        <div><h1 className="text-3xl font-bold tracking-tight">Data Vault</h1><p className="text-muted-foreground mt-1">Review customer-authorized business data, quality flags, duplicates and exclusions before deciding what to use.</p></div>
         <Button asChild size="lg"><Link to="/app/data-vault/upload"><Upload className="h-4 w-4 mr-2" />Upload contacts</Link></Button>
       </div>
       <p className="text-xs text-muted-foreground">A “valid” record has passed current workspace-format and quality checks only. It does not establish lawful basis, consent, recipient suitability, deliverability or legal compliance.</p>
 
       {empty ? (
-        <Card><CardContent className="p-10 text-center space-y-4"><Upload className="h-12 w-12 mx-auto text-muted-foreground" /><div><h2 className="text-xl font-semibold">No contacts yet</h2><p className="text-sm text-muted-foreground mt-1 max-w-md mx-auto">Upload is storage. Activation preparation is a separate customer decision. Bring authorised records in first; the workspace will flag quality, duplicates and risky records before you decide what to use.</p></div><div className="flex justify-center gap-2 flex-wrap"><Button asChild><Link to="/app/data-vault/upload"><Upload className="h-4 w-4 mr-2" />Upload contacts</Link></Button><Button asChild variant="outline"><Link to="/demo/data-vault">View demo data flow</Link></Button></div></CardContent></Card>
+        <Card><CardContent className="p-10 text-center space-y-4"><Upload className="h-12 w-12 mx-auto text-muted-foreground" /><div><h2 className="text-xl font-semibold">No contacts yet</h2><p className="text-sm text-muted-foreground mt-1 max-w-md mx-auto">Upload is storage. Activation preparation is a separate customer decision. Bring authorized records in first; the workspace will flag quality, duplicates and risky records before you decide what to use.</p></div><div className="flex justify-center gap-2 flex-wrap"><Button asChild><Link to="/app/data-vault/upload"><Upload className="h-4 w-4 mr-2" />Upload contacts</Link></Button><Button asChild variant="outline"><Link to="/demo/data-vault">View demo data flow</Link></Button></div></CardContent></Card>
       ) : (
         <>
           <VaultSummaryCards stats={stats} />

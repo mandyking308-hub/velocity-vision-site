@@ -10,7 +10,7 @@ const templates = [
   {
     icon: Target,
     name: "Business relationship workflow",
-    desc: "A reusable structure for customer-authorised business records, editable outreach drafts, activation review and follow-up records.",
+    desc: "A reusable structure for customer-authorized business records, editable outreach drafts, activation review and follow-up records.",
   },
   {
     icon: Rocket,
@@ -38,7 +38,7 @@ const Templates = () => (
   <>
     <SEO
       title="Templates — Customer-reviewed workflow structures | Velocity Vision"
-      description="Reusable workflow structures for customer-authorised data, editable AI-assisted drafts, sender verification, activation review, follow-up records and early opportunity administration."
+      description="Reusable workflow structures for customer-authorized data, editable AI-assisted drafts, sender verification, activation review, follow-up records and early opportunity administration."
       path="/templates"
     />
     <Navbar />
@@ -57,7 +57,7 @@ const Templates = () => (
               Reusable structures for customer-controlled workflows
             </h1>
             <p className="text-primary-foreground/75 text-lg mb-5 max-w-3xl">
-              Each template provides an editable structure for customer-authorised records, AI-assisted drafts, sender settings, activation review and follow-up administration.
+              Each template provides an editable structure for customer-authorized records, AI-assisted drafts, sender settings, activation review and follow-up administration.
             </p>
             <p className="text-primary-foreground/70 text-sm mb-8 max-w-3xl">
               Templates are not prospect databases, legal approval, managed campaigns or guaranteed commercial methods. Customers review and approve every record, output and activation decision.
