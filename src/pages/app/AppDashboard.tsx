@@ -30,6 +30,8 @@ import { useLegalStatus } from "@/lib/legalCompliance";
 import { deriveFollowUpState } from "@/lib/leadStates";
 import type { PlanId } from "@/lib/credits";
 import { CADENCE_LABELS, nextActionLabel, type CadenceType } from "@/lib/cadence";
+import { useCurrency } from "@/hooks/useCurrency";
+import { CURRENCY_SYMBOLS } from "@/lib/currency";
 
 interface VaultStats {
   contacts: number;
@@ -80,6 +82,7 @@ export default function AppDashboard() {
   const { remaining, planConfig } = useCredits();
   const { workspaces, currentId, loading: workspaceLoading } = useWorkspace();
   const legal = useLegalStatus();
+  const { currency } = useCurrency();
 
   const [firstName, setFirstName] = useState("");
   const [vault, setVault] = useState<VaultStats>(EMPTY_VAULT);
@@ -342,7 +345,7 @@ export default function AppDashboard() {
         <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-4">
           <Stat label="Leads" value={commercial.leads} icon={Users} />
           <Stat label="Opportunities" value={commercial.opportunities} icon={Briefcase} />
-          <Stat label="Open value" value={`£${commercial.pipelineValue.toLocaleString()}`} icon={TrendingUp} />
+          <Stat label="Open value" value={`${CURRENCY_SYMBOLS[currency]}${commercial.pipelineValue.toLocaleString()}`} icon={TrendingUp} />
           <Stat label="Stuck 14d+" value={commercial.stuck} icon={AlertTriangle} tone="warn" />
           <Stat label="Actions overdue" value={commercial.overdueActions} icon={Clock} tone="danger" />
           <Stat label="Recorded won" value={commercial.won} icon={CheckCircle2} tone="good" />
