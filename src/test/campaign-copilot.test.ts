@@ -29,7 +29,7 @@ const memoryStorage = () => {
 };
 
 describe("copilot — required data-source confirmation", () => {
-  it("blocks creation until the user confirms authorised business data", () => {
+  it("blocks creation until the user confirms authorized business data", () => {
     const input = validInput({ dataSourceConfirmed: false });
     expect(canCreateFromCopilot(input)).toBe(false);
     expect(validateCopilotInput(input).map((i) => i.field)).toContain("dataSourceConfirmed");
@@ -52,7 +52,7 @@ describe("copilot — required data-source confirmation", () => {
 
   it("records the confirmation in the compliance note", () => {
     const note = buildComplianceNote({ dataSourceConfirmed: true, constraints: "" }, "ai");
-    expect(note).toMatch(/authorised business data/i);
+    expect(note).toMatch(/authorized business data/i);
     expect(buildComplianceNote({ dataSourceConfirmed: false, constraints: "" }, "ai")).toMatch(/not yet confirmed/i);
   });
 });
