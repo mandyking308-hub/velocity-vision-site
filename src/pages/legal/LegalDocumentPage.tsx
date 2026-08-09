@@ -358,7 +358,7 @@ const docs: Record<string, LegalDoc> = {
           "Credits are not money, stored value, electronic money, gift cards or currency. Credits have no cash value, are not transferable, are not redeemable for cash and may expire, be limited, be withdrawn or be subject to plan rules.",
           "Stored data may remain available when credits run out, but chargeable actions may pause until credits are added, the plan is upgraded or billing is restored.",
           "Unless required by law or expressly stated in writing by Global Solutions Management LLC, fees, subscriptions and credit purchases are non-refundable once the paid period begins, credits are made available or services are activated.",
-          "You are responsible for all taxes, VAT, sales tax, use tax, withholding, duties, levies, exchange-rate effects, bank fees, card fees, foreign transaction fees and payment-provider charges.",
+          "You are responsible for all applicable taxes, including sales tax, use tax, VAT or GST where applicable, withholding, duties, levies, exchange-rate effects, bank fees, card fees, foreign transaction fees and payment-provider charges. Where we are required by law to collect tax, it is calculated at checkout based on the billing address you provide.",
           "Prices may be displayed in one or more currencies. Currency conversion tools, estimates or localized price displays are provided for convenience only. The final amount charged may depend on checkout currency, payment processor rates, card issuer rates, taxes, location, exchange-rate changes and payment-provider charges.",
           "We may suspend, restrict or terminate access for failed payments, expired payment methods, chargebacks, payment disputes, fraud signals, overdue invoices, tax issues or billing abuse.",
         ],
@@ -1038,7 +1038,7 @@ const docs: Record<string, LegalDoc> = {
         paragraphs: [
           `Prices may be displayed in one or more currencies. Currency conversion tools, estimates or localized price displays are provided for convenience only.`,
           `The final amount charged may depend on checkout currency, payment processor rates, card issuer rates, bank rates, taxes, location, exchange-rate changes and payment-provider charges.`,
-          `Customer is responsible for all taxes, VAT, GST, sales tax, use tax, withholding, duties, levies, assessments, bank fees, card fees, foreign transaction fees, exchange-rate effects and payment-provider charges unless we are legally required to collect them.`,
+          `Customer is responsible for all applicable taxes, including sales tax, use tax, VAT or GST where applicable, withholding, duties, levies, assessments, bank fees, card fees, foreign transaction fees, exchange-rate effects and payment-provider charges unless we are legally required to collect them. Where we are required by law to collect tax, it is calculated at checkout based on the billing address provided.`,
           `If Customer is required by law to withhold tax from payments, Customer must gross up the payment so that Global Solutions Management LLC receives the full amount that would have been received without withholding, unless prohibited by mandatory law.`,
           `We may collect taxes where required or where we reasonably determine collection is appropriate. Tax treatment may depend on Customer's location, billing details, tax status, usage, local law and payment processor configuration.`,
           `Customer is responsible for providing valid tax registration details, exemption certificates or other tax information where applicable.`,
@@ -1775,7 +1775,7 @@ const docs: Record<string, LegalDoc> = {
           "“Customer”, “you” or “your” means the person, company, agency, organization, partnership, charity, trust, public body, fund, brand, client, estate, project or other legal entity that uses Velocity Vision and determines the purposes and means of processing Customer Personal Data.",
           "“Customer Personal Data” means Personal Data that Customer uploads, imports, enters, provides, generates, activates, exports, processes or otherwise makes available through Velocity Vision and that Global Solutions Management LLC processes on behalf of Customer as Processor, Service Provider, Contractor or equivalent role.",
           "“Personal Data” means any information relating to an identified or identifiable individual, or any equivalent term under applicable Data Protection Laws.",
-          "“Data Protection Laws” means all privacy, data protection, cybersecurity, electronic communications, direct marketing, AI-related and similar laws that apply to the processing of Customer Personal Data, including where applicable the GDPR, UK GDPR, Data Protection Act 2018, PECR, Swiss FADP, CCPA/CPRA, US state privacy laws, EU AI Act, ePrivacy rules and other applicable privacy, marketing, AI and data protection laws.",
+          "“Data Protection Laws” means all privacy, data protection, cybersecurity, electronic communications, direct marketing, AI-related and similar laws that apply to the processing of Customer Personal Data, including where applicable the GDPR, Swiss FADP, CCPA/CPRA, US state privacy laws, EU AI Act, ePrivacy rules and other applicable privacy, marketing, AI and data protection laws.",
           "“GDPR” means Regulation (EU) 2016/679.",
           "“CCPA” means the California Consumer Privacy Act as amended by the California Privacy Rights Act and applicable regulations.",
           "“Controller”, “Processor”, “Business”, “Service Provider”, “Contractor”, “Consumer”, “Data Subject”, “Process”, “Processing”, “Sell”, “Share”, “Sensitive Personal Information” and similar terms have the meanings given to them under applicable Data Protection Laws.",
@@ -1941,7 +1941,7 @@ const docs: Record<string, LegalDoc> = {
           "payment card data;",
           "government identifier data;",
           "precise geolocation data;",
-          "special category data under GDPR or UK GDPR;",
+          "special category data under GDPR or equivalent sensitive categories under other applicable laws;",
           "sensitive personal information under CCPA or similar laws;",
           "data subject to professional secrecy or privilege unless Customer is authorized to process it;",
           "data subject to confidentiality obligations that prohibit SaaS processing;",
@@ -2210,7 +2210,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "23. International Transfers",
         paragraphs: [
-          "Customer Personal Data may be processed in the United States, United Kingdom, European Economic Area and other jurisdictions where Global Solutions Management LLC or its Subprocessors operate.",
+          "Customer Personal Data may be processed in the United States, European Economic Area and other jurisdictions where Global Solutions Management LLC or its Subprocessors operate.",
           "Customer authorizes Global Solutions Management LLC and its Subprocessors to process Customer Personal Data in these jurisdictions as necessary to provide Velocity Vision.",
           "Customer is responsible for ensuring that Customer Personal Data may lawfully be transferred to, accessed from, processed in and stored in all relevant jurisdictions.",
           "Where Data Protection Laws require a transfer mechanism, transfers may rely on one or more of the following, as applicable:",
@@ -2238,9 +2238,9 @@ const docs: Record<string, LegalDoc> = {
         ],
       },
       {
-        heading: "25. UK and Swiss Transfers",
+        heading: "25. Swiss and Other Transfers",
         paragraphs: [
-          "Where Customer Personal Data subject to UK GDPR is transferred to Global Solutions Management LLC or a Subprocessor in a country that does not provide adequate protection, the applicable UK transfer mechanism, including the UK International Data Transfer Addendum or UK International Data Transfer Agreement, is incorporated by reference where required.",
+          "Where Customer Personal Data is transferred from a jurisdiction whose applicable law requires a specific transfer mechanism, addendum or agreement in addition to standard contractual clauses, that mechanism is incorporated by reference where required.",
           "Where Customer Personal Data subject to Swiss data protection law is transferred to Global Solutions Management LLC or a Subprocessor in a country that does not provide adequate protection, the applicable transfer mechanism will be interpreted to cover Swiss requirements where required.",
           "Customer is responsible for determining whether transfer impact assessments, supplementary measures, notices or additional safeguards are required for Customer’s use case.",
         ],
@@ -2257,7 +2257,7 @@ const docs: Record<string, LegalDoc> = {
         heading: "27. Data Privacy Framework",
         paragraphs: [
           "If Global Solutions Management LLC or a relevant Subprocessor is certified under an applicable data privacy framework, including the EU-U.S. Data Privacy Framework, UK Extension or Swiss-U.S. Data Privacy Framework, transfers may rely on that framework where legally available.",
-          "If a data privacy framework is invalidated, suspended, unavailable or no longer applicable, transfers may rely on standard contractual clauses, UK transfer mechanisms, Swiss transfer mechanisms or another lawful transfer mechanism.",
+          "If a data privacy framework is invalidated, suspended, unavailable or no longer applicable, transfers may rely on standard contractual clauses, Swiss transfer mechanisms or another lawful transfer mechanism.",
           "Nothing in this DPA requires Global Solutions Management LLC to maintain certification under any data privacy framework unless expressly agreed in writing.",
         ],
       },
@@ -2505,7 +2505,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "44. Governing Law and Jurisdiction",
         paragraphs: [
-          "This DPA is governed by the laws of the State of Delaware, United States, except where Data Protection Laws, standard contractual clauses, UK transfer mechanisms, Swiss transfer mechanisms or mandatory law require another governing law for a specific data protection issue.",
+          "This DPA is governed by the laws of the State of Delaware, United States, except where Data Protection Laws, standard contractual clauses, Swiss transfer mechanisms or mandatory law require another governing law for a specific data protection issue.",
           "Subject to any mandatory law that cannot be waived, the state and federal courts located in Delaware have exclusive jurisdiction over disputes arising out of or relating to this DPA.",
           "Despite the above, Global Solutions Management LLC may seek injunctive relief, debt recovery, payment enforcement, intellectual property enforcement, confidentiality enforcement, security enforcement, data protection enforcement or urgent protective relief in any court or forum of competent jurisdiction.",
         ],
@@ -2513,7 +2513,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "45. Order of Precedence for Data Transfer Terms",
         paragraphs: [
-          "If standard contractual clauses, UK transfer mechanisms, Swiss transfer mechanisms or mandatory Data Protection Laws apply and conflict with this DPA, those transfer terms or mandatory laws control only to the extent required for the restricted transfer or specific mandatory data protection issue.",
+          "If standard contractual clauses, Swiss transfer mechanisms or mandatory Data Protection Laws apply and conflict with this DPA, those transfer terms or mandatory laws control only to the extent required for the restricted transfer or specific mandatory data protection issue.",
           "All other terms of this DPA, the Platform Terms of Service and Customer Agreement continue to apply to the maximum extent permitted by law.",
         ],
       },
@@ -2664,7 +2664,7 @@ const docs: Record<string, LegalDoc> = {
           "billing address;",
           "company details;",
           "tax information;",
-          "VAT, GST or sales tax details;",
+          "sales tax, VAT or GST details;",
           "subscription plan;",
           "credit purchases;",
           "top-ups;",
@@ -2834,7 +2834,7 @@ const docs: Record<string, LegalDoc> = {
       },
       {
         heading: "10. Lawful Bases for Processing",
-        paragraphs: ["Where GDPR, UK GDPR or similar laws apply, our lawful bases may include:"],
+        paragraphs: ["Where GDPR or similar laws apply, our lawful bases may include:"],
         bullets: [
           "contract: to provide accounts, subscriptions, workspaces, support, billing and platform services;",
           `legitimate interests: to operate, secure, improve, monitor, support and protect ${PLATFORM}, prevent abuse, enforce terms, maintain records and communicate with business users;`,
@@ -2983,9 +2983,9 @@ const docs: Record<string, LegalDoc> = {
         heading: "21. International Transfers",
         paragraphs: [
           "Global Solutions Management LLC is incorporated in Delaware, United States.",
-          "Personal information may be processed in the United States, United Kingdom, European Economic Area and other jurisdictions where we or our service providers operate.",
+          "Personal information may be processed in the United States, European Economic Area and other jurisdictions where we or our service providers operate.",
           "These jurisdictions may have data protection laws that differ from those in your location.",
-          "Where required by applicable law, we use recognized transfer mechanisms such as adequacy decisions, standard contractual clauses, UK transfer mechanisms, Swiss transfer mechanisms, data privacy frameworks or other lawful safeguards.",
+          "Where required by applicable law, we use recognized transfer mechanisms such as adequacy decisions, standard contractual clauses, Swiss transfer mechanisms, data privacy frameworks or other lawful safeguards.",
           `Customers remain responsible for determining whether their own use of ${PLATFORM}, including customer-uploaded data, outreach activity, AI-assisted features and integrations, is lawful in each relevant jurisdiction.`,
         ],
       },
@@ -2993,7 +2993,7 @@ const docs: Record<string, LegalDoc> = {
         heading: "22. Data Privacy Framework",
         paragraphs: [
           "Where we or a relevant service provider participates in an applicable data privacy framework, including the EU-U.S. Data Privacy Framework, UK Extension or Swiss-U.S. Data Privacy Framework, transfers may rely on that framework where legally available.",
-          "If a data privacy framework is invalidated, suspended, unavailable or no longer applicable, transfers may rely on standard contractual clauses, UK transfer mechanisms, Swiss transfer mechanisms or another lawful transfer mechanism.",
+          "If a data privacy framework is invalidated, suspended, unavailable or no longer applicable, transfers may rely on standard contractual clauses, Swiss transfer mechanisms or another lawful transfer mechanism.",
           "Nothing in this Privacy Policy requires Global Solutions Management LLC to maintain certification under any data privacy framework unless expressly stated by us.",
         ],
       },
@@ -3072,7 +3072,7 @@ const docs: Record<string, LegalDoc> = {
           "payment card data;",
           "government identifiers;",
           "precise geolocation data;",
-          "special category data under GDPR or UK GDPR;",
+          "special category data under GDPR or equivalent sensitive categories under other applicable laws;",
           "sensitive personal information under CCPA or similar laws;",
           "children's data;",
           "data subject to professional secrecy or privilege;",
@@ -3371,7 +3371,7 @@ const docs: Record<string, LegalDoc> = {
           "financial account data;",
           "government identifier data;",
           "precise geolocation data;",
-          "special category data under GDPR or UK GDPR;",
+          "special category data under GDPR or equivalent sensitive categories under other applicable laws;",
           "sensitive personal information under CCPA or similar laws;",
           "data subject to professional secrecy or privilege unless authorized in writing;",
           "data subject to confidentiality obligations that prohibit SaaS processing;",
@@ -5435,8 +5435,8 @@ const docs: Record<string, LegalDoc> = {
         heading: `36. International Transfers`,
         paragraphs: [
           `Global Solutions Management LLC is incorporated in Delaware, United States.`,
-          `Cookie and tracking data may be processed in the United States, United Kingdom, European Economic Area and other jurisdictions where we or our providers operate.`,
-          `Where required by applicable law, we use recognized transfer mechanisms such as adequacy decisions, standard contractual clauses, UK transfer mechanisms, Swiss transfer mechanisms, data privacy frameworks or other lawful safeguards.`,
+          `Cookie and tracking data may be processed in the United States, European Economic Area and other jurisdictions where we or our providers operate.`,
+          `Where required by applicable law, we use recognized transfer mechanisms such as adequacy decisions, standard contractual clauses, Swiss transfer mechanisms, data privacy frameworks or other lawful safeguards.`,
           `Users should review the Privacy Policy for more information about international transfers.`,
         ],
       },
@@ -6845,7 +6845,7 @@ const docs: Record<string, LegalDoc> = {
         heading: "27. Business Days and Business Hours",
         paragraphs: [
           `Unless a separate signed written agreement states otherwise, support targets are measured in business days.`,
-          `A business day means Monday to Friday, excluding public holidays and company closure days in the United States, United Kingdom or any jurisdiction where support operations or relevant providers are materially affected.`,
+          `A business day means Monday to Friday, excluding public holidays and company closure days in the United States or any jurisdiction where support operations or relevant providers are materially affected.`,
           `Support may not be available during weekends, public holidays, company closure days, maintenance periods, provider outages or force majeure events unless expressly agreed in writing.`,
         ],
       },
