@@ -64,8 +64,49 @@ export function buildAuthorizationUrl(opts: {
   url.searchParams.set("state", opts.state);
   url.searchParams.set("code_challenge", opts.codeChallenge);
   url.searchParams.set("code_challenge_method", "S256");
+  // Matches Buffer's documented OAuth example; keeps account selection explicit.
+  url.searchParams.set("prompt", "consent");
   return url.toString();
 }
+
+// --------------------------------------------------------- token endpoint ----
+// Buffer's /token endpoint requires application/x-www-form-urlencoded bodies
+// for BOTH the authorization-code exchange and refresh-token exchange. These
+// pure builders return URLSearchParams so secrets travel in the POST body,
+// never in a URL, and never as JSON.
+
+export function buildAuthorizationCodeForm(opts: {
+  clientId: string;
+  clientSecret: string;
+  code: string;
+  redirectUri: string;
+  codeVerifier: string;
+}): URLSearchParams {
+  const form = new URLSearchParams();
+  form.set("grant_type", "authorization_code");
+  form.set("code", opts.code);
+  form.set("redirect_uri", opts.redirectUri);
+  form.set("client_id", opts.clientId);
+  form.set("client_secret", opts.clientSecret);
+  form.set("code_verifier", opts.codeVerifier);
+  return form;
+}
+
+export function buildRefreshTokenForm(opts: {
+  clientId: string;
+  clientSecret: string;
+  refreshToken: string;
+}): URLSearchParams {
+  const form = new URLSearchParams();
+  form.set("grant_type", "refresh_token");
+  form.set("refresh_token", opts.refreshToken);
+  form.set("client_id", opts.clientId);
+  form.set("client_secret", opts.clientSecret);
+  return form;
+}
+
+// The exact Content-Type Buffer requires for both token exchanges.
+export const BUFFER_TOKEN_CONTENT_TYPE = "application/x-www-form-urlencoded";
 
 // ------------------------------------------------------------ GraphQL docs ----
 export const ORGANIZATIONS_QUERY = `query BufferOrganizations {
@@ -150,11 +191,13 @@ export function validateCreatePostRequest(
 export function buildCreatePostVariables(args: CreatePostRequest): { input: Record<string, unknown> } {
   const { channelId, text, mode, dueAt } = args;
   if (mode === "schedule") {
+    // Buffer custom scheduling: schedulingType stays "automatic"; the
+    // customScheduled MODE plus a future dueAt pins the exact time.
     return {
       input: {
         channelId,
         text,
-        schedulingType: "customScheduled",
+        schedulingType: "automatic",
         mode: "customScheduled",
         dueAt,
         saveToDraft: false,

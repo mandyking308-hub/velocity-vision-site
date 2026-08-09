@@ -2,7 +2,9 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { loadBufferConfig } from "../_shared/buffer.ts";
 import {
   BUFFER_SCOPES,
+  BUFFER_TOKEN_CONTENT_TYPE,
   BUFFER_TOKEN_URL,
+  buildAuthorizationCodeForm,
   computeAccessTokenExpiry,
   safeReturnTo,
   tokenResponseIsUsable,
@@ -77,16 +79,17 @@ Deno.serve(async (req) => {
     }
 
     // Exchange the authorization code (exact redirect URI + PKCE verifier).
+    // Buffer requires a form-encoded body — confidential client sends
+    // client_id + client_secret + code_verifier in the POST body only.
     const tokenRes = await fetch(BUFFER_TOKEN_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        grant_type: "authorization_code",
+      headers: { "Content-Type": BUFFER_TOKEN_CONTENT_TYPE },
+      body: buildAuthorizationCodeForm({
+        clientId: config.clientId!,
+        clientSecret: config.clientSecret!,
         code,
-        redirect_uri: config.redirectUri,
-        client_id: config.clientId,
-        client_secret: config.clientSecret,
-        code_verifier: stateRow.code_verifier,
+        redirectUri: config.redirectUri!,
+        codeVerifier: stateRow.code_verifier,
       }),
     });
     const tokenJson = await tokenRes.json().catch(() => null);
