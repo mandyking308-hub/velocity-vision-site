@@ -112,7 +112,7 @@ export default function AppBilling() {
     };
 
     if (parsed.status !== "success") {
-      if (parsed.status === "cancelled") toast.info("Checkout cancelled", { description: "No payment was taken. You can try again any time." });
+      if (parsed.status === "cancelled") toast.info("Checkout canceled", { description: "No payment was taken. You can try again any time." });
       else if (parsed.status === "failed") toast.error("Payment didn't go through", { description: "No charge was made. Please try again or contact support." });
       else toast.info("Checkout closed", { description: "We couldn't confirm a payment for this return. Your billing details below are up to date." });
       clearParams();
