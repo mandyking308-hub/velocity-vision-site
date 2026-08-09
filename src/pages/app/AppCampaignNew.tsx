@@ -261,7 +261,7 @@ export default function AppCampaignNew() {
               <Field label="Campaign language"><Select value={language} onValueChange={(v) => setLanguage(v as CampaignLanguage)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{supportedLanguages.map((x) => <SelectItem key={x.value} value={x.value}>{x.label}</SelectItem>)}</SelectContent></Select></Field>
             </div>
             <Field label="Offer / proposition *"><Textarea value={offer} onChange={(e) => setOffer(e.target.value)} rows={3} maxLength={1500} placeholder="What are you offering, and what should the reader understand?" /></Field>
-            <Field label="Audience *"><Textarea value={audience} onChange={(e) => setAudience(e.target.value)} rows={3} maxLength={1500} placeholder="Describe the business audience using data you are authorised to process." /></Field>
+            <Field label="Audience *"><Textarea value={audience} onChange={(e) => setAudience(e.target.value)} rows={3} maxLength={1500} placeholder="Describe the business audience using data you are authorized to process." /></Field>
             <div className="grid sm:grid-cols-2 gap-3">
               <Field label="Industry"><Input value={industry} onChange={(e) => setIndustry(e.target.value)} maxLength={200} /></Field>
               <Field label="Geography"><Input value={geography} onChange={(e) => setGeography(e.target.value)} maxLength={200} /></Field>

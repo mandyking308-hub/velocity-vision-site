@@ -47,7 +47,7 @@ const industries = [
     icon: HeartHandshake,
     title: "Membership and nonprofit organizations",
     need: "Coordinate lawful partner, sponsor, supplier and organizational outreach without turning the platform into a consumer messaging database.",
-    use: "Organisations can review their own records, create draft materials and manage approved follow-up through a governed workflow.",
+    use: "Organizations can review their own records, create draft materials and manage approved follow-up through a governed workflow.",
     safeguard: "Sensitive beneficiary, health, safeguarding or donor-payment data should not be uploaded unless expressly permitted and properly protected.",
   },
   {

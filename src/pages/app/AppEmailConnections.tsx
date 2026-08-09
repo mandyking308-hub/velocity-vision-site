@@ -214,7 +214,7 @@ export default function AppEmailConnections() {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Choose your mailbox</CardTitle>
-          <CardDescription>Only connectors marked Enabled can start hosted authorisation today. Setup-in-progress connectors do not start a provider flow. Never paste mailbox passwords, API keys or client secrets into support messages.</CardDescription>
+          <CardDescription>Only connectors marked Enabled can start hosted authorization today. Setup-in-progress connectors do not start a provider flow. Never paste mailbox passwords, API keys or client secrets into support messages.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="grid sm:grid-cols-2 gap-3">
