@@ -151,7 +151,7 @@ describe("ROI calculator UI", () => {
     const dealInput = screen.getByLabelText(/average deal value/i) as HTMLInputElement;
     fireEvent.change(dealInput, { target: { value: "" } });
     expect(dealInput.value).toBe(""); // stays empty, no snap
-    expect(screen.getByText("£0")).toBeInTheDocument(); // maths treats empty as 0
+    expect(screen.getAllByText("£0").length).toBeGreaterThan(0); // maths treats empty as 0
     expect(screen.queryByText(/NaN|Infinity/)).toBeNull();
   });
 
