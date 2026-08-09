@@ -1777,7 +1777,6 @@ const docs: Record<string, LegalDoc> = {
           "“Personal Data” means any information relating to an identified or identifiable individual, or any equivalent term under applicable Data Protection Laws.",
           "“Data Protection Laws” means all privacy, data protection, cybersecurity, electronic communications, direct marketing, AI-related and similar laws that apply to the processing of Customer Personal Data, including where applicable the GDPR, UK GDPR, Data Protection Act 2018, PECR, Swiss FADP, CCPA/CPRA, US state privacy laws, EU AI Act, ePrivacy rules and other applicable privacy, marketing, AI and data protection laws.",
           "“GDPR” means Regulation (EU) 2016/679.",
-          "“UK GDPR” means the UK GDPR as incorporated into UK law.",
           "“CCPA” means the California Consumer Privacy Act as amended by the California Privacy Rights Act and applicable regulations.",
           "“Controller”, “Processor”, “Business”, “Service Provider”, “Contractor”, “Consumer”, “Data Subject”, “Process”, “Processing”, “Sell”, “Share”, “Sensitive Personal Information” and similar terms have the meanings given to them under applicable Data Protection Laws.",
           "“Subprocessor” means any third party engaged by Global Solutions Management LLC to process Customer Personal Data on behalf of Customer in connection with Velocity Vision.",
