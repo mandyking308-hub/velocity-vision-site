@@ -1,47 +1,46 @@
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Calculator, TrendingUp, ArrowRight, DollarSign, Target, Users, Play } from "lucide-react";
+import { Calculator, TrendingUp, ArrowRight, DollarSign, Target, Users, Play, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-
-const SERVICE_COST_MONTHLY = 7500; // Growth plan benchmark used for ROI comparison
-
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(Number.isFinite(value) ? value : 0);
+import { useCurrency } from "@/hooks/useCurrency";
+import { CURRENCY_SYMBOLS, formatPrice, priceFor } from "@/lib/currency";
+import {
+  DEFAULT_ROI_PLAN,
+  ROI_PLANS,
+  computeScenario,
+  getRoiPlan,
+  parseScenarioInput,
+  type RoiPlanId,
+} from "@/lib/roiScenario";
 
 const ROICalculator = () => {
-  const [dealValue, setDealValue] = useState<number>(15000);
-  const [closeRate, setCloseRate] = useState<number>(20);
-  const [monthlyLeads, setMonthlyLeads] = useState<number>(40);
+  const { currency } = useCurrency();
+  const [planId, setPlanId] = useState<RoiPlanId>(DEFAULT_ROI_PLAN);
+  // Raw string state so fields can be cleared/typed freely without snapping to 0.
+  const [dealValueRaw, setDealValueRaw] = useState("15000");
+  const [closeRateRaw, setCloseRateRaw] = useState("20");
+  const [leadsRaw, setLeadsRaw] = useState("40");
 
-  const { monthlyDeals, monthlyRevenue, annualRevenue, roiMultiple, netMonthly } = useMemo(() => {
-    const safeLeads = Math.max(0, monthlyLeads || 0);
-    const safeRate = Math.min(Math.max(0, closeRate || 0), 100) / 100;
-    const safeValue = Math.max(0, dealValue || 0);
+  const plan = getRoiPlan(planId);
+  const planPrice = priceFor(plan.sku, currency);
 
-    const deals = safeLeads * safeRate;
-    const revenue = deals * safeValue;
-    const annual = revenue * 12;
-    const net = revenue - SERVICE_COST_MONTHLY;
-    const roi = SERVICE_COST_MONTHLY > 0 ? revenue / SERVICE_COST_MONTHLY : 0;
+  const scenario = useMemo(
+    () =>
+      computeScenario({
+        monthlyLeads: parseScenarioInput(leadsRaw),
+        closeRatePct: parseScenarioInput(closeRateRaw),
+        dealValue: parseScenarioInput(dealValueRaw),
+        planCost: planPrice.amount,
+      }),
+    [leadsRaw, closeRateRaw, dealValueRaw, planPrice.amount],
+  );
 
-    return {
-      monthlyDeals: deals,
-      monthlyRevenue: revenue,
-      annualRevenue: annual,
-      roiMultiple: roi,
-      netMonthly: net,
-    };
-  }, [dealValue, closeRate, monthlyLeads]);
-
-  const isProfitable = netMonthly > 0;
+  const fmt = (n: number) => formatPrice(n, currency);
+  const sliderRate = scenario.closeRatePct;
 
   return (
     <section id="roi-calculator" className="section-padding bg-muted/30">
@@ -54,13 +53,14 @@ const ROICalculator = () => {
           className="text-center max-w-2xl mx-auto mb-12"
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent font-semibold text-sm uppercase tracking-widest mb-4">
-            <Calculator size={16} /> ROI Calculator
+            <Calculator size={16} /> Scenario Calculator
           </div>
           <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">
-            See your growth potential in 30 seconds.
+            Model your pipeline economics in 30 seconds.
           </h2>
           <p className="text-muted-foreground text-lg">
-            Plug in your numbers. We'll show you what a Velocity Vision engine could deliver — and what it would cost to build.
+            Estimate the economics using your own assumptions — deal value, close rate and lead
+            volume — then compare the scenario against a Velocity plan price.
           </p>
         </motion.div>
 
@@ -77,16 +77,47 @@ const ROICalculator = () => {
               <h3 className="font-display text-xl font-semibold text-foreground mb-2">Your numbers</h3>
 
               <div className="space-y-2">
+                <Label className="flex items-center gap-2 text-foreground">
+                  <Layers size={16} className="text-accent" /> Compare against plan
+                </Label>
+                <div className="grid grid-cols-3 gap-2" role="group" aria-label="Plan selector">
+                  {ROI_PLANS.map((p) => {
+                    const price = priceFor(p.sku, currency);
+                    const active = p.id === planId;
+                    return (
+                      <button
+                        key={p.id}
+                        type="button"
+                        aria-pressed={active}
+                        onClick={() => setPlanId(p.id)}
+                        className={`rounded-lg border px-3 py-2 text-left transition-colors ${
+                          active
+                            ? "border-accent bg-accent/10"
+                            : "border-border/60 hover:border-accent/50"
+                        }`}
+                      >
+                        <span className="block text-sm font-semibold text-foreground">{p.name}</span>
+                        <span className="block text-xs text-muted-foreground">
+                          {price.formatted}
+                          {p.period === "monthly" ? "/mo" : " one-off"}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="deal-value" className="flex items-center gap-2 text-foreground">
-                  <DollarSign size={16} className="text-accent" /> Average deal value (USD)
+                  <DollarSign size={16} className="text-accent" /> Average deal value (
+                  {CURRENCY_SYMBOLS[currency]} {currency})
                 </Label>
                 <Input
                   id="deal-value"
                   type="number"
                   min={0}
-                  max={10000000}
-                  value={dealValue}
-                  onChange={(e) => setDealValue(Number(e.target.value))}
+                  value={dealValueRaw}
+                  onChange={(e) => setDealValueRaw(e.target.value)}
                   className="text-lg"
                 />
               </div>
@@ -100,16 +131,16 @@ const ROICalculator = () => {
                   type="number"
                   min={0}
                   max={100}
-                  value={closeRate}
-                  onChange={(e) => setCloseRate(Number(e.target.value))}
+                  value={closeRateRaw}
+                  onChange={(e) => setCloseRateRaw(e.target.value)}
                   className="text-lg"
                 />
                 <input
                   type="range"
                   min={0}
                   max={100}
-                  value={closeRate}
-                  onChange={(e) => setCloseRate(Number(e.target.value))}
+                  value={sliderRate}
+                  onChange={(e) => setCloseRateRaw(e.target.value)}
                   className="w-full accent-accent"
                   aria-label="Close rate slider"
                 />
@@ -123,15 +154,16 @@ const ROICalculator = () => {
                   id="monthly-leads"
                   type="number"
                   min={0}
-                  max={100000}
-                  value={monthlyLeads}
-                  onChange={(e) => setMonthlyLeads(Number(e.target.value))}
+                  value={leadsRaw}
+                  onChange={(e) => setLeadsRaw(e.target.value)}
                   className="text-lg"
                 />
               </div>
 
               <p className="text-xs text-muted-foreground pt-2">
-                Comparison benchmarks against our Growth plan at {formatCurrency(SERVICE_COST_MONTHLY)}/mo.
+                {plan.period === "one-off"
+                  ? `Comparing against ${plan.name} at ${planPrice.formatted} one-off — the 30-day plan price.`
+                  : `Comparing against ${plan.name} at ${planPrice.formatted}/mo — the monthly plan price.`}
               </p>
             </CardContent>
           </Card>
@@ -141,52 +173,64 @@ const ROICalculator = () => {
             <div className="absolute top-0 right-0 w-72 h-72 rounded-full bg-accent/10 blur-3xl" />
             <CardContent className="p-8 space-y-6 relative">
               <h3 className="font-display text-xl font-semibold mb-2 flex items-center gap-2">
-                <TrendingUp size={20} className="text-accent" /> Projected impact
+                <TrendingUp size={20} className="text-accent" /> Scenario estimate
               </h3>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-4 rounded-lg bg-primary-foreground/5 border border-primary-foreground/10">
-                  <p className="text-xs uppercase tracking-wider text-primary-foreground/60 mb-1">Monthly deals</p>
-                  <p className="text-2xl font-display font-bold">{monthlyDeals.toFixed(1)}</p>
+                  <p className="text-xs uppercase tracking-wider text-primary-foreground/60 mb-1">
+                    Estimated deals / month
+                  </p>
+                  <p className="text-2xl font-display font-bold">{scenario.deals.toFixed(1)}</p>
                 </div>
                 <div className="p-4 rounded-lg bg-primary-foreground/5 border border-primary-foreground/10">
-                  <p className="text-xs uppercase tracking-wider text-primary-foreground/60 mb-1">ROI multiple</p>
-                  <p className="text-2xl font-display font-bold text-accent">{roiMultiple.toFixed(1)}×</p>
+                  <p className="text-xs uppercase tracking-wider text-primary-foreground/60 mb-1">
+                    Revenue-to-plan-cost ratio
+                  </p>
+                  <p className="text-2xl font-display font-bold text-accent">
+                    {scenario.ratio.toFixed(1)}×
+                  </p>
                 </div>
               </div>
 
               <div className="p-5 rounded-lg bg-primary-foreground/5 border border-primary-foreground/10">
-                <p className="text-xs uppercase tracking-wider text-primary-foreground/60 mb-1">Monthly revenue</p>
+                <p className="text-xs uppercase tracking-wider text-primary-foreground/60 mb-1">
+                  Potential monthly revenue
+                </p>
                 <p className="text-3xl md:text-4xl font-display font-bold text-gradient">
-                  {formatCurrency(monthlyRevenue)}
+                  {fmt(scenario.monthlyRevenue)}
                 </p>
               </div>
 
               <div className="p-5 rounded-lg bg-primary-foreground/5 border border-primary-foreground/10">
-                <p className="text-xs uppercase tracking-wider text-primary-foreground/60 mb-1">Annual revenue</p>
+                <p className="text-xs uppercase tracking-wider text-primary-foreground/60 mb-1">
+                  Potential annual revenue
+                </p>
                 <p className="text-3xl md:text-4xl font-display font-bold text-gradient">
-                  {formatCurrency(annualRevenue)}
+                  {fmt(scenario.annualRevenue)}
                 </p>
               </div>
 
               <div
                 className={`p-4 rounded-lg border ${
-                  isProfitable
+                  scenario.isNetPositive
                     ? "bg-accent/15 border-accent/30"
                     : "bg-destructive/15 border-destructive/30"
                 }`}
               >
                 <p className="text-xs uppercase tracking-wider text-primary-foreground/70 mb-1">
-                  Net monthly vs service cost
+                  {plan.period === "one-off"
+                    ? "Net vs one-off plan price (first 30 days)"
+                    : "Net monthly vs monthly plan price"}
                 </p>
                 <p className="text-xl font-display font-bold">
-                  {isProfitable ? "+" : ""}
-                  {formatCurrency(netMonthly)}
+                  {scenario.isNetPositive ? "+" : ""}
+                  {fmt(scenario.netVsPlan)}
                 </p>
                 <p className="text-xs text-primary-foreground/60 mt-1">
-                  {isProfitable
-                    ? "You'd net positive after our retainer."
-                    : "Volume needs to grow before our retainer pays back."}
+                  {scenario.isNetPositive
+                    ? "Your scenario revenue covers the plan price."
+                    : "Your scenario doesn't cover the plan price yet."}
                 </p>
               </div>
 
@@ -207,7 +251,8 @@ const ROICalculator = () => {
         </motion.div>
 
         <p className="text-xs text-muted-foreground text-center mt-6 max-w-xl mx-auto">
-          Estimates only. Actual results depend on offer, market, and execution. Confirmed in your discovery call.
+          Illustrative only — not a guarantee of results. Actual outcomes depend on your offer,
+          market and execution.
         </p>
       </div>
     </section>
