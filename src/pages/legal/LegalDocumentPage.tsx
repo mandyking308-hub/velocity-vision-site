@@ -7226,7 +7226,7 @@ const docs: Record<string, LegalDoc> = {
       {
         heading: "5. Changes to Subprocessors",
         paragraphs: [
-          `${PLATFORM} may add, remove, replace, migrate or reorganise subprocessors from time to time to improve reliability, security, compliance, performance, cost, provider fit, feature coverage, geographic coverage or business continuity.`,
+          `${PLATFORM} may add, remove, replace, migrate or reorganize subprocessors from time to time to improve reliability, security, compliance, performance, cost, provider fit, feature coverage, geographic coverage or business continuity.`,
           `Where the Data Processing Agreement requires notice of changes to subprocessors that process customer personal data, notice will be provided in accordance with that agreement.`,
           `Continued use of ${PLATFORM} after an update to this list constitutes acknowledgement of the updated list to the extent permitted by law and the Data Processing Agreement.`,
         ],
