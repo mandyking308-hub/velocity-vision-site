@@ -9,6 +9,8 @@ import {
   BUFFER_TOKEN_URL,
   CHANNELS_QUERY,
   ORGANIZATIONS_QUERY,
+  BUFFER_TOKEN_CONTENT_TYPE,
+  buildRefreshTokenForm,
   computeAccessTokenExpiry,
   tokenResponseIsUsable,
 } from "./buffer-shared.ts";
@@ -136,14 +138,14 @@ export async function getValidAccessToken(
     return { ok: false, error: "reconnect_required" };
   }
 
+  // Buffer requires form-encoded token requests — never JSON, never in the URL.
   const tokenRes = await fetch(BUFFER_TOKEN_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      grant_type: "refresh_token",
-      refresh_token: refreshPlain,
-      client_id: config.clientId,
-      client_secret: config.clientSecret,
+    headers: { "Content-Type": BUFFER_TOKEN_CONTENT_TYPE },
+    body: buildRefreshTokenForm({
+      clientId: config.clientId!,
+      clientSecret: config.clientSecret!,
+      refreshToken: refreshPlain,
     }),
   });
   const tokenJson = await tokenRes.json().catch(() => null);

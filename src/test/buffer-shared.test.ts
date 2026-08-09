@@ -1,7 +1,10 @@
 import { describe, it, expect } from "vitest";
 import {
   BUFFER_SCOPES,
+  BUFFER_TOKEN_CONTENT_TYPE,
+  buildAuthorizationCodeForm,
   buildAuthorizationUrl,
+  buildRefreshTokenForm,
   buildCreatePostVariables,
   bufferServiceHint,
   computeAccessTokenExpiry,
@@ -49,12 +52,79 @@ describe("Buffer PKCE + authorization URL", () => {
     expect(u.searchParams.get("state")).toBe("state-abc");
     expect(u.searchParams.get("code_challenge")).toBe("challenge-xyz");
     expect(u.searchParams.get("code_challenge_method")).toBe("S256");
+    // Buffer's documented OAuth example includes prompt=consent.
+    expect(u.searchParams.get("prompt")).toBe("consent");
     expect(url).not.toContain("verifier");
     expect(url).not.toContain("client_secret");
   });
 
   it("requests exactly the minimum scopes", () => {
     expect(BUFFER_SCOPES).toBe("account:read posts:write offline_access");
+  });
+});
+
+describe("Buffer token endpoint payloads are form-encoded, never JSON", () => {
+  it("declares the required x-www-form-urlencoded content type", () => {
+    expect(BUFFER_TOKEN_CONTENT_TYPE).toBe("application/x-www-form-urlencoded");
+  });
+
+  it("authorization-code exchange: confidential client + PKCE verifier in the BODY", () => {
+    const form = buildAuthorizationCodeForm({
+      clientId: "cid",
+      clientSecret: "super-secret",
+      code: "authcode",
+      redirectUri: "https://example.com/functions/v1/buffer-oauth-callback",
+      codeVerifier: "verifier-123",
+    });
+    // URLSearchParams serializes to form-encoded, not JSON.
+    const body = form.toString();
+    expect(body).not.toContain("{");
+    expect(body).toContain("grant_type=authorization_code");
+    expect(form.get("code")).toBe("authcode");
+    expect(form.get("redirect_uri")).toBe("https://example.com/functions/v1/buffer-oauth-callback");
+    expect(form.get("client_id")).toBe("cid");
+    expect(form.get("client_secret")).toBe("super-secret");
+    expect(form.get("code_verifier")).toBe("verifier-123");
+    // Exactly these fields — nothing extra.
+    expect([...form.keys()].sort()).toEqual(
+      ["client_id", "client_secret", "code", "code_verifier", "grant_type", "redirect_uri"].sort(),
+    );
+  });
+
+  it("refresh exchange: client_id + client_secret + refresh_token in the BODY", () => {
+    const form = buildRefreshTokenForm({
+      clientId: "cid",
+      clientSecret: "super-secret",
+      refreshToken: "rt-abc",
+    });
+    const body = form.toString();
+    expect(body).not.toContain("{");
+    expect(body).toContain("grant_type=refresh_token");
+    expect(form.get("refresh_token")).toBe("rt-abc");
+    expect(form.get("client_id")).toBe("cid");
+    expect(form.get("client_secret")).toBe("super-secret");
+    expect([...form.keys()].sort()).toEqual(
+      ["client_id", "client_secret", "grant_type", "refresh_token"].sort(),
+    );
+  });
+
+  it("secrets never appear in the token endpoint URL", () => {
+    // Both exchanges POST to the bare token URL; form bodies keep the
+    // client secret and tokens out of any URL.
+    const codeForm = buildAuthorizationCodeForm({
+      clientId: "cid",
+      clientSecret: "super-secret",
+      code: "c",
+      redirectUri: "https://example.com/cb",
+      codeVerifier: "v",
+    });
+    const refreshForm = buildRefreshTokenForm({ clientId: "cid", clientSecret: "super-secret", refreshToken: "rt" });
+    for (const tokenUrl of ["https://auth.buffer.com/token"]) {
+      expect(tokenUrl).not.toContain("super-secret");
+      expect(tokenUrl).not.toContain("client_secret");
+    }
+    expect(codeForm).toBeInstanceOf(URLSearchParams);
+    expect(refreshForm).toBeInstanceOf(URLSearchParams);
   });
 });
 
@@ -120,15 +190,19 @@ describe("createPost GraphQL payloads", () => {
     expect(input).toMatchObject({ schedulingType: "automatic", mode: "addToQueue", saveToDraft: false });
   });
 
-  it("Schedule = customScheduled with dueAt, saveToDraft:false", () => {
+  it("Schedule = schedulingType automatic + mode customScheduled + future dueAt, saveToDraft:false", () => {
+    // Buffer's custom scheduling keeps schedulingType "automatic"; the
+    // customScheduled mode + dueAt pins the time. Regression: we previously
+    // sent schedulingType "customScheduled", which Buffer rejects.
     const dueAt = new Date(Date.now() + 7200_000).toISOString();
     const { input } = buildCreatePostVariables({ ...ch, mode: "schedule", dueAt });
     expect(input).toMatchObject({
-      schedulingType: "customScheduled",
+      schedulingType: "automatic",
       mode: "customScheduled",
       dueAt,
       saveToDraft: false,
     });
+    expect(isFutureIso(input.dueAt as string)).toBe(true);
   });
 });
 
