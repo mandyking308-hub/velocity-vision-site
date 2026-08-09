@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { Sparkles, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { HUMAN_REVIEW_PRICE } from "@/lib/credits";
+import { useCurrency } from "@/hooks/useCurrency";
+import { priceFor } from "@/lib/currency";
 import { useDodoCheckout } from "@/hooks/useDodoCheckout";
 import { useDodoReadiness } from "@/hooks/useDodoReadiness";
 import { CHECKOUT_ACTIVATING_COPY, isProductLiveReady } from "@/lib/dodoReadiness";
@@ -20,6 +21,7 @@ export default function HumanReviewButton({ campaignId }: Props) {
   const { startCheckout } = useDodoCheckout();
   const { readiness } = useDodoReadiness();
   const [legalOpen, setLegalOpen] = useState(false);
+  const { currency } = useCurrency();
 
   useEffect(() => {
     if (!user) return;
@@ -53,11 +55,11 @@ export default function HumanReviewButton({ campaignId }: Props) {
           </DialogHeader>
           <ul className="text-sm text-muted-foreground space-y-1 list-disc pl-5">
             <li>Independent expert review of strategy, copy and offer</li>
-            <li>Prioritised recommendations</li>
+            <li>Prioritized recommendations</li>
             <li>One async revision pass on the pack</li>
           </ul>
           <DialogFooter className="mt-4 flex items-center justify-between">
-            <span className="text-lg font-semibold">£{HUMAN_REVIEW_PRICE}</span>
+            <span className="text-lg font-semibold">{priceFor("vv_human_review_oneoff", currency).formatted}</span>
             <Button onClick={() => { setOpen(false); setLegalOpen(true); }}>Purchase review</Button>
           </DialogFooter>
         </DialogContent>

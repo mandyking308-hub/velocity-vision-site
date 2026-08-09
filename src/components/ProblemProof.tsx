@@ -8,7 +8,7 @@ const workflowChanges = [
   },
   {
     title: "Review before activation",
-    desc: "Customers review data source, record status, sender configuration, audience selection and generated drafts before an authorised-user activation decision.",
+    desc: "Customers review data source, record status, sender configuration, audience selection and generated drafts before an authorized-user activation decision.",
   },
   {
     title: "Recorded next actions",
@@ -58,7 +58,7 @@ const ProblemProof = () => (
           Data review, draft creation, activation and follow-up often sit in separate systems
         </h2>
         <p className="text-muted-foreground text-lg leading-relaxed">
-          Velocity Vision is designed to organise those customer-controlled activities in one self-serve software workspace without taking over the customer's data, content, sender or activation decisions.
+          Velocity Vision is designed to organize those customer-controlled activities in one self-serve software workspace without taking over the customer's data, content, sender or activation decisions.
         </p>
       </motion.div>
 
@@ -116,7 +116,7 @@ const ProblemProof = () => (
           A structured workspace, not a managed campaign service
         </p>
         <p className="text-muted-foreground text-lg leading-relaxed">
-          Customers provide authorised data, review software flags, edit generated drafts, verify their sender, approve activation and manage follow-up. Velocity Vision does not guarantee legal compliance, deliverability, replies, sales, pipeline or revenue.
+          Customers provide authorized data, review software flags, edit generated drafts, verify their sender, approve activation and manage follow-up. Velocity Vision does not guarantee legal compliance, deliverability, replies, sales, pipeline or revenue.
         </p>
       </motion.div>
     </div>

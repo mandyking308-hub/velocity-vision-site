@@ -192,7 +192,7 @@ export default function AppBilling() {
         <Card className="border-primary/30">
           <CardHeader>
             <CardTitle className="text-base">Move beyond Free Preview</CardTitle>
-            <CardDescription>Free Preview stays £0 and is limited to one full campaign pack, 25 contacts and no live sending. Top-ups are available after moving to an eligible paid workspace.</CardDescription>
+            <CardDescription>Free Preview stays {formatPrice(0, currency)} and is limited to one full campaign pack, 25 contacts and no live sending. Top-ups are available after moving to an eligible paid workspace.</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-3 md:grid-cols-2">
             <Card><CardContent className="p-4 space-y-2"><div className="font-semibold">Starter — {priceFor("vv_starter_oneoff", currency).formatted} one-off</div><p className="text-sm text-muted-foreground">30 days, 25 Campaign Credits, one-off campaigns and live sending up to 20/day subject to sender safety.</p><Button onClick={() => buyPlan("starter")}>Start Starter</Button></CardContent></Card>

@@ -25,7 +25,7 @@ const controls = [
   {
     icon: KeyRound,
     title: "Access-Controlled Secret Configuration",
-    body: "Operational credentials and service configuration are kept outside public page content and restricted to authorised system access.",
+    body: "Operational credentials and service configuration are kept outside public page content and restricted to authorized system access.",
   },
   {
     icon: Database,
@@ -55,7 +55,7 @@ const controls = [
   {
     icon: ShieldCheck,
     title: "Customer-Controlled Activation",
-    body: "Sender verification, record review and plan limits are separated from the authorised user's final activation decision.",
+    body: "Sender verification, record review and plan limits are separated from the authorized user's final activation decision.",
   },
 ];
 
