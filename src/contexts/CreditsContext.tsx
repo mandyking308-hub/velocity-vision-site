@@ -48,7 +48,10 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
       .maybeSingle();
     if (data) return data as UserPlan;
     // New account: provision Free Preview (welcome credits + 14-day preview).
-    // Idempotent — safe on repeat calls. Paid upgrades happen via Stripe webhook.
+    // Idempotent — safe on repeat calls. Paid upgrades happen via payment webhook.
+    // NO fallback plan grant: if provisioning fails we surface the failure and
+    // retry on next load — silently granting a different (paid) plan would
+    // corrupt plan truth and billing reconciliation.
     const { data: fp, error: fpErr } = await supabase.rpc("grant_free_preview_welcome" as any);
     if (!fpErr && fp) {
       return {
@@ -58,15 +61,8 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
         period_end: (fp as any).preview_expires_at,
       };
     }
-    // Fallback to legacy starter provisioning if the free-preview RPC is unavailable.
-    const { data: provisioned } = await supabase.rpc("provision_starter_plan");
-    if (!provisioned) return null;
-    return {
-      plan: (provisioned as any).plan,
-      status: (provisioned as any).status,
-      period_start: (provisioned as any).period_start,
-      period_end: (provisioned as any).period_end,
-    };
+    console.error("Free Preview provisioning failed:", fpErr);
+    return null;
   }, [user]);
 
 

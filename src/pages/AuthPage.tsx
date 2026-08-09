@@ -89,11 +89,19 @@ const AuthPage = () => {
         toast.error(error.message);
       } else {
         if (data.user) {
-          await recordLegalAcceptance({
-            userId: data.user.id,
-            email,
-            source: "signup",
-          });
+          // Best-effort: the account exists regardless of whether this insert
+          // succeeds. A failure here must never break signup UX — the
+          // fail-closed LegalComplianceGate re-records acceptance before the
+          // first governed action (workspace creation, checkout, activation).
+          try {
+            await recordLegalAcceptance({
+              userId: data.user.id,
+              email,
+              source: "signup",
+            });
+          } catch (acceptErr) {
+            console.error("Signup legal acceptance deferred to first-run gate:", acceptErr);
+          }
         }
         toast.success("Check your email to confirm your account.");
       }
