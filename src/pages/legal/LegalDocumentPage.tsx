@@ -2219,8 +2219,6 @@ const docs: Record<string, LegalDoc> = {
         bullets: [
           "adequacy decisions;",
           "the European Commission’s standard contractual clauses;",
-          "the UK International Data Transfer Addendum;",
-          "the UK International Data Transfer Agreement;",
           "Swiss transfer mechanisms;",
           "data privacy frameworks;",
           "approved certification mechanisms;",
@@ -4063,9 +4061,6 @@ const docs: Record<string, LegalDoc> = {
           `Customer is responsible for identifying and complying with all laws, regulations, guidance, regulator expectations, platform rules, provider rules, industry standards and contractual restrictions that apply to Customer’s marketing activity.`,
           `Relevant laws may include, depending on the jurisdiction and use case:`,
           `* GDPR;`,
-          `* UK GDPR;`,
-          `* Data Protection Act 2018;`,
-          `* PECR;`,
           `* ePrivacy rules;`,
           `* CAN-SPAM;`,
           `* CASL;`,
