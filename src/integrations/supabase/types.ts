@@ -97,6 +97,107 @@ export type Database = {
           },
         ]
       }
+      buffer_connection_secrets: {
+        Row: {
+          connection_id: string
+          created_at: string
+          encrypted_access_token: string
+          encrypted_refresh_token: string
+          updated_at: string
+        }
+        Insert: {
+          connection_id: string
+          created_at?: string
+          encrypted_access_token: string
+          encrypted_refresh_token: string
+          updated_at?: string
+        }
+        Update: {
+          connection_id?: string
+          created_at?: string
+          encrypted_access_token?: string
+          encrypted_refresh_token?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "buffer_connection_secrets_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: true
+            referencedRelation: "buffer_connections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      buffer_connections: {
+        Row: {
+          access_token_expires_at: string | null
+          buffer_account_id: string | null
+          connected_at: string
+          id: string
+          last_error: string | null
+          scopes: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token_expires_at?: string | null
+          buffer_account_id?: string | null
+          connected_at?: string
+          id?: string
+          last_error?: string | null
+          scopes?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token_expires_at?: string | null
+          buffer_account_id?: string | null
+          connected_at?: string
+          id?: string
+          last_error?: string | null
+          scopes?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      buffer_oauth_states: {
+        Row: {
+          code_verifier: string
+          consumed_at: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          return_to: string | null
+          state: string
+          user_id: string
+        }
+        Insert: {
+          code_verifier: string
+          consumed_at?: string | null
+          created_at?: string
+          expires_at: string
+          id?: string
+          return_to?: string | null
+          state: string
+          user_id: string
+        }
+        Update: {
+          code_verifier?: string
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          return_to?: string | null
+          state?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       campaign_assets: {
         Row: {
           asset_type: string
