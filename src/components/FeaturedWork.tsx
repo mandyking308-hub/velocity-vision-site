@@ -13,7 +13,7 @@ const caseStudies = [
   {
     industry: "Healthcare",
     objective: "Reposition a health-tech brand for Series B fundraise",
-    strategy: "Brand refresh, executive visibility programme, and investor-focused content strategy",
+    strategy: "Brand refresh, executive visibility program, and investor-focused content strategy",
     results: "$42M raised · 8x media share of voice · Top 10 health-tech ranking",
   },
   {

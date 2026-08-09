@@ -2,7 +2,7 @@
   "welcome": {
     "subject": "Welcome to Velocity Vision",
     "greeting": "Hi {{name}},",
-    "body": "Your workspace is ready. Upload your authorised business data to prepare and review your first campaign.",
+    "body": "Your workspace is ready. Upload your authorized business data to prepare and review your first campaign.",
     "cta": "Open your dashboard"
   },
   "receipt": {

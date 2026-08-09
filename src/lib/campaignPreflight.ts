@@ -174,7 +174,7 @@ export function runPreflight(input: PreflightInput): PreflightResult {
     add({
       id: "sample",
       label: "Not a sample campaign",
-      detail: "Sample campaigns are for practice only. Use your own authorised data and offer before live use.",
+      detail: "Sample campaigns are for practice only. Use your own authorized data and offer before live use.",
       ok: false,
       severity: "blocker",
       fixTo: "/app/data-vault/upload",

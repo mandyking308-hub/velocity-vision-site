@@ -18,7 +18,7 @@ import { parseBuyParam } from "@/lib/safeNext";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useCurrency } from "@/hooks/useCurrency";
-import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
+import { formatPrice, priceFor, taxNotice, type SkuId } from "@/lib/currency";
 import PricingCurrencySelector from "@/components/PricingCurrencySelector";
 import { billingTroubleCopy, classifyCheckoutReturn, isBillingTrouble, resolveBillingPortalFunction } from "@/lib/checkoutReturn";
 import FeedbackPrompt from "@/components/support/FeedbackPrompt";
@@ -59,7 +59,7 @@ export default function AppBilling() {
   const [pendingPlan, setPendingPlan] = useState<PlanId | null>(null);
   const [showCheckoutFeedback, setShowCheckoutFeedback] = useState(false);
 
-  const displayPlanPrice = (id: PlanId) => id === "free_preview" ? "£0" : priceFor(PLAN_TO_SKU[id], currency).formatted;
+  const displayPlanPrice = (id: PlanId) => id === "free_preview" ? formatPrice(0, currency) : priceFor(PLAN_TO_SKU[id], currency).formatted;
 
   const openBillingPortal = async () => {
     setPortalLoading(true);
@@ -112,7 +112,7 @@ export default function AppBilling() {
     };
 
     if (parsed.status !== "success") {
-      if (parsed.status === "cancelled") toast.info("Checkout cancelled", { description: "No payment was taken. You can try again any time." });
+      if (parsed.status === "cancelled") toast.info("Checkout canceled", { description: "No payment was taken. You can try again any time." });
       else if (parsed.status === "failed") toast.error("Payment didn't go through", { description: "No charge was made. Please try again or contact support." });
       else toast.info("Checkout closed", { description: "We couldn't confirm a payment for this return. Your billing details below are up to date." });
       clearParams();
@@ -192,7 +192,7 @@ export default function AppBilling() {
         <Card className="border-primary/30">
           <CardHeader>
             <CardTitle className="text-base">Move beyond Free Preview</CardTitle>
-            <CardDescription>Free Preview stays £0 and is limited to one full campaign pack, 25 contacts and no live sending. Top-ups are available after moving to an eligible paid workspace.</CardDescription>
+            <CardDescription>Free Preview stays {formatPrice(0, currency)} and is limited to one full campaign pack, 25 contacts and no live sending. Top-ups are available after moving to an eligible paid workspace.</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-3 md:grid-cols-2">
             <Card><CardContent className="p-4 space-y-2"><div className="font-semibold">Starter — {priceFor("vv_starter_oneoff", currency).formatted} one-off</div><p className="text-sm text-muted-foreground">30 days, 25 Campaign Credits, one-off campaigns and live sending up to 20/day subject to sender safety.</p><Button onClick={() => buyPlan("starter")}>Start Starter</Button></CardContent></Card>

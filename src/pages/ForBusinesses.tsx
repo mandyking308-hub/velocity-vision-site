@@ -25,8 +25,8 @@ import {
 const essentials = [
   {
     icon: Database,
-    title: "Organise customer-owned data",
-    desc: "Upload authorised business records, map fields, identify duplicates and separate records that need review before use.",
+    title: "Organize customer-owned data",
+    desc: "Upload authorized business records, map fields, identify duplicates and separate records that need review before use.",
   },
   {
     icon: ShieldCheck,
@@ -115,7 +115,7 @@ const ForBusinesses = () => (
   <>
     <SEO
       title="For Businesses — Customer-controlled commercial workspace | Velocity Vision"
-      description="A self-serve software workspace for businesses to organise their own data, prepare AI-assisted drafts, approve governed activation, manage follow-up and track early pipeline."
+      description="A self-serve software workspace for businesses to organize their own data, prepare AI-assisted drafts, approve governed activation, manage follow-up and track early pipeline."
       path="/for-businesses"
     />
     <Navbar />
@@ -134,10 +134,10 @@ const ForBusinesses = () => (
               A self-serve workspace for customer-controlled commercial activity
             </h1>
             <p className="text-primary-foreground/75 text-lg mb-5 max-w-3xl leading-relaxed">
-              Organise your own business data, prepare editable AI-assisted drafts, review safe segments, approve governed activation and keep follow-up and early pipeline in one software workspace.
+              Organize your own business data, prepare editable AI-assisted drafts, review safe segments, approve governed activation and keep follow-up and early pipeline in one software workspace.
             </p>
             <p className="text-primary-foreground/70 text-sm mb-8 max-w-3xl leading-relaxed">
-              Velocity Vision does not scrape contact data, sell lists, provide managed campaigns or send automatically. Your organisation remains responsible for lawful basis, sender identity, content, suppression handling and every activation decision.
+              Velocity Vision does not scrape contact data, sell lists, provide managed campaigns or send automatically. Your organization remains responsible for lawful basis, sender identity, content, suppression handling and every activation decision.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button variant="hero" size="lg" asChild>

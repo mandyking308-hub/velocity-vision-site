@@ -21,17 +21,17 @@ const productCards = [
   {
     icon: Database,
     title: "Customer-provided data",
-    desc: "Customers upload and organise business records they are authorised to use. Velocity Vision does not scrape or sell contact lists.",
+    desc: "Customers upload and organize business records they are authorized to use. Velocity Vision does not scrape or sell contact lists.",
   },
   {
     icon: ShieldCheck,
     title: "Customer-controlled activation",
-    desc: "Draft generation, sender verification, record review and authorised-user activation are kept as separate steps.",
+    desc: "Draft generation, sender verification, record review and authorized-user activation are kept as separate steps.",
   },
   {
     icon: GitBranch,
     title: "Operational records",
-    desc: "Follow-up states and early opportunity records help customers organise activity without promising a commercial result.",
+    desc: "Follow-up states and early opportunity records help customers organize activity without promising a commercial result.",
   },
 ];
 
@@ -86,7 +86,7 @@ const About = () => (
               Customer-controlled B2B software operated by Global Solutions Management LLC
             </h1>
             <p className="text-primary-foreground/80 text-lg leading-relaxed mb-5">
-              Velocity Vision organises customer-provided business data, editable AI-assisted drafts, sender verification, activation controls, follow-up records and early opportunity administration in one self-serve workspace.
+              Velocity Vision organizes customer-provided business data, editable AI-assisted drafts, sender verification, activation controls, follow-up records and early opportunity administration in one self-serve workspace.
             </p>
             <p className="text-primary-foreground/70 text-sm leading-relaxed">
               It does not scrape contacts, sell lists, provide managed campaigns, send automatically or guarantee compliance, deliverability, replies, sales, pipeline or revenue.
@@ -143,7 +143,7 @@ const About = () => (
               The website offers automated translation and supported display currencies. The English legal documents control, and the final transaction currency, tax treatment, payment provider and terms are confirmed before purchase.
             </p>
             <p className="text-xs text-muted-foreground mt-4 leading-relaxed">
-              Customers remain responsible for laws applying to their organisation, data, recipients, sender and activity in each relevant jurisdiction.
+              Customers remain responsible for laws applying to their organization, data, recipients, sender and activity in each relevant jurisdiction.
             </p>
           </div>
         </div>

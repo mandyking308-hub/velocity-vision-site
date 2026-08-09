@@ -55,7 +55,7 @@ const routes = [
   },
   {
     icon: MessageSquare,
-    title: "General enquiries",
+    title: "General inquiries",
     desc: "Anything else — press, hiring, or a question that doesn't fit above.",
     action: "Send a message",
     to: "#contact-form",
@@ -158,7 +158,7 @@ const Contact = () => {
     <>
       <SEO
         title="Contact Velocity Vision — Sales, Support, Billing"
-        description="Reach the right route fast: sales for enterprise and agency volume, product support, billing, legal and compliance, partnerships, or general enquiries."
+        description="Reach the right route fast: sales for enterprise and agency volume, product support, billing, legal and compliance, partnerships, or general inquiries."
         path="/contact"
       />
       <Navbar />
@@ -222,7 +222,7 @@ const Contact = () => {
               >
                 <h2 className="text-2xl font-display font-bold text-foreground mb-2">Send us a message</h2>
                 <p className="text-sm text-muted-foreground mb-8">
-                  For everything that doesn't fit a route above. Enquiries are normally acknowledged within one business day.
+                  For everything that doesn't fit a route above. Inquiries are normally acknowledged within one business day.
                 </p>
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

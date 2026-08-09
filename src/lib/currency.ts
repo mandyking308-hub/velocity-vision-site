@@ -1,12 +1,15 @@
 // International payments — currency, locale, pricing catalogue.
-// Launch set: GBP (base), USD, EUR, CAD, AUD, MXN.
+// Launch set: USD (default display), GBP, EUR, CAD, AUD, MXN.
 // Pricing strategy: direct FX, rounded to clean local numbers (Jun 2026 rates).
 
 export const SUPPORTED_CURRENCIES = ["GBP", "USD", "EUR", "CAD", "AUD", "MXN"] as const;
 export type Currency = (typeof SUPPORTED_CURRENCIES)[number];
-// Founder decision: unconfigured/unknown locales fall back cleanly to USD
-// (international-first). GBP remains the base pricing currency for Stripe
-// lookup keys — see priceIdFor below.
+// US baseline: Velocity Vision is operated by Global Solutions Management LLC
+// (Delaware, US). USD is the primary/default display currency. A visitor may
+// deliberately switch via the currency selector or ?ccy= URL override, but
+// IP/geo/browser locale never auto-switch the default away from USD.
+// GBP remains the base pricing currency for historic Stripe lookup keys —
+// see priceIdFor below.
 export const DEFAULT_CURRENCY: Currency = "USD";
 
 export const CURRENCY_LABELS: Record<Currency, string> = {

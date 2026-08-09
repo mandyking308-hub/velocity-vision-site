@@ -8,8 +8,8 @@ const steps = [
     n: "step-one",
     number: "01",
     icon: Upload,
-    title: "Organise customer-authorised business data",
-    desc: "Upload CSV or spreadsheet records, map fields and organise companies, contacts and segments inside the Data Vault.",
+    title: "Organize customer-authorized business data",
+    desc: "Upload CSV or spreadsheet records, map fields and organize companies, contacts and segments inside the Data Vault.",
     details: ["Data Vault", "Field mapping", "Duplicate checks", "Records requiring review"],
   },
   {
@@ -17,7 +17,7 @@ const steps = [
     number: "02",
     icon: ShieldCheck,
     title: "Prepare drafts and apply activation controls",
-    desc: "Generate editable email, social, press and video drafts from a customer brief, verify the customer's sender and require an authorised-user decision before activation.",
+    desc: "Generate editable email, social, press and video drafts from a customer brief, verify the customer's sender and require an authorized-user decision before activation.",
     details: ["AI-assisted drafts", "Sender verification", "Cadence settings", "Customer approval"],
   },
   {
@@ -46,7 +46,7 @@ const HowItWorksPreview = () => (
           How it works
         </p>
         <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">
-          Customer data in, editable drafts prepared, authorised activity recorded
+          Customer data in, editable drafts prepared, authorized activity recorded
         </h2>
         <p className="text-muted-foreground text-lg leading-relaxed">
           The workflow separates data review, draft preparation, sender verification, customer approval, activation and follow-up records so responsibility remains clear at every step.

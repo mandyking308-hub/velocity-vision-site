@@ -102,7 +102,7 @@ export default function DemoDataVault() {
         <Card className="bg-primary text-primary-foreground">
           <CardContent className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-3">
             <div>
-              <div className="text-lg font-semibold">Try the workflow with your own authorised data</div>
+              <div className="text-lg font-semibold">Try the workflow with your own authorized data</div>
               <div className="text-sm opacity-90">Free Preview supports up to 25 contacts. Data review does not spend Campaign Credits; workspace flags are operational review aids, not legal approval.</div>
             </div>
             <Button asChild variant="secondary" size="lg"><Link to="/auth">Start Free Preview <ArrowRight className="h-4 w-4 ml-1" /></Link></Button>

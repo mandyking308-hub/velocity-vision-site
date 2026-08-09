@@ -12,7 +12,7 @@ const cards = [
     icon: Briefcase,
     label: "For Businesses",
     title: "A customer-controlled workspace for lean teams",
-    desc: "Organise authorised data, editable drafts, activation controls, follow-up and early opportunity records without transferring responsibility to a managed service.",
+    desc: "Organize authorized data, editable drafts, activation controls, follow-up and early opportunity records without transferring responsibility to a managed service.",
     cta: "Review the business workspace",
     href: "/for-businesses",
     tone: "blue" as const,
@@ -21,7 +21,7 @@ const cards = [
     icon: Building2,
     label: "For Agencies",
     title: "One account with an isolated workspace per client",
-    desc: "Keep authorised client data, draft content, sender settings and activation decisions separated while using pooled Campaign Credits and account-wide send-usage visibility.",
+    desc: "Keep authorized client data, draft content, sender settings and activation decisions separated while using pooled Campaign Credits and account-wide send-usage visibility.",
     cta: "Review the agency workspace",
     href: "/for-agencies",
     tone: "pink" as const,
@@ -42,7 +42,7 @@ const AudienceSplit = () => (
           <div aria-hidden className="absolute bottom-6 right-8 w-24 h-24 rounded-full" style={{ backgroundColor: PINK }} />
           <p className="relative font-semibold text-[11px] uppercase tracking-[0.25em] text-white/80 mb-4">Built for customer-controlled B2B workflows</p>
           <h2 className="relative font-display font-bold text-3xl md:text-5xl leading-[1.05] mb-4">One self-serve product. <span style={{ color: "#FFD6E7" }}>Clear responsibility at every step.</span></h2>
-          <p className="relative text-white/85 text-base md:text-lg max-w-xl leading-relaxed">Businesses and agencies use Velocity Vision to organise customer-provided data, editable drafts, activation controls, follow-up records and early opportunity records in one workspace.</p>
+          <p className="relative text-white/85 text-base md:text-lg max-w-xl leading-relaxed">Businesses and agencies use Velocity Vision to organize customer-provided data, editable drafts, activation controls, follow-up records and early opportunity records in one workspace.</p>
         </div>
       </motion.div>
 

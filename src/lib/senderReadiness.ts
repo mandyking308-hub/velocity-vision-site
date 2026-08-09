@@ -116,7 +116,7 @@ export function computeReadiness(c: ConnectionShape | null | undefined): Readine
     // full send needs sending_enabled. Copy is provider-appropriate.
     const full = c.sending_enabled === true;
     const providerNote =
-      provider === "ews" ? " Exchange/EWS uses your organisation's mail infrastructure."
+      provider === "ews" ? " Exchange/EWS uses your organization's mail infrastructure."
       : provider === "imap" ? " IMAP sender uses your provider's outbound service."
       : "";
     return {

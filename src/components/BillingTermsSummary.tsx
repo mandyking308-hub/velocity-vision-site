@@ -25,7 +25,7 @@ export default function BillingTermsSummary({ className, compact = false }: Prop
         <h4 className="font-semibold text-foreground text-sm">Billing terms before you continue</h4>
       </div>
       <p className={cn("leading-relaxed", compact ? "text-xs" : "text-sm")}>
-        Subscriptions renew automatically unless cancelled before the next billing period.
+        Subscriptions renew automatically unless canceled before the next billing period.
         Taxes are calculated at checkout based on billing details. Credits, top-ups and
         one-off purchases may be non-refundable except where required by law or expressly
         stated in the Customer Agreement. Cancellation stops future renewal but does not

@@ -7,10 +7,10 @@ import { supabase } from "@/integrations/supabase/client";
 
 const TEMPLATES = [
   { id: "lead_gen", title: "Lead generation", desc: "A structured starting point for B2B lead-generation outreach.", icon: Rocket },
-  { id: "launch", title: "Offer launch", desc: "Organise a product or service launch around a clear brief and reviewable assets.", icon: Megaphone },
-  { id: "nurture", title: "Nurture", desc: "Prepare a multi-email sequence for an existing authorised audience.", icon: Mail },
+  { id: "launch", title: "Offer launch", desc: "Organize a product or service launch around a clear brief and reviewable assets.", icon: Megaphone },
+  { id: "nurture", title: "Nurture", desc: "Prepare a multi-email sequence for an existing authorized audience.", icon: Mail },
   { id: "promo", title: "Promotion", desc: "Prepare time-limited offer drafts with clear customer-controlled calls to action.", icon: Tag },
-  { id: "re_engagement", title: "Re-engagement", desc: "Prepare a fresh angle for dormant business contacts you are authorised to contact.", icon: RefreshCw },
+  { id: "re_engagement", title: "Re-engagement", desc: "Prepare a fresh angle for dormant business contacts you are authorized to contact.", icon: RefreshCw },
   { id: "pr_push", title: "PR announcement", desc: "Prepare a clear announcement or PR angle and editable release draft.", icon: Newspaper },
 ];
 

@@ -48,7 +48,7 @@ const articles = [
     tag: "Follow-up records",
     title: "Separating follow-up activity from guaranteed pipeline",
     excerpt:
-      "How software can organise reply states, next actions and early opportunity records without promising replies, sales or revenue.",
+      "How software can organize reply states, next actions and early opportunity records without promising replies, sales or revenue.",
     date: "Mar 2026",
     readTime: "6 min",
   },

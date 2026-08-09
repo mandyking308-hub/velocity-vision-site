@@ -365,7 +365,7 @@ const EN: Strings = {
   ],
   pressQuote: (b) => `"${b.name} was built because ${b.audience} told us they wanted a clearer way to run this kind of work," a company spokesperson said.`,
   pressBoilerplate: (b) => `About: Velocity Vision helps ${b.audience} run marketing and outreach in a self-serve workspace. Customer-controlled, transparent, and clearly priced.`,
-  pressContact: `For press enquiries, please reply to this release.`,
+  pressContact: `For press inquiries, please reply to this release.`,
   videoHooks: (b) => [`A short note for ${b.audience}.`, `${b.industry} teams — here is a clearer way to ${b.cta.toLowerCase()}.`, `${b.offer} in one minute.`],
   script30: (b, h) => `[0-3s] Hook: "${h[0]}"\n[3-10s] Problem: ${b.audience} spend too much time on work that does not convert.\n[10-22s] What ${b.offer} does.\n[22-30s] CTA: ${b.cta}.`,
   script60: (b, h) => `[0-5s] Hook: "${h[1]}"\n[5-15s] Why this matters for ${b.audience}.\n[15-30s] What ${b.offer} actually does.\n[30-45s] Where it fits in an existing workflow.\n[45-55s] Common question: "will it sound like us?" — you set the tone, you edit before launch.\n[55-60s] CTA: ${b.cta}.`,

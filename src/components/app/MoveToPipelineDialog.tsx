@@ -9,6 +9,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
+import { useCurrency } from "@/hooks/useCurrency";
+import { CURRENCY_SYMBOLS } from "@/lib/currency";
 
 const STAGES = ["discovery", "demo", "proposal", "negotiation", "won", "lost"] as const;
 
@@ -32,6 +34,7 @@ export default function MoveToPipelineDialog({
   onDone?: () => void;
 }) {
   const tc = useTranslation("common").t;
+  const { currency } = useCurrency();
   const [stage, setStage] = useState<typeof STAGES[number]>("discovery");
   const [value, setValue] = useState("");
   const [close, setClose] = useState("");
@@ -120,7 +123,7 @@ export default function MoveToPipelineDialog({
               </Select>
             </div>
             <div>
-              <Label>Expected value (£)</Label>
+              <Label>Expected value ({CURRENCY_SYMBOLS[currency]})</Label>
               <Input type="number" value={value} onChange={(e) => setValue(e.target.value)} placeholder="5000" />
             </div>
           </div>

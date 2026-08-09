@@ -75,14 +75,14 @@ describe("Copilot wizard UI", () => {
     advanceToReview();
     const createBtn = screen.getByRole("button", { name: /create my draft/i });
     expect(createBtn).toBeDisabled();
-    fireEvent.click(screen.getByRole("checkbox", { name: /authorised to email/i }));
+    fireEvent.click(screen.getByRole("checkbox", { name: /authorized to email/i }));
     await waitFor(() => expect(screen.getByRole("button", { name: /create my draft/i })).toBeEnabled());
   });
 
   it("falls back to a manual starter and still saves a draft when AI is unavailable", async () => {
     render(<AppCampaignCopilot />);
     advanceToReview();
-    fireEvent.click(screen.getByRole("checkbox", { name: /authorised to email/i }));
+    fireEvent.click(screen.getByRole("checkbox", { name: /authorized to email/i }));
     fireEvent.click(screen.getByRole("button", { name: /create my draft/i }));
     await waitFor(() => expect(navigate).toHaveBeenCalledWith("/app/campaigns/camp-1"));
     expect(invoke).toHaveBeenCalled();
@@ -92,7 +92,7 @@ describe("Copilot wizard UI", () => {
     insertSingle.mockResolvedValue({ data: null, error: new Error("network") });
     render(<AppCampaignCopilot />);
     advanceToReview();
-    fireEvent.click(screen.getByRole("checkbox", { name: /authorised to email/i }));
+    fireEvent.click(screen.getByRole("checkbox", { name: /authorized to email/i }));
     fireEvent.click(screen.getByRole("button", { name: /create my draft/i }));
     await waitFor(() => expect(screen.getByText(/couldn't finish that/i)).toBeInTheDocument());
     expect(navigate).not.toHaveBeenCalled();

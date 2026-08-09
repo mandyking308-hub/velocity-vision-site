@@ -94,7 +94,7 @@ export default function AppWorkspaces() {
           <DialogDescription>
             {isAgency
               ? "Each client workspace keeps its contacts, campaigns, assets, replies and pipeline separate. Plan billing and pooled Campaign Credits remain account-level."
-              : "Your workspace keeps contacts, campaigns, assets, replies and pipeline organised. Billing remains account-level."}
+              : "Your workspace keeps contacts, campaigns, assets, replies and pipeline organized. Billing remains account-level."}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
@@ -132,7 +132,7 @@ export default function AppWorkspaces() {
         <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-accent/5">
           <CardContent className="p-10 text-center space-y-4">
             <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto"><Sparkles className="h-7 w-7 text-primary" /></div>
-            <div><h2 className="text-xl font-semibold">Create your first workspace</h2><p className="text-sm text-muted-foreground max-w-md mx-auto mt-1">Keep contacts, campaigns, assets, replies and pipeline organised in one customer-controlled workspace.</p></div>
+            <div><h2 className="text-xl font-semibold">Create your first workspace</h2><p className="text-sm text-muted-foreground max-w-md mx-auto mt-1">Keep contacts, campaigns, assets, replies and pipeline organized in one customer-controlled workspace.</p></div>
             {CreateDialog}
           </CardContent>
         </Card>

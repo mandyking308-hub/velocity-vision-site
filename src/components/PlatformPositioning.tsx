@@ -66,7 +66,7 @@ const PlatformPositioning = () => (
             </div>
             <div className="rounded-lg bg-secondary/60 p-3">
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Pipeline</p>
-              <p className="text-2xl font-display font-bold text-foreground">£47k</p>
+              <p className="text-2xl font-display font-bold text-foreground">$59k</p>
             </div>
           </div>
           <div className="space-y-2">

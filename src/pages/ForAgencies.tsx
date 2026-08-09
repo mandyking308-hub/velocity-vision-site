@@ -25,7 +25,7 @@ const workspaceControls = [
   {
     icon: Layers,
     title: "Isolated client workspaces",
-    desc: "Keep each client's authorised data, draft content, sender settings, activation decisions and pipeline records in a separate workspace.",
+    desc: "Keep each client's authorized data, draft content, sender settings, activation decisions and pipeline records in a separate workspace.",
   },
   {
     icon: Coins,
@@ -63,7 +63,7 @@ const softwareOutputs = [
   {
     icon: Share2,
     title: "Editable social drafts",
-    desc: "Generate posts, hooks and variants from an authorised client brief while keeping outputs in draft.",
+    desc: "Generate posts, hooks and variants from an authorized client brief while keeping outputs in draft.",
   },
   {
     icon: Newspaper,
@@ -79,9 +79,9 @@ const softwareOutputs = [
 
 const responsibilities = [
   "The agency must have authority from each client to use the workspace and process the relevant data.",
-  "Each client or authorised agency user must provide lawfully obtained business data and maintain suppression and opt-out records.",
+  "Each client or authorized agency user must provide lawfully obtained business data and maintain suppression and opt-out records.",
   "The correct client sender must be connected and verified before activation.",
-  "Every draft, segment and activation decision must be reviewed and approved by an authorised user.",
+  "Every draft, segment and activation decision must be reviewed and approved by an authorized user.",
   "Velocity Vision does not scrape contacts, sell lists, operate managed campaigns or send automatically.",
   "Software controls do not guarantee legal compliance, deliverability, replies, pipeline or commercial outcomes.",
 ];
@@ -109,7 +109,7 @@ const ForAgencies = () => (
               One agency account with a separate software workspace for each client
             </h1>
             <p className="text-primary-foreground/75 text-lg mb-5 max-w-3xl leading-relaxed">
-              Organise authorised client data, prepare editable AI-assisted drafts, apply governed activation controls and keep follow-up and early pipeline records separated by client.
+              Organize authorized client data, prepare editable AI-assisted drafts, apply governed activation controls and keep follow-up and early pipeline records separated by client.
             </p>
             <p className="text-primary-foreground/70 text-sm mb-8 max-w-3xl leading-relaxed">
               Velocity Vision supplies self-serve software, not agency delivery. The agency and its clients remain responsible for authority, lawful basis, data source, sender identity, content approval, suppression handling and every activation decision.

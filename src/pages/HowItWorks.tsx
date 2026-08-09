@@ -11,7 +11,7 @@ import { ArrowRight, Check } from "lucide-react";
 const steps = [
   {
     n: "01",
-    title: "Upload authorised business data",
+    title: "Upload authorized business data",
     desc: "Import CSV or spreadsheet records and map the fields needed for the customer's workspace.",
   },
   {
@@ -27,7 +27,7 @@ const steps = [
   {
     n: "04",
     title: "Connect and verify the customer's sender",
-    desc: "Configure the authorised mailbox or sender route and complete the applicable verification steps.",
+    desc: "Configure the authorized mailbox or sender route and complete the applicable verification steps.",
   },
   {
     n: "05",
@@ -42,7 +42,7 @@ const steps = [
   {
     n: "07",
     title: "Run preflight and review activation controls",
-    desc: "Work through the preflight readiness scorecard, apply plan limits and daily send allowances, then require an authorised-user decision before activation.",
+    desc: "Work through the preflight readiness scorecard, apply plan limits and daily send allowances, then require an authorized-user decision before activation.",
   },
   {
     n: "08",
@@ -79,7 +79,7 @@ const HowItWorks = () => (
   <>
     <SEO
       title="How it works — Customer-controlled workflow | Velocity Vision"
-      description="The Velocity Vision workflow for customer-provided business data, record review, editable AI-assisted drafts, sender verification, authorised activation, follow-up records and early opportunity administration."
+      description="The Velocity Vision workflow for customer-provided business data, record review, editable AI-assisted drafts, sender verification, authorized activation, follow-up records and early opportunity administration."
       path="/how-it-works"
     />
     <Navbar />

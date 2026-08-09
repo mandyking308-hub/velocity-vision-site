@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Check } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useCurrency } from "@/hooks/useCurrency";
-import { priceFor, taxNotice, type SkuId } from "@/lib/currency";
+import { formatPrice, priceFor, taxNotice, type SkuId } from "@/lib/currency";
 import PricingCurrencySelector from "@/components/PricingCurrencySelector";
 import TrustStrip from "@/components/TrustStrip";
 import GlobalStrip from "@/components/GlobalStrip";
@@ -95,7 +95,7 @@ const plans: PlanDef[] = [
 const buildFaqs = (topUpsPurchasable: boolean) => [
   {
     q: "Is Free Preview really free?",
-    a: "Yes. £0, no card required. You get 10 welcome Campaign Credits plus +2 per day, with the daily balance capped at 10, for a 14-day preview. Free Preview is limited to one full campaign pack, one workspace, up to 25 contacts and no live sending. There is no automatic paid upgrade.",
+    a: "Yes. $0, no card required. You get 10 welcome Campaign Credits plus +2 per day, with the daily balance capped at 10, for a 14-day preview. Free Preview is limited to one full campaign pack, one workspace, up to 25 contacts and no live sending. There is no automatic paid upgrade.",
   },
   {
     q: "What happens when the Free Preview pack or credits are used?",
@@ -133,7 +133,7 @@ const buildFaqs = (topUpsPurchasable: boolean) => [
   },
   {
     q: "Which plans renew automatically?",
-    a: "Starter is a one-off purchase with 30 days of workspace access. Growth and Agency Workspace are monthly subscriptions that renew at the disclosed monthly price until cancelled.",
+    a: "Starter is a one-off purchase with 30 days of workspace access. Growth and Agency Workspace are monthly subscriptions that renew at the disclosed monthly price until canceled.",
   },
   {
     q: "What is Premium Human Review?",
@@ -149,7 +149,7 @@ const buildFaqs = (topUpsPurchasable: boolean) => [
   },
   {
     q: "Are outputs or commercial results guaranteed?",
-    a: "No. Velocity Vision helps organise customer-controlled activity and stored outcome records. It does not guarantee replies, sales, deliverability, legal compliance, pipeline or revenue and does not perform automated attribution or A/B testing.",
+    a: "No. Velocity Vision helps organize customer-controlled activity and stored outcome records. It does not guarantee replies, sales, deliverability, legal compliance, pipeline or revenue and does not perform automated attribution or A/B testing.",
   },
 ];
 
@@ -186,7 +186,7 @@ export default function Pricing() {
           <div className="mb-6 rounded-2xl border border-white/40 bg-white p-6 lg:p-7 shadow-card text-foreground">
             <div className="flex flex-col md:flex-row md:items-center gap-5">
               <div className="flex-1">
-                <span className="inline-block text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-accent/15 text-accent font-semibold mb-2">Free Preview · £0</span>
+                <span className="inline-block text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-accent/15 text-accent font-semibold mb-2">Free Preview · {formatPrice(0, currency)}</span>
                 <h2 className="font-display font-semibold text-xl">Build and review the first workflow before you pay</h2>
                 <ul className="mt-3 grid sm:grid-cols-2 gap-x-6 gap-y-1 text-sm">
                   {["10 welcome credits + 2/day (daily balance cap 10)", "1 workspace · up to 25 contacts", "Maximum 1 full campaign pack", "14-day preview window", "No card required. No automatic upgrade.", "No live sending or mailbox connection", "No recurring cadence", "No credit top-ups into Free Preview"].map((x) => <li key={x} className="flex gap-2"><Check size={16} className="text-accent mt-0.5 shrink-0" />{x}</li>)}
@@ -197,7 +197,7 @@ export default function Pricing() {
           </div>
 
           <div className="mb-6 rounded-xl border border-accent/40 bg-accent/5 px-4 py-4 text-sm text-foreground/90 space-y-2">
-            <p><strong>Billing:</strong> Starter is one-off with 30 days of workspace access. Growth and Agency renew monthly until cancelled.</p>
+            <p><strong>Billing:</strong> Starter is one-off with 30 days of workspace access. Growth and Agency renew monthly until canceled.</p>
             <p><strong>Credits:</strong> the current live credit-priced action is full campaign-pack generation. Sending, Data Vault review and activation preparation are governed separately.</p>
             <p><strong>Delivery:</strong> paid products are delivered electronically through account/workspace access after payment and any required onboarding or compliance checks.</p>
             <p><strong>Refunds:</strong> <a href="https://globalsolutions.management/refunds" target="_blank" rel="noreferrer" className="underline underline-offset-4 font-semibold">read the GSM Refund Policy</a>. Product-specific terms and the identified payment provider's procedures may also apply.</p>

@@ -11,11 +11,11 @@ const faqs = [
   },
   {
     q: "What workflow can Velocity Vision bring together?",
-    a: "The workspace can bring customer-provided contact data, AI-assisted drafts, sender verification, activation controls, follow-up records and early opportunity records into one product. Customers should decide which existing tools or processes, if any, are genuinely replaced in their organisation.",
+    a: "The workspace can bring customer-provided contact data, AI-assisted drafts, sender verification, activation controls, follow-up records and early opportunity records into one product. Customers should decide which existing tools or processes, if any, are genuinely replaced in their organization.",
   },
   {
     q: "Is this a self-serve workspace?",
-    a: "Yes. Customers upload authorised data, review software flags, prepare editable drafts, verify their sender, approve activation and manage follow-up from their own workspace. Velocity Vision does not provide managed campaigns.",
+    a: "Yes. Customers upload authorized data, review software flags, prepare editable drafts, verify their sender, approve activation and manage follow-up from their own workspace. Velocity Vision does not provide managed campaigns.",
   },
   {
     q: "Does Velocity Vision scrape contacts or sell lists?",

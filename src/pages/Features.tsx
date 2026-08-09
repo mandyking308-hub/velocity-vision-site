@@ -10,7 +10,7 @@ import { ArrowRight } from "lucide-react";
 
 const groups = [
   { label: "Data Vault and record review", features: [
-    ["Upload and field mapping", "Upload customer-authorised CSV or spreadsheet records, map fields and organise companies and contacts."],
+    ["Upload and field mapping", "Upload customer-authorized CSV or spreadsheet records, map fields and organize companies and contacts."],
     ["Quality and duplicate flags", "Surface missing fields, invalid formats, duplicates and records requiring customer review. These labels are operational aids, not legal approval."],
     ["Customer-reviewed segments", "Create segments from reviewed records without treating a software label as lawful-basis or recipient-suitability approval."],
   ]},
@@ -42,26 +42,26 @@ const groups = [
   { label: "Cadence and reusable work", features: [
     ["One-off campaigns", "Starter, Growth and Agency support one-off customer-controlled campaigns."],
     ["Recurring cadence", "Growth and Agency add weekly, monthly or custom recurring cadence and reusable recurring templates/segments."],
-    ["No automatic sending", "Cadence dates organise recurring work. Every run remains customer-controlled and still passes the applicable send-time checks."],
+    ["No automatic sending", "Cadence dates organize recurring work. Every run remains customer-controlled and still passes the applicable send-time checks."],
   ]},
   { label: "Agency Workspace", features: [
-    ["Isolated client workspaces", "Keep authorised client data, drafts, sender settings, replies and pipeline records separated by workspace."],
+    ["Isolated client workspaces", "Keep authorized client data, drafts, sender settings, replies and pipeline records separated by workspace."],
     ["Pooled Campaign Credits", "Use the Agency plan's 250 monthly Campaign Credits across isolated client workspaces."],
     ["Account-wide visibility", "Review account-wide daily send usage plus cross-client pipeline and Outcome Funnel records. No seat management or cross-seat pooled-send enforcement is claimed."],
   ]},
   { label: "Billing and optional review", features: [
-    ["Published plans", "Free Preview £0; Starter £149 one-off; Growth £249/month; Agency £499/month, with the current included credits and send ceilings shown on Pricing."],
+    ["Published plans", "Free Preview $0; Starter $189 one-off; Growth $315/month; Agency $629/month, with the current included credits and send ceilings shown on Pricing."],
     ["Paid-workspace top-ups", "Credit top-ups are only for eligible paid workspaces. Free Preview cannot buy top-ups and remains capped at one full campaign pack."],
-    ["Premium Human Review", "Where available, the £199 one-off add-on provides senior-strategist review, written recommendations and one asynchronous revision pass. It is separate from complimentary onboarding/setup guidance."],
+    ["Premium Human Review", "Where available, the $249 one-off add-on provides senior-strategist review, written recommendations and one asynchronous revision pass. It is separate from complimentary onboarding/setup guidance."],
   ]},
 ];
 
 export default function Features() {
   return <>
-    <SEO title="Features — Customer-controlled B2B software | Velocity Vision" description="Velocity Vision features for authorised business data review, full campaign-pack generation, activation preparation, governed sending, reply intent, meetings, pipeline, Outcome Funnel and agency workspaces." path="/features" />
+    <SEO title="Features — Customer-controlled B2B software | Velocity Vision" description="Velocity Vision features for authorized business data review, full campaign-pack generation, activation preparation, governed sending, reply intent, meetings, pipeline, Outcome Funnel and agency workspaces." path="/features" />
     <Navbar />
     <main className="pt-24">
-      <section className="section-padding bg-hero"><div className="max-w-5xl mx-auto"><motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}><p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Features</p><h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">One customer-controlled workspace from authorised data to recorded outcomes</h1><p className="text-primary-foreground/75 text-lg mb-5 max-w-3xl">Prepare editable AI-assisted drafts, record approvals, prepare campaign leads, use governed paid-plan sending, triage replies and track stored outcomes.</p><p className="text-primary-foreground/70 text-sm mb-8 max-w-3xl">Velocity Vision does not scrape contacts, sell lists, provide managed campaigns, send automatically, run A/B experiments or guarantee compliance, deliverability, replies, sales, pipeline or revenue.</p><Button variant="hero" size="lg" asChild><Link to="/auth">Start Free Preview <ArrowRight size={18} /></Link></Button></motion.div></div></section>
+      <section className="section-padding bg-hero"><div className="max-w-5xl mx-auto"><motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}><p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Features</p><h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">One customer-controlled workspace from authorized data to recorded outcomes</h1><p className="text-primary-foreground/75 text-lg mb-5 max-w-3xl">Prepare editable AI-assisted drafts, record approvals, prepare campaign leads, use governed paid-plan sending, triage replies and track stored outcomes.</p><p className="text-primary-foreground/70 text-sm mb-8 max-w-3xl">Velocity Vision does not scrape contacts, sell lists, provide managed campaigns, send automatically, run A/B experiments or guarantee compliance, deliverability, replies, sales, pipeline or revenue.</p><Button variant="hero" size="lg" asChild><Link to="/auth">Start Free Preview <ArrowRight size={18} /></Link></Button></motion.div></div></section>
       <div className="panel-wrap"><div className="panel-blue"><section className="section-padding"><div className="max-w-7xl mx-auto space-y-14">{groups.map((group, index) => <motion.div key={group.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, delay: index * 0.02 }}><p className="font-semibold text-sm uppercase tracking-widest mb-4 opacity-90">{group.label}</p><div className="grid grid-cols-1 md:grid-cols-3 gap-5">{group.features.map(([title, value]) => <div key={title} className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground"><h2 className="font-display font-semibold mb-2">{title}</h2><p className="text-sm leading-relaxed opacity-90">{value}</p></div>)}</div></motion.div>)}</div></section></div></div>
       <section className="section-padding bg-hero text-center"><div className="max-w-3xl mx-auto"><h2 className="text-3xl md:text-5xl font-display font-bold text-primary-foreground mb-5">Review the exact service level before purchase</h2><p className="text-primary-foreground/75 text-lg mb-8">Pricing shows the current plan limits, Campaign Credits, billing cadence, sending ceilings and optional Premium Human Review.</p><Button variant="hero" size="lg" asChild><Link to="/pricing">See pricing <ArrowRight size={18} /></Link></Button></div></section>
     </main>

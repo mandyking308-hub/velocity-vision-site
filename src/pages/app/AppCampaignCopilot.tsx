@@ -412,7 +412,7 @@ export default function AppCampaignCopilot() {
               <Summary label="Must avoid" value={input.constraints.trim() || "Nothing specified"} />
 
               <div className="rounded-md border border-border p-3 space-y-2">
-                <div className="text-xs font-medium flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /> Personalisation</div>
+                <div className="text-xs font-medium flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /> Personalization</div>
                 <p className="text-xs text-muted-foreground">These are the only variables we use. Each has safe fallback text when a contact field is blank.</p>
                 <ul className="text-xs space-y-1">
                   {COPILOT_VARIABLES.map((v) => (

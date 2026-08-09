@@ -30,6 +30,8 @@ import { useLegalStatus } from "@/lib/legalCompliance";
 import { deriveFollowUpState } from "@/lib/leadStates";
 import type { PlanId } from "@/lib/credits";
 import { CADENCE_LABELS, nextActionLabel, type CadenceType } from "@/lib/cadence";
+import { useCurrency } from "@/hooks/useCurrency";
+import { CURRENCY_SYMBOLS } from "@/lib/currency";
 
 interface VaultStats {
   contacts: number;
@@ -80,6 +82,7 @@ export default function AppDashboard() {
   const { remaining, planConfig } = useCredits();
   const { workspaces, currentId, loading: workspaceLoading } = useWorkspace();
   const legal = useLegalStatus();
+  const { currency } = useCurrency();
 
   const [firstName, setFirstName] = useState("");
   const [vault, setVault] = useState<VaultStats>(EMPTY_VAULT);
@@ -259,7 +262,7 @@ export default function AppDashboard() {
         <CardContent className="p-10 text-center space-y-4">
           <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto"><Sparkles className="h-7 w-7 text-primary" /></div>
           <h1 className="text-2xl font-bold">Create your first workspace</h1>
-          <p className="text-sm text-muted-foreground">Your workspace keeps contacts, campaigns, replies and early pipeline organised. Agency plans can create isolated client workspaces; plan billing remains account-level.</p>
+          <p className="text-sm text-muted-foreground">Your workspace keeps contacts, campaigns, replies and early pipeline organized. Agency plans can create isolated client workspaces; plan billing remains account-level.</p>
           <Button size="lg" onClick={() => navigate("/app/workspaces")}><Briefcase className="h-4 w-4 mr-2" /> Create workspace</Button>
         </CardContent>
       </Card>
@@ -274,7 +277,7 @@ export default function AppDashboard() {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Welcome back{firstName ? `, ${firstName}` : ""}</h1>
-            <p className="text-muted-foreground mt-1">Review authorised data, prepare editable campaign drafts, record approvals, manage replies and follow stored outcomes from one customer-controlled workspace.</p>
+            <p className="text-muted-foreground mt-1">Review authorized data, prepare editable campaign drafts, record approvals, manage replies and follow stored outcomes from one customer-controlled workspace.</p>
           </div>
           <div className="grid grid-cols-3 gap-3 min-w-[320px]">
             <PillStat label="Campaign Credits" value={remaining} hint={planConfig.name} />
@@ -313,7 +316,7 @@ export default function AppDashboard() {
         </div>
       </Section>
 
-      <Section title="Campaign cadence" icon={Clock} description="Cadence dates organise recurring work on eligible plans. Every run remains customer-controlled." link="/app/campaigns" linkLabel="Open campaigns">
+      <Section title="Campaign cadence" icon={Clock} description="Cadence dates organize recurring work on eligible plans. Every run remains customer-controlled." link="/app/campaigns" linkLabel="Open campaigns">
         {campaigns.length === 0 ? <Empty text="No campaigns yet." action="Create campaign" onClick={() => navigate("/app/campaigns/new")} /> : (
           <div className="grid md:grid-cols-2 gap-3">
             {campaigns.slice(0, 6).map((c) => (
@@ -342,7 +345,7 @@ export default function AppDashboard() {
         <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-4">
           <Stat label="Leads" value={commercial.leads} icon={Users} />
           <Stat label="Opportunities" value={commercial.opportunities} icon={Briefcase} />
-          <Stat label="Open value" value={`£${commercial.pipelineValue.toLocaleString()}`} icon={TrendingUp} />
+          <Stat label="Open value" value={`${CURRENCY_SYMBOLS[currency]}${commercial.pipelineValue.toLocaleString()}`} icon={TrendingUp} />
           <Stat label="Stuck 14d+" value={commercial.stuck} icon={AlertTriangle} tone="warn" />
           <Stat label="Actions overdue" value={commercial.overdueActions} icon={Clock} tone="danger" />
           <Stat label="Recorded won" value={commercial.won} icon={CheckCircle2} tone="good" />
@@ -395,7 +398,7 @@ function Empty({ text, action, onClick }: { text: string; action: string; onClic
 
 function buildActions(v: VaultStats, c: CommercialStats, credits: number, sendsRemaining: number, plan: PlanId) {
   const actions: Array<{ title: string; desc: string; to: string; icon: any }> = [];
-  if (v.contacts === 0) actions.push({ title: "Upload authorised business data", desc: "Start the Data Vault review workflow.", to: "/app/data-vault/upload", icon: Upload });
+  if (v.contacts === 0) actions.push({ title: "Upload authorized business data", desc: "Start the Data Vault review workflow.", to: "/app/data-vault/upload", icon: Upload });
   if (v.review > 0) actions.push({ title: `Review ${v.review} flagged record${v.review === 1 ? "" : "s"}`, desc: "Resolve incomplete or ambiguous data before activation preparation.", to: "/app/data-vault", icon: ShieldCheck });
   if (v.eligible > 0) actions.push({ title: `Prepare up to ${v.eligible} eligible record${v.eligible === 1 ? "" : "s"}`, desc: "Activation preparation creates campaign leads; it does not send email or spend Campaign Credits.", to: "/app/activate", icon: ShieldCheck });
   if (c.replies > 0) actions.push({ title: `${c.replies} repl${c.replies === 1 ? "y" : "ies"} need attention`, desc: "Review the stored reply queue and choose the next action.", to: "/app/follow-up", icon: MessageSquare });

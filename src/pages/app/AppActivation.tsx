@@ -368,7 +368,7 @@ export default function AppActivation() {
           icon={Upload}
           flow="Step 1 — Upload → Review → Prepare"
           title="You haven't uploaded any contacts yet"
-          description="Upload authorised business data, review the workspace flags, then return here to prepare eligible records inside a campaign."
+          description="Upload authorized business data, review the workspace flags, then return here to prepare eligible records inside a campaign."
           why="Data review and activation preparation do not spend Campaign Credits. Credits currently fund credit-priced AI generation such as a full campaign pack."
           steps={[{ to: "/app/data-vault/upload", label: "Upload contacts", icon: Upload }, { to: "/app/data-vault", label: "View Data Vault" }]}
         />
@@ -377,7 +377,7 @@ export default function AppActivation() {
           icon={ShieldCheck}
           flow={`Step 2 — ${totalContacts} records uploaded but none currently eligible`}
           title="No records available for activation preparation"
-          description="Every uploaded record is currently blocked or suppressed. Review the records or import a different authorised dataset."
+          description="Every uploaded record is currently blocked or suppressed. Review the records or import a different authorized dataset."
           steps={[{ to: "/app/data-vault", label: "Open Data Vault", icon: ShieldCheck }, { to: "/app/data-vault/upload", label: "Upload another list", icon: Upload }]}
         />
       ) : (

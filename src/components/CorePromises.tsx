@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { ShieldCheck, Layers, GitBranch } from "lucide-react";
 
 const promises = [
-  { icon: Layers, title: "Data to action in one place", desc: "Upload authorised business contacts, review workspace quality flags, build customer-reviewed segments and prepare campaign leads without treating a data label as legal approval." },
+  { icon: Layers, title: "Data to action in one place", desc: "Upload authorized business contacts, review workspace quality flags, build customer-reviewed segments and prepare campaign leads without treating a data label as legal approval." },
   { icon: ShieldCheck, title: "Governed sending by default", desc: "On eligible paid plans, mailbox readiness, tiered daily ceilings, unsubscribe handling and safety checks are applied again before a real send." },
   { icon: GitBranch, title: "Follow-up and pipeline, not just sends", desc: "Work recorded replies, follow-up states and customer-selected early opportunities inside the same workspace." },
 ];

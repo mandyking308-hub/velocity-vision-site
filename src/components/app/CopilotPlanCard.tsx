@@ -13,7 +13,7 @@ import type { CopilotEmailStep, CopilotPlan } from "@/lib/copilotBrief";
 
 /**
  * Read-only summary of what the Copilot produced: objective, ICP, offer angle,
- * manual channel tasks, personalisation variables and the compliance note.
+ * manual channel tasks, personalization variables and the compliance note.
  */
 export function CopilotPlanCard({ plan }: { plan: CopilotPlan }) {
   return (
@@ -61,7 +61,7 @@ export function CopilotPlanCard({ plan }: { plan: CopilotPlan }) {
         )}
 
         <div>
-          <div className="text-xs font-medium mb-1.5">Personalisation variables</div>
+          <div className="text-xs font-medium mb-1.5">Personalization variables</div>
           <ul className="text-xs space-y-1">
             {plan.variables.map((v) => (
               <li key={v.token} className="flex flex-wrap gap-x-2">

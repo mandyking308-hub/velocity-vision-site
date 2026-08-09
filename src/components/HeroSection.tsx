@@ -15,7 +15,7 @@ const HeroSection = () => (
             <Sparkles size={14} /> Velocity Vision · For small teams, consultants and agencies
           </p>
           <h1 className="relative font-display font-bold leading-[1.02] tracking-tight text-4xl md:text-5xl lg:text-6xl mb-6">
-            Turn your approved prospect data into <span style={{ color: PINK }}>personalised outreach campaigns</span> — in one workspace.
+            Turn your approved prospect data into <span style={{ color: PINK }}>personalized outreach campaigns</span> — in one workspace.
           </h1>
           <p className="relative text-base md:text-lg text-white/85 max-w-xl mb-5 leading-relaxed">
             Upload the business contacts you already have, review their quality, and generate editable email, social, press and video drafts in a single session. Verify your sender, approve what goes out, then work replies and early opportunities in the same place.

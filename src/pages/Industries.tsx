@@ -18,7 +18,7 @@ const industries = [
   {
     icon: Cpu,
     title: "Software and technology",
-    need: "Organise customer-provided prospect and partner data, prepare launch materials and manage structured follow-up around a defined product proposition.",
+    need: "Organize customer-provided prospect and partner data, prepare launch materials and manage structured follow-up around a defined product proposition.",
     use: "Teams can create editable outreach drafts, review safe segments, approve activation and move selected responses into an early pipeline.",
     safeguard: "No scraped databases, automatic sending or guaranteed pipeline claims.",
   },
@@ -26,7 +26,7 @@ const industries = [
     icon: Briefcase,
     title: "Professional services",
     need: "Maintain a clear commercial workflow for relationship-led business development without relying on disconnected spreadsheets and inbox reminders.",
-    use: "Firms can organise lawful business contacts, prepare customer-reviewed messages and track follow-up and opportunities in one workspace.",
+    use: "Firms can organize lawful business contacts, prepare customer-reviewed messages and track follow-up and opportunities in one workspace.",
     safeguard: "The platform does not provide professional advice, prospecting services or managed campaigns.",
   },
   {
@@ -39,15 +39,15 @@ const industries = [
   {
     icon: GraduationCap,
     title: "Education and training businesses",
-    need: "Structure business-to-business outreach to organisations, partners and professional audiences using data the customer is authorised to use.",
+    need: "Structure business-to-business outreach to organizations, partners and professional audiences using data the customer is authorized to use.",
     use: "Teams can prepare editable campaign packs, manage approved follow-up and track early commercial opportunities.",
     safeguard: "Velocity Vision is not intended for outreach to children or for processing student special-category data.",
   },
   {
     icon: HeartHandshake,
-    title: "Membership and nonprofit organisations",
-    need: "Coordinate lawful partner, sponsor, supplier and organisational outreach without turning the platform into a consumer messaging database.",
-    use: "Organisations can review their own records, create draft materials and manage approved follow-up through a governed workflow.",
+    title: "Membership and nonprofit organizations",
+    need: "Coordinate lawful partner, sponsor, supplier and organizational outreach without turning the platform into a consumer messaging database.",
+    use: "Organizations can review their own records, create draft materials and manage approved follow-up through a governed workflow.",
     safeguard: "Sensitive beneficiary, health, safeguarding or donor-payment data should not be uploaded unless expressly permitted and properly protected.",
   },
   {
@@ -63,7 +63,7 @@ const Industries = () => (
   <>
     <SEO
       title="Business Use Cases by Industry — Velocity Vision"
-      description="See how businesses, agencies and organisations can use the self-serve Velocity Vision workspace for customer-provided data, AI-assisted drafts, governed activation, follow-up and early pipeline."
+      description="See how businesses, agencies and organizations can use the self-serve Velocity Vision workspace for customer-provided data, AI-assisted drafts, governed activation, follow-up and early pipeline."
       path="/industries"
     />
     <Navbar />
@@ -82,7 +82,7 @@ const Industries = () => (
               A governed software workflow for different B2B operating models
             </h1>
             <p className="text-primary-foreground/75 text-lg max-w-3xl leading-relaxed">
-              Velocity Vision is a self-serve software workspace. The examples below describe how different organisations may configure the same product functionality; they are not managed services, customer case studies or performance claims.
+              Velocity Vision is a self-serve software workspace. The examples below describe how different organizations may configure the same product functionality; they are not managed services, customer case studies or performance claims.
             </p>
             <p className="text-primary-foreground/70 text-sm max-w-3xl mt-5 leading-relaxed">
               Customers supply their own lawfully obtained business data, connect their own sender and remain responsible for permissions, content review, suppression handling and every activation decision.

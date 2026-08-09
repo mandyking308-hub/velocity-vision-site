@@ -59,7 +59,7 @@ const capabilities = [
     icon: Inbox,
     title: "Follow-up workspace",
     overview:
-      "Organise replies and next actions in one workspace so customers can manage follow-up without relying on a shared spreadsheet or disconnected inbox process.",
+      "Organize replies and next actions in one workspace so customers can manage follow-up without relying on a shared spreadsheet or disconnected inbox process.",
     features: [
       "Reply and follow-up states",
       "Snooze and action queues",
@@ -128,7 +128,7 @@ const Services = () => (
               One self-serve workspace for governed commercial activity
             </h1>
             <p className="text-primary-foreground/75 text-lg max-w-3xl leading-relaxed">
-              Velocity Vision helps businesses organise their own contact data, prepare AI-assisted drafts, approve governed activation, manage follow-up and track early pipeline from one software workspace.
+              Velocity Vision helps businesses organize their own contact data, prepare AI-assisted drafts, approve governed activation, manage follow-up and track early pipeline from one software workspace.
             </p>
             <p className="text-primary-foreground/70 text-sm max-w-3xl mt-5 leading-relaxed">
               Velocity Vision does not scrape contact data, sell lists, provide managed campaigns or send automatically. Customers provide lawfully obtained business data, connect their own sender and remain responsible for every review, approval and activation decision.
