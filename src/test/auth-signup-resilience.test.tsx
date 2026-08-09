@@ -3,6 +3,9 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import React from "react";
 
+class ResizeObserverStub { observe() {} unobserve() {} disconnect() {} }
+(globalThis as any).ResizeObserver = (globalThis as any).ResizeObserver ?? ResizeObserverStub;
+
 const navigate = vi.fn();
 const signUp = vi.fn();
 const signInWithPassword = vi.fn();
