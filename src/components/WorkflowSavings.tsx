@@ -6,31 +6,37 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
+import { useCurrency } from "@/hooks/useCurrency";
+import { CURRENCY_SYMBOLS, formatPrice, priceFor } from "@/lib/currency";
 
-const fmt = (value: number) =>
-  new Intl.NumberFormat("en-GB", {
-    style: "currency",
-    currency: "GBP",
-    maximumFractionDigits: 0,
-  }).format(Number.isFinite(value) ? value : 0);
-
-const GROWTH_PLAN_MONTHLY = 249;
+const parseNonNegative = (raw: string) => {
+  const trimmed = raw.trim();
+  if (!trimmed) return 0;
+  const value = Number(trimmed);
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, value);
+};
 
 const WorkflowSavings = () => {
-  const [campaigns, setCampaigns] = useState(0);
-  const [hoursDataPerCampaign, setHoursDataPerCampaign] = useState(0);
-  const [hoursAssetsPerCampaign, setHoursAssetsPerCampaign] = useState(0);
-  const [toolSpend, setToolSpend] = useState(0);
-  const [freelancerSpend, setFreelancerSpend] = useState(0);
-  const [hourlyRate, setHourlyRate] = useState(0);
+  const { currency } = useCurrency();
+  const [campaigns, setCampaigns] = useState("");
+  const [hoursDataPerCampaign, setHoursDataPerCampaign] = useState("");
+  const [hoursAssetsPerCampaign, setHoursAssetsPerCampaign] = useState("");
+  const [toolSpend, setToolSpend] = useState("");
+  const [freelancerSpend, setFreelancerSpend] = useState("");
+  const [hourlyRate, setHourlyRate] = useState("");
+
+  const growthPrice = priceFor("vv_growth_monthly", currency);
+  const fmt = (value: number) => formatPrice(value, currency);
+  const moneyLabel = `${CURRENCY_SYMBOLS[currency]} ${currency}`;
 
   const estimate = useMemo(() => {
-    const campaignCount = Math.max(0, campaigns || 0);
-    const dataHours = Math.max(0, hoursDataPerCampaign || 0);
-    const assetHours = Math.max(0, hoursAssetsPerCampaign || 0);
-    const tools = Math.max(0, toolSpend || 0);
-    const freelancers = Math.max(0, freelancerSpend || 0);
-    const rate = Math.max(0, hourlyRate || 0);
+    const campaignCount = parseNonNegative(campaigns);
+    const dataHours = parseNonNegative(hoursDataPerCampaign);
+    const assetHours = parseNonNegative(hoursAssetsPerCampaign);
+    const tools = parseNonNegative(toolSpend);
+    const freelancers = parseNonNegative(freelancerSpend);
+    const rate = parseNonNegative(hourlyRate);
 
     const monthlyHours = campaignCount * (dataHours + assetHours);
     const monthlyTeamTimeCost = monthlyHours * rate;
@@ -80,6 +86,9 @@ const WorkflowSavings = () => {
               <h3 className="font-display text-xl font-semibold text-foreground">
                 Your figures
               </h3>
+              <p className="text-xs text-muted-foreground -mt-2">
+                Money fields use {moneyLabel}. Leave a field blank if it does not apply.
+              </p>
 
               <div className="space-y-2">
                 <Label htmlFor="campaigns" className="flex items-center gap-2">
@@ -88,9 +97,12 @@ const WorkflowSavings = () => {
                 <Input
                   id="campaigns"
                   type="number"
+                  inputMode="decimal"
                   min={0}
+                  step="any"
+                  placeholder="e.g. 4"
                   value={campaigns}
-                  onChange={(event) => setCampaigns(Number(event.target.value))}
+                  onChange={(event) => setCampaigns(event.target.value)}
                 />
               </div>
 
@@ -101,9 +113,12 @@ const WorkflowSavings = () => {
                 <Input
                   id="hData"
                   type="number"
+                  inputMode="decimal"
                   min={0}
+                  step="any"
+                  placeholder="e.g. 3"
                   value={hoursDataPerCampaign}
-                  onChange={(event) => setHoursDataPerCampaign(Number(event.target.value))}
+                  onChange={(event) => setHoursDataPerCampaign(event.target.value)}
                 />
               </div>
 
@@ -114,48 +129,60 @@ const WorkflowSavings = () => {
                 <Input
                   id="hAssets"
                   type="number"
+                  inputMode="decimal"
                   min={0}
+                  step="any"
+                  placeholder="e.g. 5"
                   value={hoursAssetsPerCampaign}
-                  onChange={(event) => setHoursAssetsPerCampaign(Number(event.target.value))}
+                  onChange={(event) => setHoursAssetsPerCampaign(event.target.value)}
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="tools" className="flex items-center gap-2">
-                  <Wrench size={16} className="text-accent" /> Current monthly software spend
+                  <Wrench size={16} className="text-accent" /> Current monthly software spend ({currency})
                 </Label>
                 <Input
                   id="tools"
                   type="number"
+                  inputMode="decimal"
                   min={0}
+                  step="any"
+                  placeholder="e.g. 300"
                   value={toolSpend}
-                  onChange={(event) => setToolSpend(Number(event.target.value))}
+                  onChange={(event) => setToolSpend(event.target.value)}
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="freelancers" className="flex items-center gap-2">
-                  <DollarSign size={16} className="text-accent" /> Current monthly contractor or external-service spend
+                  <DollarSign size={16} className="text-accent" /> Current monthly contractor or external-service spend ({currency})
                 </Label>
                 <Input
                   id="freelancers"
                   type="number"
+                  inputMode="decimal"
                   min={0}
+                  step="any"
+                  placeholder="e.g. 1000"
                   value={freelancerSpend}
-                  onChange={(event) => setFreelancerSpend(Number(event.target.value))}
+                  onChange={(event) => setFreelancerSpend(event.target.value)}
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="rate" className="flex items-center gap-2">
-                  <DollarSign size={16} className="text-accent" /> Your chosen hourly cost (£/hour)
+                  <DollarSign size={16} className="text-accent" /> Your chosen hourly cost ({moneyLabel}/hour)
                 </Label>
                 <Input
                   id="rate"
                   type="number"
+                  inputMode="decimal"
                   min={0}
+                  step="any"
+                  placeholder="e.g. 35"
                   value={hourlyRate}
-                  onChange={(event) => setHourlyRate(Number(event.target.value))}
+                  onChange={(event) => setHourlyRate(event.target.value)}
                 />
               </div>
             </CardContent>
@@ -174,7 +201,7 @@ const WorkflowSavings = () => {
                     Entered hours per month
                   </p>
                   <p className="text-2xl font-display font-bold">
-                    {estimate.monthlyHours.toFixed(0)}h
+                    {estimate.monthlyHours.toFixed(1)}h
                   </p>
                 </div>
                 <div className="p-4 rounded-lg bg-primary-foreground/5 border border-primary-foreground/10">
@@ -204,7 +231,7 @@ const WorkflowSavings = () => {
                   Published Velocity Vision Growth price
                 </p>
                 <p className="text-xl font-display font-bold">
-                  {fmt(GROWTH_PLAN_MONTHLY)} per month
+                  {growthPrice.formatted} per month
                 </p>
                 <p className="text-xs text-primary-foreground/65 mt-2 leading-relaxed">
                   This is a price reference, not a savings calculation. Review the included functionality and decide which current costs, if any, are genuinely replaced in your own organisation.
