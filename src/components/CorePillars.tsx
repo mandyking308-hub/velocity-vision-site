@@ -40,7 +40,7 @@ const CorePillars = () => (
       >
         <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">What Velocity Vision does</p>
         <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">
-          The whole campaign. One workspace.
+          Everything your campaign needs, connected.
         </h2>
       </motion.div>
 
