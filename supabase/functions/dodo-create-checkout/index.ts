@@ -138,10 +138,11 @@ Deno.serve(async (req) => {
       console.error("dodo-create-checkout rejected an unsafe checkout link");
       return json({ error: "unsafe_checkout_url" }, 502);
     }
+    // Never expose environment/mode details to the browser — only the
+    // validated hosted link and the session id the customer just created.
     return json({
       checkoutUrl,
       sessionId: session.session_id ?? null,
-      mode: cfg.config.mode,
     });
 
   } catch (e) {
