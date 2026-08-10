@@ -5,21 +5,26 @@ import { ArrowRight } from "lucide-react";
 
 const FinalCTA = () => (
   <section className="section-padding bg-hero relative overflow-hidden">
-    <div className="absolute inset-0 bg-accent/5 blur-3xl rounded-full w-[600px] h-[600px] -top-40 -right-40" />
+    <div aria-hidden className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-white/10 blur-3xl" />
+    <div aria-hidden className="absolute -bottom-48 -left-32 w-[500px] h-[500px] rounded-full bg-black/10 blur-3xl" />
     <div className="relative max-w-4xl mx-auto text-center">
       <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-        <h2 className="text-3xl md:text-5xl font-display font-bold text-primary-foreground mb-6">
-          Stop running outreach, follow-up and pipeline across six tools
+        <h2 className="text-3xl md:text-5xl font-display font-bold text-primary-foreground mb-5 leading-tight">
+          One workspace instead of a stack of disconnected tools.
         </h2>
-        <p className="text-primary-foreground/75 text-lg mb-4 max-w-xl mx-auto">
-          Bring data, assets, activation, follow-up and early pipeline into one governed workspace.
+        <p className="text-primary-foreground/90 font-display font-semibold text-lg md:text-xl mb-4 tracking-wide">
+          Find. Create. Approve. <span className="bg-white text-accent-warm px-2 rounded-lg">Publish.</span> Follow up.
         </p>
-        <p className="text-primary-foreground/80 text-sm mb-10 max-w-xl mx-auto">
+        <p className="text-primary-foreground/75 text-sm mb-10 max-w-xl mx-auto leading-relaxed">
           Launch support includes complimentary onboarding and setup guidance. Premium Human Review, where offered, is a separate paid add-on.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button variant="hero" size="lg" asChild><Link to="/auth">Start your workspace <ArrowRight size={18} /></Link></Button>
-          <Button variant="hero-outline" size="lg" asChild><Link to="/pricing">See pricing</Link></Button>
+          <Button size="lg" className="bg-white text-accent hover:bg-white/90 font-bold shadow-xl" asChild>
+            <Link to="/auth">Start Free Preview <ArrowRight size={18} /></Link>
+          </Button>
+          <Button variant="hero-outline" size="lg" asChild>
+            <Link to="/pricing">See pricing</Link>
+          </Button>
         </div>
       </motion.div>
     </div>

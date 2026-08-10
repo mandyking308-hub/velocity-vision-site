@@ -4,90 +4,75 @@ import {
   Database,
   FileCheck,
   Server,
-  KeyRound,
   UserCheck,
   ScanSearch,
-  Scale,
   Gauge,
 } from "lucide-react";
 
 const controls = [
   {
     icon: Server,
-    title: "Managed Cloud Infrastructure",
-    body: "Authentication, database, storage and backend functions are provided through managed cloud services.",
-  },
-  {
-    icon: Gauge,
-    title: "Rate Limiting and Abuse Controls",
-    body: "Public routes and activation workflows use validation, limits and abuse-prevention controls appropriate to their function.",
-  },
-  {
-    icon: KeyRound,
-    title: "Access-Controlled Secret Configuration",
-    body: "Operational credentials and service configuration are kept outside public page content and restricted to authorized system access.",
-  },
-  {
-    icon: Database,
-    title: "Logical Workspace Separation",
-    body: "Customer and client workspaces use account and workspace identifiers to support logical data separation.",
+    title: "Managed cloud infrastructure",
+    body: "Authentication, database, storage and backend functions run on managed cloud services.",
   },
   {
     icon: UserCheck,
-    title: "Authenticated Access",
-    body: "Protected product routes require authenticated access, with permissions applied to customer and internal workspace functions.",
+    title: "Authenticated access",
+    body: "Protected product routes require sign-in, with permissions applied to customer and internal functions.",
   },
   {
-    icon: ScanSearch,
-    title: "Code and Configuration Checks",
-    body: "Repository checks and release reviews help identify missing routes, unsafe public claims and configuration regressions before publication.",
-  },
-  {
-    icon: FileCheck,
-    title: "Data Processing Documents",
-    body: "The Legal Centre publishes a Data Processing Agreement, Privacy Policy and Subprocessor List for customer review.",
-  },
-  {
-    icon: Scale,
-    title: "Privacy and Rights Routes",
-    body: "Published privacy terms explain data handling, rights requests, complaints, subprocessors and customer responsibilities.",
+    icon: Database,
+    title: "Logical workspace separation",
+    body: "Account and workspace identifiers keep customer and client data logically separated.",
   },
   {
     icon: ShieldCheck,
-    title: "Customer-Controlled Activation",
-    body: "Sender verification, record review and plan limits are separated from the authorized user's final activation decision.",
+    title: "Customer-controlled activation",
+    body: "Sender verification, record review and plan limits sit ahead of the authorized user's final decision.",
+  },
+  {
+    icon: Gauge,
+    title: "Rate limiting & abuse controls",
+    body: "Public routes and activation workflows use validation and limits appropriate to their function.",
+  },
+  {
+    icon: FileCheck,
+    title: "Published legal stack",
+    body: "Privacy Policy, Data Processing Agreement, Subprocessor List and security terms are published in the Legal Centre.",
+  },
+  {
+    icon: ScanSearch,
+    title: "Code & configuration checks",
+    body: "Repository checks and release reviews catch missing routes, unsafe claims and configuration regressions.",
   },
 ];
 
 const SecurityTrust = () => (
-  <section className="section-padding bg-splash-blue relative overflow-hidden">
+  <section className="section-padding bg-background relative overflow-hidden">
     <div className="max-w-7xl mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.5 }}
-        className="max-w-3xl mb-10 md:mb-14"
+        className="max-w-3xl mb-10 md:mb-12"
       >
         <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3 inline-flex items-center gap-2">
           <ShieldCheck size={14} /> Security and governance
         </p>
-        <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-foreground mb-5">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-foreground mb-4">
           Documented controls around access, data and activation
         </h2>
-        <p className="text-muted-foreground text-base md:text-lg leading-relaxed">
-          Velocity Vision uses managed cloud services, authenticated product routes, logical workspace separation, validation, rate limiting and a published legal-document stack covering privacy, data processing, acceptable use, marketing compliance, cookies, security and service levels.
-        </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
         {controls.map((control, index) => (
           <motion.div
             key={control.title}
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.35, delay: (index % 3) * 0.05 }}
+            transition={{ duration: 0.35, delay: (index % 4) * 0.05 }}
             className="rounded-xl border border-border/60 bg-card p-5 shadow-card hover:border-accent/40 hover:shadow-elevated transition-all"
           >
             <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
@@ -96,9 +81,7 @@ const SecurityTrust = () => (
             <h3 className="font-display font-semibold text-foreground text-sm md:text-base mb-2 leading-snug">
               {control.title}
             </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {control.body}
-            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed">{control.body}</p>
           </motion.div>
         ))}
       </div>
