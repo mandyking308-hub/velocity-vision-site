@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Database, Sparkles, Eye, Send, FileCheck } from "lucide-react";
+import laughingMarketer from "@/assets/laughing-marketer.jpg";
 
 const steps = [
   { icon: Database, label: "Your data + brief", note: "You upload approved data and own it" },
@@ -19,15 +20,29 @@ const ControlFlow = () => (
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="max-w-3xl mb-12"
+        className="grid lg:grid-cols-[0.92fr_1.08fr] rounded-[32px] overflow-hidden shadow-2xl mb-12 bg-card border border-border/50"
       >
-        <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">How control works</p>
-        <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">
-          One self-serve product. Clear responsibility at every step.
-        </h2>
-        <p className="text-muted-foreground text-lg leading-relaxed">
-          From approved data to a complete campaign pack to replies and pipeline — nothing sends or publishes automatically. Every activation is an authorized human decision.
-        </p>
+        <div className="relative min-h-[320px] sm:min-h-[400px] lg:min-h-[440px] bg-muted">
+          <img
+            src={laughingMarketer}
+            alt="Business user working in a commercial software workspace"
+            className="absolute inset-0 h-full w-full object-cover object-[50%_20%]"
+            loading="lazy"
+            width={1024}
+            height={1280}
+          />
+        </div>
+
+        <div className="relative flex flex-col justify-center p-8 md:p-12 bg-gradient-to-br from-[#2440FF] via-[#4338e8] to-[#FF1478] text-white">
+          <div aria-hidden className="absolute -top-16 -right-16 w-60 h-60 rounded-full bg-white/10 blur-3xl" />
+          <p className="relative font-semibold text-sm uppercase tracking-widest mb-3 text-white/80">How control works</p>
+          <h2 className="relative text-3xl md:text-5xl font-display font-bold mb-4 leading-tight">
+            One self-serve product. Clear responsibility at every step.
+          </h2>
+          <p className="relative text-white/85 text-base md:text-lg leading-relaxed max-w-2xl">
+            From approved data to a complete campaign pack to replies and pipeline — nothing sends or publishes automatically. Every activation is an authorized human decision.
+          </p>
+        </div>
       </motion.div>
 
       <div className="flex flex-col lg:flex-row lg:items-stretch gap-3">
