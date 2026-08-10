@@ -1,19 +1,30 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, ShieldCheck, Database, Mail, Newspaper, Share2, Linkedin } from "lucide-react";
-import { siX, siInstagram, siBuffer } from "simple-icons";
+import {
+  ArrowRight,
+  ShieldCheck,
+  Database,
+  Mail,
+  Newspaper,
+  Share2,
+  Target,
+  LayoutTemplate,
+  Clapperboard,
+  Megaphone,
+  ListChecks,
+  Send,
+} from "lucide-react";
+import { siBuffer } from "simple-icons";
 
-type BrandIconDef = { path: string; hex: string; title: string };
-const BrandIcon = ({ icon, size = 14 }: { icon: BrandIconDef; size?: number }) => (
-  <svg role="img" aria-label={icon.title} viewBox="0 0 24 24" width={size} height={size} fill={`#${icon.hex}`}>
-    <path d={icon.path} />
-  </svg>
-);
-
-const draftRows = [
-  { icon: Mail, label: "Email sequence", value: "Draft ready" },
-  { icon: Share2, label: "Social posts", value: "4 drafts ready" },
-  { icon: Newspaper, label: "Press release", value: "In review" },
+const packTiles = [
+  { icon: Target, label: "Strategy" },
+  { icon: LayoutTemplate, label: "Landing & offer" },
+  { icon: Mail, label: "Email sequence" },
+  { icon: Newspaper, label: "Press release" },
+  { icon: Share2, label: "Social pack" },
+  { icon: Clapperboard, label: "Video scripts" },
+  { icon: Megaphone, label: "Paid ads" },
+  { icon: ListChecks, label: "Lead capture" },
 ];
 
 const HeroSection = () => (
@@ -27,14 +38,13 @@ const HeroSection = () => (
           <ShieldCheck size={14} /> Velocity Vision · Customer-controlled B2B workspace
         </p>
         <h1 className="font-display font-bold leading-[1.05] tracking-tight text-4xl md:text-5xl lg:text-[3.6rem] mb-6">
-          Find prospects. Create outreach.{" "}
+          Build the whole campaign.{" "}
           <span className="inline-block bg-white text-accent-warm px-3 md:px-4 rounded-2xl whitespace-nowrap">
-            Publish social.
-          </span>{" "}
-          Manage replies.
+            Run it from one workspace.
+          </span>
         </h1>
         <p className="text-base md:text-lg text-primary-foreground/85 max-w-xl mb-8 leading-relaxed">
-          One workspace for customer-controlled B2B growth — from approved prospect data to personalized email, social publishing and follow-up.
+          Approved prospect data and a single brief become a complete campaign pack — strategy, landing &amp; offer copy, email sequences, press, social, video scripts, paid ads and lead capture — with governed sending, replies and early pipeline in one place.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 mb-5">
           <Link
@@ -51,7 +61,7 @@ const HeroSection = () => (
           </Link>
         </div>
         <p className="text-xs md:text-sm text-primary-foreground/75 max-w-xl leading-relaxed">
-          You control what gets approved, sent and published. No card required for the Free Preview.
+          You review and approve what gets used, sent or handed off. No card required for the Free Preview.
         </p>
       </motion.div>
 
@@ -73,44 +83,43 @@ const HeroSection = () => (
             </span>
           </div>
 
-          <div className="space-y-2">
-            {draftRows.map((row) => (
-              <div key={row.label} className="flex items-center justify-between bg-muted/50 rounded-lg px-3 py-2">
-                <span className="flex items-center gap-2 text-xs font-medium text-foreground/90">
-                  <row.icon size={14} className="text-accent" /> {row.label}
-                </span>
-                <span className="text-xs font-semibold text-muted-foreground">{row.value}</span>
-              </div>
-            ))}
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">
+              Complete campaign pack — from one brief
+            </p>
+            <div className="grid grid-cols-2 gap-1.5">
+              {packTiles.map((tile) => (
+                <div key={tile.label} className="flex items-center gap-2 bg-muted/50 rounded-lg px-2.5 py-2">
+                  <tile.icon size={13} className="text-accent shrink-0" />
+                  <span className="text-[11px] font-medium text-foreground/90">{tile.label}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="rounded-xl border border-accent-warm/30 bg-accent-warm/5 p-3 space-y-3">
-            <div className="flex items-center justify-between">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-accent-warm inline-flex items-center gap-1.5">
-                <BrandIcon icon={siBuffer} size={12} /> Social publishing — your Buffer account
-              </p>
+          <div className="rounded-xl border border-accent-warm/30 bg-accent-warm/5 p-3 space-y-2">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-accent-warm">Activation routes</p>
+            <div className="flex items-center justify-between text-[11px]">
+              <span className="inline-flex items-center gap-1.5 font-medium text-foreground/90">
+                <Send size={12} className="text-accent" /> Governed email sending
+              </span>
+              <span className="text-muted-foreground font-semibold">Approval-gated</span>
             </div>
-            <div className="flex items-center gap-2">
-              {[<Linkedin size={13} className="text-[#0A66C2]" />, <BrandIcon icon={siInstagram} size={13} />, <BrandIcon icon={siX} size={13} />].map((icon, i) => (
-                <span key={i} className="w-7 h-7 rounded-lg bg-white border border-border/60 flex items-center justify-center">
-                  {icon}
-                </span>
-              ))}
-              <span className="text-[10px] text-muted-foreground ml-1">Choose the channel</span>
+            <div className="flex items-center justify-between text-[11px]">
+              <span className="inline-flex items-center gap-1.5 font-medium text-foreground/90">
+                <svg role="img" aria-label="Buffer" viewBox="0 0 24 24" width={12} height={12} fill={`#${siBuffer.hex}`}>
+                  <path d={siBuffer.path} />
+                </svg>
+                Social → your Buffer account
+              </span>
+              <span className="text-muted-foreground font-semibold">Draft · Queue · Schedule</span>
             </div>
-            <div className="grid grid-cols-3 gap-1 rounded-lg bg-muted/60 p-1 text-center">
-              {["Draft", "Queue", "Schedule"].map((mode, i) => (
-                <span
-                  key={mode}
-                  className={`text-[11px] font-semibold rounded-md py-1.5 ${i === 0 ? "bg-accent-warm text-accent-foreground shadow" : "text-muted-foreground"}`}
-                >
-                  {mode}
-                </span>
-              ))}
+            <div className="flex items-center justify-between text-[11px]">
+              <span className="inline-flex items-center gap-1.5 font-medium text-foreground/90">
+                <LayoutTemplate size={12} className="text-accent" /> Other assets
+              </span>
+              <span className="text-muted-foreground font-semibold">Use in your channels</span>
             </div>
-            <p className="text-[10px] text-muted-foreground leading-relaxed">
-              Illustrative connected Buffer workflow — Velocity prepares, you approve, Buffer publishes under your settings.
-            </p>
           </div>
 
           <div className="flex items-center justify-between bg-muted/50 rounded-lg px-3 py-2">
