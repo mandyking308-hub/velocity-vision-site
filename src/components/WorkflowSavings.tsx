@@ -1,11 +1,10 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Calculator, ArrowRight, Clock, DollarSign, Wrench } from "lucide-react";
+import { Calculator, ArrowRight, Clock, DollarSign, Wrench, RotateCcw, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
 import { useCurrency } from "@/hooks/useCurrency";
 import { CURRENCY_SYMBOLS, formatPrice, priceFor } from "@/lib/currency";
 
@@ -17,26 +16,51 @@ const parseNonNegative = (raw: string) => {
   return Math.max(0, value);
 };
 
+const EXAMPLE = {
+  campaigns: "4",
+  hoursDataPerCampaign: "3",
+  hoursAssetsPerCampaign: "5",
+  toolSpend: "300",
+  freelancerSpend: "1000",
+  hourlyRate: "35",
+};
+const EMPTY = {
+  campaigns: "",
+  hoursDataPerCampaign: "",
+  hoursAssetsPerCampaign: "",
+  toolSpend: "",
+  freelancerSpend: "",
+  hourlyRate: "",
+};
+
 const WorkflowSavings = () => {
   const { currency } = useCurrency();
-  const [campaigns, setCampaigns] = useState("");
-  const [hoursDataPerCampaign, setHoursDataPerCampaign] = useState("");
-  const [hoursAssetsPerCampaign, setHoursAssetsPerCampaign] = useState("");
-  const [toolSpend, setToolSpend] = useState("");
-  const [freelancerSpend, setFreelancerSpend] = useState("");
-  const [hourlyRate, setHourlyRate] = useState("");
+  const [values, setValues] = useState(EMPTY);
+  const [exampleLoaded, setExampleLoaded] = useState(false);
+
+  const set = (key: keyof typeof EMPTY) => (event: React.ChangeEvent<HTMLInputElement>) =>
+    setValues((prev) => ({ ...prev, [key]: event.target.value }));
+
+  const loadExample = () => {
+    setValues(EXAMPLE);
+    setExampleLoaded(true);
+  };
+  const reset = () => {
+    setValues(EMPTY);
+    setExampleLoaded(false);
+  };
 
   const growthPrice = priceFor("vv_growth_monthly", currency);
   const fmt = (value: number) => formatPrice(value, currency);
   const moneyLabel = `${CURRENCY_SYMBOLS[currency]} ${currency}`;
 
   const estimate = useMemo(() => {
-    const campaignCount = parseNonNegative(campaigns);
-    const dataHours = parseNonNegative(hoursDataPerCampaign);
-    const assetHours = parseNonNegative(hoursAssetsPerCampaign);
-    const tools = parseNonNegative(toolSpend);
-    const freelancers = parseNonNegative(freelancerSpend);
-    const rate = parseNonNegative(hourlyRate);
+    const campaignCount = parseNonNegative(values.campaigns);
+    const dataHours = parseNonNegative(values.hoursDataPerCampaign);
+    const assetHours = parseNonNegative(values.hoursAssetsPerCampaign);
+    const tools = parseNonNegative(values.toolSpend);
+    const freelancers = parseNonNegative(values.freelancerSpend);
+    const rate = parseNonNegative(values.hourlyRate);
 
     const monthlyHours = campaignCount * (dataHours + assetHours);
     const monthlyTeamTimeCost = monthlyHours * rate;
@@ -47,15 +71,18 @@ const WorkflowSavings = () => {
       monthlyTeamTimeCost,
       monthlyCurrentCost,
       annualCurrentCost: monthlyCurrentCost * 12,
+      illustrativeDifference: monthlyCurrentCost - growthPrice.amount,
     };
-  }, [
-    campaigns,
-    hoursDataPerCampaign,
-    hoursAssetsPerCampaign,
-    toolSpend,
-    freelancerSpend,
-    hourlyRate,
-  ]);
+  }, [values, growthPrice.amount]);
+
+  const fields: Array<{ key: keyof typeof EMPTY; id: string; label: string; icon: typeof Clock; placeholder: string }> = [
+    { key: "campaigns", id: "campaigns", label: "Campaign workflows per month", icon: Calculator, placeholder: "e.g. 4" },
+    { key: "hoursDataPerCampaign", id: "hData", label: "Hours per workflow preparing and reviewing data", icon: Clock, placeholder: "e.g. 3" },
+    { key: "hoursAssetsPerCampaign", id: "hAssets", label: "Hours per workflow preparing content and follow-up", icon: Clock, placeholder: "e.g. 5" },
+    { key: "toolSpend", id: "tools", label: `Current monthly software spend (${currency})`, icon: Wrench, placeholder: "e.g. 300" },
+    { key: "freelancerSpend", id: "freelancers", label: `Current monthly contractor or external-service spend (${currency})`, icon: DollarSign, placeholder: "e.g. 1000" },
+    { key: "hourlyRate", id: "rate", label: `Your chosen hourly cost (${moneyLabel}/hour)`, icon: DollarSign, placeholder: "e.g. 35" },
+  ];
 
   return (
     <section id="workflow-cost" className="section-padding bg-splash-pink relative overflow-hidden">
@@ -73,184 +100,107 @@ const WorkflowSavings = () => {
             <Calculator size={14} /> Current workflow cost
           </p>
           <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">
-            Calculate the cost of your existing process using your own figures
+            What does your current process cost? Run your own numbers.
           </h2>
           <p className="text-muted-foreground text-lg leading-relaxed">
-            Enter the time and external spend associated with your current workflow. The calculator performs simple arithmetic only; it does not predict savings or assume that Velocity Vision replaces any existing employee, contractor, tool or service.
+            Enter the time and external spend behind your current workflow. Simple arithmetic only — it does not predict savings or assume Velocity Vision replaces any employee, contractor, tool or service.
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-6">
-          <Card className="border-border/60 shadow-card">
-            <CardContent className="p-8 space-y-5">
-              <h3 className="font-display text-xl font-semibold text-foreground">
-                Your figures
-              </h3>
-              <p className="text-xs text-muted-foreground -mt-2">
-                Money fields use {moneyLabel}. Leave a field blank if it does not apply.
-              </p>
-
-              <div className="space-y-2">
-                <Label htmlFor="campaigns" className="flex items-center gap-2">
-                  <Calculator size={16} className="text-accent" /> Campaign workflows per month
-                </Label>
-                <Input
-                  id="campaigns"
-                  type="number"
-                  inputMode="decimal"
-                  min={0}
-                  step="any"
-                  placeholder="e.g. 4"
-                  value={campaigns}
-                  onChange={(event) => setCampaigns(event.target.value)}
-                />
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="grid lg:grid-cols-2 rounded-[2rem] overflow-hidden shadow-2xl"
+        >
+          {/* Input panel — brand blue */}
+          <div className="bg-accent text-accent-foreground p-6 md:p-10 relative overflow-hidden">
+            <div aria-hidden className="absolute -top-16 -left-16 w-56 h-56 rounded-full bg-white/10 blur-3xl" />
+            <div className="relative bg-white text-foreground rounded-2xl p-6 md:p-7 space-y-5 shadow-xl">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h3 className="font-display text-xl font-semibold">Your figures</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Money fields use {moneyLabel}. Blank fields count as 0. Results update live.
+                  </p>
+                </div>
+                <div className="flex gap-2 shrink-0">
+                  <Button type="button" variant="outline" size="sm" onClick={loadExample}>
+                    <Sparkles size={14} /> Load example
+                  </Button>
+                  <Button type="button" variant="ghost" size="sm" onClick={reset}>
+                    <RotateCcw size={14} /> Reset
+                  </Button>
+                </div>
               </div>
+              {exampleLoaded && (
+                <p className="text-[11px] text-muted-foreground bg-muted/50 rounded-lg px-3 py-2">
+                  Illustrative example loaded — every figure is editable. Replace it with your own numbers.
+                </p>
+              )}
+              {fields.map((field) => (
+                <div key={field.id} className="space-y-2">
+                  <Label htmlFor={field.id} className="flex items-center gap-2">
+                    <field.icon size={16} className="text-accent" /> {field.label}
+                  </Label>
+                  <Input
+                    id={field.id}
+                    type="number"
+                    inputMode="decimal"
+                    min={0}
+                    step="any"
+                    placeholder={field.placeholder}
+                    value={values[field.key]}
+                    onChange={set(field.key)}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="hData" className="flex items-center gap-2">
-                  <Clock size={16} className="text-accent" /> Hours per workflow preparing and reviewing data
-                </Label>
-                <Input
-                  id="hData"
-                  type="number"
-                  inputMode="decimal"
-                  min={0}
-                  step="any"
-                  placeholder="e.g. 3"
-                  value={hoursDataPerCampaign}
-                  onChange={(event) => setHoursDataPerCampaign(event.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="hAssets" className="flex items-center gap-2">
-                  <Clock size={16} className="text-accent" /> Hours per workflow preparing content and follow-up
-                </Label>
-                <Input
-                  id="hAssets"
-                  type="number"
-                  inputMode="decimal"
-                  min={0}
-                  step="any"
-                  placeholder="e.g. 5"
-                  value={hoursAssetsPerCampaign}
-                  onChange={(event) => setHoursAssetsPerCampaign(event.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="tools" className="flex items-center gap-2">
-                  <Wrench size={16} className="text-accent" /> Current monthly software spend ({currency})
-                </Label>
-                <Input
-                  id="tools"
-                  type="number"
-                  inputMode="decimal"
-                  min={0}
-                  step="any"
-                  placeholder="e.g. 300"
-                  value={toolSpend}
-                  onChange={(event) => setToolSpend(event.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="freelancers" className="flex items-center gap-2">
-                  <DollarSign size={16} className="text-accent" /> Current monthly contractor or external-service spend ({currency})
-                </Label>
-                <Input
-                  id="freelancers"
-                  type="number"
-                  inputMode="decimal"
-                  min={0}
-                  step="any"
-                  placeholder="e.g. 1000"
-                  value={freelancerSpend}
-                  onChange={(event) => setFreelancerSpend(event.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="rate" className="flex items-center gap-2">
-                  <DollarSign size={16} className="text-accent" /> Your chosen hourly cost ({moneyLabel}/hour)
-                </Label>
-                <Input
-                  id="rate"
-                  type="number"
-                  inputMode="decimal"
-                  min={0}
-                  step="any"
-                  placeholder="e.g. 35"
-                  value={hourlyRate}
-                  onChange={(event) => setHourlyRate(event.target.value)}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-hero text-primary-foreground border-0 shadow-2xl overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-72 h-72 rounded-full bg-accent/10 blur-3xl" />
-            <CardContent className="p-8 space-y-5 relative">
-              <h3 className="font-display text-xl font-semibold">
-                Your current-workflow estimate
-              </h3>
+          {/* Results panel — brand pink */}
+          <div className="bg-accent-warm text-accent-foreground p-6 md:p-10 relative overflow-hidden">
+            <div aria-hidden className="absolute -bottom-20 -right-16 w-64 h-64 rounded-full bg-white/15 blur-3xl" />
+            <div className="relative space-y-5">
+              <h3 className="font-display text-xl font-semibold">Your current-workflow estimate</h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="p-4 rounded-lg bg-primary-foreground/5 border border-primary-foreground/10">
-                  <p className="text-xs uppercase tracking-wider text-primary-foreground/60 mb-1">
-                    Entered hours per month
-                  </p>
-                  <p className="text-2xl font-display font-bold">
-                    {estimate.monthlyHours.toFixed(1)}h
-                  </p>
+                <div className="p-4 rounded-xl bg-white/10 border border-white/20">
+                  <p className="text-xs uppercase tracking-wider opacity-70 mb-1">Entered hours per month</p>
+                  <p className="text-2xl font-display font-bold">{estimate.monthlyHours.toFixed(1)}h</p>
                 </div>
-                <div className="p-4 rounded-lg bg-primary-foreground/5 border border-primary-foreground/10">
-                  <p className="text-xs uppercase tracking-wider text-primary-foreground/60 mb-1">
-                    Entered team-time cost
-                  </p>
-                  <p className="text-2xl font-display font-bold">
-                    {fmt(estimate.monthlyTeamTimeCost)}
-                  </p>
+                <div className="p-4 rounded-xl bg-white/10 border border-white/20">
+                  <p className="text-xs uppercase tracking-wider opacity-70 mb-1">Entered team-time cost</p>
+                  <p className="text-2xl font-display font-bold">{fmt(estimate.monthlyTeamTimeCost)}</p>
                 </div>
               </div>
 
-              <div className="p-5 rounded-lg bg-primary-foreground/5 border border-primary-foreground/10">
-                <p className="text-xs uppercase tracking-wider text-primary-foreground/60 mb-1">
-                  Total current monthly estimate
-                </p>
-                <p className="text-3xl md:text-4xl font-display font-bold text-gradient">
-                  {fmt(estimate.monthlyCurrentCost)}
-                </p>
-                <p className="text-xs text-primary-foreground/60 mt-1">
-                  {fmt(estimate.annualCurrentCost)} annualised from your entries
+              <div className="p-5 rounded-xl bg-white/10 border border-white/20">
+                <p className="text-xs uppercase tracking-wider opacity-70 mb-1">Total current monthly estimate</p>
+                <p className="text-3xl md:text-4xl font-display font-bold">{fmt(estimate.monthlyCurrentCost)}</p>
+                <p className="text-xs opacity-70 mt-1">{fmt(estimate.annualCurrentCost)} annualized from your entries</p>
+              </div>
+
+              <div className="p-5 rounded-xl bg-white/15 border border-white/30">
+                <p className="text-xs uppercase tracking-wider opacity-80 mb-1">Published Velocity Vision Growth price</p>
+                <p className="text-xl font-display font-bold">{growthPrice.formatted} per month</p>
+                <p className="text-xs opacity-75 mt-2 leading-relaxed">
+                  Illustrative cost difference: {fmt(estimate.illustrativeDifference)} per month — your entered monthly estimate minus the published Growth price. This is a transparent price comparison, not a savings calculation.
                 </p>
               </div>
 
-              <div className="p-4 rounded-lg bg-accent/15 border border-accent/30">
-                <p className="text-xs uppercase tracking-wider text-primary-foreground/70 mb-1">
-                  Published Velocity Vision Growth price
-                </p>
-                <p className="text-xl font-display font-bold">
-                  {growthPrice.formatted} per month
-                </p>
-                <p className="text-xs text-primary-foreground/65 mt-2 leading-relaxed">
-                  This is a price reference, not a savings calculation. Review the included functionality and decide which current costs, if any, are genuinely replaced in your own organization.
-                </p>
-              </div>
-
-              <div className="pt-2 space-y-3">
-                <Button variant="hero" size="lg" className="w-full" asChild>
-                  <Link to="/pricing">
-                    Review full pricing <ArrowRight size={18} />
-                  </Link>
+              <div className="pt-1 space-y-3">
+                <Button size="lg" className="w-full bg-white text-accent-warm hover:bg-white/90 font-bold shadow-lg" asChild>
+                  <Link to="/pricing">Review full pricing <ArrowRight size={18} /></Link>
                 </Button>
                 <Button variant="hero-outline" size="lg" className="w-full" asChild>
                   <Link to="/features">Review included features</Link>
                 </Button>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+          </div>
+        </motion.div>
 
         <p className="text-xs text-muted-foreground mt-6 max-w-3xl">
           Arithmetic is based solely on the figures entered by the visitor. Velocity Vision does not guarantee cost savings, staff-time reductions, tool replacement, contractor replacement or any commercial outcome.

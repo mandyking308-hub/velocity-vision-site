@@ -2,14 +2,15 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import HeroSection from "@/components/HeroSection";
-import EmailIntegrationsStrip from "@/components/EmailIntegrationsStrip";
-import CampaignChannelsStrip from "@/components/CampaignChannelsStrip";
-import ProblemProof from "@/components/ProblemProof";
-import CampaignCapabilities from "@/components/CampaignCapabilities";
-import HowItWorksPreview from "@/components/HowItWorksPreview";
+import CorePillars from "@/components/CorePillars";
+import ControlFlow from "@/components/ControlFlow";
+import SixSteps from "@/components/SixSteps";
+import SocialBufferSection from "@/components/SocialBufferSection";
+import GovernanceSection from "@/components/GovernanceSection";
 import WorkflowSavings from "@/components/WorkflowSavings";
 import PricingTeaser from "@/components/PricingTeaser";
-import AudienceSplit from "@/components/AudienceSplit";
+import CampaignChannelsStrip from "@/components/CampaignChannelsStrip";
+import EmailIntegrationsStrip from "@/components/EmailIntegrationsStrip";
 import SecurityTrust from "@/components/SecurityTrust";
 import GlobalStrip from "@/components/GlobalStrip";
 import HomeFAQ from "@/components/HomeFAQ";
@@ -19,7 +20,7 @@ const Index = () => (
   <>
     <SEO
       title="Velocity Vision — Customer-controlled B2B commercial workspace"
-      description="Self-serve B2B software for customer-provided business data, editable AI-assisted drafts, sender verification, governed activation controls, follow-up records and early opportunity administration."
+      description="Self-serve B2B software for approved prospect data, editable AI-assisted drafts, connected Buffer social publishing, governed activation controls, follow-up records and early opportunity administration."
       path="/"
       jsonLd={{
         "@context": "https://schema.org",
@@ -43,7 +44,7 @@ const Index = () => (
             operatingSystem: "Web",
             url: "https://velocity-outreach.com",
             description:
-              "Self-serve software for customer-provided business data, editable AI-assisted drafts, governed activation controls, follow-up records and early opportunity administration.",
+              "Self-serve software for customer-provided business data, editable AI-assisted drafts, connected Buffer social publishing, governed activation controls, follow-up records and early opportunity administration.",
           },
         ],
       }}
@@ -51,44 +52,25 @@ const Index = () => (
     <Navbar />
     <main>
       <HeroSection />
-      <div className="panel-wrap">
-        <div className="panel-pink">
-          <AudienceSplit />
-        </div>
-      </div>
+      <CorePillars />
+      <ControlFlow />
       <div className="panel-wrap">
         <div className="panel-blue">
-          <HowItWorksPreview />
+          <SixSteps />
         </div>
       </div>
       <div className="panel-wrap">
         <div className="panel-pink">
-          <ProblemProof />
+          <SocialBufferSection />
         </div>
       </div>
-      <div className="panel-wrap">
-        <div className="panel-pink">
-          <CampaignChannelsStrip />
-        </div>
-      </div>
-      <CampaignCapabilities />
+      <GovernanceSection />
       <WorkflowSavings />
       <PricingTeaser />
-      <div className="panel-wrap">
-        <div className="panel-blue">
-          <EmailIntegrationsStrip />
-        </div>
-      </div>
-      <div className="panel-wrap">
-        <div className="panel-blue">
-          <SecurityTrust />
-        </div>
-      </div>
-      <div className="panel-wrap">
-        <div className="panel-pink">
-          <GlobalStrip />
-        </div>
-      </div>
+      <CampaignChannelsStrip />
+      <EmailIntegrationsStrip />
+      <SecurityTrust />
+      <GlobalStrip />
       <HomeFAQ />
       <FinalCTA />
     </main>
