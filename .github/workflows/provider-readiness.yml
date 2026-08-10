@@ -29,5 +29,4 @@ jobs:
         run: bun run audit:provider
 
       - name: Build production site
-        if: always()
         run: bun run build
