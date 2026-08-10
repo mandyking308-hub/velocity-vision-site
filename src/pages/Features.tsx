@@ -14,15 +14,15 @@ const groups = [
     ["Quality and duplicate flags", "Surface missing fields, invalid formats, duplicates and records requiring customer review. These labels are operational aids, not legal approval."],
     ["Customer-reviewed segments", "Create segments from reviewed records without treating a software label as lawful-basis or recipient-suitability approval."],
   ]},
-  { label: "Guided first campaign", features: [
+  { label: "Campaign creation", features: [
     ["First-Campaign Copilot", "Answer a short brief and prepare a complete editable campaign pack from the customer-provided goal, audience, offer and tone."],
-    ["First Campaign Launchpad", "See campaign-specific progress across brief, data, content, human approval, activation preparation and follow-up."],
-    ["Full campaign-pack generation", "Campaign Credits currently fund the live full campaign-pack generator. Sending and data review are governed separately."],
+    ["First Campaign Launchpad", "See campaign-specific progress across brief, data, complete campaign assets, human approval, activation preparation and follow-up."],
+    ["Full campaign-pack generation", "Create strategy, landing & offer copy, email sequences, a social pack, press release, video scripts, paid-ad copy and lead capture from one brief. Campaign Credits currently fund the live full-pack generator; sending and data review are governed separately."],
   ]},
   { label: "Activation preparation", features: [
     ["Preflight for campaign preparation", "Check selected campaign, content, eligible records, current legal acceptance, human approval and sample-data status before preparing leads."],
     ["Lead preparation, not sending", "Activation preparation creates campaign leads. It does not send email and does not consume Campaign Credits."],
-    ["Customer-controlled overrides", "Records needing review or carrying risk remain visible for customer assessment; blocked or suppressed records remain excluded by current platform rules."],
+    ["Customer-controlled channel use", "Approved email can move through governed sending, approved social can be handed to the customer's Buffer account, and the remaining campaign assets stay under customer control for use in the channels they choose."],
   ]},
   { label: "Live sending controls", features: [
     ["Paid-plan send ceilings", "Normal ceilings are 20/day Starter, 50/day Growth and 100/day Agency; Free Preview has zero live sending."],
@@ -45,7 +45,7 @@ const groups = [
     ["No automatic sending", "Cadence dates organize recurring work. Every run remains customer-controlled and still passes the applicable send-time checks."],
   ]},
   { label: "Agency Workspace", features: [
-    ["Isolated client workspaces", "Keep authorized client data, drafts, sender settings, replies and pipeline records separated by workspace."],
+    ["Isolated client workspaces", "Keep authorized client data, campaign packs, sender settings, replies and pipeline records separated by workspace."],
     ["Pooled Campaign Credits", "Use the Agency plan's 250 monthly Campaign Credits across isolated client workspaces."],
     ["Account-wide visibility", "Review account-wide daily send usage plus cross-client pipeline and Outcome Funnel records. No seat management or cross-seat pooled-send enforcement is claimed."],
   ]},
@@ -58,10 +58,10 @@ const groups = [
 
 export default function Features() {
   return <>
-    <SEO title="Features — Customer-controlled B2B software | Velocity Vision" description="Velocity Vision features for authorized business data review, full campaign-pack generation, activation preparation, governed sending, reply intent, meetings, pipeline, Outcome Funnel and agency workspaces." path="/features" />
+    <SEO title="Features — Complete customer-controlled campaigns | Velocity Vision" description="Velocity Vision combines approved business data, complete campaign-pack generation, controlled activation, governed sending, Buffer social handoff, reply intent, meetings, pipeline and Outcome Funnel records in one workspace." path="/features" />
     <Navbar />
     <main className="pt-24">
-      <section className="section-padding bg-hero"><div className="max-w-5xl mx-auto"><motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}><p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Features</p><h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">One customer-controlled workspace from authorized data to recorded outcomes</h1><p className="text-primary-foreground/75 text-lg mb-5 max-w-3xl">Prepare editable AI-assisted drafts, record approvals, prepare campaign leads, use governed paid-plan sending, triage replies and track stored outcomes.</p><p className="text-primary-foreground/70 text-sm mb-8 max-w-3xl">Velocity Vision does not scrape contacts, sell lists, provide managed campaigns, send automatically, run A/B experiments or guarantee compliance, deliverability, replies, sales, pipeline or revenue.</p><Button variant="hero" size="lg" asChild><Link to="/auth">Start Free Preview <ArrowRight size={18} /></Link></Button></motion.div></div></section>
+      <section className="section-padding bg-hero"><div className="max-w-5xl mx-auto"><motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}><p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Features</p><h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">Build the complete campaign, activate it with control, and follow through</h1><p className="text-primary-foreground/75 text-lg mb-5 max-w-3xl">Start with approved business data and one brief. Generate the campaign strategy and working assets, review them, choose the right activation route, manage replies and keep early pipeline visible in the same workspace.</p><p className="text-primary-foreground/70 text-sm mb-8 max-w-3xl">Velocity Vision does not scrape contacts, sell lists, provide managed campaigns, send automatically, run A/B experiments or guarantee compliance, deliverability, replies, sales, pipeline or revenue.</p><Button variant="hero" size="lg" asChild><Link to="/auth">Start Free Preview <ArrowRight size={18} /></Link></Button></motion.div></div></section>
       <div className="panel-wrap"><div className="panel-blue"><section className="section-padding"><div className="max-w-7xl mx-auto space-y-14">{groups.map((group, index) => <motion.div key={group.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, delay: index * 0.02 }}><p className="font-semibold text-sm uppercase tracking-widest mb-4 opacity-90">{group.label}</p><div className="grid grid-cols-1 md:grid-cols-3 gap-5">{group.features.map(([title, value]) => <div key={title} className="bg-white border border-white/40 rounded-xl p-6 shadow-card text-foreground"><h2 className="font-display font-semibold mb-2">{title}</h2><p className="text-sm leading-relaxed opacity-90">{value}</p></div>)}</div></motion.div>)}</div></section></div></div>
       <section className="section-padding bg-hero text-center"><div className="max-w-3xl mx-auto"><h2 className="text-3xl md:text-5xl font-display font-bold text-primary-foreground mb-5">Review the exact service level before purchase</h2><p className="text-primary-foreground/75 text-lg mb-8">Pricing shows the current plan limits, Campaign Credits, billing cadence, sending ceilings and optional Premium Human Review.</p><Button variant="hero" size="lg" asChild><Link to="/pricing">See pricing <ArrowRight size={18} /></Link></Button></div></section>
     </main>
