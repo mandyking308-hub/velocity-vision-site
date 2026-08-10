@@ -75,6 +75,8 @@ const WorkflowSavings = () => {
     };
   }, [values, growthPrice.amount]);
 
+  const hasAnyInput = useMemo(() => Object.values(values).some((raw) => raw.trim() !== ""), [values]);
+
   const fields: Array<{ key: keyof typeof EMPTY; id: string; label: string; icon: typeof Clock; placeholder: string }> = [
     { key: "campaigns", id: "campaigns", label: "Campaign workflows per month", icon: Calculator, placeholder: "e.g. 4" },
     { key: "hoursDataPerCampaign", id: "hData", label: "Hours per workflow preparing and reviewing data", icon: Clock, placeholder: "e.g. 3" },
@@ -185,9 +187,15 @@ const WorkflowSavings = () => {
               <div className="p-5 rounded-xl bg-white/15 border border-white/30">
                 <p className="text-xs uppercase tracking-wider opacity-80 mb-1">Published Velocity Vision Growth price</p>
                 <p className="text-xl font-display font-bold">{growthPrice.formatted} per month</p>
-                <p className="text-xs opacity-75 mt-2 leading-relaxed">
-                  Illustrative cost difference: {fmt(estimate.illustrativeDifference)} per month — your entered monthly estimate minus the published Growth price. This is a transparent price comparison, not a savings calculation.
-                </p>
+                {hasAnyInput ? (
+                  <p className="text-xs opacity-75 mt-2 leading-relaxed">
+                    Illustrative cost difference: {fmt(estimate.illustrativeDifference)} per month — your entered monthly estimate minus the published Growth price. This is a transparent price comparison, not a savings calculation.
+                  </p>
+                ) : (
+                  <p className="text-xs opacity-75 mt-2 leading-relaxed">
+                    Enter your figures to compare your current monthly estimate with the published Growth price.
+                  </p>
+                )}
               </div>
 
               <div className="pt-1 space-y-3">
