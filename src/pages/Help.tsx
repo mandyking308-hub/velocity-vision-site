@@ -9,16 +9,17 @@ import { ArrowRight } from "lucide-react";
 
 const sections = [
   { title: "Getting started", items: [
-    ["How do I start?", "Create a workspace, upload authorized business data, review the workspace flags, create a campaign pack, record human approval and prepare eligible records as campaign leads. Free Preview cannot send live outreach."],
+    ["How do I start?", "Create a workspace, upload authorized business data, review the workspace flags, create a complete campaign pack, record human approval and prepare eligible records as campaign leads. Free Preview cannot send live outreach."],
     ["Do I need perfectly formatted data?", "No. The workspace can surface duplicates, missing fields, invalid formats and records requiring review. Those labels support customer assessment and are not legal approval."],
-    ["What is a sensible first test?", "Use a small set of business records your organization is authorized to process, confirm source and suppression status, and review the first workflow before any paid live sending."],
+    ["What is a sensible first test?", "Use a small set of business records your organization is authorized to process, confirm source and suppression status, generate the first complete campaign pack and review the workflow before any paid live sending."],
   ]},
   { title: "Data Vault", items: [
     ["What does ‘eligible under checks’ mean?", "It means a record passed the current workspace-format, duplicate, blocking and quality checks. It does not establish lawful basis, consent, recipient suitability, deliverability or legal compliance."],
     ["What happens after upload?", "Records are mapped and can be checked for duplicates, missing fields, invalid formats and other review issues. The customer decides whether records remain, are corrected, suppressed or excluded."],
   ]},
   { title: "Campaign packs and Campaign Credits", items: [
-    ["What does AI generate?", "The full campaign-pack generator prepares editable email, social, press and video drafts from the customer brief. Outputs remain drafts until the customer reviews them."],
+    ["What does the full campaign-pack generator create?", "From one customer brief, the current campaign pack can prepare editable strategy, landing & offer copy, email sequences, a social pack, press release, video scripts, paid-ad copy and lead capture. Outputs remain drafts until the customer reviews them."],
+    ["How does social activation work?", "Approved social text can be handed to the customer's own Buffer account as a draft, into the queue or scheduled for later. Velocity Vision does not auto-publish social content."],
     ["What uses Campaign Credits today?", "The current live credit-priced action is full campaign-pack generation. Data review, activation preparation and individual email/contact sends are not charged as Campaign Credits."],
     ["Can I regenerate a Free Preview pack?", "Free Preview is capped at one full campaign pack. It cannot generate a second full pack and does not accept credit top-ups. Compare paid plans to continue full-pack generation."],
   ]},
@@ -40,17 +41,17 @@ const sections = [
     ["How do payment problems get resolved?", "Payment fulfilment is driven by the configured provider webhook. If Billing does not update after a successful payment, contact support with the date, amount and account email. Never send card numbers, API keys or other credentials."],
   ]},
   { title: "Agency Workspace", items: [
-    ["How are clients kept separate?", "Each client workspace keeps its authorized records, drafts, sender settings, replies and pipeline records isolated. Plan billing and pooled Campaign Credits remain account-level."],
+    ["How are clients kept separate?", "Each client workspace keeps its authorized records, campaign packs, sender settings, replies and pipeline records isolated. Plan billing and pooled Campaign Credits remain account-level."],
     ["What does Agency account-wide sending mean?", "Agency shows account-wide daily send usage across client workspaces and has a normal 100/day plan ceiling for the sending account. It does not claim seat management or cross-seat pooled-send enforcement."],
   ]},
 ];
 
 export default function Help() {
   return <>
-    <SEO title="Velocity Vision Help Centre" description="Product guidance for Velocity Vision data review, campaign packs, activation preparation, governed sending, replies, billing and Agency Workspace." path="/help" />
+    <SEO title="Velocity Vision Help Centre" description="Product guidance for Velocity Vision approved data, complete campaign packs, controlled activation, governed sending, Buffer social handoff, replies, billing and Agency Workspace." path="/help" />
     <Navbar />
     <main className="pt-24">
-      <section className="section-padding bg-hero"><div className="max-w-4xl mx-auto"><motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}><p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Product guidance</p><h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-4">Velocity Vision Help Centre</h1><p className="text-primary-foreground/75 text-lg">Current guidance for the customer-controlled workflow, plan limits, Campaign Credits, sending and support.</p></motion.div></div></section>
+      <section className="section-padding bg-hero"><div className="max-w-4xl mx-auto"><motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}><p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Product guidance</p><h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-4">Velocity Vision Help Centre</h1><p className="text-primary-foreground/75 text-lg">Current guidance from approved data and campaign generation through activation, replies, pipeline, plan limits, Campaign Credits and support.</p></motion.div></div></section>
       <div className="panel-wrap"><div className="panel-pink"><section className="section-padding"><div className="max-w-4xl mx-auto space-y-6">{sections.map((section) => <div key={section.title} className="bg-white rounded-xl border border-white/40 shadow-card p-6 md:p-8 text-foreground"><h2 className="text-2xl font-display font-bold mb-2">{section.title}</h2><Accordion type="single" collapsible>{section.items.map(([q, a], index) => <AccordionItem key={q} value={`${section.title}-${index}`}><AccordionTrigger className="text-left font-display">{q}</AccordionTrigger><AccordionContent className="text-foreground/80 leading-relaxed">{a}</AccordionContent></AccordionItem>)}</Accordion></div>)}</div></section></div></div>
       <section className="section-padding bg-hero"><div className="max-w-3xl mx-auto text-center"><h2 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground mb-4">Need account, billing or compliance support?</h2><p className="text-primary-foreground/75 text-lg mb-8">Use the Contact page and select the route that matches the enquiry. Never include passwords, API keys, app passwords or webhook secrets.</p><Button variant="hero" size="lg" asChild><Link to="/contact">Open Contact page <ArrowRight size={18} /></Link></Button></div></section>
     </main><Footer />
