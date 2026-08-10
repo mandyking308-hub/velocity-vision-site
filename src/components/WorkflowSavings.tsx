@@ -187,7 +187,6 @@ const WorkflowSavings = () => {
               <div className="p-5 rounded-xl bg-white/15 border border-white/30">
                 <p className="text-xs uppercase tracking-wider opacity-80 mb-1">Published Velocity Vision Growth price</p>
                 <p className="text-xl font-display font-bold">{growthPrice.formatted} per month</p>
-                <p className="text-xs opacity-75 mt-2 leading-relaxed">
                 {hasAnyInput ? (
                   <p className="text-xs opacity-75 mt-2 leading-relaxed">
                     Illustrative cost difference: {fmt(estimate.illustrativeDifference)} per month — your entered monthly estimate minus the published Growth price. This is a transparent price comparison, not a savings calculation.
