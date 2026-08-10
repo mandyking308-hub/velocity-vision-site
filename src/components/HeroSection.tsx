@@ -39,7 +39,7 @@ const HeroSection = () => (
         </p>
         <h1 className="font-display font-bold leading-[1.05] tracking-tight text-4xl md:text-5xl lg:text-[3.6rem] mb-6">
           Build the whole campaign.{" "}
-          <span className="inline-block bg-white text-accent-warm px-3 md:px-4 rounded-2xl whitespace-nowrap">
+          <span className="inline-block bg-white text-accent-warm px-3 md:px-4 rounded-2xl">
             Run it from one workspace.
           </span>
         </h1>
