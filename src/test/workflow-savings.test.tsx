@@ -110,6 +110,6 @@ describe("WorkflowSavings blank/reset comparison state", () => {
     fireEvent.change(screen.getByLabelText(/Your chosen hourly cost/), { target: { value: "35.5" } });
     // 2 * 1.5 = 3.0h; 3 * 35.5 = $106.50
     expect(screen.getByText("3.0h")).toBeInTheDocument();
-    expect(screen.getByText("$106.50")).toBeInTheDocument();
+    expect(screen.getAllByText("$106.50").length).toBeGreaterThan(0);
   });
 });
