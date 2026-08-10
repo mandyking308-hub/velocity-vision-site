@@ -7,9 +7,9 @@ const steps = [
   { number: "01", title: "Connect", desc: "Bring your approved data and verify your sender." },
   { number: "02", title: "Create", desc: "Generate a complete campaign pack from one brief — strategy, email, landing & offer, PR, social, video, ads and lead capture." },
   { number: "03", title: "Review", desc: "Edit every asset before it leaves draft." },
-  { number: "04", title: "Activate", desc: "Send approved email through governed sending, hand social to your Buffer account, and use the other assets in your channels — your call." },
-  { number: "05", title: "Respond", desc: "Triage replies, record follow-ups, hand off meetings." },
-  { number: "06", title: "Learn", desc: "Watch the Outcome Funnel record what happened." },
+  { number: "04", title: "Activate", desc: "Send approved email through governed sending, hand social to your Buffer account, and use the other assets in your chosen channels." },
+  { number: "05", title: "Respond", desc: "Triage replies, record follow-ups and hand off meetings." },
+  { number: "06", title: "Learn", desc: "Watch the Outcome Funnel record what happened and inform the next campaign." },
 ];
 
 const SixSteps = () => (
@@ -25,7 +25,7 @@ const SixSteps = () => (
         <div className="max-w-2xl">
           <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-90">The workflow</p>
           <h2 className="text-3xl md:text-5xl font-display font-bold leading-tight">
-            From prospect to conversation.
+            From brief to campaign to response.
           </h2>
         </div>
         <Button asChild className="bg-white text-accent hover:bg-white/90 font-bold self-start md:self-auto shadow-lg">
