@@ -1,0 +1,8 @@
+/* Homepage content must never depend on IntersectionObserver to become readable.
+   Framer Motion can still animate after intersection, but its initial opacity: 0
+   state is overridden so stitched screenshots, crawlers and fast scrolling do
+   not produce large blank sections. */
+.homepage-static [style*="opacity: 0"] {
+  opacity: 1 !important;
+  transform: none !important;
+}
