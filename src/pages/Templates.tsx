@@ -9,36 +9,36 @@ import { ArrowRight, Target, Rocket, Heart, Tag, RefreshCw } from "lucide-react"
 const templates = [
   {
     icon: Target,
-    name: "Business relationship workflow",
-    desc: "A reusable structure for customer-authorized business records, editable outreach drafts, activation review and follow-up records.",
+    name: "Business relationship campaign",
+    desc: "A reusable structure connecting customer-authorized business records, the campaign brief, editable assets, activation review and follow-up records.",
   },
   {
     icon: Rocket,
-    name: "Product announcement workflow",
-    desc: "Editable email, social, press and video drafts prepared from a customer brief for review before scheduling, distribution or activation.",
+    name: "Product launch campaign",
+    desc: "Start from one brief and prepare the campaign strategy, landing & offer copy, email, social, press, video, paid-ad copy and lead capture for review before use.",
   },
   {
     icon: Heart,
-    name: "Existing-contact education workflow",
-    desc: "A customer-reviewed sequence structure for existing business relationships, with follow-up and reply-state records.",
+    name: "Existing-contact education campaign",
+    desc: "A customer-reviewed campaign structure for existing business relationships, combining relevant campaign assets with follow-up and reply-state records.",
   },
   {
     icon: Tag,
-    name: "Time-limited offer workflow",
-    desc: "Editable offer and reminder drafts linked to customer-reviewed records, timing settings and activation controls.",
+    name: "Time-limited offer campaign",
+    desc: "Connect offer and landing copy, email and supporting campaign assets to customer-reviewed records, timing settings and activation controls.",
   },
   {
     icon: RefreshCw,
-    name: "Existing-relationship review workflow",
-    desc: "A structure for reviewing source, suppression status and suitability before deciding whether an existing business relationship should be contacted again.",
+    name: "Existing-relationship review campaign",
+    desc: "Review source, suppression status and suitability before deciding whether an existing business relationship should enter a new customer-controlled campaign.",
   },
 ];
 
 const Templates = () => (
   <>
     <SEO
-      title="Templates — Customer-reviewed workflow structures | Velocity Vision"
-      description="Reusable workflow structures for customer-authorized data, editable AI-assisted drafts, sender verification, activation review, follow-up records and early opportunity administration."
+      title="Campaign Templates — Reusable customer-controlled structures | Velocity Vision"
+      description="Reusable campaign structures connecting customer-authorized data, a complete campaign pack, activation review, follow-up and early opportunity records."
       path="/templates"
     />
     <Navbar />
@@ -54,10 +54,10 @@ const Templates = () => (
               Templates
             </p>
             <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">
-              Reusable structures for customer-controlled workflows
+              Reusable campaign structures, not disconnected copy templates
             </h1>
             <p className="text-primary-foreground/75 text-lg mb-5 max-w-3xl">
-              Each template provides an editable structure for customer-authorized records, AI-assisted drafts, sender settings, activation review and follow-up administration.
+              Start from a reviewed campaign structure that keeps the audience, brief, working assets, activation choices and follow-up connected in the same workspace.
             </p>
             <p className="text-primary-foreground/70 text-sm mb-8 max-w-3xl">
               Templates are not prospect databases, legal approval, managed campaigns or guaranteed commercial methods. Customers review and approve every record, output and activation decision.
