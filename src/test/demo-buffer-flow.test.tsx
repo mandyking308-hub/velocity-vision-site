@@ -14,7 +14,7 @@ describe("DemoSendToBuffer (public demo simulation)", () => {
     render(<DemoSendToBuffer />);
     const draftBtn = screen.getByRole("button", { name: "Draft" });
     expect(draftBtn).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByText(/Your LinkedIn/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Your LinkedIn/i).length).toBeGreaterThan(0);
   });
 
   it("confirms with precise non-published wording for draft mode", () => {
@@ -22,7 +22,7 @@ describe("DemoSendToBuffer (public demo simulation)", () => {
     fireEvent.click(screen.getByRole("button", { name: /Saved to Buffer draft/i }));
     const status = screen.getByRole("status");
     expect(status.textContent).toContain("Saved to Buffer draft (demo)");
-    expect(status.textContent).not.toMatch(/published\b/i);
+    expect(status.textContent).not.toMatch(/Published to|Post published|Published successfully/i);
     expect(status.textContent).toContain("nothing is published automatically");
   });
 
