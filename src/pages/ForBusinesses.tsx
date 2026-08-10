@@ -16,10 +16,10 @@ import {
   Eye,
   Mail,
   Share2,
-  Newspaper,
   Megaphone,
   Layers,
   CheckCircle2,
+  ListChecks,
 } from "lucide-react";
 
 const essentials = [
@@ -51,40 +51,40 @@ const essentials = [
   {
     icon: Eye,
     title: "Keep activity visible",
-    desc: "View data preparation, approved activation, follow-up and early pipeline in the same customer-controlled software environment.",
+    desc: "View data preparation, complete campaign assets, approved activation, follow-up and early pipeline in the same customer-controlled software environment.",
   },
 ];
 
 const outputs = [
   {
+    icon: Megaphone,
+    title: "Complete campaign pack",
+    desc: "Create strategy, landing & offer copy, email sequences, social content, a press release, video scripts, paid-ad copy and lead capture from one brief.",
+  },
+  {
     icon: Mail,
-    title: "Email sequence drafts",
-    desc: "Prepare editable multi-step email drafts for customer review before any activation decision.",
+    title: "Governed email activation",
+    desc: "Review and approve email sequences before eligible paid-plan sending, with sender and send-safety checks applied at activation and send time.",
   },
   {
     icon: Share2,
-    title: "Social content drafts",
-    desc: "Generate editable social posts, hooks and platform variants from a customer brief.",
+    title: "Social handoff through Buffer",
+    desc: "Review social drafts, then hand approved text to your own Buffer account as a draft, into your queue or scheduled for later.",
   },
   {
-    icon: Newspaper,
-    title: "Press release drafts",
-    desc: "Create structured announcement drafts that the customer reviews, edits and distributes through its chosen route.",
-  },
-  {
-    icon: Megaphone,
-    title: "Campaign workspace",
-    desc: "Keep the brief, approved segment, draft assets and activation settings together for customer review.",
+    icon: ListChecks,
+    title: "Lead capture",
+    desc: "Keep the campaign's lead-capture form structure and thank-you copy connected to the same brief and campaign workspace.",
   },
   {
     icon: Inbox,
     title: "Follow-up records",
-    desc: "Maintain next-action and reply states without treating software suggestions as guaranteed sales opportunities.",
+    desc: "Maintain reply, next-action and follow-up states without treating software suggestions as guaranteed sales opportunities.",
   },
   {
     icon: GitBranch,
-    title: "Opportunity records",
-    desc: "Record customer-selected opportunities and export them when a fuller CRM process is required.",
+    title: "Pipeline and Outcome Funnel",
+    desc: "Record customer-selected opportunities and review stored progression from contacted through reply, meeting, opportunity and won states.",
   },
 ];
 
@@ -97,7 +97,7 @@ const replaces = [
   {
     icon: CheckCircle2,
     title: "Unclear approval steps",
-    desc: "Separate draft generation, data review, sender verification and customer activation approval.",
+    desc: "Separate campaign generation, data review, sender verification and customer activation approval.",
   },
   {
     icon: Inbox,
@@ -114,8 +114,8 @@ const replaces = [
 const ForBusinesses = () => (
   <>
     <SEO
-      title="For Businesses — Customer-controlled commercial workspace | Velocity Vision"
-      description="A self-serve software workspace for businesses to organize their own data, prepare AI-assisted drafts, approve governed activation, manage follow-up and track early pipeline."
+      title="For Businesses — Complete customer-controlled campaigns | Velocity Vision"
+      description="A self-serve campaign workspace for businesses to organize approved data, create a complete campaign pack, choose controlled activation routes, manage replies and track early pipeline."
       path="/for-businesses"
     />
     <Navbar />
@@ -131,10 +131,10 @@ const ForBusinesses = () => (
               For businesses
             </p>
             <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">
-              A self-serve workspace for customer-controlled commercial activity
+              Build the complete campaign without stitching together the workflow
             </h1>
             <p className="text-primary-foreground/75 text-lg mb-5 max-w-3xl leading-relaxed">
-              Organize your own business data, prepare editable AI-assisted drafts, review safe segments, approve governed activation and keep follow-up and early pipeline in one software workspace.
+              Start with your approved business data and one campaign brief. Create the strategy and working assets, review everything, activate through the right channels, then manage replies and early pipeline from one workspace.
             </p>
             <p className="text-primary-foreground/70 text-sm mb-8 max-w-3xl leading-relaxed">
               Velocity Vision does not scrape contact data, sell lists, provide managed campaigns or send automatically. Your organization remains responsible for lawful basis, sender identity, content, suppression handling and every activation decision.
@@ -162,10 +162,10 @@ const ForBusinesses = () => (
                   Core software workflow
                 </p>
                 <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
-                  Structure the work without transferring customer responsibility
+                  From data to campaign to response, your team stays in control
                 </h2>
                 <p className="text-lg opacity-90">
-                  Velocity Vision provides software controls and editable drafts. Your team reviews the data, approves the content and decides what is activated.
+                  Velocity Vision connects the work in one system. Your team still reviews the data, approves the assets and decides what is activated.
                 </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -200,7 +200,7 @@ const ForBusinesses = () => (
                   Inside the workspace
                 </p>
                 <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
-                  Editable outputs and operational records
+                  Create the campaign, activate it, then manage what comes back
                 </h2>
                 <p className="text-lg opacity-90">
                   AI-assisted outputs remain drafts until your team reviews them. Recorded activity is operational information, not a promise of replies, sales or revenue.
