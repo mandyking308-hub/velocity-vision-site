@@ -14,18 +14,17 @@ import {
   Layers,
   Inbox,
   Eye,
-  Mail,
-  Share2,
-  Newspaper,
   GitBranch,
   CheckCircle2,
+  Megaphone,
+  Send,
 } from "lucide-react";
 
 const workspaceControls = [
   {
     icon: Layers,
     title: "Isolated client workspaces",
-    desc: "Keep each client's authorized data, draft content, sender settings, activation decisions and pipeline records in a separate workspace.",
+    desc: "Keep each client's authorized data, campaign pack, sender settings, activation decisions and pipeline records in a separate workspace.",
   },
   {
     icon: Coins,
@@ -56,32 +55,32 @@ const workspaceControls = [
 
 const softwareOutputs = [
   {
-    icon: Mail,
-    title: "Editable email drafts",
-    desc: "Prepare client-specific email sequence drafts for review before any activation decision.",
+    icon: Megaphone,
+    title: "Complete client campaign pack",
+    desc: "Turn each authorized client brief into strategy, landing & offer copy, email sequences, social content, a press release, video scripts, paid-ad copy and lead capture.",
   },
   {
-    icon: Share2,
-    title: "Editable social drafts",
-    desc: "Generate posts, hooks and variants from an authorized client brief while keeping outputs in draft.",
+    icon: Send,
+    title: "Controlled activation routes",
+    desc: "Use governed email sending for approved sequences, hand approved social content to the client's own Buffer account, and keep the remaining assets under agency/client control for distribution.",
   },
   {
-    icon: Newspaper,
-    title: "Editable press drafts",
-    desc: "Create announcement drafts that the agency and client review before distribution through their chosen route.",
+    icon: Inbox,
+    title: "Client-specific replies and follow-up",
+    desc: "Keep reply intent, referrals, out-of-office dates, reminders and next actions inside the correct client workspace.",
   },
   {
     icon: GitBranch,
-    title: "Follow-up and early pipeline records",
-    desc: "Record client-approved opportunities, stages and next actions without promising leads, replies, sales or revenue.",
+    title: "Pipeline and Outcome Funnel records",
+    desc: "Record client-approved opportunities, stages and next actions, then review stored progression without promising leads, sales or revenue.",
   },
 ];
 
 const responsibilities = [
   "The agency must have authority from each client to use the workspace and process the relevant data.",
   "Each client or authorized agency user must provide lawfully obtained business data and maintain suppression and opt-out records.",
-  "The correct client sender must be connected and verified before activation.",
-  "Every draft, segment and activation decision must be reviewed and approved by an authorized user.",
+  "The correct client sender must be connected and verified before live email activation.",
+  "Every campaign asset, segment and activation decision must be reviewed and approved by an authorized user.",
   "Velocity Vision does not scrape contacts, sell lists, operate managed campaigns or send automatically.",
   "Software controls do not guarantee legal compliance, deliverability, replies, pipeline or commercial outcomes.",
 ];
@@ -89,8 +88,8 @@ const responsibilities = [
 const ForAgencies = () => (
   <>
     <SEO
-      title="For Agencies — Isolated client workspaces | Velocity Vision"
-      description="A self-serve agency workspace with isolated client data, pooled Campaign Credits, governed activation controls, follow-up and early pipeline records."
+      title="For Agencies — Complete campaigns in isolated client workspaces | Velocity Vision"
+      description="A self-serve agency campaign workspace with isolated client data, complete campaign packs, pooled Campaign Credits, controlled activation routes, follow-up and early pipeline records."
       path="/for-agencies"
     />
     <Navbar />
@@ -106,10 +105,10 @@ const ForAgencies = () => (
               For agencies
             </p>
             <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">
-              One agency account with a separate software workspace for each client
+              Run complete client campaigns without mixing client workspaces
             </h1>
             <p className="text-primary-foreground/75 text-lg mb-5 max-w-3xl leading-relaxed">
-              Organize authorized client data, prepare editable AI-assisted drafts, apply governed activation controls and keep follow-up and early pipeline records separated by client.
+              Give each client a separate workspace for approved data, a complete campaign pack, controlled activation routes, replies and early pipeline — while keeping pooled Campaign Credits and account-level oversight.
             </p>
             <p className="text-primary-foreground/70 text-sm mb-8 max-w-3xl leading-relaxed">
               Velocity Vision supplies self-serve software, not agency delivery. The agency and its clients remain responsible for authority, lawful basis, data source, sender identity, content approval, suppression handling and every activation decision.
@@ -140,10 +139,10 @@ const ForAgencies = () => (
                   Agency workspace controls
                 </p>
                 <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
-                  Separate client activity while maintaining account-level oversight
+                  Separate every client's campaign while maintaining account-level oversight
                 </h2>
                 <p className="text-lg opacity-90">
-                  The product helps structure workspace separation and approval steps; it does not transfer the agency's or client's legal and operational responsibility to Velocity Vision.
+                  The product structures workspace separation and approval steps; it does not transfer the agency's or client's legal and operational responsibility to Velocity Vision.
                 </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -175,10 +174,10 @@ const ForAgencies = () => (
             <div className="max-w-7xl mx-auto">
               <div className="max-w-3xl mb-10">
                 <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">
-                  Software outputs
+                  Client campaign system
                 </p>
                 <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
-                  Draft materials and operational records remain under agency and client control
+                  Create the full pack, choose the activation route, then manage the response
                 </h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
