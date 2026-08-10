@@ -31,29 +31,29 @@ const capabilities = [
   },
   {
     icon: Sparkles,
-    title: "AI-assisted asset drafting",
+    title: "Complete campaign generation",
     overview:
-      "Generate editable campaign materials from a customer brief while keeping every output in draft until the customer reviews it.",
+      "Turn one customer brief into the campaign strategy and working assets while keeping every output editable until the customer reviews it.",
     features: [
-      "Email sequence drafts",
-      "Social post drafts",
-      "Press release drafts",
-      "Video scripts and follow-up copy",
+      "Strategy plus landing & offer copy",
+      "Email sequences plus social pack",
+      "Press release plus video scripts",
+      "Paid-ad copy plus lead capture",
     ],
-    workflow: "Brief → Generate → Review → Edit",
+    workflow: "Brief → Generate full pack → Review → Edit",
   },
   {
     icon: ShieldCheck,
-    title: "Governed activation",
+    title: "Controlled activation routes",
     overview:
-      "Connect and verify the customer's own sender, apply plan limits and require an explicit customer decision before anything is activated.",
+      "Connect and verify the customer's own sender for governed email, hand approved social content to the customer's own Buffer account, and keep the remaining campaign assets under customer control for distribution.",
     features: [
-      "Sender verification",
-      "Daily send limits",
-      "Risky-record controls",
-      "Customer approval before activation",
+      "Sender verification for live email",
+      "Daily send limits and send-time checks",
+      "Buffer handoff for approved social text",
+      "Customer approval before activation or handoff",
     ],
-    workflow: "Verify → Check → Approve → Activate",
+    workflow: "Verify → Review → Approve → Activate or hand off",
   },
   {
     icon: Inbox,
@@ -70,37 +70,37 @@ const capabilities = [
   },
   {
     icon: GitBranch,
-    title: "Early pipeline",
+    title: "Early pipeline and Outcome Funnel",
     overview:
-      "Move customer-selected warm contacts into an early pipeline and track stage, value and next action without presenting software activity as guaranteed revenue.",
+      "Move customer-selected warm contacts into an early pipeline and track stored progression without presenting software activity as guaranteed revenue.",
     features: [
       "Opportunity stages",
       "Value and status tracking",
-      "Activity history",
-      "CRM export when required",
+      "Meeting handoff and activity history",
+      "Outcome Funnel and CRM export when required",
     ],
-    workflow: "Qualify → Move → Track → Export",
+    workflow: "Qualify → Handoff → Track → Review outcomes",
   },
   {
     icon: Layers,
     title: "Agency workspaces",
     overview:
-      "Give agencies separate client workspaces with isolated data, customer-controlled activation, pooled Campaign Credits and account-wide visibility of send usage.",
+      "Give agencies separate client workspaces with isolated data, complete client campaign packs, customer-controlled activation, pooled Campaign Credits and account-wide visibility of send usage.",
     features: [
       "Isolated client workspaces",
       "Pooled Campaign Credits",
       "Account-wide send-usage visibility and the plan's daily send ceiling",
-      "Cross-workspace visibility",
+      "Cross-workspace pipeline and Outcome Funnel visibility",
     ],
-    workflow: "Create → Isolate → Govern → Review",
+    workflow: "Create → Isolate → Build → Govern → Review",
   },
 ];
 
 const Services = () => (
   <>
     <SEO
-      title="Platform Capabilities — Velocity Vision"
-      description="Explore the self-serve Velocity Vision software workspace: customer-provided data review, AI-assisted drafts, governed activation, follow-up and early pipeline."
+      title="Platform Capabilities — Complete campaign workspace | Velocity Vision"
+      description="Explore Velocity Vision: customer-provided data review, complete campaign-pack generation, controlled activation routes, governed sending, Buffer social handoff, follow-up and early pipeline."
       path="/services"
     />
     <Navbar />
@@ -125,10 +125,10 @@ const Services = () => (
               Platform capabilities
             </p>
             <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6 max-w-3xl">
-              One self-serve workspace for governed commercial activity
+              One workspace from approved data to complete campaign to response
             </h1>
             <p className="text-primary-foreground/75 text-lg max-w-3xl leading-relaxed">
-              Velocity Vision helps businesses organize their own contact data, prepare AI-assisted drafts, approve governed activation, manage follow-up and track early pipeline from one software workspace.
+              Velocity Vision helps businesses organize their own contact data, build a complete campaign pack from one brief, choose controlled activation routes, manage replies and track early pipeline from one software workspace.
             </p>
             <p className="text-primary-foreground/70 text-sm max-w-3xl mt-5 leading-relaxed">
               Velocity Vision does not scrape contact data, sell lists, provide managed campaigns or send automatically. Customers provide lawfully obtained business data, connect their own sender and remain responsible for every review, approval and activation decision.
