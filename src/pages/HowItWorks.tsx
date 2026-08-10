@@ -27,22 +27,22 @@ const steps = [
   {
     n: "04",
     title: "Connect and verify the customer's sender",
-    desc: "Configure the authorized mailbox or sender route and complete the applicable verification steps.",
+    desc: "Configure the authorized mailbox or sender route and complete the applicable verification steps before any live email activation.",
   },
   {
     n: "05",
-    title: "Prepare editable AI-assisted drafts",
-    desc: "Answer the Copilot brief and generate email, social, press and video drafts. Every output remains editable, and the Launchpad shows what is still outstanding.",
+    title: "Generate the complete campaign pack",
+    desc: "Answer one Copilot brief and create editable strategy, landing & offer copy, email sequences, social content, a press release, video scripts, paid-ad copy and lead capture. Every output remains editable.",
   },
   {
     n: "06",
-    title: "Set timing and cadence",
-    desc: "Configure one-off timing on any paid plan, or recurring cadence on Growth and Agency, subject to plan, provider rules and activation controls.",
+    title: "Choose channels, timing and cadence",
+    desc: "Decide how approved assets will be used: governed email sending, social handoff to the customer's own Buffer account, or customer-controlled use of the remaining assets. Configure one-off timing, or recurring cadence on Growth and Agency.",
   },
   {
     n: "07",
-    title: "Run preflight and review activation controls",
-    desc: "Work through the preflight readiness scorecard, apply plan limits and daily send allowances, then require an authorized-user decision before activation.",
+    title: "Run preflight and approve activation",
+    desc: "Work through the readiness scorecard, apply plan limits and daily send allowances, then require an authorized-user decision before eligible email activity is activated.",
   },
   {
     n: "08",
@@ -63,23 +63,25 @@ const steps = [
 
 const outputs = [
   "Data Vault",
-  "Quality and review flags",
+  "Campaign strategy",
+  "Landing & offer copy",
+  "Email sequence",
+  "Social pack",
+  "Press release",
+  "Video scripts",
+  "Paid-ad copy",
+  "Lead capture",
   "Sender verification",
-  "Editable email drafts",
-  "Editable social drafts",
-  "Editable press drafts",
-  "Editable video drafts",
-  "Cadence settings",
   "Follow-up records",
   "Early opportunity records",
-  "Automated activity summary",
+  "Outcome Funnel",
 ];
 
 const HowItWorks = () => (
   <>
     <SEO
-      title="How it works — Customer-controlled workflow | Velocity Vision"
-      description="The Velocity Vision workflow for customer-provided business data, record review, editable AI-assisted drafts, sender verification, authorized activation, follow-up records and early opportunity administration."
+      title="How it works — From data to complete campaign to response | Velocity Vision"
+      description="See how Velocity Vision moves from customer-provided business data and one brief to a complete campaign pack, customer-controlled activation, replies, meetings, pipeline and stored outcomes."
       path="/how-it-works"
     />
     <Navbar />
@@ -95,10 +97,10 @@ const HowItWorks = () => (
               How it works
             </p>
             <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">
-              AI-assisted drafts with customer-controlled activation
+              From approved data to complete campaign to response
             </h1>
             <p className="text-primary-foreground/75 text-lg mb-5 max-w-3xl">
-              Velocity Vision separates data review, draft preparation, sender verification, activation approval, follow-up records and early opportunity administration.
+              Start with the customer data and campaign brief, build the complete pack, review every asset, choose the right activation route, then manage replies and early pipeline from the same workspace.
             </p>
             <p className="text-primary-foreground/70 text-sm mb-8 max-w-3xl">
               Velocity Vision does not scrape contacts, sell lists, provide managed campaigns, send automatically or guarantee compliance, deliverability, replies, sales, pipeline or revenue.
@@ -126,7 +128,7 @@ const HowItWorks = () => (
                   The workflow
                 </p>
                 <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
-                  Ten documented steps from upload to measured outcomes
+                  Ten documented steps from data to measured outcomes
                 </h2>
                 <p className="text-lg opacity-90">
                   The customer remains responsible for data source, lawful basis, recipients, content, sender identity, suppression handling and every activation decision.
@@ -165,13 +167,13 @@ const HowItWorks = () => (
             <div className="max-w-5xl mx-auto">
               <div className="max-w-3xl mb-10">
                 <p className="font-semibold text-sm uppercase tracking-widest mb-3 opacity-80">
-                  Product outputs and records
+                  What lives in the workspace
                 </p>
                 <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
-                  Editable drafts and operational records in one workspace
+                  The campaign assets and operational records stay connected
                 </h2>
                 <p className="text-lg opacity-90">
-                  Outputs remain drafts until customer review. Recorded activity describes use of the workspace and is not a promised commercial result.
+                  Campaign assets remain drafts until customer review. Recorded activity describes use of the workspace and is not a promised commercial result.
                 </p>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
