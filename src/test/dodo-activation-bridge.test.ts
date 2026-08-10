@@ -348,3 +348,79 @@ describe("checkout refId contract", () => {
     expect(read("supabase/functions/dodo-webhook/index.ts")).toContain("campaign_id: meta.refId");
   });
 });
+
+// ── Launch manifest: seven live USD products (docs/dodo-launch-manifest.md) ──
+import { DODO_PRODUCT_CATALOG } from "../../supabase/functions/_shared/dodo";
+import { PRICE_CATALOGUE } from "@/lib/currency";
+
+describe("Dodo launch manifest (USD canonical catalogue)", () => {
+  it("covers exactly the seven launch products", () => {
+    expect(Object.keys(DODO_PRODUCT_CATALOG).sort()).toEqual([
+      "vv_agency_monthly", "vv_growth_monthly", "vv_human_review_oneoff",
+      "vv_starter_oneoff", "vv_topup_large", "vv_topup_medium", "vv_topup_small",
+    ]);
+  });
+
+  it("matches the public USD catalogue — Dodo map stays ID-only, never price-bearing", () => {
+    const expectedUsd: Record<string, number> = {
+      vv_starter_oneoff: 189,
+      vv_growth_monthly: 315,
+      vv_agency_monthly: 629,
+      vv_human_review_oneoff: 249,
+      vv_topup_small: 59,
+      vv_topup_medium: 149,
+      vv_topup_large: 349,
+    };
+    for (const [sku, usd] of Object.entries(expectedUsd)) {
+      expect(PRICE_CATALOGUE[sku as keyof typeof PRICE_CATALOGUE].USD).toBe(usd);
+    }
+    // No GBP/price leakage inside the Dodo fulfilment catalogue itself.
+    expect(JSON.stringify(DODO_PRODUCT_CATALOG)).not.toMatch(/GBP|£|149|249|279/);
+  });
+
+  it("fulfilment credits and recurrence match tier truth", () => {
+    expect(DODO_PRODUCT_CATALOG.vv_starter_oneoff).toMatchObject({ plan: "starter", credits: 25, recurring: false });
+    expect(DODO_PRODUCT_CATALOG.vv_growth_monthly).toMatchObject({ plan: "growth", credits: 80, recurring: true });
+    expect(DODO_PRODUCT_CATALOG.vv_agency_monthly).toMatchObject({ plan: "agency", credits: 250, recurring: true });
+    expect(DODO_PRODUCT_CATALOG.vv_topup_small.credits).toBe(25);
+    expect(DODO_PRODUCT_CATALOG.vv_topup_medium.credits).toBe(75);
+    expect(DODO_PRODUCT_CATALOG.vv_topup_large.credits).toBe(200);
+    expect(DODO_PRODUCT_CATALOG.vv_human_review_oneoff.credits).toBeUndefined();
+  });
+});
+
+// ── Webhook fulfilment invariants ──────────────────────────────────────────
+describe("dodo webhook fulfilment invariants", () => {
+  const hook = read("supabase/functions/dodo-webhook/index.ts");
+
+  it("grants recurring credits ONLY on activation/renewal — updated/plan_changed never grant", () => {
+    expect(hook).toContain('eventType === "subscription.active" || eventType === "subscription.renewed"');
+    expect(hook).not.toMatch(/eventType === "subscription\.(updated|plan_changed)"[^\n]*grant/i);
+  });
+
+  it("dedupes financially and per event so duplicate delivery cannot double-grant", () => {
+    expect(hook).toContain("dodo_payment:${externalId}");
+    expect(hook).toContain("dodo_sub:${subId}:${cycleKey}");
+    expect(hook).toContain('if ((dupErr as { code?: string }).code === "23505") return ok({ duplicate: true })');
+    expect(hook).toContain('if ((error as { code?: string }).code === "23505") return false');
+  });
+
+  it("a metadata-less updated/plan_changed event cannot wipe the stored plan or price", () => {
+    expect(hook).toContain("...(entry?.plan ? { plan: entry.plan } : {})");
+    expect(hook).toContain("...(productKey ? { price_id: productKey } : {})");
+    expect(hook).toContain("...(payload.product_id ? { product_id: payload.product_id } : {})");
+    expect(hook).not.toContain("plan: entry?.plan ?? null");
+  });
+
+  it("fulfils only after signature verification, never before", () => {
+    expect(hook.indexOf("verifyDodoWebhook")).toBeLessThan(hook.indexOf("handlePaymentSucceeded"));
+    expect(hook).toContain('return new Response("invalid signature", { status: 400 })');
+  });
+});
+
+describe("dodo checkout response minimality", () => {
+  const fn = read("supabase/functions/dodo-create-checkout/index.ts");
+  it("never returns environment/mode details to the browser", () => {
+    expect(fn).not.toContain("mode: cfg.config.mode");
+  });
+});
