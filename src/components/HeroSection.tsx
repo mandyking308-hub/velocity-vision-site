@@ -44,7 +44,7 @@ const HeroSection = () => (
           </span>
         </h1>
         <p className="text-base md:text-lg text-primary-foreground/85 max-w-xl mb-8 leading-relaxed">
-          Approved prospect data and a single brief become a complete campaign pack — strategy, landing &amp; offer copy, email sequences, press, social, video scripts, paid ads and lead capture — with governed sending, replies and early pipeline in one place.
+          Turn approved prospect data and one brief into a complete campaign pack — then review, activate across the right channels, manage replies and track early pipeline from the same workspace.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 mb-5">
           <Link
