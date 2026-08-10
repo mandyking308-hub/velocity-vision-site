@@ -70,11 +70,7 @@ const Index = () => (
       <CampaignChannelsStrip />
       <EmailIntegrationsStrip />
       <SecurityTrust />
-      <div className="panel-wrap">
-        <div className="panel-pink">
-          <GlobalStrip />
-        </div>
-      </div>
+      <GlobalStrip />
       <HomeFAQ />
       <FinalCTA />
     </main>
