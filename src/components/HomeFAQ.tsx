@@ -6,24 +6,28 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 const faqs = [
   {
+    q: "What does Velocity Vision actually create?",
+    a: "From one customer brief, the current complete campaign pack can prepare editable strategy, landing & offer copy, email sequences, a social pack, press release, video scripts, paid-ad copy and lead capture. Customers review and control every output before use.",
+  },
+  {
     q: "Is Velocity Vision AI-powered?",
-    a: "Yes. AI helps prepare editable email, social, press, video and follow-up drafts and can flag data-quality issues. Customers review, edit and control every output and activation decision. Velocity Vision does not guarantee replies, sales, deliverability, compliance, pipeline or revenue.",
+    a: "Yes. AI helps prepare the complete editable campaign pack and can flag data-quality issues. Customers review, edit and control every output and activation decision. Velocity Vision does not guarantee replies, sales, deliverability, compliance, pipeline or revenue.",
   },
   {
     q: "Is this a self-serve workspace?",
-    a: "Yes. Customers upload authorized data, review software flags, prepare editable drafts, verify their sender, approve activation and manage follow-up from their own workspace. Velocity Vision does not provide managed campaigns.",
+    a: "Yes. Customers upload authorized data, review software flags, create the campaign pack, verify their sender where required, approve activation and manage follow-up from their own workspace. Velocity Vision does not provide managed campaigns.",
   },
   {
     q: "Does Velocity Vision scrape contacts or sell lists?",
     a: "No. Velocity Vision does not scrape contact data, sell lists or provide prospect databases. Customers supply their own lawfully obtained business data, maintain suppression and opt-out records, verify their sender and approve every activation.",
   },
   {
-    q: "Can I send social drafts straight to my channels?",
-    a: "Yes, optionally. Connect your own Buffer account — you sign in to Buffer yourself; Velocity never uses a shared Buffer account and never asks for your social-network passwords. After reviewing and editing a generated draft, you can send it to your own Buffer channels as a draft (the default), into your queue, or scheduled for later. Velocity never auto-publishes, and Buffer's own approval and channel settings still apply.",
+    q: "How does social publishing work?",
+    a: "Connect your own Buffer account — Velocity never uses a shared Buffer account and never asks for your social-network passwords. After reviewing a generated social draft, you can hand approved text to your own Buffer channels as a draft, into your queue, or scheduled for later. Velocity never auto-publishes, and Buffer's own approval and channel settings still apply.",
   },
   {
     q: "What does activation mean?",
-    a: "Activation preparation is a separate customer-controlled step involving campaign content, eligible records, legal acceptance and human approval. Mailbox readiness, unsubscribe handling and daily send limits are checked again when sending. Operational safeguards are not legal approval or a deliverability guarantee.",
+    a: "Activation is customer-controlled. Approved email can move through governed sending on eligible paid plans; approved social text can be handed to Buffer; the remaining campaign assets stay under customer control for use in the channels they choose. Mailbox readiness, unsubscribe handling and daily send limits are checked again when sending.",
   },
   {
     q: "What happens when Campaign Credits run out?",
@@ -35,7 +39,7 @@ const faqs = [
   },
   {
     q: "Is it for businesses or agencies?",
-    a: "Both. Businesses can use a customer-controlled workspace, while agencies can use one account with isolated client workspaces, pooled Campaign Credits, cross-client outcome visibility and account-wide send-usage visibility. Agencies remain responsible for client authority, data, sender identity and activation decisions.",
+    a: "Both. Businesses can run complete customer-controlled campaigns in one workspace, while agencies can use isolated client workspaces, pooled Campaign Credits, cross-client outcome visibility and account-wide send-usage visibility. Agencies remain responsible for client authority, data, sender identity and activation decisions.",
   },
   {
     q: "Does it support international customers?",
