@@ -36,7 +36,7 @@ const GovernanceSection = () => (
       >
         <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Governance</p>
         <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">
-          AI moves quickly. Your team stays in control.
+          Built for review, approval and accountability.
         </h2>
       </motion.div>
 
