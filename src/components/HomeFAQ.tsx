@@ -42,6 +42,10 @@ const faqs = [
     a: "Campaign Credits currently fund full campaign-pack generation. When the balance is insufficient for a credit-priced AI action, that generation pauses until eligible credits are added or the plan changes. Live sending is governed separately by paid-plan and sender safety limits; Campaign Credits are not charged per email or contact sent.",
   },
   {
+    q: "Can I send social drafts straight to my channels?",
+    a: "Yes, optionally. Connect your own Buffer account — you sign in to Buffer yourself; Velocity never uses a shared Buffer account and never asks for your social-network passwords. After reviewing and editing a generated draft, you can send it to your own Buffer channels as a draft (the default), into your queue, or scheduled for later. Velocity never auto-publishes, and Buffer's own approval and channel settings still apply.",
+  },
+  {
     q: "Does it support international customers?",
     a: "The website provides supported display currencies and multilingual access. The final currency, tax treatment, payment provider and applicable terms are confirmed before purchase. Customers remain responsible for laws applying to their own data, recipients and activity.",
   },

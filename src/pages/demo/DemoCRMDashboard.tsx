@@ -9,6 +9,7 @@ import FirstCampaignLaunchpad from "@/components/app/FirstCampaignLaunchpad";
 import CampaignPreflight from "@/components/app/CampaignPreflight";
 import ReplyCommandCentre from "@/components/app/ReplyCommandCentre";
 import OutcomeFunnelPanel from "@/components/app/OutcomeFunnelPanel";
+import DemoSendToBuffer from "@/components/demo/DemoSendToBuffer";
 import { runPreflight } from "@/lib/campaignPreflight";
 import { isUnsubscribeCapabilityReady, UNSUBSCRIBE_HANDLER_DEPLOYED } from "@/lib/systemCapabilities";
 import type { LaunchpadSignals } from "@/lib/launchpad";
@@ -191,6 +192,7 @@ export default function DemoCRMDashboard() {
               </Card>
             ))}
           </div>
+          <DemoSendToBuffer />
           <p className="text-xs text-muted-foreground">No automated publishing, attribution, A/B testing or “winning campaign” cloning is represented in this demo.</p>
         </TabsContent>
 

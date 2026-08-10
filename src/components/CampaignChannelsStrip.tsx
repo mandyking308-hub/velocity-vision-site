@@ -60,7 +60,9 @@ export default function CampaignChannelsStrip({ variant = "full" }: Props) {
               ))}
             </div>
             <p className="text-[11px] text-white/80 mt-5 text-center">
-              Velocity Vision prepares social and paid-channel content. Publishing remains under your control.
+              Velocity Vision prepares social and paid-channel content. Publishing remains under your control —
+              optionally connect your own Buffer account to send reviewed drafts as a draft, queue item, or scheduled
+              post. Velocity never auto-publishes.
             </p>
           </div>
         </section>
@@ -106,7 +108,11 @@ export default function CampaignChannelsStrip({ variant = "full" }: Props) {
         </div>
         <style>{`@keyframes channels-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
 
-        <p className="text-xs text-muted-foreground mt-6 max-w-2xl mx-auto text-center">
+        <p className="text-sm text-foreground/80 mt-6 max-w-2xl mx-auto text-center">
+          Connect your own Buffer account and send reviewed social drafts straight to your own channels — as a
+          draft, into your queue, or scheduled for later. Velocity never auto-publishes.
+        </p>
+        <p className="text-xs text-muted-foreground mt-3 max-w-2xl mx-auto text-center">
           Logos shown for identification only; each platform is a trademark of its respective owner. Velocity Vision does not post to third-party social or ad accounts on your behalf.
         </p>
       </div>
