@@ -212,6 +212,7 @@ export const DODO_HANDLED_EVENTS = new Set([
   "subscription.updated",
   "subscription.on_hold",
   "subscription.renewed",
+  "subscription.plan_changed",
   "subscription.cancelled",
   "subscription.failed",
   "subscription.expired",
@@ -337,6 +338,9 @@ export interface DodoReadinessPayload {
  * never leaks a key, product id, environment string or error detail.
  * `live` is true ONLY when an API key exists AND DODO_ENVIRONMENT is
  * explicitly `live_mode` AND at least one allow-listed product is mapped.
+ * `ready` FAILS CLOSED for launch: it is true only when ALL SEVEN launch
+ * products are mapped. Per-product booleans stay available so surfaces can
+ * show exactly what is still missing without leaking ids.
  */
 export function computeDodoReadiness(getEnv: (key: string) => string | undefined): DodoReadinessPayload {
   const cfg = loadDodoConfig(getEnv);
@@ -346,6 +350,6 @@ export function computeDodoReadiness(getEnv: (key: string) => string | undefined
   for (const key of DODO_ALLOWED_PRODUCT_KEYS) {
     products[key] = live && typeof map[key] === "string" && map[key].trim().length > 0;
   }
-  const ready = live && Object.values(products).some(Boolean);
-  return { provider: "dodo", live: live && ready, ready, products };
+  const ready = live && Object.values(products).every(Boolean);
+  return { provider: "dodo", live: live && Object.values(products).some(Boolean), ready, products };
 }
