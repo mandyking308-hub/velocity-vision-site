@@ -163,14 +163,18 @@ async function handleSubscriptionEvent(
   const periodEnd = payload.next_billing_date ?? payload.previous_billing_date ?? null;
 
   if (userId) {
+    // subscription.updated / subscription.plan_changed can arrive without our
+    // checkout metadata. Never let a metadata-less event wipe the stored plan
+    // or price: only overwrite them when this event actually identifies the
+    // product.
     await db().from("stripe_subscriptions").upsert({
       user_id: userId,
       provider: "dodo",
       stripe_subscription_id: externalSubId,
       stripe_customer_id: payload.customer?.customer_id ?? "dodo_unknown",
-      product_id: payload.product_id ?? null,
-      price_id: productKey,
-      plan: entry?.plan ?? null,
+      ...(payload.product_id ? { product_id: payload.product_id } : {}),
+      ...(productKey ? { price_id: productKey } : {}),
+      ...(entry?.plan ? { plan: entry.plan } : {}),
       status,
       current_period_end: periodEnd,
       cancel_at_period_end: !!payload.cancel_at_next_billing_date,
