@@ -1,7 +1,20 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
-import PremiumHomepage from "@/components/PremiumHomepage";
+import HeroSection from "@/components/HeroSection";
+import CorePillars from "@/components/CorePillars";
+import CampaignPackSection from "@/components/CampaignPackSection";
+import SixSteps from "@/components/SixSteps";
+import ControlFlow from "@/components/ControlFlow";
+import GovernanceSection from "@/components/GovernanceSection";
+import WorkflowSavings from "@/components/WorkflowSavings";
+import PricingTeaser from "@/components/PricingTeaser";
+import CampaignChannelsStrip from "@/components/CampaignChannelsStrip";
+import EmailIntegrationsStrip from "@/components/EmailIntegrationsStrip";
+import SecurityTrust from "@/components/SecurityTrust";
+import GlobalStrip from "@/components/GlobalStrip";
+import HomeFAQ from "@/components/HomeFAQ";
+import FinalCTA from "@/components/FinalCTA";
 
 const Index = () => (
   <>
@@ -37,8 +50,29 @@ const Index = () => (
       }}
     />
     <Navbar />
-    <main>
-      <PremiumHomepage />
+    <main className="homepage-static">
+      <HeroSection />
+      <CorePillars />
+      <div className="panel-wrap">
+        <div className="panel-pink">
+          <CampaignPackSection />
+        </div>
+      </div>
+      <div className="panel-wrap">
+        <div className="panel-blue">
+          <SixSteps />
+        </div>
+      </div>
+      <ControlFlow />
+      <GovernanceSection />
+      <WorkflowSavings />
+      <PricingTeaser />
+      <CampaignChannelsStrip />
+      <EmailIntegrationsStrip />
+      <SecurityTrust />
+      <GlobalStrip />
+      <HomeFAQ />
+      <FinalCTA />
     </main>
     <Footer />
   </>
