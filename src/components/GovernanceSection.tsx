@@ -5,7 +5,7 @@ const cards = [
   {
     icon: Eye,
     title: "Review before activation",
-    desc: "Every send and every Buffer handoff waits for an authorized human decision.",
+    desc: "Every campaign asset stays reviewable, and every send or handoff waits for an authorised human decision.",
   },
   {
     icon: KeyRound,
@@ -15,12 +15,12 @@ const cards = [
   {
     icon: FileCheck,
     title: "Recorded activity",
-    desc: "Approvals, sends and follow-ups stay visible as workspace records you can audit.",
+    desc: "Approvals, sends, handoffs and follow-ups stay visible as workspace records you can audit.",
   },
   {
     icon: UserCheck,
     title: "Human ownership",
-    desc: "Your data, your sender, your call. Software assists — people decide.",
+    desc: "Your data, your campaign, your call. Software assists — people decide.",
   },
 ];
 
