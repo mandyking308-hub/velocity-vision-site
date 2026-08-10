@@ -1,30 +1,29 @@
 import { motion } from "framer-motion";
-import { Database, Mail, Share2, Inbox } from "lucide-react";
-import { siBuffer } from "simple-icons";
+import { Database, Sparkles, Send, Inbox } from "lucide-react";
 
 const pillars = [
   {
     icon: Database,
-    title: "Prospecting & Data",
-    desc: "Upload approved business contacts, map fields and review record quality in the Data Vault.",
+    title: "Data & Audience",
+    desc: "Upload approved business contacts, map fields, review record quality and work from clean segments in the Data Vault.",
     highlight: false,
   },
   {
-    icon: Mail,
-    title: "Personalized Outreach",
-    desc: "Generate editable email, press and follow-up drafts from a single customer brief.",
-    highlight: false,
-  },
-  {
-    icon: Share2,
-    title: "Social Publishing",
-    desc: "Review social copy here, then hand it to your own Buffer account as a draft, queue item or scheduled post.",
+    icon: Sparkles,
+    title: "Create the Campaign",
+    desc: "One brief becomes a complete campaign pack: strategy, landing & offer copy, email sequence, press release, social pack, video scripts, paid ads and lead capture.",
     highlight: true,
   },
   {
+    icon: Send,
+    title: "Activate Across Channels",
+    desc: "Send approved email through governed sending, hand social drafts to your own Buffer account, and use the other assets in the channels you choose.",
+    highlight: false,
+  },
+  {
     icon: Inbox,
-    title: "Replies & Follow-up",
-    desc: "Triage replies by intent, record next actions and track early opportunities in one place.",
+    title: "Replies & Pipeline",
+    desc: "Triage replies by intent, record follow-ups, hand off meetings and track early opportunities in the Outcome Funnel.",
     highlight: false,
   },
 ];
@@ -41,7 +40,7 @@ const CorePillars = () => (
       >
         <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">What Velocity Vision does</p>
         <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">
-          Four jobs. One workspace.
+          The whole campaign. One workspace.
         </h2>
       </motion.div>
 
@@ -77,10 +76,8 @@ const CorePillars = () => (
             </p>
             {pillar.highlight && (
               <p className="relative mt-4 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider bg-white/20 rounded-full px-2.5 py-1">
-                <svg role="img" aria-label="Buffer" viewBox="0 0 24 24" width={11} height={11} fill={`#${siBuffer.hex}`}>
-                  <path d={siBuffer.path} />
-                </svg>
-                Connected Buffer workflow
+                <Sparkles size={11} />
+                8 editable asset types from one brief
               </p>
             )}
           </motion.div>
