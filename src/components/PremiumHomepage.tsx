@@ -52,31 +52,31 @@ const capabilityCards = [
   {
     icon: Search,
     title: "Prospecting",
-    copy: "Bring in approved business data and organise campaign targets.",
+    copy: "Bring in approved business data and organise the people and companies you want to reach.",
   },
   {
     icon: Mail,
     title: "Personalised Outreach",
-    copy: "Create editable email sequences and campaign assets in one place.",
+    copy: "Create editable email sequences and campaign assets from the same brief.",
   },
   {
     icon: Share2,
-    title: "Social Campaigns",
-    copy: "Create channel-ready social posts and send approved drafts to Buffer.",
+    title: "Social Publishing",
+    copy: "Create channel-ready posts, review them, then hand approved content to Buffer for draft, queue or scheduled publishing.",
     featured: true,
   },
   {
     icon: MessageCircle,
     title: "Replies & Follow-up",
-    copy: "Keep responses, reminders and early pipeline activity organised.",
+    copy: "Keep responses, reminders and early pipeline activity organised in the same workspace.",
   },
 ];
 
 const flowSteps = [
-  { icon: Database, title: "Your data", copy: "You connect approved sources" },
-  { icon: Sparkles, title: "AI prepares", copy: "Campaign strategy and editable assets" },
+  { icon: Database, title: "Your data", copy: "Connect approved sources" },
+  { icon: Sparkles, title: "AI prepares", copy: "Strategy and editable assets" },
   { icon: Eye, title: "You approve", copy: "Review, edit and confirm" },
-  { icon: Send, title: "Velocity activates", copy: "Governed email or Buffer handoff" },
+  { icon: Send, title: "You activate", copy: "Governed email or reviewed Buffer handoff" },
   { icon: FileCheck2, title: "Everything is recorded", copy: "Activity, follow-up and outcomes" },
 ];
 
@@ -84,9 +84,9 @@ const sixSteps = [
   { icon: Link2, number: "01", title: "Connect", copy: "Approved data and accounts." },
   { icon: WandSparkles, number: "02", title: "Create", copy: "Campaign strategy and assets." },
   { icon: Eye, number: "03", title: "Review", copy: "Edit and approve everything." },
-  { icon: Rocket, number: "04", title: "Activate", copy: "Governed email and Buffer handoff." },
-  { icon: Reply, number: "05", title: "Respond", copy: "Replies, reminders and follow-up." },
-  { icon: BarChart3, number: "06", title: "Learn", copy: "Review outcomes and improve." },
+  { icon: Rocket, number: "04", title: "Activate", copy: "Send governed email or hand approved social to Buffer." },
+  { icon: Reply, number: "05", title: "Respond", copy: "Manage replies, reminders and follow-up." },
+  { icon: BarChart3, number: "06", title: "Learn", copy: "Review outcomes and improve the next campaign." },
 ];
 
 const assetTypes = [
@@ -114,19 +114,19 @@ const faqItems = [
   },
   {
     q: "Is this a self-serve workspace?",
-    a: "Yes. Customers upload authorized data, review software flags, prepare editable drafts, verify their sender, approve activation and manage follow-up from their own workspace. Velocity Vision does not provide managed campaigns.",
+    a: "Yes. Customers upload authorised data, review software flags, prepare editable drafts, verify their sender, approve activation and manage follow-up from their own workspace. Velocity Vision does not provide managed campaigns.",
   },
   {
     q: "Does Velocity Vision scrape contacts or sell lists?",
     a: "No. Velocity Vision does not scrape contact data, sell lists or provide prospect databases. Customers supply their own lawfully obtained business data, maintain suppression and opt-out records, verify their sender and approve every activation.",
   },
   {
-    q: "Can I send social drafts to my channels?",
-    a: "Yes, optionally. Connect your own Buffer account. After reviewing and editing a generated draft, you can send it to your own Buffer channels as a draft, into your queue, or scheduled for later. Velocity never auto-publishes, and Buffer's own approval and channel settings still apply.",
+    q: "How does social publishing work?",
+    a: "Connect your own Buffer account. After reviewing and editing a generated social draft, you can hand it to your Buffer account as a draft, into your queue, or scheduled for later. Velocity does not auto-publish; Buffer's own approval and channel settings still apply.",
   },
   {
     q: "What does activation mean?",
-    a: "Activation preparation is a separate customer-controlled step involving campaign content, eligible records, legal acceptance and human approval. Mailbox readiness, unsubscribe handling and daily send limits are checked again when sending.",
+    a: "Activation is a separate customer-controlled step involving campaign content, eligible records, legal acceptance and human approval. Mailbox readiness, unsubscribe handling and daily send limits are checked again when sending.",
   },
   {
     q: "What happens when Campaign Credits run out?",
@@ -138,16 +138,16 @@ const faqItems = [
   },
   {
     q: "Does it support international customers?",
-    a: "The website provides supported display currencies and multilingual access. The final currency, tax treatment, payment provider and applicable terms are confirmed before purchase. Customers remain responsible for laws applying to their own data, recipients and activity.",
+    a: "The website provides supported display currencies and multilingual access. Final currency, tax treatment, payment provider and applicable terms are confirmed before purchase. Customers remain responsible for laws applying to their own data, recipients and activity.",
   },
 ];
 
 const socialDays = [
   { day: "Mon", date: "19", posts: ["LinkedIn · 09:00"] },
   { day: "Tue", date: "20", posts: ["Buffer queue · 11:30"] },
-  { day: "Wed", date: "21", posts: ["Social draft · 13:00"] },
+  { day: "Wed", date: "21", posts: ["Instagram · 13:00"] },
   { day: "Thu", date: "22", posts: ["Buffer queue · 14:30"] },
-  { day: "Fri", date: "23", posts: ["Social draft · 10:00"] },
+  { day: "Fri", date: "23", posts: ["Facebook · 10:00"] },
   { day: "Sat", date: "24", posts: [] },
   { day: "Sun", date: "25", posts: [] },
 ];
@@ -164,7 +164,7 @@ function BufferMark({ size = 16 }: { size?: number }) {
 
 function ProductDashboard() {
   return (
-    <div className="rounded-[28px] border border-white/25 bg-[#111b67]/80 p-3 shadow-2xl backdrop-blur-xl sm:p-4">
+    <div className="rounded-[30px] border border-white/25 bg-[#111b67]/80 p-3 shadow-2xl backdrop-blur-xl sm:p-4">
       <div className="grid grid-cols-[92px_1fr] gap-3 rounded-2xl bg-white/95 p-3 text-slate-900 sm:grid-cols-[118px_1fr] sm:p-4">
         <div className="rounded-xl bg-slate-950 p-3 text-[10px] text-white sm:text-xs">
           <p className="mb-4 font-bold">Workspace</p>
@@ -195,7 +195,9 @@ function ProductDashboard() {
             <div className="rounded-xl border border-slate-200 bg-white p-3">
               <div className="mb-2 flex items-center justify-between">
                 <p className="text-xs font-bold">Upcoming social handoffs</p>
-                <span className="rounded-full bg-pink-50 px-2 py-1 text-[9px] font-bold text-pink-600">BUFFER</span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-pink-50 px-2 py-1 text-[9px] font-bold text-pink-600">
+                  <BufferMark size={10} /> BUFFER
+                </span>
               </div>
               <div className="space-y-2">
                 {["Product launch sequence", "Founder insight post", "Campaign proof point"].map((item, index) => (
@@ -207,7 +209,7 @@ function ProductDashboard() {
               </div>
             </div>
             <div className="rounded-xl border border-slate-200 bg-white p-3">
-              <p className="text-[10px] text-slate-500">Campaign status</p>
+              <p className="text-[10px] text-slate-500">Campaign readiness</p>
               <p className="mt-1 text-2xl font-black text-[#3157ff]">82%</p>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">
                 <div className="h-full w-[82%] rounded-full bg-gradient-to-r from-[#3157ff] to-[#ff176c]" />
@@ -223,7 +225,7 @@ function ProductDashboard() {
 
 function SocialWorkspaceVisual() {
   return (
-    <div className="relative rounded-[26px] border border-white/30 bg-white p-3 text-slate-900 shadow-2xl sm:p-5">
+    <div className="relative rounded-[28px] border border-white/30 bg-white p-3 text-slate-900 shadow-2xl sm:p-5">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
         <div className="flex gap-4 text-[10px] font-semibold text-slate-500 sm:text-xs">
           <span>Create</span>
@@ -248,19 +250,19 @@ function SocialWorkspaceVisual() {
             ))}
           </div>
           <div className="min-h-28 rounded-xl border border-slate-200 bg-white p-3 text-[10px] leading-relaxed text-slate-600">
-            Turn one approved campaign idea into channel-ready social copy, then review every post before handoff.
+            Turn one approved campaign idea into channel-ready social copy. Tailor the message, review every post and keep the whole campaign consistent.
           </div>
           <div className="mt-3 flex items-center gap-2 rounded-xl bg-[#3157ff] px-3 py-2.5 text-[10px] font-bold text-white shadow-lg">
-            <BufferMark size={13} /> Send reviewed draft to Buffer
+            <BufferMark size={13} /> Send approved post to Buffer
           </div>
-          <p className="mt-2 text-[9px] leading-relaxed text-slate-500">Choose draft, queue or schedule in the handoff flow.</p>
+          <p className="mt-2 text-[9px] leading-relaxed text-slate-500">Choose draft, queue or scheduled handoff.</p>
         </div>
 
         <div className="min-w-0">
           <div className="mb-3 flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold">Campaign planning view</p>
-              <p className="text-[9px] text-slate-500">Illustrative weekly handoff plan</p>
+              <p className="text-xs font-bold">Weekly social plan</p>
+              <p className="text-[9px] text-slate-500">Plan here, publish through your Buffer account</p>
             </div>
             <div className="flex items-center gap-1 rounded-lg border border-slate-200 px-2 py-1 text-[9px]">
               <CalendarDays size={11} /> Week
@@ -319,16 +321,16 @@ function CostCalculator() {
   ] as const;
 
   return (
-    <section className="py-14 sm:py-16 lg:py-20">
+    <section className="py-14 sm:py-16 lg:py-24">
       <div className={sectionShell}>
-        <div className="overflow-hidden rounded-[30px] bg-gradient-to-r from-[#1737ff] via-[#5127df] to-[#ff176c] p-4 shadow-2xl sm:p-6 lg:p-8">
+        <div className="overflow-hidden rounded-[32px] bg-gradient-to-r from-[#1737ff] via-[#5127df] to-[#ff176c] p-4 shadow-2xl sm:p-6 lg:p-8">
           <div className="grid items-stretch gap-5 lg:grid-cols-[0.75fr_1.05fr_0.9fr]">
             <div className="flex flex-col justify-center p-2 text-white sm:p-4">
               <span className="mb-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em]">
                 <Clock3 size={12} /> Calculator
               </span>
-              <h2 className="text-3xl font-black leading-tight sm:text-4xl">What is your current campaign stack costing you?</h2>
-              <p className="mt-4 max-w-md text-sm leading-relaxed text-white/80 sm:text-base">Enter your own numbers and compare them with the current Growth plan.</p>
+              <h2 className="text-3xl font-black leading-tight sm:text-4xl">What is your current outreach stack costing you?</h2>
+              <p className="mt-4 max-w-md text-sm leading-relaxed text-white/80 sm:text-base">Enter your own monthly tool costs and compare them with the current Growth plan.</p>
             </div>
 
             <div className="rounded-2xl bg-white p-5 shadow-xl sm:p-6">
@@ -361,11 +363,11 @@ function CostCalculator() {
               <p className="mt-1 text-2xl font-black">{formatPrice(saving, currency)} / month</p>
               {savingPct > 0 && <span className="mt-3 inline-flex rounded-full bg-white px-3 py-1 text-xs font-black text-[#fb1768]">{savingPct}% lower than entered stack</span>}
               <div className="mt-5 space-y-2 text-sm text-white/90">
-                {["Campaign workspace", "Email + social workflow", "One campaign pack system"].map((item) => (
+                {["Campaign workspace", "Email + social workflow", "One campaign-pack system"].map((item) => (
                   <p key={item} className="flex items-center gap-2"><Check size={14} /> {item}</p>
                 ))}
               </div>
-              <p className="mt-4 text-[10px] leading-relaxed text-white/65">Illustrative comparison only. Your actual savings depend on your current tools and usage.</p>
+              <p className="mt-4 text-[10px] leading-relaxed text-white/65">Illustrative comparison only. Actual savings depend on your current tools and usage.</p>
             </div>
           </div>
         </div>
@@ -408,7 +410,7 @@ function PricingSection() {
   ];
 
   return (
-    <section className="bg-[#f7f8fc] py-16 lg:py-20">
+    <section className="bg-[#f7f8fc] py-16 lg:py-24">
       <div className={sectionShell}>
         <div className="mb-10 grid gap-5 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
           <div>
@@ -467,13 +469,13 @@ function FAQSection() {
   );
 
   return (
-    <section className="bg-[#f7f8fc] py-16 lg:py-20">
+    <section className="bg-[#f7f8fc] py-16 lg:py-24">
       <div className={sectionShell}>
         <div className="grid gap-8 lg:grid-cols-[0.42fr_1fr]">
           <div>
             <span className="mb-3 inline-flex rounded-full bg-[#eef2ff] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#3157ff]">FAQ</span>
             <h2 className="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Straight answers.</h2>
-            <p className="mt-4 text-sm leading-relaxed text-slate-600">The detailed product, legal and billing information is still available — it just no longer overwhelms the homepage.</p>
+            <p className="mt-4 text-sm leading-relaxed text-slate-600">Product control, social publishing, data, activation and billing — explained without the noise.</p>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
             {renderItems(left, 0)}
@@ -494,7 +496,7 @@ export default function PremiumHomepage() {
       <section className="relative overflow-hidden bg-gradient-to-br from-[#071a75] via-[#2636df] to-[#ff176c] pt-28 text-white lg:pt-32">
         <div className="absolute -left-24 top-20 h-72 w-72 rounded-full bg-blue-400/20 blur-3xl" />
         <div className="absolute -right-20 bottom-0 h-80 w-80 rounded-full bg-pink-300/20 blur-3xl" />
-        <div className={`${sectionShell} relative grid items-center gap-10 pb-14 pt-8 lg:grid-cols-[0.8fr_1.2fr] lg:pb-20 lg:pt-12`}>
+        <div className={`${sectionShell} relative grid items-center gap-10 pb-16 pt-8 lg:grid-cols-[0.8fr_1.2fr] lg:pb-24 lg:pt-12`}>
           <div>
             <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] backdrop-blur">
               <Sparkles size={12} /> Customer-controlled campaign workspace
@@ -502,11 +504,11 @@ export default function PremiumHomepage() {
             <h1 className="text-4xl font-black leading-[0.98] tracking-[-0.04em] sm:text-5xl lg:text-6xl xl:text-7xl">
               Find prospects.<br />
               Create outreach.<br />
-              <span className="text-[#ff8fbd]">Publish social.</span><br />
+              <span className="text-[#ff9fc5]">Publish social.</span><br />
               Manage replies.
             </h1>
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-white/82 sm:text-lg">
-              One workspace for outbound growth — from approved prospect data to personalised email, social campaign creation and follow-up.
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg">
+              One customer-controlled workspace for approved prospect data, personalised email, social campaign creation through Buffer and follow-up.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Button asChild size="lg" className="bg-white font-bold text-[#10228c] hover:bg-white/90">
@@ -518,14 +520,14 @@ export default function PremiumHomepage() {
             </div>
             <p className="mt-5 flex max-w-lg items-start gap-2 text-xs leading-relaxed text-white/70">
               <ShieldCheck size={15} className="mt-0.5 shrink-0" />
-              Self-serve software. You control what gets approved, sent and handed off to publishing.
+              You control what gets approved, sent and handed to Buffer for publishing.
             </p>
           </div>
           <ProductDashboard />
         </div>
       </section>
 
-      <section className="relative -mt-1 bg-[#f7f8fc] py-10 sm:py-12">
+      <section className="relative -mt-1 bg-[#f7f8fc] py-10 sm:py-12 lg:py-14">
         <div className={sectionShell}>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {capabilityCards.map((card) => (
@@ -544,11 +546,12 @@ export default function PremiumHomepage() {
         </div>
       </section>
 
-      <section className="py-14 sm:py-16 lg:py-20">
+      <section className="py-16 sm:py-20 lg:py-24">
         <div className={sectionShell}>
           <div className="mx-auto max-w-4xl text-center">
             <span className="mb-3 inline-flex rounded-full bg-[#eef2ff] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#3157ff]">Control</span>
             <h2 className="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">One self-serve product. Clear responsibility at every step.</h2>
+            <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">AI prepares the work. Your team reviews it. Activation stays explicit. The record stays visible.</p>
           </div>
           <div className="mt-10 grid gap-3 lg:grid-cols-5">
             {flowSteps.map((step, index) => (
@@ -566,12 +569,13 @@ export default function PremiumHomepage() {
         </div>
       </section>
 
-      <section className="bg-[#f7f8fc] py-14 sm:py-16 lg:py-20">
+      <section className="bg-[#f7f8fc] py-16 sm:py-20 lg:py-24">
         <div className={sectionShell}>
           <div className="mb-8 flex items-end justify-between gap-4">
             <div>
               <span className="mb-3 inline-flex rounded-full bg-pink-100 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-pink-700">Workflow</span>
               <h2 className="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">From prospect to conversation.</h2>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">One campaign moves through a clear sequence instead of bouncing between disconnected tools.</p>
             </div>
             <Button asChild variant="outline" className="hidden bg-white sm:inline-flex"><Link to="/how-it-works">See the full workflow <ArrowRight size={15} /></Link></Button>
           </div>
@@ -588,37 +592,39 @@ export default function PremiumHomepage() {
         </div>
       </section>
 
-      <section className="py-14 sm:py-16 lg:py-20">
+      <section className="py-16 sm:py-20 lg:py-24">
         <div className={sectionShell}>
-          <div className="overflow-hidden rounded-[32px] bg-gradient-to-r from-[#0c2ee8] via-[#3432e8] to-[#ff176c] p-5 text-white shadow-2xl sm:p-8 lg:p-10">
-            <div className="grid items-center gap-9 lg:grid-cols-[0.72fr_1.28fr]">
+          <div className="overflow-hidden rounded-[34px] bg-gradient-to-r from-[#0c2ee8] via-[#3432e8] to-[#ff176c] p-5 text-white shadow-2xl sm:p-8 lg:p-10">
+            <div className="grid items-center gap-10 lg:grid-cols-[0.72fr_1.28fr]">
               <div>
                 <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em]">
                   <BufferMark size={13} /> Social + Buffer
                 </span>
-                <h2 className="text-3xl font-black leading-tight sm:text-4xl lg:text-5xl">Your social campaign workflow, built into the same workspace.</h2>
-                <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/80 sm:text-base">Create once. Adapt by channel. Review. Then send approved drafts to your Buffer account.</p>
-                <div className="mt-6 space-y-3 text-sm text-white/90">
+                <h2 className="text-3xl font-black leading-tight sm:text-4xl lg:text-5xl">Plan social in Velocity. Publish through Buffer.</h2>
+                <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/85 sm:text-base">Create channel-ready posts from the same campaign brief, review them here, then hand approved content to your Buffer account as a draft, into the queue or scheduled for later.</p>
+                <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
                   {[
-                    "Multi-channel social pack creation",
-                    "Edit every post before handoff",
-                    "Send to Buffer as draft, queue or scheduled post",
-                    "Keep social consistent with email, PR, video and paid assets",
+                    "Create a complete multi-channel social pack",
+                    "Tailor copy for LinkedIn, Instagram, Facebook and X",
+                    "Review and edit every post before handoff",
+                    "Keep social aligned with email, PR, video and paid assets",
+                    "Choose Buffer draft, queue or scheduled handoff",
+                    "Retain customer control over final publishing",
                   ].map((item) => (
-                    <p key={item} className="flex items-start gap-2"><Check size={15} className="mt-0.5 shrink-0 text-[#ff9fc5]" /> {item}</p>
+                    <p key={item} className="flex items-start gap-2 text-sm text-white/90"><Check size={15} className="mt-0.5 shrink-0 text-[#ffb2d0]" /> {item}</p>
                   ))}
                 </div>
                 <Button asChild className="mt-7 bg-white font-bold text-[#172bbd] hover:bg-white/90"><Link to="/features">Explore social workflow <ArrowRight size={15} /></Link></Button>
-                <p className="mt-4 max-w-lg text-[10px] leading-relaxed text-white/60">Current Buffer handoff is text-only. Velocity never auto-publishes; the customer chooses draft, queue or schedule and Buffer's own channel settings apply.</p>
+                <p className="mt-4 max-w-lg text-[10px] leading-relaxed text-white/65">Velocity hands reviewed text to your connected Buffer account. Buffer controls final channel publishing, approvals and channel settings.</p>
               </div>
               <SocialWorkspaceVisual />
             </div>
 
-            <div className="mt-8 border-t border-white/20 pt-6">
+            <div className="mt-9 border-t border-white/20 pt-7">
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p className="text-sm font-black">One brief. A complete campaign pack.</p>
-                  <p className="mt-1 text-xs text-white/70">Keep every channel visible without turning the homepage into a wall of copy.</p>
+                  <p className="mt-1 text-xs text-white/70">Build the whole campaign together so every channel carries the same message.</p>
                 </div>
                 <span className="rounded-full bg-white/10 px-3 py-1 text-[10px] font-bold">8 editable asset types</span>
               </div>
@@ -635,13 +641,13 @@ export default function PremiumHomepage() {
         </div>
       </section>
 
-      <section className="bg-white py-14 sm:py-16 lg:py-20">
+      <section className="bg-white py-16 sm:py-20 lg:py-24">
         <div className={sectionShell}>
           <div className="grid gap-8 lg:grid-cols-[0.56fr_1fr] lg:items-center">
             <div>
               <span className="mb-3 inline-flex rounded-full bg-[#eef2ff] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#3157ff]">Governance</span>
               <h2 className="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">AI moves quickly. Your team stays in control.</h2>
-              <p className="mt-4 max-w-xl text-sm leading-relaxed text-slate-600">The control model is a strength of the product, so it stays on the homepage — but in a much cleaner form.</p>
+              <p className="mt-4 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">Review, permissions and recorded activity keep campaign decisions visible to the people responsible for them.</p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {governanceCards.map((card) => (
@@ -658,13 +664,13 @@ export default function PremiumHomepage() {
 
       <CostCalculator />
 
-      <section className="bg-white py-14 sm:py-16 lg:py-20">
+      <section className="bg-white py-16 sm:py-20 lg:py-24">
         <div className={sectionShell}>
           <div className="grid gap-8 lg:grid-cols-[0.48fr_1fr] lg:items-center">
             <div>
               <span className="mb-3 inline-flex rounded-full bg-[#eef2ff] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#3157ff]">Connections</span>
               <h2 className="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Connect the tools and channels you already use.</h2>
-              <p className="mt-4 text-sm leading-relaxed text-slate-600">Email, social handoff and workflow connections sit together instead of feeling like separate products.</p>
+              <p className="mt-4 text-sm leading-relaxed text-slate-600 sm:text-base">Bring email, Buffer and follow-up into one customer-controlled campaign workflow.</p>
             </div>
             <div className="rounded-[26px] border border-slate-200 bg-[#f8f9fd] p-5 shadow-sm sm:p-6">
               <div className="grid gap-4 sm:grid-cols-3">
@@ -678,7 +684,7 @@ export default function PremiumHomepage() {
                   <p className="mb-2 text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Social + Buffer</p>
                   <div className="flex flex-wrap gap-2">
                     <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-[10px] font-semibold text-slate-700"><BufferMark size={12} /> Buffer</span>
-                    <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-[10px] font-semibold text-slate-700">Your connected channels</span>
+                    <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-[10px] font-semibold text-slate-700">Channel-ready posts</span>
                     <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-[10px] font-semibold text-slate-700">Draft / queue / schedule</span>
                   </div>
                 </div>
@@ -698,13 +704,13 @@ export default function PremiumHomepage() {
         </div>
       </section>
 
-      <section className="bg-gradient-to-br from-[#fafbff] via-white to-[#fff2f8] py-14 sm:py-16 lg:py-20">
+      <section className="bg-gradient-to-br from-[#fafbff] via-white to-[#fff2f8] py-16 sm:py-20 lg:py-24">
         <div className={sectionShell}>
           <div className="grid gap-8 lg:grid-cols-[0.7fr_1fr] lg:items-center">
             <div>
               <span className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#3157ff] shadow-sm"><Globe2 size={12} /> Global by default</span>
               <h2 className="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Built for teams working across markets.</h2>
-              <p className="mt-4 max-w-xl text-sm leading-relaxed text-slate-600">Multilingual access, multi-currency pricing and an international legal document stack — without making claims the product cannot support.</p>
+              <p className="mt-4 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">Multilingual access, supported display currencies and an international legal document stack help teams work across markets from the same product.</p>
             </div>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {[
@@ -732,12 +738,12 @@ export default function PremiumHomepage() {
       <PricingSection />
       <FAQSection />
 
-      <section className="bg-white py-10">
+      <section className="bg-white py-10 sm:py-12">
         <div className={sectionShell}>
           <div className="overflow-hidden rounded-[30px] bg-gradient-to-r from-[#1138ff] via-[#4d2ce7] to-[#ff176c] px-6 py-9 text-white shadow-2xl sm:px-10 lg:flex lg:items-center lg:justify-between lg:gap-8 lg:px-12 lg:py-11">
             <div>
               <p className="text-3xl font-black leading-tight sm:text-4xl">One workspace instead of a stack of disconnected tools.</p>
-              <p className="mt-2 text-sm text-white/75">Find. Create. Approve. Hand off. Follow up.</p>
+              <p className="mt-2 text-sm text-white/75">Find. Create. Approve. Send. Publish through Buffer. Follow up.</p>
             </div>
             <div className="mt-6 flex flex-wrap items-center gap-3 lg:mt-0 lg:justify-end">
               <Button asChild size="lg" className="bg-white font-black text-[#172bbd] hover:bg-white/90"><Link to="/auth">Start free</Link></Button>
