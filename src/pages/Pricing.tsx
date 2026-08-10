@@ -47,7 +47,7 @@ const plans: PlanDef[] = [
       "1 workspace · one-off campaigns",
       "Data Vault with customer review",
       "First-Campaign Copilot and Launchpad",
-      "Full campaign pack (email, social, press, video)",
+      "Complete campaign pack: strategy, landing & offer, email, social, press, video, paid ads and lead capture",
       "Activation-preparation preflight and sender setup",
       "Reply Intent Command Centre, referrals and out-of-office dates",
       "Meeting handoff, pipeline and Outcome Funnel",
@@ -58,9 +58,9 @@ const plans: PlanDef[] = [
   {
     sku: "vv_growth_monthly",
     name: "Growth",
-    tagline: "Recurring commercial workspace",
+    tagline: "Recurring campaign workspace",
     unit: "per month",
-    best: "Teams running customer-controlled outreach continuously",
+    best: "Teams running complete customer-controlled campaigns continuously",
     credits: "Includes 80 Campaign Credits / month",
     highlight: true,
     features: [
@@ -76,9 +76,9 @@ const plans: PlanDef[] = [
   {
     sku: "vv_agency_monthly",
     name: "Agency Workspace",
-    tagline: "Multi-client commercial workspace",
+    tagline: "Multi-client campaign workspace",
     unit: "per month",
-    best: "Agencies and fractional teams",
+    best: "Agencies and fractional teams running separate client campaigns",
     credits: "Includes 250 pooled Campaign Credits / month",
     features: [
       "Everything in Growth",
@@ -160,15 +160,15 @@ export default function Pricing() {
 
   return (
     <>
-      <SEO title="Pricing — Velocity Vision commercial workspace" description="Published pricing for Velocity Vision Free Preview, Starter, Growth and Agency Workspace, with Campaign Credit, sending, billing and add-on terms." path="/pricing" />
+      <SEO title="Pricing — Complete customer-controlled campaign workspace | Velocity Vision" description="Published pricing for Velocity Vision Free Preview, Starter, Growth and Agency Workspace, covering complete campaign-pack generation, Campaign Credits, sending, billing and add-on terms." path="/pricing" />
       <Navbar />
       <main className="pt-20">
         <section className="relative bg-hero px-6 md:px-12 lg:px-20 pt-16 pb-28 md:pt-20 md:pb-36 lg:pt-24 lg:pb-44">
           <div className="max-w-4xl mx-auto text-center">
             <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
               <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Pricing</p>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-primary-foreground mb-5">Published plans for a customer-controlled workspace</h1>
-              <p className="text-primary-foreground/80 text-lg md:text-xl mb-8 max-w-3xl mx-auto">Review price, billing cadence, Campaign Credits, workspace access, send ceilings, tax treatment and delivery terms before purchase.</p>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-primary-foreground mb-5">Published plans for the complete campaign workspace</h1>
+              <p className="text-primary-foreground/80 text-lg md:text-xl mb-8 max-w-3xl mx-auto">Choose the level of campaign generation, recurring use, sending capacity and workspace access you need. Review price, Campaign Credits, billing cadence, tax treatment and delivery terms before purchase.</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button variant="hero" size="lg" asChild><Link to="/auth">Start Free Preview <ArrowRight size={18} /></Link></Button>
                 <Button variant="hero-outline" size="lg" asChild><Link to="/contact">Talk to us about onboarding</Link></Button>
@@ -187,7 +187,7 @@ export default function Pricing() {
             <div className="flex flex-col md:flex-row md:items-center gap-5">
               <div className="flex-1">
                 <span className="inline-block text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-accent/15 text-accent font-semibold mb-2">Free Preview · {formatPrice(0, currency)}</span>
-                <h2 className="font-display font-semibold text-xl">Build and review the first workflow before you pay</h2>
+                <h2 className="font-display font-semibold text-xl">Build and review your first complete campaign pack before you pay</h2>
                 <ul className="mt-3 grid sm:grid-cols-2 gap-x-6 gap-y-1 text-sm">
                   {["10 welcome credits + 2/day (daily balance cap 10)", "1 workspace · up to 25 contacts", "Maximum 1 full campaign pack", "14-day preview window", "No card required. No automatic upgrade.", "No live sending or mailbox connection", "No recurring cadence", "No credit top-ups into Free Preview"].map((x) => <li key={x} className="flex gap-2"><Check size={16} className="text-accent mt-0.5 shrink-0" />{x}</li>)}
                 </ul>
