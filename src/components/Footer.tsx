@@ -9,7 +9,7 @@ const Footer = () => (
         <div className="lg:col-span-2">
           <h3 className="text-2xl font-display font-bold mb-4 flex items-center gap-2"><img src={logoMark} alt="Velocity Vision" width={36} height={36} className="h-9 w-9 shrink-0" loading="lazy" /><span>Velocity<span className="text-accent"> Vision</span></span></h3>
           <p className="text-primary-foreground/70 text-sm leading-relaxed max-w-xs">
-            A self-serve workspace for Data Vault, quality review, governed activation, follow-up and pipeline. Built for founders, lean teams and agencies.
+            A self-serve B2B campaign workspace from approved data and one brief to complete campaign assets, controlled activation, follow-up and early pipeline.
           </p>
           <p className="text-primary-foreground/60 text-xs mt-3">Global workspace · multilingual access · multi-currency pricing</p>
 
