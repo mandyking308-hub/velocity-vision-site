@@ -168,7 +168,8 @@ describe("Dodo event handling surface", () => {
     expect([...DODO_HANDLED_EVENTS].sort()).toEqual([
       "payment.failed", "payment.succeeded", "subscription.active",
       "subscription.cancelled", "subscription.expired", "subscription.failed",
-      "subscription.on_hold", "subscription.renewed", "subscription.updated",
+      "subscription.on_hold", "subscription.plan_changed",
+      "subscription.renewed", "subscription.updated",
     ]);
   });
 
@@ -181,6 +182,9 @@ describe("Dodo event handling surface", () => {
     expect(dodoSubscriptionStatus("subscription.cancelled")).toBe("canceled");
     expect(dodoSubscriptionStatus("subscription.renewed")).toBe("active");
     expect(dodoSubscriptionStatus("subscription.updated", "paused")).toBe("paused");
+    // plan_changed maps safely from the payload status and never invents one
+    expect(dodoSubscriptionStatus("subscription.plan_changed", "active")).toBe("active");
+    expect(dodoSubscriptionStatus("subscription.plan_changed", "on_hold")).toBe("on_hold");
   });
 });
 

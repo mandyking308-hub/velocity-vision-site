@@ -56,17 +56,27 @@ describe("computeDodoReadiness", () => {
     expect(computeDodoReadiness(env({ DODO_ENVIRONMENT: "live_mode", DODO_PRODUCT_MAP: FULL_MAP })).ready).toBe(false);
   });
 
-  it("reports per-product readiness for a partial live map", () => {
+  it("fails closed on a partial live map: ready stays false until ALL seven launch products are mapped", () => {
     const r = computeDodoReadiness(env({
       DODO_API_KEY: "k",
       DODO_ENVIRONMENT: "live_mode",
       DODO_PRODUCT_MAP: JSON.stringify({ vv_growth_monthly: "pdt_2", vv_topup_small: " " }),
     }));
+    // live connection detected, per-product booleans exposed safely...
     expect(r.live).toBe(true);
-    expect(r.ready).toBe(true);
     expect(r.products.vv_growth_monthly).toBe(true);
     expect(r.products.vv_starter_oneoff).toBe(false);
     expect(r.products.vv_topup_small).toBe(false);
+    // ...but the generic launch-ready flag must NOT flip on a partial map.
+    expect(r.ready).toBe(false);
+    // Six of seven is still not launch-ready.
+    const six = JSON.parse(FULL_MAP);
+    delete six.vv_topup_large;
+    const r6 = computeDodoReadiness(env({
+      DODO_API_KEY: "k", DODO_ENVIRONMENT: "live_mode", DODO_PRODUCT_MAP: JSON.stringify(six),
+    }));
+    expect(r6.ready).toBe(false);
+    expect(Object.values(r6.products).filter(Boolean)).toHaveLength(6);
   });
 
   it("is fully ready with a live full map", () => {
