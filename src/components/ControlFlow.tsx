@@ -2,11 +2,11 @@ import { motion } from "framer-motion";
 import { ArrowRight, Database, Sparkles, Eye, Send, FileCheck } from "lucide-react";
 
 const steps = [
-  { icon: Database, label: "Your data", note: "You upload and own it" },
-  { icon: Sparkles, label: "AI prepares", note: "Editable drafts only" },
+  { icon: Database, label: "Your data + brief", note: "You upload approved data and own it" },
+  { icon: Sparkles, label: "AI prepares the full pack", note: "Strategy and every asset as editable drafts" },
   { icon: Eye, label: "You review & approve", note: "Nothing leaves draft alone" },
-  { icon: Send, label: "You activate", note: "Send outreach or hand social to Buffer" },
-  { icon: FileCheck, label: "Everything is recorded", note: "Approvals and activity stay visible" },
+  { icon: Send, label: "You activate per channel", note: "Governed email send, Buffer handoff, your distribution" },
+  { icon: FileCheck, label: "Replies & outcomes recorded", note: "Approvals and activity stay visible" },
 ];
 
 const ControlFlow = () => (
@@ -26,7 +26,7 @@ const ControlFlow = () => (
           One self-serve product. Clear responsibility at every step.
         </h2>
         <p className="text-muted-foreground text-lg leading-relaxed">
-          Nothing sends or publishes automatically — every activation is an authorized human decision.
+          From approved data to a complete campaign pack to replies and pipeline — nothing sends or publishes automatically. Every activation is an authorized human decision.
         </p>
       </motion.div>
 

@@ -5,7 +5,7 @@ import HeroSection from "@/components/HeroSection";
 import CorePillars from "@/components/CorePillars";
 import ControlFlow from "@/components/ControlFlow";
 import SixSteps from "@/components/SixSteps";
-import SocialBufferSection from "@/components/SocialBufferSection";
+import CampaignPackSection from "@/components/CampaignPackSection";
 import GovernanceSection from "@/components/GovernanceSection";
 import WorkflowSavings from "@/components/WorkflowSavings";
 import PricingTeaser from "@/components/PricingTeaser";
@@ -19,8 +19,8 @@ import FinalCTA from "@/components/FinalCTA";
 const Index = () => (
   <>
     <SEO
-      title="Velocity Vision — Customer-controlled B2B commercial workspace"
-      description="Self-serve B2B software for approved prospect data, editable AI-assisted drafts, connected Buffer social publishing, governed activation controls, follow-up records and early opportunity administration."
+      title="Velocity Vision — Customer-controlled B2B campaign workspace"
+      description="Self-serve B2B software that turns approved prospect data and one brief into a complete campaign pack — strategy, landing and offer copy, email sequences, press, social, video scripts, paid ads and lead capture — with governed sending, Buffer social handoff, replies and early pipeline."
       path="/"
       jsonLd={{
         "@context": "https://schema.org",
@@ -44,7 +44,7 @@ const Index = () => (
             operatingSystem: "Web",
             url: "https://velocity-outreach.com",
             description:
-              "Self-serve software for customer-provided business data, editable AI-assisted drafts, connected Buffer social publishing, governed activation controls, follow-up records and early opportunity administration.",
+              "Self-serve software for customer-provided business data, complete AI-assisted campaign packs, governed email activation, connected Buffer social handoff, follow-up records and early opportunity administration.",
           },
         ],
       }}
@@ -61,7 +61,7 @@ const Index = () => (
       </div>
       <div className="panel-wrap">
         <div className="panel-pink">
-          <SocialBufferSection />
+          <CampaignPackSection />
         </div>
       </div>
       <GovernanceSection />

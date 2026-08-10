@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 
 const steps = [
   { number: "01", title: "Connect", desc: "Bring your approved data and verify your sender." },
-  { number: "02", title: "Create", desc: "Generate email, social and press drafts from one brief." },
-  { number: "03", title: "Review", desc: "Edit everything before it leaves draft." },
-  { number: "04", title: "Activate", desc: "Send approved outreach or hand social to Buffer — your call." },
+  { number: "02", title: "Create", desc: "Generate a complete campaign pack from one brief — strategy, email, landing & offer, PR, social, video, ads and lead capture." },
+  { number: "03", title: "Review", desc: "Edit every asset before it leaves draft." },
+  { number: "04", title: "Activate", desc: "Send approved email through governed sending, hand social to your Buffer account, and use the other assets in your channels — your call." },
   { number: "05", title: "Respond", desc: "Triage replies, record follow-ups, hand off meetings." },
   { number: "06", title: "Learn", desc: "Watch the Outcome Funnel record what happened." },
 ];
