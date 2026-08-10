@@ -14,6 +14,7 @@ import {
   GitBranch,
   Users,
   Scale,
+  Sparkles,
 } from "lucide-react";
 import aboutHero from "@/assets/about-hero.jpg";
 
@@ -24,14 +25,14 @@ const productCards = [
     desc: "Customers upload and organize business records they are authorized to use. Velocity Vision does not scrape or sell contact lists.",
   },
   {
-    icon: ShieldCheck,
-    title: "Customer-controlled activation",
-    desc: "Draft generation, sender verification, record review and authorized-user activation are kept as separate steps.",
+    icon: Sparkles,
+    title: "Complete campaign pack",
+    desc: "One customer brief can generate strategy, landing & offer copy, email sequences, social content, a press release, video scripts, paid-ad copy and lead capture as editable campaign assets.",
   },
   {
     icon: GitBranch,
-    title: "Operational records",
-    desc: "Follow-up states and early opportunity records help customers organize activity without promising a commercial result.",
+    title: "Controlled activation and outcomes",
+    desc: "Customers review and approve assets, use governed email or Buffer social handoff where applicable, then manage replies and early opportunity records without a promised commercial result.",
   },
 ];
 
@@ -56,8 +57,8 @@ const operatingCards = [
 const About = () => (
   <>
     <SEO
-      title="About Velocity Vision — Self-serve B2B software"
-      description="Velocity Vision is a self-serve B2B software workspace operated by Global Solutions Management LLC for customer-provided data, editable AI-assisted drafts, activation controls, follow-up records and early opportunity administration."
+      title="About Velocity Vision — Complete customer-controlled campaign software"
+      description="Velocity Vision is self-serve B2B campaign software operated by Global Solutions Management LLC, combining customer-provided data, complete campaign-pack generation, controlled activation, follow-up and early pipeline records."
       path="/about"
     />
     <Navbar />
@@ -83,10 +84,10 @@ const About = () => (
               About Velocity Vision
             </p>
             <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6">
-              Customer-controlled B2B software operated by Global Solutions Management LLC
+              Customer-controlled B2B campaign software operated by Global Solutions Management LLC
             </h1>
             <p className="text-primary-foreground/80 text-lg leading-relaxed mb-5">
-              Velocity Vision organizes customer-provided business data, editable AI-assisted drafts, sender verification, activation controls, follow-up records and early opportunity administration in one self-serve workspace.
+              Velocity Vision connects customer-provided business data, a complete AI-assisted campaign pack, controlled activation routes, follow-up and early pipeline in one self-serve workspace.
             </p>
             <p className="text-primary-foreground/70 text-sm leading-relaxed">
               It does not scrape contacts, sell lists, provide managed campaigns, send automatically or guarantee compliance, deliverability, replies, sales, pipeline or revenue.
@@ -102,7 +103,7 @@ const About = () => (
               What the product does
             </h2>
             <p className="text-muted-foreground text-lg leading-relaxed">
-              Velocity Vision provides software functions and editable drafts. Customers retain responsibility for data source, lawful basis, recipients, sender identity, content, suppression handling and every activation decision.
+              Start with approved business data and a campaign brief, create the working campaign assets, then review and control what is used or activated. Customers retain responsibility for data source, lawful basis, recipients, sender identity, content, suppression handling and every activation decision.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
