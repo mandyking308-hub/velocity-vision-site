@@ -18,43 +18,43 @@ const industries = [
   {
     icon: Cpu,
     title: "Software and technology",
-    need: "Organize customer-provided prospect and partner data, prepare launch materials and manage structured follow-up around a defined product proposition.",
-    use: "Teams can create editable outreach drafts, review safe segments, approve activation and move selected responses into an early pipeline.",
+    need: "Organize customer-provided prospect and partner data and build a coherent launch or growth campaign around a defined product proposition.",
+    use: "Teams can create a complete editable campaign pack, review the audience, choose controlled activation routes and move selected responses into early pipeline.",
     safeguard: "No scraped databases, automatic sending or guaranteed pipeline claims.",
   },
   {
     icon: Briefcase,
     title: "Professional services",
-    need: "Maintain a clear commercial workflow for relationship-led business development without relying on disconnected spreadsheets and inbox reminders.",
-    use: "Firms can organize lawful business contacts, prepare customer-reviewed messages and track follow-up and opportunities in one workspace.",
+    need: "Maintain a clear campaign and relationship-development workflow without relying on disconnected spreadsheets, copy documents and inbox reminders.",
+    use: "Firms can organize lawful business contacts, build customer-reviewed campaign assets and track follow-up and opportunities in one workspace.",
     safeguard: "The platform does not provide professional advice, prospecting services or managed campaigns.",
   },
   {
     icon: Building2,
     title: "Agencies and fractional teams",
-    need: "Keep each client's data, drafts, activation controls and pipeline activity separated while maintaining account-level visibility.",
-    use: "Agency Workspace provides isolated client workspaces, pooled Campaign Credits, account-wide send-usage visibility and the plan's daily send ceiling.",
+    need: "Keep each client's data, campaign pack, activation controls and pipeline activity separated while maintaining account-level visibility.",
+    use: "Agency Workspace provides isolated client workspaces, pooled Campaign Credits, account-wide send-usage visibility and cross-client stored outcome views.",
     safeguard: "Each agency remains responsible for client authority, lawful data, sender identity and every activation decision.",
   },
   {
     icon: GraduationCap,
     title: "Education and training businesses",
-    need: "Structure business-to-business outreach to organizations, partners and professional audiences using data the customer is authorized to use.",
-    use: "Teams can prepare editable campaign packs, manage approved follow-up and track early commercial opportunities.",
+    need: "Structure business-to-business campaigns to organizations, partners and professional audiences using data the customer is authorized to use.",
+    use: "Teams can prepare complete editable campaign packs, manage approved follow-up and track early commercial opportunities.",
     safeguard: "Velocity Vision is not intended for outreach to children or for processing student special-category data.",
   },
   {
     icon: HeartHandshake,
     title: "Membership and nonprofit organizations",
-    need: "Coordinate lawful partner, sponsor, supplier and organizational outreach without turning the platform into a consumer messaging database.",
-    use: "Organizations can review their own records, create draft materials and manage approved follow-up through a governed workflow.",
+    need: "Coordinate lawful partner, sponsor, supplier and organizational campaigns without turning the platform into a consumer messaging database.",
+    use: "Organizations can review their own records, create connected campaign assets and manage approved follow-up through a governed workflow.",
     safeguard: "Sensitive beneficiary, health, safeguarding or donor-payment data should not be uploaded unless expressly permitted and properly protected.",
   },
   {
     icon: Boxes,
     title: "B2B product and service companies",
-    need: "Bring data preparation, outreach drafting, follow-up and early pipeline into a repeatable internal operating process.",
-    use: "Customers can upload their own business data, prepare assets, approve safe segments and retain control of all sending and publishing decisions.",
+    need: "Bring data preparation, campaign creation, activation, follow-up and early pipeline into a repeatable internal operating process.",
+    use: "Customers can upload their own business data, create the full campaign pack, approve safe segments and retain control of all sending, social handoff and distribution decisions.",
     safeguard: "Velocity Vision does not promise replies, sales, deliverability, compliance or any particular commercial outcome.",
   },
 ];
@@ -62,8 +62,8 @@ const industries = [
 const Industries = () => (
   <>
     <SEO
-      title="Business Use Cases by Industry — Velocity Vision"
-      description="See how businesses, agencies and organizations can use the self-serve Velocity Vision workspace for customer-provided data, AI-assisted drafts, governed activation, follow-up and early pipeline."
+      title="Business Campaign Use Cases by Industry — Velocity Vision"
+      description="See how businesses, agencies and organizations can use Velocity Vision for customer-provided data, complete campaign generation, controlled activation, follow-up and early pipeline."
       path="/industries"
     />
     <Navbar />
@@ -79,10 +79,10 @@ const Industries = () => (
               Business use cases
             </p>
             <h1 className="text-4xl md:text-6xl font-display font-bold text-primary-foreground mb-6 max-w-4xl">
-              A governed software workflow for different B2B operating models
+              The same complete campaign workflow, adapted to different B2B operating models
             </h1>
             <p className="text-primary-foreground/75 text-lg max-w-3xl leading-relaxed">
-              Velocity Vision is a self-serve software workspace. The examples below describe how different organizations may configure the same product functionality; they are not managed services, customer case studies or performance claims.
+              The examples below show how different organizations may configure the same self-serve system: approved data, complete campaign assets, controlled activation, replies and early pipeline. They are not managed services, customer case studies or performance claims.
             </p>
             <p className="text-primary-foreground/70 text-sm max-w-3xl mt-5 leading-relaxed">
               Customers supply their own lawfully obtained business data, connect their own sender and remain responsible for permissions, content review, suppression handling and every activation decision.
