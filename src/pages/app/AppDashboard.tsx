@@ -295,6 +295,7 @@ export default function AppDashboard() {
         </div>
       </div>
 
+      <PlanSummaryCard />
       <FreePreviewStatusCard />
       <FirstCampaignLaunchpad signals={launchpadSignals} />
       <CampaignPreflight result={dashboardPreflight} title="Activation-preparation preflight" compact />
