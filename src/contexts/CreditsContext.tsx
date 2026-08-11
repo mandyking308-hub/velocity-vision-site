@@ -1,7 +1,9 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useState, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { PLANS, PlanId, CREDIT_COSTS, CreditAction, HUMAN_REVIEW_PRICE } from "@/lib/credits";
+import { PLANS, PlanId } from "@/lib/credits";
+import { computeCreditBalance, type CreditBalanceSnapshot, type CreditLedgerLike } from "@/lib/creditBalance";
+import { isPlanEntitled } from "@/lib/planEntitlement";
 import { toast } from "sonner";
 
 interface UserPlan {
@@ -14,9 +16,12 @@ interface UserPlan {
 interface CreditsContextValue {
   loading: boolean;
   plan: PlanId;
+  planStatus: string;
   planConfig: typeof PLANS[PlanId];
   periodStart: Date | null;
   periodEnd: Date | null;
+  entitled: boolean;
+  entitlementEnded: boolean;
   starterExpired: boolean;
   isFreePreview: boolean;
   freePreviewExpired: boolean;
@@ -26,18 +31,17 @@ interface CreditsContextValue {
   topupBalance: number;
   remaining: number;
   refresh: () => Promise<void>;
-  /** Returns true on success, false (and shows toast) if not enough credits. */
-  consume: (action: CreditAction, refId?: string, label?: string) => Promise<boolean>;
   purchaseHumanReview: (campaignId: string) => Promise<void>;
 }
 
 const Ctx = createContext<CreditsContextValue | null>(null);
+const EMPTY_BALANCE: CreditBalanceSnapshot = { included: 0, used: 0, topupBalance: 0, remaining: 0 };
 
 export function CreditsProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [userPlan, setUserPlan] = useState<UserPlan | null>(null);
-  const [ledger, setLedger] = useState<Array<{ delta: number; reason: string; created_at: string }>>([]);
+  const [balance, setBalance] = useState<CreditBalanceSnapshot>(EMPTY_BALANCE);
 
   const ensurePlan = useCallback(async (): Promise<UserPlan | null> => {
     if (!user) return null;
@@ -47,11 +51,7 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
       .eq("user_id", user.id)
       .maybeSingle();
     if (data) return data as UserPlan;
-    // New account: provision Free Preview (welcome credits + 14-day preview).
-    // Idempotent — safe on repeat calls. Paid upgrades happen via payment webhook.
-    // NO fallback plan grant: if provisioning fails we surface the failure and
-    // retry on next load — silently granting a different (paid) plan would
-    // corrupt plan truth and billing reconciliation.
+
     const { data: fp, error: fpErr } = await supabase.rpc("grant_free_preview_welcome" as any);
     if (!fpErr && fp) {
       return {
@@ -65,14 +65,43 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
     return null;
   }, [user]);
 
-
   const load = useCallback(async () => {
-    if (!user) { setLoading(false); return; }
+    if (!user) {
+      setUserPlan(null);
+      setBalance(EMPTY_BALANCE);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     const p = await ensurePlan();
     setUserPlan(p);
-    const { data: ld } = await supabase.from("credit_ledger").select("delta, reason, created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(500);
-    setLedger((ld as any) || []);
+
+    const { data: serverBalance, error: serverBalanceError } = await (supabase as any).rpc("get_current_credit_balance");
+    if (!serverBalanceError && serverBalance && typeof serverBalance === "object") {
+      setBalance({
+        included: Math.max(0, Number(serverBalance.included) || 0),
+        used: Math.max(0, Number(serverBalance.used) || 0),
+        topupBalance: Math.max(0, Number(serverBalance.topup_balance) || 0),
+        remaining: Math.max(0, Number(serverBalance.remaining) || 0),
+      });
+    } else {
+      // Backward-compatible fallback while the DB migration rolls out. This
+      // uses the same allocation rule: cycle credits first, then carried top-ups.
+      const { data: ld } = await supabase
+        .from("credit_ledger")
+        .select("delta, reason, created_at")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: true })
+        .limit(2000);
+      const periodStart = p ? new Date(p.period_start) : null;
+      const periodEnd = p?.period_end ? new Date(p.period_end) : null;
+      const freeExpired = p?.plan === "free_preview" && (!periodEnd || periodEnd.getTime() <= Date.now());
+      setBalance(computeCreditBalance((ld as CreditLedgerLike[]) || [], {
+        plan: p?.plan || "free_preview",
+        periodStart,
+        freePreviewExpired: freeExpired,
+      }));
+    }
     setLoading(false);
   }, [user, ensurePlan]);
 
@@ -80,101 +109,49 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
 
   const planId: PlanId = (userPlan?.plan as PlanId) || "free_preview";
   const planConfig = PLANS[planId] ?? PLANS.free_preview;
+  const planStatus = userPlan?.status || "missing";
   const periodStart = userPlan ? new Date(userPlan.period_start) : null;
   const periodEnd = userPlan?.period_end ? new Date(userPlan.period_end) : null;
-  const starterExpired = planId === "starter" && !!periodEnd && periodEnd.getTime() < Date.now();
+  const entitled = !!userPlan && isPlanEntitled({
+    plan: planId,
+    status: planStatus,
+    periodEnd,
+  });
+  const entitlementEnded = !!userPlan && !entitled;
+  const starterExpired = planId === "starter" && !entitled;
   const isFreePreview = planId === "free_preview";
-  const freePreviewExpired = isFreePreview && !!periodEnd && periodEnd.getTime() < Date.now();
+  const freePreviewExpired = isFreePreview && !entitled;
   const freePreviewDaysLeft = isFreePreview && periodEnd
     ? Math.max(0, Math.ceil((periodEnd.getTime() - Date.now()) / 86400000))
     : null;
 
-  // Compute included + used balances. Free credits (welcome + daily) are
-  // zeroed once the preview window ends, but paid top-ups remain usable.
-  const { included, used, topupBalance, remaining } = useMemo(() => {
-    const startMs = periodStart?.getTime() ?? 0;
-    let inc = 0, usedC = 0, topup = 0, topupSpent = 0, freeInc = 0, freeUsed = 0;
-    for (const row of ledger) {
-      const t = new Date(row.created_at).getTime();
-      if (row.reason === "plan_grant" && t >= startMs) inc += row.delta;
-      else if (row.reason.startsWith("spend_") && t >= startMs) usedC += -row.delta;
-      else if (row.reason === "paid_topup_spend") topupSpent += -row.delta;
-      else if (row.reason === "topup" || row.reason === "stripe_topup") topup += row.delta;
-      else if (row.reason === "free_welcome_grant" || row.reason === "free_daily_grant") freeInc += row.delta;
-      else if (row.reason === "free_preview_spend") freeUsed += -row.delta;
-      else if (row.reason === "qa_manual_grant" || row.reason === "manual_grant") topup += row.delta;
-    }
-    // When the preview window has closed, free credits are forfeit — only paid
-    // top-up balance keeps generation alive.
-    const freeNet = freePreviewExpired ? 0 : Math.max(0, freeInc - freeUsed);
-    const paidNet = Math.max(0, topup - topupSpent);
-    const planNet = Math.max(0, inc - usedC);
-    return {
-      included: (freePreviewExpired ? 0 : freeInc) + inc,
-      used: (freePreviewExpired ? 0 : freeUsed) + usedC,
-      topupBalance: paidNet,
-      remaining: planNet + paidNet + freeNet,
-    };
-  }, [ledger, periodStart, freePreviewExpired]);
-
-  const consume = useCallback<CreditsContextValue["consume"]>(async (action, refId, label) => {
-    if (!user) return false;
-    const cost = CREDIT_COSTS[action];
-    if (remaining < cost) {
-      const desc = freePreviewExpired && topupBalance <= 0
-        ? "Free Preview has ended. Buy credits or upgrade to continue generating."
-        : "Top up or upgrade to keep generating.";
-      toast.error("You're out of Campaign Credits", { description: desc });
-      return false;
-    }
-    if (starterExpired) {
-      toast.error("Starter access has ended", { description: "Upgrade to Growth or buy another Starter to keep generating." });
-      return false;
-    }
-    // Route the spend to whichever bucket is actually funding it so reporting
-    // stays clean and expired free credits can't be resurrected.
-    const useFree = isFreePreview && !freePreviewExpired;
-    const usePaidTopup = !useFree && isFreePreview && topupBalance >= cost;
-    const reason = useFree
-      ? "free_preview_spend"
-      : usePaidTopup
-        ? "paid_topup_spend"
-        : `spend_${action}`;
-    const { error } = await supabase.from("credit_ledger").insert({
-      user_id: user.id,
-      delta: -cost,
-      reason,
-      ref_id: refId,
-      meta: {
-        action,
-        label: label ?? action,
-        cost,
-        tier: isFreePreview ? "free_preview" : planId,
-        bucket: useFree ? "free_preview" : usePaidTopup ? "paid_topup" : "plan",
-      },
-    });
-    if (error) { toast.error("Could not record credit usage"); return false; }
-    await load();
-    return true;
-  }, [user, remaining, topupBalance, starterExpired, freePreviewExpired, isFreePreview, planId, load]);
-
-  // NOTE: Human Review purchases MUST go through hosted checkout —
-  // `HumanReviewButton` starts checkout (Dodo when live, otherwise the existing
-  // Stripe path) and the provider webhook inserts the `human_reviews` row via
-  // service_role after payment clears. This stub remains only to preserve the
-  // public type; it does not write to the DB.
-
+  // Human Review purchases must go through hosted checkout; the provider
+  // webhook is the only fulfilment path.
   const purchaseHumanReview = useCallback<CreditsContextValue["purchaseHumanReview"]>(async () => {
     toast.error("Use the Buy button to start checkout.");
   }, []);
 
-
   const value: CreditsContextValue = {
-    loading, plan: planId, planConfig, periodStart, periodEnd, starterExpired,
-    isFreePreview, freePreviewExpired, freePreviewDaysLeft,
-    included, used, topupBalance, remaining,
-    refresh: load, consume, purchaseHumanReview,
+    loading,
+    plan: planId,
+    planStatus,
+    planConfig,
+    periodStart,
+    periodEnd,
+    entitled,
+    entitlementEnded,
+    starterExpired,
+    isFreePreview,
+    freePreviewExpired,
+    freePreviewDaysLeft,
+    included: balance.included,
+    used: balance.used,
+    topupBalance: balance.topupBalance,
+    remaining: balance.remaining,
+    refresh: load,
+    purchaseHumanReview,
   };
+
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 
