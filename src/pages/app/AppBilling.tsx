@@ -13,7 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Check, ArrowUpRight, CheckCircle2, AlertTriangle } from "lucide-react";
 import { useDodoCheckout } from "@/hooks/useDodoCheckout";
 import { useDodoReadiness } from "@/hooks/useDodoReadiness";
-import { CHECKOUT_ACTIVATING_COPY, isProductLiveReady, type DodoProductKey } from "@/lib/dodoReadiness";
+import { CHECKOUT_ACTIVATING_COPY, type DodoProductKey } from "@/lib/dodoReadiness";
 import { parseBuyParam } from "@/lib/safeNext";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
@@ -154,11 +154,11 @@ export default function AppBilling() {
     const id = pendingPlan;
     setPendingPlan(null);
     const productKey = PLAN_TO_DODO_PRODUCT[id];
-    if (!isProductLiveReady(readiness, productKey)) {
-      toast.info(CHECKOUT_ACTIVATING_COPY, { description: "No payment was taken. We'll arrange onboarding with you directly." });
-      navigate(`/contact?plan=${id}`);
-      return;
-    }
+    // The server-side dodo-create-checkout function is the authoritative
+    // fail-closed gate: it validates auth, the allow-listed product key, live
+    // API config, the product map and the returned checkout URL. The
+    // client-side readiness probe is advisory only and must never redirect a
+    // paying customer away from a valid live checkout.
     await startCheckout(productKey);
   };
 

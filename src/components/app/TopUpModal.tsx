@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button";
 import { TOPUP_PACKS } from "@/lib/credits";
 import { useCredits } from "@/contexts/CreditsContext";
 import { useDodoCheckout } from "@/hooks/useDodoCheckout";
-import { useDodoReadiness } from "@/hooks/useDodoReadiness";
-import { CHECKOUT_ACTIVATING_COPY, isProductLiveReady, type DodoProductKey } from "@/lib/dodoReadiness";
+import { type DodoProductKey } from "@/lib/dodoReadiness";
 import { toast } from "sonner";
 import { Sparkles } from "lucide-react";
 import { useCurrency } from "@/hooks/useCurrency";
@@ -27,7 +26,6 @@ const PACK_TO_SKU: Record<string, SkuId> = {
 
 export default function TopUpModal({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
   const { startCheckout } = useDodoCheckout();
-  const { readiness } = useDodoReadiness();
   const { currency } = useCurrency();
   const { plan, isFreePreview } = useCredits();
   const navigate = useNavigate();
@@ -44,10 +42,9 @@ export default function TopUpModal({ open, onOpenChange }: { open: boolean; onOp
     const id = pendingPack;
     setPendingPack(null);
     const productKey = PACK_TO_PRODUCT[id];
-    if (!isProductLiveReady(readiness, productKey)) {
-      toast.info(CHECKOUT_ACTIVATING_COPY, { description: "No payment was taken." });
-      return;
-    }
+    // The server-side dodo-create-checkout function is the authoritative
+    // fail-closed gate; the client readiness probe is advisory only and must
+    // not block an eligible paid user from a valid live checkout.
     await startCheckout(productKey);
   };
 

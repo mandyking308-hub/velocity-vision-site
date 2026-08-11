@@ -2,7 +2,11 @@ import { useCallback, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { isSafeDodoCheckoutLink } from "@/lib/dodoLinks";
-import { CHECKOUT_ACTIVATING_COPY, type DodoProductKey } from "@/lib/dodoReadiness";
+import { type DodoProductKey } from "@/lib/dodoReadiness";
+
+/** Honest failure copy: checkout failed, no manual-onboarding implication. */
+const CHECKOUT_UNAVAILABLE_COPY = "Checkout is temporarily unavailable.";
+const CHECKOUT_UNAVAILABLE_DETAIL = "No payment was taken. Please try again in a moment or contact support.";
 
 /**
  * Starts a Dodo hosted checkout for an allow-listed internal product key.
