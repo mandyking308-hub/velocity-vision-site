@@ -29,18 +29,19 @@ export default function TopUpModal({ open, onOpenChange }: { open: boolean; onOp
   const { startCheckout } = useDodoCheckout();
   const { readiness } = useDodoReadiness();
   const { currency } = useCurrency();
-  const { plan, isFreePreview } = useCredits();
+  const { plan, isFreePreview, entitled, entitlementEnded } = useCredits();
   const navigate = useNavigate();
   const [pendingPack, setPendingPack] = useState<string | null>(null);
+  const canBuyTopup = entitled && !isFreePreview;
 
   const handle = (packId: string) => {
-    if (isFreePreview) return;
+    if (!canBuyTopup) return;
     onOpenChange(false);
     setPendingPack(packId);
   };
 
   const confirmBuy = async () => {
-    if (!pendingPack || isFreePreview) return;
+    if (!pendingPack || !canBuyTopup) return;
     const id = pendingPack;
     setPendingPack(null);
     const productKey = PACK_TO_PRODUCT[id];
@@ -60,16 +61,22 @@ export default function TopUpModal({ open, onOpenChange }: { open: boolean; onOp
             <DialogDescription>
               {isFreePreview
                 ? "Free Preview is limited to one full campaign pack. Move to a paid plan before buying additional Campaign Credits."
-                : "Choose an available credit pack for this paid workspace. Credits are fulfilled after confirmed payment."}
+                : entitlementEnded
+                  ? "Your paid access has ended. Renew or choose a current paid plan before buying additional Campaign Credits."
+                  : "Choose an available credit pack for this paid workspace. Credits are fulfilled after confirmed payment."}
             </DialogDescription>
           </DialogHeader>
 
-          {isFreePreview ? (
+          {!canBuyTopup ? (
             <div className="rounded-lg border border-accent/30 bg-accent/5 p-5 space-y-3">
               <p className="text-sm text-muted-foreground">
-                Top-ups are not sold into Free Preview because the preview remains capped at one full campaign pack and 25 contacts. Starter is a one-off paid option; Growth and Agency are monthly plans.
+                {isFreePreview
+                  ? "Top-ups are not sold into Free Preview because the preview remains capped at one full campaign pack and 25 contacts. Starter is a one-off paid option; Growth and Agency are monthly plans."
+                  : "Unused paid top-up balance remains recorded on the account, but new top-ups and paid actions require a current paid entitlement."}
               </p>
-              <Button onClick={() => { onOpenChange(false); navigate("/pricing"); }}>Compare paid plans</Button>
+              <Button onClick={() => { onOpenChange(false); navigate(isFreePreview ? "/pricing" : "/app/billing"); }}>
+                {isFreePreview ? "Compare paid plans" : "Renew or change plan"}
+              </Button>
             </div>
           ) : (
             <>
@@ -92,7 +99,7 @@ export default function TopUpModal({ open, onOpenChange }: { open: boolean; onOp
         </DialogContent>
       </Dialog>
       <LegalComplianceGate
-        open={pendingPack !== null && !isFreePreview}
+        open={pendingPack !== null && canBuyTopup}
         onOpenChange={(v) => { if (!v) setPendingPack(null); }}
         source="topup_checkout"
         title="Confirm current terms before buying credits"

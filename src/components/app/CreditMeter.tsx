@@ -10,23 +10,35 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export function CreditPill() {
-  const { remaining, included, topupBalance } = useCredits();
-  const total = included + topupBalance;
+  const { remaining, used, entitled } = useCredits();
+  const total = entitled ? remaining + used : 0;
   return (
     <Link to="/app/billing" className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card hover:bg-muted text-xs font-medium">
       <Sparkles className="h-3.5 w-3.5 text-accent" />
-      <span>{remaining} / {total} credits</span>
+      <span>{remaining} / {total} usable credits</span>
     </Link>
   );
 }
 
 export default function CreditMeter() {
-  const { included, used, topupBalance, remaining, periodEnd, planConfig, starterExpired } = useCredits();
+  const {
+    used,
+    topupBalance,
+    remaining,
+    periodEnd,
+    planConfig,
+    entitled,
+    entitlementEnded,
+    isFreePreview,
+  } = useCredits();
   const [open, setOpen] = useState(false);
-  const total = included + topupBalance;
+  // `remaining + used` represents the cycle's actual usable starting pool even
+  // after spend has crossed from included credits into carried top-ups.
+  const total = entitled ? remaining + used : 0;
   const pct = total > 0 ? Math.min(100, (used / total) * 100) : 0;
   const state = usageState(used, total);
   const nextReset = periodEnd ? periodEnd.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) : "—";
+  const canBuyTopup = entitled && !isFreePreview;
 
   const nudgeReason =
     state === "exhausted" ? "credits_exhausted" as const :
@@ -42,20 +54,27 @@ export default function CreditMeter() {
               <div className="text-xs uppercase tracking-wider text-muted-foreground">Campaign Credits</div>
               <div className="text-3xl font-bold mt-1">{remaining}<span className="text-base font-normal text-muted-foreground"> / {total}</span></div>
               <div className="text-xs text-muted-foreground mt-1">
-                {planConfig.name} • {planConfig.cadence === "monthly" ? `Resets ${nextReset}` : starterExpired ? "Starter ended" : `Access until ${nextReset}`}
+                {entitlementEnded
+                  ? `${planConfig.name} access ended · renew to use credits`
+                  : planConfig.cadence === "monthly"
+                    ? `${planConfig.name} • Resets ${nextReset}`
+                    : `${planConfig.name} • Access until ${nextReset}`}
               </div>
+              {entitlementEnded && topupBalance > 0 && (
+                <div className="text-xs text-muted-foreground mt-1">{topupBalance} owned top-up credits remain recorded for use after renewal.</div>
+              )}
             </div>
             <div className="flex gap-2">
-              <Button size="sm" variant="outline" onClick={() => setOpen(true)}>Buy credits</Button>
-              <Button size="sm" asChild><Link to="/app/billing">Upgrade</Link></Button>
+              {canBuyTopup && <Button size="sm" variant="outline" onClick={() => setOpen(true)}>Buy credits</Button>}
+              <Button size="sm" asChild><Link to="/app/billing">{entitlementEnded ? "Renew" : "Upgrade"}</Link></Button>
             </div>
           </div>
           <Progress value={pct} />
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>{used} used this cycle</span>
-            <span>{topupBalance > 0 && `+${topupBalance} top-up`}</span>
+            <span>{entitled && topupBalance > 0 ? `+${topupBalance} top-up remaining` : ""}</span>
           </div>
-          {nudgeReason && <UpgradeNudge reason={nudgeReason} variant="inline" />}
+          {entitled && nudgeReason && <UpgradeNudge reason={nudgeReason} variant="inline" />}
         </CardContent>
       </Card>
       <TopUpModal open={open} onOpenChange={setOpen} />
