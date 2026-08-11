@@ -12,7 +12,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Check, ArrowUpRight, CheckCircle2, AlertTriangle } from "lucide-react";
 import { useDodoCheckout } from "@/hooks/useDodoCheckout";
-import { useDodoReadiness } from "@/hooks/useDodoReadiness";
 import { type DodoProductKey } from "@/lib/dodoReadiness";
 import { parseBuyParam } from "@/lib/safeNext";
 import { toast } from "sonner";
@@ -52,7 +51,6 @@ export default function AppBilling() {
   const [emailConn, setEmailConn] = useState<any[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
   const [stripeSub, setStripeSub] = useState<any>(null);
-  const { readiness } = useDodoReadiness();
   const { startCheckout } = useDodoCheckout();
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
