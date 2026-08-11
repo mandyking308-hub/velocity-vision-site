@@ -73,6 +73,7 @@ export default function AppPerformance() {
         <CardContent className="text-sm text-muted-foreground space-y-2">
           <p>Counts reflect records stored in your workspace. Missing events remain zero rather than being estimated.</p>
           <p>Velocity Vision does not infer a “winning channel”, attribute revenue automatically or run A/B experiments. Use the underlying campaign, reply and pipeline records when deciding your next action.</p>
+          <p>Social posts handed to your own Buffer account are scheduled and published there. Velocity does not receive social performance metrics, so none are shown on this page — check your Buffer account for post analytics.</p>
         </CardContent>
       </Card>
     </div>
