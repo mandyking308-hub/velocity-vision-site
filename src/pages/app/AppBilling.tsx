@@ -13,7 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Check, ArrowUpRight, CheckCircle2, AlertTriangle } from "lucide-react";
 import { useDodoCheckout } from "@/hooks/useDodoCheckout";
 import { useDodoReadiness } from "@/hooks/useDodoReadiness";
-import { CHECKOUT_ACTIVATING_COPY, type DodoProductKey } from "@/lib/dodoReadiness";
+import { type DodoProductKey } from "@/lib/dodoReadiness";
 import { parseBuyParam } from "@/lib/safeNext";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
@@ -230,7 +230,6 @@ export default function AppBilling() {
       <section>
         <h2 className="text-xl font-semibold mb-3">Paid plans</h2>
         <BillingTermsSummary className="mb-4" />
-        {!readiness.live && <p className="text-sm text-muted-foreground mb-4">{CHECKOUT_ACTIVATING_COPY}</p>}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {PAID_PLAN_ENTRIES.map((id) => {
             const cfg = PLANS[id];
