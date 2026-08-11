@@ -13,10 +13,7 @@ export function isKnownPlan(value: unknown): value is KnownPlan {
   return typeof value === "string" && (KNOWN_PLANS as readonly string[]).includes(value.toLowerCase());
 }
 
-/**
- * Shared fail-closed server rule. A cancel-at-period-end subscription should be
- * persisted as `canceling`; it remains entitled only until period_end.
- */
+/** Shared fail-closed server rule. */
 export function isEntitlementActive(record: EntitlementRecord | null | undefined, nowMs = Date.now()): boolean {
   if (!record || !isKnownPlan(record.plan)) return false;
   const status = String(record.status || "").toLowerCase();
@@ -30,6 +27,12 @@ export function effectivePlan(record: EntitlementRecord | null | undefined, nowM
   return isEntitlementActive(record, nowMs) ? String(record!.plan).toLowerCase() as KnownPlan : null;
 }
 
+/**
+ * Translate provider lifecycle state into the product entitlement state.
+ * Only an explicit cancel-at-period-end keeps access through a future paid
+ * period; an immediate cancellation fails closed even if a stale future date is
+ * still present in the provider payload.
+ */
 export function userPlanStatusForSubscription(input: {
   subscriptionStatus: string;
   periodEnd?: string | null;
@@ -44,7 +47,7 @@ export function userPlanStatusForSubscription(input: {
     return input.cancelAtPeriodEnd && hasFuturePeriod ? "canceling" : status;
   }
   if (status === "canceled" || status === "cancelled") {
-    return hasFuturePeriod ? "canceling" : "canceled";
+    return input.cancelAtPeriodEnd && hasFuturePeriod ? "canceling" : "canceled";
   }
   if (status === "on_hold") return "on_hold";
   if (status === "past_due" || status === "failed") return "past_due";
