@@ -1,5 +1,7 @@
-// Campaign Credits — customer-facing AI usage allowance
-// All numbers here are placeholders the founder can edit later.
+// Campaign Credits — customer-facing AI usage allowance.
+// This module is the shared plan/entitlement truth for the website and app:
+// plan allowances, credit costs, Free Preview limits and top-up packs here
+// must match the published Pricing page and the server/DB enforcement gates.
 
 export type PlanId = "free_preview" | "starter" | "growth" | "agency";
 
@@ -151,21 +153,25 @@ export const ACTION_LABELS: Record<CreditAction, string> = {
   regenerate_section: "Regenerate section",
 };
 
-// Top-up packs (placeholder pricing — editable later)
+// Top-up packs — paid workspaces only (Free Preview cannot buy top-ups).
+// `price` is the live USD reference and MUST match PRICE_CATALOGUE[..].USD in
+// src/lib/currency.ts; all customer-facing display goes through priceFor().
 export interface TopUpPack {
   id: "small" | "medium" | "large";
   label: string;
   credits: number;
-  price: number; // GBP
+  price: number; // USD reference — display via the currency catalogue
   blurb: string;
 }
 
 export const TOPUP_PACKS: TopUpPack[] = [
-  { id: "small", label: "Small top-up", credits: 25, price: 49, blurb: "A quick boost for one extra campaign." },
-  { id: "medium", label: "Medium top-up", credits: 75, price: 119, blurb: "Best value for active months.", },
-  { id: "large", label: "Large top-up", credits: 200, price: 279, blurb: "For agencies or busy launch sprints." },
+  { id: "small", label: "Small top-up", credits: 25, price: 59, blurb: "A quick boost for one extra campaign." },
+  { id: "medium", label: "Medium top-up", credits: 75, price: 149, blurb: "Best value for active months.", },
+  { id: "large", label: "Large top-up", credits: 200, price: 349, blurb: "For agencies or busy launch sprints." },
 ];
 
+// Historical only: Human Review is cancelled as a product. Retained solely so
+// internal CRM revenue reporting for past purchases keeps compiling.
 export const HUMAN_REVIEW_PRICE = 199;
 
 // Warning thresholds — share between dashboard, banners and modals
