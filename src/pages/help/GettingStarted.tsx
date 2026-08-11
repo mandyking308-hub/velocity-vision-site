@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Sparkles, Upload, Rocket, Send, ShieldCheck, TrendingUp, Coins } from "lucide-react";
+import { Sparkles, Upload, Rocket, Send, ShieldCheck, TrendingUp, Coins, Share2 } from "lucide-react";
 
 const topics = [
   { icon: Sparkles, title: "How Campaign Credits work", body: "Campaign Credits are non-cashable product-usage units for credit-priced AI generation. The current live credit-priced action is full campaign-pack generation. Data review, activation preparation and individual email/contact sends are not charged as Campaign Credits." },
@@ -11,6 +11,7 @@ const topics = [
   { icon: Rocket, title: "Prepare the first campaign pack", body: "Use the Copilot or campaign builder to set the goal, audience, offer and tone, then generate and review the editable full campaign pack. Free Preview is capped at one full pack." },
   { icon: ShieldCheck, title: "Review and approve the campaign", body: "Check factual accuracy, claims, recipients, tone and applicable legal requirements. Record human approval before activation preparation. Premium Human Review is a separate paid add-on where available; ordinary human approval remains the customer's responsibility." },
   { icon: Send, title: "Prepare leads, then send separately", body: "Activation preparation creates campaign leads and does not send email or spend Campaign Credits. Before a real send, the product rechecks the eligible paid plan, mailbox state, unsubscribe handling and current daily allowance." },
+  { icon: Share2, title: "Publish social posts via Buffer", body: "Optionally connect your own Buffer account in Settings, then open a reviewed campaign post and choose Send to Buffer. You pick the channel and whether it goes as a draft, to the queue, or on a schedule — publishing stays under your control in Buffer, and Velocity never posts automatically. Supported channels include LinkedIn, Instagram, X/Twitter, Facebook and TikTok, depending on the channels connected in your Buffer account." },
   { icon: TrendingUp, title: "Choose the right paid service level", body: "Starter is $189 one-off with 30 days and a normal 20/day send ceiling. Growth is $315/month with recurring cadence and 50/day. Agency is $629/month with isolated client workspaces, pooled credits and a 100/day normal ceiling." },
   { icon: Coins, title: "Additional Campaign Credits", body: "Credit top-ups are only for eligible paid workspaces. Free Preview cannot buy top-ups and remains capped at one full campaign pack. The final amount, currency, tax treatment, payment provider and terms are confirmed before payment." },
 ];

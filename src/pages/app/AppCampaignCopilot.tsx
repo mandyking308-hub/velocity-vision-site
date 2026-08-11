@@ -371,7 +371,7 @@ export default function AppCampaignCopilot() {
               <div className="space-y-2">
                 <Label>Which channels should we draft for?</Label>
                 <p className="text-xs text-muted-foreground">
-                  Only email is sent by the platform, from your own connected mailbox. Everything else is drafted for you to carry out manually.
+                  Only email is sent by the platform, from your own connected mailbox. Social channels are drafted for review, then handed to your own Buffer account via Send to Buffer — you control scheduling and publishing there. Press and paid ads stay manual.
                 </p>
                 <div className="grid gap-2">
                   {COPILOT_CHANNELS.map((c) => (

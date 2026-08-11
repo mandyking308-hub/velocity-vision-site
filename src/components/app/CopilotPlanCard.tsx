@@ -13,7 +13,7 @@ import type { CopilotEmailStep, CopilotPlan } from "@/lib/copilotBrief";
 
 /**
  * Read-only summary of what the Copilot produced: objective, ICP, offer angle,
- * manual channel tasks, personalization variables and the compliance note.
+ * channel handoff tasks, personalization variables and the compliance note.
  */
 export function CopilotPlanCard({ plan }: { plan: CopilotPlan }) {
   return (
@@ -47,7 +47,7 @@ export function CopilotPlanCard({ plan }: { plan: CopilotPlan }) {
         {plan.manualTasks.length > 0 && (
           <div>
             <div className="text-xs font-medium flex items-center gap-2 mb-1.5">
-              <ClipboardList className="h-4 w-4 text-primary" /> Manual channel tasks
+              <ClipboardList className="h-4 w-4 text-primary" /> Channel handoff tasks
             </div>
             <ul className="space-y-1.5">
               {plan.manualTasks.map((t) => (
