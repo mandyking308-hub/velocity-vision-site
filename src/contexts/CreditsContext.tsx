@@ -85,8 +85,6 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
         remaining: Math.max(0, Number(serverBalance.remaining) || 0),
       });
     } else {
-      // Backward-compatible fallback while the DB migration rolls out. This
-      // uses the same allocation rule: cycle credits first, then carried top-ups.
       const { data: ld } = await supabase
         .from("credit_ledger")
         .select("delta, reason, created_at")
@@ -112,11 +110,7 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
   const planStatus = userPlan?.status || "missing";
   const periodStart = userPlan ? new Date(userPlan.period_start) : null;
   const periodEnd = userPlan?.period_end ? new Date(userPlan.period_end) : null;
-  const entitled = !!userPlan && isPlanEntitled({
-    plan: planId,
-    status: planStatus,
-    periodEnd,
-  });
+  const entitled = !!userPlan && isPlanEntitled({ plan: planId, status: planStatus, periodEnd });
   const entitlementEnded = !!userPlan && !entitled;
   const starterExpired = planId === "starter" && !entitled;
   const isFreePreview = planId === "free_preview";
@@ -125,8 +119,6 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
     ? Math.max(0, Math.ceil((periodEnd.getTime() - Date.now()) / 86400000))
     : null;
 
-  // Human Review purchases must go through hosted checkout; the provider
-  // webhook is the only fulfilment path.
   const purchaseHumanReview = useCallback<CreditsContextValue["purchaseHumanReview"]>(async () => {
     toast.error("Use the Buy button to start checkout.");
   }, []);
@@ -147,7 +139,10 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
     included: balance.included,
     used: balance.used,
     topupBalance: balance.topupBalance,
-    remaining: balance.remaining,
+    // Credits remain owned for accounting, but are not usable until the plan
+    // is currently entitled. This avoids showing phantom spendable balance on
+    // an expired/canceled paid account.
+    remaining: entitled ? balance.remaining : 0,
     refresh: load,
     purchaseHumanReview,
   };
