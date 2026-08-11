@@ -34,10 +34,9 @@ const sections = [
     ["Does Velocity connect to my calendar?", "No calendar connection or sync is claimed. You can use your own booking link and manually record a meeting as booked when confirmed."],
     ["Does the Outcome Funnel attribute revenue?", "No. It reports Contacted → Replied → Interested/Referral → Meeting booked → Opportunity → Won from stored records only. No automated attribution or A/B testing is performed."],
   ]},
-  { title: "Plans, billing and add-ons", items: [
+  { title: "Plans and billing", items: [
     ["What plans are available?", "Free Preview is $0. Starter is $189 one-off for 30 days. Growth is $315/month. Agency Workspace is $629/month. Review Pricing for the current included Campaign Credits and plan limits."],
     ["Can Free Preview buy top-ups?", "No. Credit top-ups are only for eligible paid workspaces. Free Preview remains capped at one full campaign pack."],
-    ["What is Premium Human Review?", "Where available, it is a separate $249 one-off add-on: senior-strategist review of the submitted campaign pack, written recommendations and one asynchronous revision pass. It is not legal advice, compliance sign-off, managed delivery or a result guarantee."],
     ["How do payment problems get resolved?", "Payment fulfilment is driven by the configured provider webhook. If Billing does not update after a successful payment, contact support with the date, amount and account email. Never send card numbers, API keys or other credentials."],
   ]},
   { title: "Agency Workspace", items: [

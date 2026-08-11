@@ -136,10 +136,6 @@ const buildFaqs = (topUpsPurchasable: boolean) => [
     a: "Starter is a one-off purchase with 30 days of workspace access. Growth and Agency Workspace are monthly subscriptions that renew at the disclosed monthly price until canceled.",
   },
   {
-    q: "What is Premium Human Review?",
-    a: "Where available, Premium Human Review is a separate paid add-on. It provides a senior-strategist review of the submitted campaign pack, written recommendations and one asynchronous revision pass. It is not legal advice, compliance sign-off, managed campaign delivery or a guarantee of results. Complimentary launch support is onboarding and setup guidance, not Premium Human Review.",
-  },
-  {
     q: "How do I cancel a monthly plan?",
     a: "Cancel through the available billing settings or published contact route before the next renewal date. Cancellation stops future renewal and normally leaves paid access available until the end of the current billing period, subject to the Terms.",
   },
@@ -204,7 +200,7 @@ export default function Pricing() {
           </div>
 
           <div className="mb-6 rounded-xl border border-border/50 bg-white/70 px-4 py-4 text-sm text-foreground/90 space-y-1">
-            <p><strong>Launch support:</strong> complimentary onboarding and setup guidance are included. Premium Human Review is a separate paid add-on where available.</p>
+            <p><strong>Launch support:</strong> complimentary onboarding and setup guidance are included.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -223,16 +219,6 @@ export default function Pricing() {
             ))}
           </div>
 
-          <div className="mt-6 rounded-2xl border border-white/40 bg-white p-6 shadow-card text-foreground">
-            <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
-              <div>
-                <span className="text-[10px] uppercase tracking-wider font-semibold text-accent">Optional paid add-on</span>
-                <h2 className="font-display font-semibold text-xl mt-1">Premium Human Review — {priceFor("vv_human_review_oneoff", currency).formatted} one-off</h2>
-                <p className="text-sm text-muted-foreground mt-2">A senior-strategist review of the submitted campaign pack, written recommendations and one asynchronous revision pass. It is not legal advice, compliance sign-off, managed delivery or a result guarantee.</p>
-              </div>
-              <Button variant="outline" asChild><Link to="/contact?topic=human-review">Ask about Human Review</Link></Button>
-            </div>
-          </div>
           <div className="mt-8"><GlobalStrip variant="compact" /></div>
         </div></section></div></div>
 

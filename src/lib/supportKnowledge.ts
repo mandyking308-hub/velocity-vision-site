@@ -122,7 +122,7 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     id: "legal-versions",
     category: "legal_data",
     question: "Why am I being asked to accept legal terms again?",
-    answer: "Governed actions such as paid checkout, workspace creation, activation preparation and eligible Premium Human Review can require acceptance of the current legal versions. The legal documents shown in the Legal Centre are authoritative.",
+    answer: "Governed actions such as paid checkout, workspace creation and activation preparation can require acceptance of the current legal versions. The legal documents shown in the Legal Centre are authoritative.",
     keywords: ["legal", "accept", "terms", "version"],
     links: [{ label: "Legal Centre", to: "/legal" }],
   },
@@ -132,13 +132,6 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     question: "Are AI-generated assets safe to send as-is?",
     answer: "No. AI outputs are drafts. Review them for factual accuracy, brand suitability, lawful basis, recipient appropriateness and applicable marketing rules before use. Velocity Vision does not provide legal advice or guarantee compliance.",
     keywords: ["ai", "draft", "compliance", "legal", "safe"],
-  },
-  {
-    id: "human-review",
-    category: "campaigns",
-    question: "What is Premium Human Review?",
-    answer: "Where available, Premium Human Review is a separate paid add-on for a senior-strategist review of the submitted campaign pack, written recommendations and one asynchronous revision pass. It is not legal advice, compliance sign-off, managed campaign delivery or a guarantee of results.",
-    keywords: ["human", "review", "premium", "strategist", "campaign"],
   },
   {
     id: "ts-wrong-ws",
