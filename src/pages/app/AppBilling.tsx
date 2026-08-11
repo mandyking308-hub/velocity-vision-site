@@ -226,6 +226,29 @@ export default function AppBilling() {
 
       {showCheckoutFeedback && <FeedbackPrompt promptKey="checkout_success" question="Was checkout clear?" feedbackType="pricing_billing" />}
 
+      {activation && (
+        <Card className="border-primary/40 bg-primary/5">
+          <CardContent className="p-4 flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex gap-3 items-center">
+              <Loader2 className={`h-5 w-5 text-primary shrink-0 ${activation.state === "pending" ? "animate-spin" : ""}`} />
+              <div>
+                <div className="font-semibold">
+                  {activation.state === "pending"
+                    ? `Payment received — activating your ${activation.label}`
+                    : "Payment received — finishing account setup"}
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {activation.state === "pending"
+                    ? "Confirming your purchase. This usually takes a few seconds."
+                    : "Confirmation is taking a moment. Your plan and credits update automatically as soon as it completes — nothing is lost."}
+                </p>
+              </div>
+            </div>
+            {activation.state === "waiting" && <Button onClick={() => navigate("/app")}>Go to Dashboard</Button>}
+          </CardContent>
+        </Card>
+      )}
+
       {isBillingTrouble(stripeSub?.status) && (
         <Card className="border-destructive">
           <CardContent className="p-4 flex items-center justify-between gap-3">
@@ -245,7 +268,7 @@ export default function AppBilling() {
             <CardDescription>Free Preview stays {formatPrice(0, currency)} and is limited to one full campaign pack, 25 contacts and no live sending. Top-ups are available after moving to an eligible paid workspace.</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-3 md:grid-cols-2">
-            <Card><CardContent className="p-4 space-y-2"><div className="font-semibold">Starter — {priceFor("vv_starter_oneoff", currency).formatted} one-off</div><p className="text-sm text-muted-foreground">30 days, 25 Campaign Credits, one-off campaigns and live sending up to 20/day subject to sender safety.</p><Button onClick={() => buyPlan("starter")}>Start Starter</Button></CardContent></Card>
+            <Card><CardContent className="p-4 space-y-2"><div className="font-semibold">Starter — {priceFor("vv_starter_oneoff", currency).formatted} one-off</div><p className="text-sm text-muted-foreground">30 days, 25 Campaign Credits, one-off campaigns and live sending up to 20/day subject to sender safety.</p><Button onClick={() => buyPlan("starter")}>Buy Starter</Button></CardContent></Card>
             <Card><CardContent className="p-4 space-y-2"><div className="font-semibold">Growth — {priceFor("vv_growth_monthly", currency).formatted}/month</div><p className="text-sm text-muted-foreground">Recurring campaigns, 80 Campaign Credits/month and live sending up to 50/day subject to sender safety.</p><Button onClick={() => buyPlan("growth")}>Start Growth</Button></CardContent></Card>
           </CardContent>
         </Card>
@@ -291,7 +314,7 @@ export default function AppBilling() {
                   <div><span className="text-2xl font-bold">{displayPlanPrice(id)}</span> <span className="text-sm text-muted-foreground">{cfg.unit}</span></div>
                   <div className="text-sm font-medium">{cfg.includedCredits} Campaign Credits {cfg.cadence === "monthly" ? "/ month" : "included"}</div>
                   <ul className="text-sm text-muted-foreground space-y-1">{cfg.features.map((f) => <li key={f} className="flex gap-2"><Check className="h-4 w-4 text-accent mt-0.5 shrink-0" />{f}</li>)}</ul>
-                  <Button className="w-full" variant={current ? "outline" : "default"} disabled={current} onClick={() => buyPlan(id)}>{current ? "Current plan" : id === "starter" ? "Start Starter" : `Start ${cfg.name}`}</Button>
+                  <Button className="w-full" variant={current ? "outline" : "default"} disabled={current} onClick={() => buyPlan(id)}>{current ? "Current plan" : id === "starter" ? "Buy Starter" : `Start ${cfg.name}`}</Button>
                 </CardContent>
               </Card>
             );
