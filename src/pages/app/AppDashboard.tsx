@@ -373,9 +373,11 @@ export default function AppDashboard() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
             ["Data Vault", "/app/data-vault", Database], ["Campaigns", "/app/campaigns", Rocket],
-            ["Follow-Up", "/app/follow-up", MessageSquare], ["Pipeline", "/app/pipeline", TrendingUp],
-            ["Performance", "/app/performance", BarChart3], ["Workspaces", "/app/workspaces", Briefcase],
-            ["Billing", "/app/billing", Settings], ["Settings", "/app/settings", Settings],
+            ["Activate", "/app/activate", ShieldCheck], ["Follow-Up", "/app/follow-up", MessageSquare],
+            ["Leads", "/app/leads", Users], ["Pipeline", "/app/pipeline", TrendingUp],
+            ["Performance", "/app/performance", BarChart3], ["Templates", "/app/templates", Wand2],
+            ["Workspaces", "/app/workspaces", Briefcase], ["Billing", "/app/billing", Settings],
+            ["Settings", "/app/settings", Settings],
           ].map(([label, to, Icon]: any[]) => <Link key={to} to={to}><Card className="h-full hover:border-primary/40"><CardContent className="p-4 flex items-center gap-2"><Icon className="h-4 w-4 text-primary" /><span className="text-sm font-medium">{label}</span><ArrowRight className="h-3.5 w-3.5 ml-auto text-muted-foreground" /></CardContent></Card></Link>)}
         </div>
       </Section>
