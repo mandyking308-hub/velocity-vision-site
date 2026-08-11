@@ -123,10 +123,33 @@ const ALLOWED_ORIGINS = [
   "https://www.velocity-outreach.com",
 ];
 
-export function dodoReturnUrls(origin: string | null | undefined): { return_url: string; cancel_url: string } {
+/**
+ * Safe internal purchase-result flag carried on the browser return URL.
+ * NEVER a price, product id, PII or provider secret — only an allow-listed
+ * token the app already recognises in `src/lib/checkoutReturn.ts`. The flag
+ * is presentational routing only: fulfilment stays webhook-authoritative.
+ */
+export const DODO_RETURN_FLAGS: Record<DodoProductKey, string> = {
+  vv_starter_oneoff: "starter",
+  vv_growth_monthly: "growth",
+  vv_agency_monthly: "agency",
+  vv_topup_small: "topup_small",
+  vv_topup_medium: "topup_medium",
+  vv_topup_large: "topup_large",
+};
+
+export function dodoReturnFlagForProduct(productKey: DodoProductKey): string {
+  return DODO_RETURN_FLAGS[productKey];
+}
+
+export function dodoReturnUrls(
+  origin: string | null | undefined,
+  productKey?: DodoProductKey,
+): { return_url: string; cancel_url: string } {
   const safeOrigin = origin && ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  const flag = productKey ? DODO_RETURN_FLAGS[productKey] : "success";
   return {
-    return_url: `${safeOrigin}/app/billing?checkout=success`,
+    return_url: `${safeOrigin}/app/billing?checkout=${flag}`,
     cancel_url: `${safeOrigin}/app/billing?checkout=cancelled`,
   };
 }

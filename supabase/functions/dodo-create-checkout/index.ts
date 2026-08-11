@@ -100,7 +100,9 @@ Deno.serve(async (req) => {
     const name = [profile?.first_name, profile?.last_name]
       .filter(Boolean).join(" ").trim() || email.split("@")[0];
 
-    const { return_url, cancel_url } = dodoReturnUrls(req.headers.get("origin"));
+    // The return URL carries only the safe internal purchase-result flag for
+    // this allow-listed productKey — never price, PII, product id or secret.
+    const { return_url, cancel_url } = dodoReturnUrls(req.headers.get("origin"), productKey);
     const entry = DODO_PRODUCT_CATALOG[productKey];
 
     const response = await fetch(`${cfg.config.baseUrl}/checkouts`, {

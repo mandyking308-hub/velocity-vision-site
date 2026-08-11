@@ -15,7 +15,7 @@ import LegalComplianceGate from "@/components/LegalComplianceGate";
 import { useLegalStatus } from "@/lib/legalCompliance";
 
 export default function AppWorkspaces() {
-  const { workspaces, currentId, setCurrentId, loading } = useWorkspace();
+  const { workspaces, currentId, setCurrentId, loading, refresh } = useWorkspace();
   const { plan, planConfig } = useCredits();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -57,11 +57,13 @@ export default function AppWorkspaces() {
       if (error) throw error;
       const ws: any = Array.isArray(data) ? data[0] : data;
       if (ws?.id) {
+        await refresh();
         setCurrentId(ws.id);
         toast.success("Workspace created");
         setOpen(false);
         setName(""); setIndustry(""); setWebsite("");
-        setTimeout(() => window.location.reload(), 300);
+        // Straight to the dashboard with the new workspace active.
+        navigate("/app");
       } else {
         toast.error("Workspace was not returned");
       }

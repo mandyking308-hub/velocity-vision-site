@@ -15,6 +15,7 @@ import { useCredits } from "@/contexts/CreditsContext";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import CreditMeter from "@/components/app/CreditMeter";
 import FreePreviewStatusCard from "@/components/app/FreePreviewStatusCard";
+import PlanSummaryCard from "@/components/app/PlanSummaryCard";
 import FirstCampaignLaunchpad from "@/components/app/FirstCampaignLaunchpad";
 import OutcomeFunnelPanel from "@/components/app/OutcomeFunnelPanel";
 import CampaignPreflight from "@/components/app/CampaignPreflight";
@@ -294,6 +295,7 @@ export default function AppDashboard() {
         </div>
       </div>
 
+      <PlanSummaryCard />
       <FreePreviewStatusCard />
       <FirstCampaignLaunchpad signals={launchpadSignals} />
       <CampaignPreflight result={dashboardPreflight} title="Activation-preparation preflight" compact />

@@ -13,19 +13,22 @@ import { GTranslateSlot } from "@/components/GTranslate";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
 
+// Customer-journey order: Dashboard -> Data Vault -> Campaigns -> Activate ->
+// Follow-up -> Leads -> Pipeline -> Performance -> Templates -> Workspaces ->
+// Billing -> Settings. Locked by src/test/customer-journey.test.ts.
 const navConfig: { to: string; key: string; icon: typeof LayoutDashboard; end?: boolean }[] = [
   { to: "/app", key: "dashboard", icon: LayoutDashboard, end: true },
   { to: "/app/data-vault", key: "dataVault", icon: Database },
-  { to: "/app/activate", key: "activate", icon: Send },
   { to: "/app/campaigns", key: "campaigns", icon: Rocket },
+  { to: "/app/activate", key: "activate", icon: Send },
   { to: "/app/follow-up", key: "followUp", icon: MessageSquare },
   { to: "/app/leads", key: "leads", icon: Users },
   { to: "/app/pipeline", key: "pipeline", icon: TrendingUp },
   { to: "/app/performance", key: "performance", icon: BarChart3 },
   { to: "/app/templates", key: "templates", icon: LayoutTemplate },
+  { to: "/app/workspaces", key: "workspaces", icon: Briefcase },
   { to: "/app/billing", key: "billing", icon: CreditCard },
   { to: "/app/settings", key: "settings", icon: Settings },
-  { to: "/app/workspaces", key: "workspaces", icon: Briefcase },
 ];
 
 function WorkspaceSwitcher() {

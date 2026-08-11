@@ -10,7 +10,7 @@ import TopUpModal from "@/components/app/TopUpModal";
 import LegalComplianceGate from "@/components/LegalComplianceGate";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { Check, ArrowUpRight, CheckCircle2, AlertTriangle } from "lucide-react";
+import { Check, ArrowUpRight, CheckCircle2, AlertTriangle, Loader2 } from "lucide-react";
 import { useDodoCheckout } from "@/hooks/useDodoCheckout";
 import { type DodoProductKey } from "@/lib/dodoReadiness";
 import { parseBuyParam } from "@/lib/safeNext";
@@ -39,6 +39,20 @@ const PLAN_TO_DODO_PRODUCT: Record<Exclude<PlanId, "free_preview">, DodoProductK
 
 const PAID_PLAN_ENTRIES: PlanId[] = ["starter", "growth", "agency"];
 
+/** Safe purchase-result flags carried on the Dodo/Stripe browser return URL. */
+const PLAN_FLAG_TO_PLAN: Record<string, PlanId> = {
+  starter: "starter",
+  plan_starter: "starter",
+  growth: "growth",
+  agency: "agency",
+};
+const TOPUP_FLAG_RE = /^topup(_small|_medium|_large)?$/;
+
+/** How many times Billing polls for webhook provisioning before showing the
+ *  honest "finishing account setup" state (8 × 2.5s ≈ 20 seconds). */
+const ACTIVATION_POLL_ATTEMPTS = 8;
+const ACTIVATION_POLL_MS = 2500;
+
 export default function AppBilling() {
   const { user } = useAuth();
   const tc = useTranslation("common").t;
@@ -56,6 +70,7 @@ export default function AppBilling() {
   const navigate = useNavigate();
   const [pendingPlan, setPendingPlan] = useState<PlanId | null>(null);
   const [showCheckoutFeedback, setShowCheckoutFeedback] = useState(false);
+  const [activation, setActivation] = useState<null | { kind: "plan" | "topup"; label: string; state: "pending" | "waiting" }>(null);
 
   const displayPlanPrice = (id: PlanId) => id === "free_preview" ? formatPrice(0, currency) : priceFor(PLAN_TO_SKU[id], currency).formatted;
 
@@ -117,18 +132,55 @@ export default function AppBilling() {
       return;
     }
 
-    const flag = parsed.flag;
+    const flag = parsed.flag.toLowerCase();
+    const expectedPlan = PLAN_FLAG_TO_PLAN[flag];
+    const isTopup = !expectedPlan && TOPUP_FLAG_RE.test(flag);
     clearParams();
+    setShowCheckoutFeedback(true);
+    toast.success(tc("toasts.paymentReceived"));
+
+    if (!expectedPlan && !isTopup) {
+      // Generic success flag with no purchase context: refresh and stay here.
+      (async () => { await refresh(); await load(); })();
+      return;
+    }
+
     (async () => {
-      setShowCheckoutFeedback(true);
-      toast.success(tc("toasts.paymentReceived"));
-      for (let i = 0; i < 4; i++) {
-        await new Promise((r) => setTimeout(r, 1200));
+      setActivation({
+        kind: expectedPlan ? "plan" : "topup",
+        label: expectedPlan ? PLANS[expectedPlan].name : "credit top-up",
+        state: "pending",
+      });
+      // The browser return NEVER grants entitlements — the verified provider
+      // webhook is authoritative. Poll (bounded) until that provisioning is
+      // visible, then continue the journey automatically.
+      const startMs = Date.now() - 60_000; // tolerate slight clock skew
+      let activated = false;
+      for (let i = 0; i < ACTIVATION_POLL_ATTEMPTS && !activated; i++) {
+        await new Promise((r) => setTimeout(r, ACTIVATION_POLL_MS));
         await refresh();
         await load();
+        if (!user) break;
+        if (expectedPlan) {
+          const { data } = await supabase.from("user_plans").select("plan").eq("user_id", user.id).maybeSingle();
+          activated = data?.plan === expectedPlan;
+        } else {
+          const { data } = await supabase.from("credit_topups").select("created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle();
+          activated = !!data && new Date(data.created_at).getTime() >= startMs;
+        }
       }
-      if (flag === "plan_starter" || flag.startsWith("checkout=plan_starter") || flag === "starter") navigate("/app/campaigns/new", { replace: true });
-      else if (flag === "growth" || flag === "agency") navigate("/app", { replace: true });
+      if (activated && expectedPlan) {
+        setActivation(null);
+        // Plan purchases land on the dashboard — never straight into campaign
+        // creation before a workspace exists.
+        navigate("/app", { replace: true, state: { planActivated: expectedPlan } });
+      } else if (activated) {
+        // Top-ups stay on Billing and show the refreshed balance/history.
+        setActivation(null);
+      } else {
+        // Webhook slower than the bounded wait: be honest, never claim failure.
+        setActivation((a) => (a ? { ...a, state: "waiting" } : a));
+      }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -174,6 +226,29 @@ export default function AppBilling() {
 
       {showCheckoutFeedback && <FeedbackPrompt promptKey="checkout_success" question="Was checkout clear?" feedbackType="pricing_billing" />}
 
+      {activation && (
+        <Card className="border-primary/40 bg-primary/5">
+          <CardContent className="p-4 flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex gap-3 items-center">
+              <Loader2 className={`h-5 w-5 text-primary shrink-0 ${activation.state === "pending" ? "animate-spin" : ""}`} />
+              <div>
+                <div className="font-semibold">
+                  {activation.state === "pending"
+                    ? `Payment received — activating your ${activation.label}`
+                    : "Payment received — finishing account setup"}
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {activation.state === "pending"
+                    ? "Confirming your purchase. This usually takes a few seconds."
+                    : "Confirmation is taking a moment. Your plan and credits update automatically as soon as it completes — nothing is lost."}
+                </p>
+              </div>
+            </div>
+            {activation.state === "waiting" && <Button onClick={() => navigate("/app")}>Go to Dashboard</Button>}
+          </CardContent>
+        </Card>
+      )}
+
       {isBillingTrouble(stripeSub?.status) && (
         <Card className="border-destructive">
           <CardContent className="p-4 flex items-center justify-between gap-3">
@@ -193,7 +268,7 @@ export default function AppBilling() {
             <CardDescription>Free Preview stays {formatPrice(0, currency)} and is limited to one full campaign pack, 25 contacts and no live sending. Top-ups are available after moving to an eligible paid workspace.</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-3 md:grid-cols-2">
-            <Card><CardContent className="p-4 space-y-2"><div className="font-semibold">Starter — {priceFor("vv_starter_oneoff", currency).formatted} one-off</div><p className="text-sm text-muted-foreground">30 days, 25 Campaign Credits, one-off campaigns and live sending up to 20/day subject to sender safety.</p><Button onClick={() => buyPlan("starter")}>Start Starter</Button></CardContent></Card>
+            <Card><CardContent className="p-4 space-y-2"><div className="font-semibold">Starter — {priceFor("vv_starter_oneoff", currency).formatted} one-off</div><p className="text-sm text-muted-foreground">30 days, 25 Campaign Credits, one-off campaigns and live sending up to 20/day subject to sender safety.</p><Button onClick={() => buyPlan("starter")}>Buy Starter</Button></CardContent></Card>
             <Card><CardContent className="p-4 space-y-2"><div className="font-semibold">Growth — {priceFor("vv_growth_monthly", currency).formatted}/month</div><p className="text-sm text-muted-foreground">Recurring campaigns, 80 Campaign Credits/month and live sending up to 50/day subject to sender safety.</p><Button onClick={() => buyPlan("growth")}>Start Growth</Button></CardContent></Card>
           </CardContent>
         </Card>
@@ -239,7 +314,7 @@ export default function AppBilling() {
                   <div><span className="text-2xl font-bold">{displayPlanPrice(id)}</span> <span className="text-sm text-muted-foreground">{cfg.unit}</span></div>
                   <div className="text-sm font-medium">{cfg.includedCredits} Campaign Credits {cfg.cadence === "monthly" ? "/ month" : "included"}</div>
                   <ul className="text-sm text-muted-foreground space-y-1">{cfg.features.map((f) => <li key={f} className="flex gap-2"><Check className="h-4 w-4 text-accent mt-0.5 shrink-0" />{f}</li>)}</ul>
-                  <Button className="w-full" variant={current ? "outline" : "default"} disabled={current} onClick={() => buyPlan(id)}>{current ? "Current plan" : id === "starter" ? "Start Starter" : `Start ${cfg.name}`}</Button>
+                  <Button className="w-full" variant={current ? "outline" : "default"} disabled={current} onClick={() => buyPlan(id)}>{current ? "Current plan" : id === "starter" ? "Buy Starter" : `Start ${cfg.name}`}</Button>
                 </CardContent>
               </Card>
             );
