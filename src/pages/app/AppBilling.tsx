@@ -10,7 +10,7 @@ import TopUpModal from "@/components/app/TopUpModal";
 import LegalComplianceGate from "@/components/LegalComplianceGate";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { Check, ArrowUpRight, CheckCircle2, AlertTriangle } from "lucide-react";
+import { Check, ArrowUpRight, CheckCircle2, AlertTriangle, Loader2 } from "lucide-react";
 import { useDodoCheckout } from "@/hooks/useDodoCheckout";
 import { type DodoProductKey } from "@/lib/dodoReadiness";
 import { parseBuyParam } from "@/lib/safeNext";
@@ -39,6 +39,20 @@ const PLAN_TO_DODO_PRODUCT: Record<Exclude<PlanId, "free_preview">, DodoProductK
 
 const PAID_PLAN_ENTRIES: PlanId[] = ["starter", "growth", "agency"];
 
+/** Safe purchase-result flags carried on the Dodo/Stripe browser return URL. */
+const PLAN_FLAG_TO_PLAN: Record<string, PlanId> = {
+  starter: "starter",
+  plan_starter: "starter",
+  growth: "growth",
+  agency: "agency",
+};
+const TOPUP_FLAG_RE = /^topup(_small|_medium|_large)?$/;
+
+/** How many times Billing polls for webhook provisioning before showing the
+ *  honest "finishing account setup" state (8 × 2.5s ≈ 20 seconds). */
+const ACTIVATION_POLL_ATTEMPTS = 8;
+const ACTIVATION_POLL_MS = 2500;
+
 export default function AppBilling() {
   const { user } = useAuth();
   const tc = useTranslation("common").t;
@@ -56,6 +70,7 @@ export default function AppBilling() {
   const navigate = useNavigate();
   const [pendingPlan, setPendingPlan] = useState<PlanId | null>(null);
   const [showCheckoutFeedback, setShowCheckoutFeedback] = useState(false);
+  const [activation, setActivation] = useState<null | { kind: "plan" | "topup"; label: string; state: "pending" | "waiting" }>(null);
 
   const displayPlanPrice = (id: PlanId) => id === "free_preview" ? formatPrice(0, currency) : priceFor(PLAN_TO_SKU[id], currency).formatted;
 
