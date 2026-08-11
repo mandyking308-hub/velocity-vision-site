@@ -46,8 +46,18 @@ describe("computeDodoReadiness", () => {
     }
   });
 
-  it("is not ready in live_mode with no product map", () => {
+  it("is ready in live_mode via the built-in live product map when no override map is set", () => {
+    // Production runs with DODO_API_KEY + DODO_ENVIRONMENT=live_mode only; the
+    // canonical six live product ids are compiled into _shared/dodo.ts.
     const r = computeDodoReadiness(env({ DODO_API_KEY: "k", DODO_ENVIRONMENT: "live_mode" }));
+    expect(r.live).toBe(true);
+    expect(r.ready).toBe(true);
+    expect(Object.values(r.products).every(Boolean)).toBe(true);
+  });
+
+  it("is not ready in test_mode with no product map", () => {
+    const r = computeDodoReadiness(env({ DODO_API_KEY: "k", DODO_ENVIRONMENT: "test_mode" }));
+    expect(r.live).toBe(false);
     expect(r.ready).toBe(false);
   });
 

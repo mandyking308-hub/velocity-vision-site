@@ -1,9 +1,11 @@
 # Dodo Launch Manifest (USD, canonical public catalogue)
 
-Internal reference for the live Dodo hookup. Product IDs are NEVER committed —
-they live only in the `DODO_PRODUCT_MAP` server secret. This manifest is
-asserted by `src/test/dodo-activation-bridge.test.ts`; if the public USD
-catalogue (`src/lib/currency.ts`) or fulfilment credits
+Internal reference for the live Dodo hookup. The canonical live product IDs
+are compiled into `DODO_LIVE_PRODUCT_MAP` in `supabase/functions/_shared/dodo.ts`
+(they are public identifiers that appear in hosted checkout links, not
+credentials); `DODO_PRODUCT_MAP` remains an optional server-side override.
+This manifest is asserted by `src/test/dodo-activation-bridge.test.ts`; if the
+public USD catalogue (`src/lib/currency.ts`) or fulfilment credits
 (`supabase/functions/_shared/dodo.ts`) drift, tests fail.
 
 ## The six live products to create in the Dodo dashboard (USD)
@@ -36,7 +38,7 @@ Events to enable (exactly these ten):
 - `DODO_API_KEY` — live API key from the Dodo dashboard
 - `DODO_WEBHOOK_SECRET` — signing secret shown when the webhook is created
 - `DODO_ENVIRONMENT` — `live_mode` only when going live (absent = test_mode)
-- `DODO_PRODUCT_MAP` — JSON: the six internal keys above → Dodo product IDs
+- `DODO_PRODUCT_MAP` — optional JSON override: the six internal keys above → Dodo product IDs (defaults to the compiled-in live map)
 
 No `VITE_` variants may ever exist; the browser only ever sees booleans.
 
