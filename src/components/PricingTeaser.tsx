@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Check } from "lucide-react";
 import { useCurrency } from "@/hooks/useCurrency";
 import { formatPrice, priceFor, type SkuId } from "@/lib/currency";
+import { authNextForPlan } from "@/lib/safeNext";
 
 const plans: Array<{
   name: string;
@@ -29,7 +30,7 @@ const plans: Array<{
       "Pipeline and Outcome Funnel · up to 20 sends/day",
       "30 days workspace access",
     ],
-    cta: "Request Starter onboarding",
+    cta: "Buy Starter",
   },
   {
     name: "Growth",
@@ -46,7 +47,7 @@ const plans: Array<{
     ],
     recurring: true,
     featured: true,
-    cta: "Request Growth onboarding",
+    cta: "Start Growth",
   },
   {
     name: "Agency Workspace",
@@ -62,7 +63,7 @@ const plans: Array<{
       "Up to 100 sends/day",
     ],
     recurring: true,
-    cta: "Request Agency onboarding",
+    cta: "Start Agency Workspace",
   },
 ];
 
@@ -155,7 +156,7 @@ const PricingTeaser = () => {
                 ))}
               </ul>
               <Button variant={plan.featured ? "cta" : "outline"} asChild className="self-stretch">
-                <Link to={`/contact?plan=${plan.slug}`}>
+                <Link to={authNextForPlan(plan.slug)}>
                   {plan.cta} <ArrowRight size={16} />
                 </Link>
               </Button>
@@ -168,7 +169,7 @@ const PricingTeaser = () => {
             <Link to="/pricing">See full pricing <ArrowRight size={18} /></Link>
           </Button>
           <p className="text-xs text-muted-foreground max-w-2xl">
-            Starter is one-off with 30 days of access; Growth and Agency Workspace renew monthly until canceled. Prices shown in {currency}; final currency, tax treatment, payment provider and product terms are confirmed before purchase. Premium Human Review, where offered, is a separate optional add-on.
+            Starter is one-off with 30 days of access; Growth and Agency Workspace renew monthly until canceled. Prices shown in {currency}; final currency, tax treatment, payment provider and product terms are confirmed before purchase.
           </p>
         </div>
       </div>

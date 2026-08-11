@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/accordion";
 import { useCurrency } from "@/hooks/useCurrency";
 import { formatPrice, priceFor } from "@/lib/currency";
+import { planSlug } from "@/lib/planIntent";
+import { authNextForPlan } from "@/lib/safeNext";
 import { siBuffer } from "simple-icons";
 import {
   ArrowRight,
@@ -385,8 +387,7 @@ function PricingSection() {
       unit: "one-off",
       copy: "One customer-controlled campaign workflow.",
       bullets: ["25 Campaign Credits", "Full campaign pack", "Governed activation", "Up to 20 sends/day", "30 days access"],
-      href: "/contact?plan=starter",
-      cta: "Request onboarding",
+      cta: "Buy Starter",
     },
     {
       name: "Growth",
@@ -394,8 +395,7 @@ function PricingSection() {
       unit: "per month",
       copy: "Ongoing self-serve activity for a growing team.",
       bullets: ["80 Campaign Credits / month", "Reusable templates", "Buffer social handoff", "Up to 50 sends/day", "Reply and pipeline states"],
-      href: "/contact?plan=growth",
-      cta: "Request onboarding",
+      cta: "Start Growth",
       featured: true,
     },
     {
@@ -404,8 +404,7 @@ function PricingSection() {
       unit: "per month",
       copy: "Isolated client workspaces with pooled credits.",
       bullets: ["250 pooled Campaign Credits", "Unlimited client workspaces", "Cross-client visibility", "Up to 100 sends/day", "Everything in Growth"],
-      href: "/contact?plan=agency",
-      cta: "Request onboarding",
+      cta: "Start Agency Workspace",
     },
   ];
 
@@ -443,7 +442,7 @@ function PricingSection() {
                 ))}
               </ul>
               <Button asChild className={plan.featured ? "mt-auto bg-[#ff176c] text-white hover:bg-[#e71360]" : "mt-auto"} variant={plan.featured ? "default" : "outline"}>
-                <Link to={plan.href}>{plan.cta}</Link>
+                <Link to={authNextForPlan(planSlug(plan.sku))}>{plan.cta}</Link>
               </Button>
             </div>
           ))}

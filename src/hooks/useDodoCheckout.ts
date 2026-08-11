@@ -2,7 +2,11 @@ import { useCallback, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { isSafeDodoCheckoutLink } from "@/lib/dodoLinks";
-import { CHECKOUT_ACTIVATING_COPY, type DodoProductKey } from "@/lib/dodoReadiness";
+import { type DodoProductKey } from "@/lib/dodoReadiness";
+
+/** Honest failure copy: checkout failed, no manual-onboarding implication. */
+const CHECKOUT_UNAVAILABLE_COPY = "Checkout is temporarily unavailable.";
+const CHECKOUT_UNAVAILABLE_DETAIL = "No payment was taken. Please try again in a moment or contact support.";
 
 /**
  * Starts a Dodo hosted checkout for an allow-listed internal product key.
@@ -24,15 +28,13 @@ export function useDodoCheckout() {
       });
       const url = (data as any)?.checkoutUrl;
       if (error || !isSafeDodoCheckoutLink(url)) {
-        toast.info(CHECKOUT_ACTIVATING_COPY, {
-          description: "No payment was taken. We'll get you set up manually.",
-        });
+        toast.info(CHECKOUT_UNAVAILABLE_COPY, { description: CHECKOUT_UNAVAILABLE_DETAIL });
         return false;
       }
       window.location.href = url;
       return true;
     } catch {
-      toast.info(CHECKOUT_ACTIVATING_COPY, { description: "No payment was taken." });
+      toast.info(CHECKOUT_UNAVAILABLE_COPY, { description: CHECKOUT_UNAVAILABLE_DETAIL });
       return false;
     } finally {
       setStarting(false);
