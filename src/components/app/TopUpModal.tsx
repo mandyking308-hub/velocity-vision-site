@@ -6,7 +6,6 @@ import { TOPUP_PACKS } from "@/lib/credits";
 import { useCredits } from "@/contexts/CreditsContext";
 import { useDodoCheckout } from "@/hooks/useDodoCheckout";
 import { type DodoProductKey } from "@/lib/dodoReadiness";
-import { toast } from "sonner";
 import { Sparkles } from "lucide-react";
 import { useCurrency } from "@/hooks/useCurrency";
 import { priceFor, taxNotice, type SkuId } from "@/lib/currency";

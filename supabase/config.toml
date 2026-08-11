@@ -35,3 +35,15 @@ project_id = "fdubhpzthtfzrzkjkalw"
     verify_jwt = false
   [functions.support-notify]
     verify_jwt = false
+  # Intentionally public: returns only booleans for allow-listed product keys, no secrets.
+  [functions.dodo-readiness]
+    verify_jwt = false
+  # Dodo authenticates via Standard Webhooks signature verification, not a Supabase user JWT.
+  [functions.dodo-webhook]
+    verify_jwt = false
+  # Validates the Authorization bearer itself via supabase.auth.getUser before any sensitive work.
+  [functions.dodo-create-checkout]
+    verify_jwt = false
+  # Validates the bearer token itself before resolving a customer.
+  [functions.dodo-customer-portal]
+    verify_jwt = false
