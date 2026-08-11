@@ -14,7 +14,7 @@ import TrustStrip from "@/components/TrustStrip";
 import GlobalStrip from "@/components/GlobalStrip";
 import { planSlug } from "@/lib/planIntent";
 import { useDodoReadiness } from "@/hooks/useDodoReadiness";
-import { isProductLiveReady, isAnyTopUpLiveReady, type DodoProductKey } from "@/lib/dodoReadiness";
+import { isAnyTopUpLiveReady } from "@/lib/dodoReadiness";
 import { authNextForPlan } from "@/lib/safeNext";
 
 const LIVE_CTA: Record<string, string> = {
@@ -53,7 +53,7 @@ const plans: PlanDef[] = [
       "Meeting handoff, pipeline and Outcome Funnel",
       "Normal send ceiling up to 20/day · 30 days workspace access",
     ],
-    cta: "Request Starter onboarding",
+    cta: "Buy Starter",
   },
   {
     sku: "vv_growth_monthly",
@@ -71,7 +71,7 @@ const plans: PlanDef[] = [
       "Reply triage, referral and out-of-office handling",
       "Outcome Funnel reporting from stored records",
     ],
-    cta: "Request Growth onboarding",
+    cta: "Start Growth",
   },
   {
     sku: "vv_agency_monthly",
@@ -88,7 +88,7 @@ const plans: PlanDef[] = [
       "Account-wide view of daily send usage across client workspaces",
       "Normal send ceiling up to 100/day",
     ],
-    cta: "Request Agency onboarding",
+    cta: "Start Agency Workspace",
   },
 ];
 
@@ -214,7 +214,7 @@ export default function Pricing() {
                 <p className="text-xs mb-3">Best for: <span className="font-medium">{plan.best}</span></p>
                 <p className="text-xs font-semibold text-accent mb-4">{plan.credits}</p>
                 <ul className="space-y-2 mb-6 flex-1">{plan.features.map((feature) => <li key={feature} className="flex items-start gap-2 text-sm"><Check size={16} className="text-accent shrink-0 mt-0.5" /><span className="opacity-80">{feature}</span></li>)}</ul>
-                {isProductLiveReady(readiness, plan.sku as DodoProductKey) ? <Button variant="cta" asChild><Link to={authNextForPlan(planSlug(plan.sku))}>{LIVE_CTA[plan.sku] ?? plan.cta}</Link></Button> : <Button variant="cta" asChild><Link to={`/contact?plan=${planSlug(plan.sku)}`}>{plan.cta}</Link></Button>}
+                <Button variant="cta" asChild><Link to={authNextForPlan(planSlug(plan.sku))}>{LIVE_CTA[plan.sku] ?? plan.cta}</Link></Button>
               </motion.div>
             ))}
           </div>
