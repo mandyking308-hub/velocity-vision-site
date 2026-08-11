@@ -132,6 +132,25 @@ describe("customer journey: dashboard welcome", () => {
     // Free Preview must state review mode / no live sending explicitly.
     expect(src).toContain("No live sending — review mode");
   });
+
+  it("dashboard workspace quick-access grid links to every core customer path", () => {
+    const src = read("src/pages/app/AppDashboard.tsx");
+    for (const path of [
+      "/app/data-vault",
+      "/app/campaigns",
+      "/app/activate",
+      "/app/follow-up",
+      "/app/leads",
+      "/app/pipeline",
+      "/app/performance",
+      "/app/templates",
+      "/app/workspaces",
+      "/app/billing",
+      "/app/settings",
+    ]) {
+      expect(src).toContain(`"${path}"`);
+    }
+  });
 });
 
 describe("customer journey: no cancelled products or stale CTAs", () => {
