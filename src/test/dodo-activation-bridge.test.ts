@@ -243,8 +243,16 @@ describe("new-purchase provider wiring", () => {
   it("AppBilling never opens Stripe checkout for a new purchase", () => {
     expect(billing).not.toContain("useStripeCheckout");
     expect(billing).not.toContain("openCheckout(");
-    expect(billing).toContain("isProductLiveReady");
     expect(billing).toContain("startCheckout");
+  });
+
+  it("AppBilling lets the server checkout function gate, never redirects to contact", () => {
+    // The client readiness probe is advisory only: confirmBuyPlan must call
+    // startCheckout directly and never bounce a paying customer to /contact.
+    const confirm = billing.slice(billing.indexOf("const confirmBuyPlan"), billing.indexOf("return ("));
+    expect(confirm).toContain("await startCheckout(productKey)");
+    expect(confirm).not.toContain("isProductLiveReady");
+    expect(confirm).not.toContain("/contact?plan=");
   });
 
   it("AppBilling keeps Stripe subscription management intact", () => {
@@ -259,35 +267,65 @@ describe("new-purchase provider wiring", () => {
     expect(billing).toMatch(/setPendingPlan\((?:plan|requested) as PlanId\)/);
   });
 
-  it("top-ups use Dodo or the safe onboarding state", () => {
+  it("top-ups are Dodo-only and never blocked by the client readiness probe", () => {
     expect(topup).not.toContain("useStripeCheckout");
-    expect(topup).toContain("isProductLiveReady");
-    expect(topup).toContain("CHECKOUT_ACTIVATING_COPY");
+    expect(topup).not.toContain("isProductLiveReady");
+    expect(topup).not.toContain("CHECKOUT_ACTIVATING_COPY");
     expect(topup).toContain("LegalComplianceGate");
+    // Free Preview restriction stays intact
+    expect(topup).toContain("isFreePreview");
+    expect(topup).toContain("await startCheckout(productKey)");
   });
 });
 
 describe("public pricing CTA switching", () => {
   const pricing = read("src/pages/Pricing.tsx");
+  const teaser = read("src/components/PricingTeaser.tsx");
+  const premium = read("src/components/PremiumHomepage.tsx");
+  const surfaces = { pricing, teaser, premium };
 
-  it("keeps the onboarding CTA as the default branch", () => {
-    expect(pricing).toContain("Request Starter onboarding");
-    expect(pricing).toContain("Request Growth onboarding");
-    expect(pricing).toContain("Request Agency onboarding");
-    expect(pricing).toContain("/contact?plan=${planSlug(plan.sku)}");
+  it("public paid-plan CTAs are live purchase labels routed through the auth bridge", () => {
+    for (const [name, src] of Object.entries(surfaces)) {
+      expect(src, name).toContain("Buy Starter");
+      expect(src, name).toContain("Start Growth");
+      expect(src, name).toContain("Start Agency Workspace");
+      expect(src, name).toContain("authNextForPlan");
+    }
   });
 
-  it("only switches to purchase CTAs when the product is live-ready", () => {
-    expect(pricing).toContain("isProductLiveReady(readiness, plan.sku as DodoProductKey)");
-    expect(pricing).toContain("Buy Starter");
-    expect(pricing).toContain("Start Growth");
-    expect(pricing).toContain("Start Agency Workspace");
-    expect(pricing).toContain("authNextForPlan");
+  it("public paid-plan CTAs never route to contact or request onboarding", () => {
+    for (const [name, src] of Object.entries(surfaces)) {
+      expect(src, name).not.toContain("/contact?plan=");
+      expect(src, name).not.toMatch(/Request (Starter |Growth |Agency )?onboarding/);
+    }
+  });
+
+  it("public CTAs are not gated on the client readiness probe", () => {
+    expect(pricing).not.toContain("isProductLiveReady");
+    expect(teaser).not.toContain("isProductLiveReady");
+    expect(premium).not.toContain("isProductLiveReady");
+  });
+
+  it("the stale Premium Human Review purchase wording is gone", () => {
+    for (const [name, src] of Object.entries(surfaces)) {
+      expect(src, name).not.toContain("Premium Human Review");
+    }
   });
 
   it("leaves Free Preview free and card-free", () => {
     expect(pricing).toContain("Start Free Preview");
     expect(pricing).toContain("No card required.");
+  });
+});
+
+describe("dodo edge-function registration", () => {
+  const config = read("supabase/config.toml");
+
+  it("declares the four Dodo functions with explicit JWT settings", () => {
+    for (const fn of ["dodo-readiness", "dodo-webhook", "dodo-create-checkout", "dodo-customer-portal"]) {
+      const block = new RegExp(`\\[functions\\.${fn}\\]\\s*\\n\\s*verify_jwt = false`);
+      expect(config, fn).toMatch(block);
+    }
   });
 });
 
