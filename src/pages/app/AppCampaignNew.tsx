@@ -42,7 +42,6 @@ const GOALS: { value: CampaignGoal; label: string }[] = [
   { value: "bookings", label: "Encourage bookings" },
   { value: "awareness", label: "Build awareness" },
 ];
-
 const KINDS: { value: CampaignKind; label: string }[] = [
   { value: "lead_gen", label: "Lead generation" },
   { value: "launch", label: "Offer launch" },
@@ -51,7 +50,6 @@ const KINDS: { value: CampaignKind; label: string }[] = [
   { value: "re_engagement", label: "Re-engagement" },
   { value: "pr_push", label: "PR announcement" },
 ];
-
 const CHANNELS = ["Email", "LinkedIn", "Instagram", "X", "Facebook", "TikTok", "PR", "Video", "Paid ads"];
 
 function normaliseKind(raw: string | null): CampaignKind {
@@ -65,7 +63,7 @@ export default function AppCampaignNew() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const { currentId } = useWorkspace();
-  const { plan, remaining, isFreePreview, starterExpired, refresh: refreshCredits } = useCredits();
+  const { plan, remaining, isFreePreview, entitled, entitlementEnded, refresh: refreshCredits } = useCredits();
   const [generating, setGenerating] = useState(false);
   const [freePackUsed, setFreePackUsed] = useState(false);
 
@@ -85,11 +83,11 @@ export default function AppCampaignNew() {
   const [channels, setChannels] = useState<string[]>(["Email", "LinkedIn"]);
   const [cadence, setCadence] = useState<CadenceConfig>(() => defaultCadence());
 
-  const recurringAllowed = canUseRecurringCadence(plan);
+  const recurringAllowed = entitled && canUseRecurringCadence(plan);
   const supportedLanguages = CAMPAIGN_LANGUAGES.filter((x) => x.supported);
 
   useEffect(() => {
-    if (!isFreePreview || !currentId) {
+    if (!isFreePreview || !entitled || !currentId) {
       setFreePackUsed(false);
       return;
     }
@@ -97,7 +95,7 @@ export default function AppCampaignNew() {
       const { data } = await supabase.from("campaigns").select("id, pack").eq("workspace_id", currentId).not("pack", "is", null).limit(1);
       setFreePackUsed((data?.length ?? 0) > 0);
     })();
-  }, [isFreePreview, currentId]);
+  }, [isFreePreview, entitled, currentId]);
 
   useEffect(() => {
     if (!recurringAllowed && cadence.cadence_type !== "one_off") {
@@ -123,7 +121,7 @@ export default function AppCampaignNew() {
     language,
   }), [name, goal, kind, offer, audience, industry, geography, pricePoint, tone, cta, channels, deadline, notes, language]);
 
-  const canGenerate = Boolean(currentId && brief.offer && brief.audience && brief.cta && channels.length > 0 && !generating);
+  const canGenerate = Boolean(currentId && entitled && brief.offer && brief.audience && brief.cta && channels.length > 0 && !generating);
 
   const toggleChannel = (channel: string, checked: boolean) => {
     setChannels((current) => checked ? Array.from(new Set([...current, channel])) : current.filter((x) => x !== channel));
@@ -131,18 +129,21 @@ export default function AppCampaignNew() {
 
   const updateCadenceType = (value: CadenceType) => {
     if (value !== "one_off" && !recurringAllowed) {
-      toast.info("Recurring cadence is available on Growth and Agency", { description: "Starter and Free Preview support one-off campaigns only." });
+      toast.info(entitlementEnded ? "Renew access to use recurring cadence" : "Recurring cadence is available on Growth and Agency", {
+        description: entitlementEnded ? "Your current plan period has ended." : "Starter and Free Preview support one-off campaigns only.",
+      });
       return;
     }
     setCadence((c) => ({ ...c, cadence_type: value }));
   };
 
   const generate = async () => {
-    if (!canGenerate || !currentId) return;
-    if (starterExpired) {
-      toast.error("Starter access has ended", { description: "Choose an eligible paid plan before generating another campaign pack." });
+    if (!currentId) return;
+    if (entitlementEnded || !entitled) {
+      toast.error("Plan access has ended", { description: "Renew or choose an eligible plan before generating another campaign pack." });
       return;
     }
+    if (!canGenerate) return;
     if (isFreePreview && freePackUsed) {
       toast.info("Free Preview includes one full campaign pack", { description: "Compare paid plans to generate another full pack." });
       return;
@@ -150,8 +151,8 @@ export default function AppCampaignNew() {
     if (remaining < CREDIT_COSTS.full_campaign_pack) {
       toast.info("Not enough Campaign Credits", {
         description: isFreePreview
-          ? "Free Preview receives daily free credits up to its balance cap. Wait for the next daily grant or compare paid plans; Free Preview does not accept top-ups."
-          : `Full campaign-pack generation costs ${CREDIT_COSTS.full_campaign_pack} credits. Add eligible paid-workspace credits or change plan to continue.`,
+          ? `Full campaign-pack generation costs ${CREDIT_COSTS.full_campaign_pack} credits. Free Preview receives daily free credits up to its balance cap; it cannot buy top-ups.`
+          : `Full campaign-pack generation costs ${CREDIT_COSTS.full_campaign_pack} credits and you have ${remaining}. Buy an eligible top-up or change plan to continue.`,
       });
       return;
     }
@@ -163,15 +164,17 @@ export default function AppCampaignNew() {
       if (aiErr) {
         const status = (aiErr as any)?.status ?? (aiErr as any)?.context?.status;
         const body = (aiErr as any)?.context?.body ? String((aiErr as any).context.body) : String((aiErr as any)?.message || "");
-        if (status === 402 || /insufficient_credits|starter_expired|no_plan|free_preview_pack_limit/.test(body)) {
+        if (status === 402 || /insufficient_credits|starter_expired|plan_not_entitled|no_plan|free_preview_expired|free_preview_pack_limit/.test(body)) {
           await refreshCredits();
           if (/free_preview_pack_limit/.test(body)) setFreePackUsed(true);
           toast.info(/free_preview_pack_limit/.test(body) ? "Free Preview includes one full campaign pack" : "Campaign-pack generation is not currently available", {
-            description: /free_preview_pack_limit/.test(body)
-              ? "Compare paid plans to generate another full pack."
-              : isFreePreview
-                ? "Wait for the next eligible daily free-credit grant or compare paid plans."
-                : "Review your plan and Campaign Credit balance, then try again.",
+            description: /plan_not_entitled|starter_expired|free_preview_expired/.test(body)
+              ? "Renew or choose an eligible plan to continue."
+              : /free_preview_pack_limit/.test(body)
+                ? "Compare paid plans to generate another full pack."
+                : isFreePreview
+                  ? "Wait for the next eligible daily free-credit grant or compare paid plans."
+                  : "Review your plan and Campaign Credit balance, then try again.",
           });
           return;
         }
@@ -248,6 +251,7 @@ export default function AppCampaignNew() {
         <p className="text-muted-foreground mt-1">Define the brief, choose the campaign language and channels, then generate one editable full campaign pack. The server reserves Campaign Credits before generation; there is no uncharged fallback pack.</p>
       </div>
 
+      {entitlementEnded && <UpgradeNudge reason="credits_exhausted" variant="card" />}
       {isFreePreview && freePackUsed && <UpgradeNudge reason="free_preview_second_pack_gate" variant="card" />}
 
       <div className="grid lg:grid-cols-3 gap-5">
@@ -291,7 +295,7 @@ export default function AppCampaignNew() {
               <Field label="First review date"><Input type="datetime-local" value={cadence.start_at ? toLocalInput(cadence.start_at) : ""} onChange={(e) => setCadence((c) => ({ ...c, start_at: e.target.value ? new Date(e.target.value).toISOString() : null }))} /></Field>
               <Field label="Time zone"><Select value={cadence.timezone} onValueChange={(v) => setCadence((c) => ({ ...c, timezone: v }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{COMMON_TIMEZONES.map((tz) => <SelectItem key={tz} value={tz}>{tz}</SelectItem>)}</SelectContent></Select></Field>
               <p className="text-xs text-muted-foreground">{plainEnglish(cadence)}</p>
-              {!recurringAllowed && <p className="text-xs text-muted-foreground">Recurring cadence is available on Growth and Agency. Starter and Free Preview are one-off only.</p>}
+              {!recurringAllowed && <p className="text-xs text-muted-foreground">{entitlementEnded ? "Renew access before using recurring cadence." : "Recurring cadence is available on Growth and Agency. Starter and Free Preview are one-off only."}</p>}
             </CardContent>
           </Card>
 
@@ -299,8 +303,9 @@ export default function AppCampaignNew() {
             <CardHeader><CardTitle className="text-base flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /> Before generation</CardTitle></CardHeader>
             <CardContent className="space-y-2 text-sm text-muted-foreground">
               <p>Full campaign-pack generation costs <strong className="text-foreground">{CREDIT_COSTS.full_campaign_pack} Campaign Credits</strong>.</p>
-              <p>Current balance: <strong className="text-foreground">{remaining}</strong>.</p>
-              <p>Free Preview is capped at one full campaign pack and cannot buy top-ups.</p>
+              <p>Current usable balance: <strong className="text-foreground">{remaining}</strong>.</p>
+              {entitlementEnded && <p className="text-destructive">Your current plan period has ended. Renew before generating.</p>}
+              {isFreePreview && <p>Free Preview is capped at one full campaign pack and cannot buy top-ups.</p>}
             </CardContent>
           </Card>
         </div>
