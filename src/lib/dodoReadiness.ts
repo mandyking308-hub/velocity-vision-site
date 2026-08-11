@@ -6,7 +6,6 @@ export const DODO_READINESS_PRODUCTS = [
   "vv_starter_oneoff",
   "vv_growth_monthly",
   "vv_agency_monthly",
-  "vv_human_review_oneoff",
   "vv_topup_small",
   "vv_topup_medium",
   "vv_topup_large",

@@ -2815,9 +2815,14 @@ export type Database = {
     }
     Functions: {
       agency_pooled_sends_today: { Args: never; Returns: number }
+      credit_balance_for_user: { Args: { _user_id: string }; Returns: Json }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
+      }
+      effective_plan_for_actions: {
+        Args: { _user_id: string }
+        Returns: string
       }
       email_queue_dispatch: { Args: never; Returns: undefined }
       enqueue_email: {
@@ -2828,6 +2833,7 @@ export type Database = {
         Args: { _label: string; _ledger_id: string; _ref_id: string }
         Returns: boolean
       }
+      get_current_credit_balance: { Args: never; Returns: Json }
       grant_free_daily_credits: { Args: never; Returns: number }
       grant_free_preview_welcome: {
         Args: never
@@ -2865,6 +2871,7 @@ export type Database = {
         }
         Returns: number
       }
+      plan_entitlement_active: { Args: { _user_id: string }; Returns: boolean }
       provision_first_workspace: {
         Args: {
           _country?: string

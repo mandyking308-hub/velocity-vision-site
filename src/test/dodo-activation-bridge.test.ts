@@ -18,10 +18,9 @@ const FULL_MAP = JSON.stringify({
   vv_starter_oneoff: "pdt_1",
   vv_growth_monthly: "pdt_2",
   vv_agency_monthly: "pdt_3",
-  vv_human_review_oneoff: "pdt_4",
-  vv_topup_small: "pdt_5",
-  vv_topup_medium: "pdt_6",
-  vv_topup_large: "pdt_7",
+  vv_topup_small: "pdt_4",
+  vv_topup_medium: "pdt_5",
+  vv_topup_large: "pdt_6",
 });
 
 describe("computeDodoReadiness", () => {
@@ -47,8 +46,18 @@ describe("computeDodoReadiness", () => {
     }
   });
 
-  it("is not ready in live_mode with no product map", () => {
+  it("is ready in live_mode via the built-in live product map when no override map is set", () => {
+    // Production runs with DODO_API_KEY + DODO_ENVIRONMENT=live_mode only; the
+    // canonical six live product ids are compiled into _shared/dodo.ts.
     const r = computeDodoReadiness(env({ DODO_API_KEY: "k", DODO_ENVIRONMENT: "live_mode" }));
+    expect(r.live).toBe(true);
+    expect(r.ready).toBe(true);
+    expect(Object.values(r.products).every(Boolean)).toBe(true);
+  });
+
+  it("is not ready in test_mode with no product map", () => {
+    const r = computeDodoReadiness(env({ DODO_API_KEY: "k", DODO_ENVIRONMENT: "test_mode" }));
+    expect(r.live).toBe(false);
     expect(r.ready).toBe(false);
   });
 
@@ -56,7 +65,7 @@ describe("computeDodoReadiness", () => {
     expect(computeDodoReadiness(env({ DODO_ENVIRONMENT: "live_mode", DODO_PRODUCT_MAP: FULL_MAP })).ready).toBe(false);
   });
 
-  it("fails closed on a partial live map: ready stays false until ALL seven launch products are mapped", () => {
+  it("fails closed on a partial live map: ready stays false until ALL six launch products are mapped", () => {
     const r = computeDodoReadiness(env({
       DODO_API_KEY: "k",
       DODO_ENVIRONMENT: "live_mode",
@@ -69,14 +78,14 @@ describe("computeDodoReadiness", () => {
     expect(r.products.vv_topup_small).toBe(false);
     // ...but the generic launch-ready flag must NOT flip on a partial map.
     expect(r.ready).toBe(false);
-    // Six of seven is still not launch-ready.
-    const six = JSON.parse(FULL_MAP);
-    delete six.vv_topup_large;
-    const r6 = computeDodoReadiness(env({
-      DODO_API_KEY: "k", DODO_ENVIRONMENT: "live_mode", DODO_PRODUCT_MAP: JSON.stringify(six),
+    // Five of six is still not launch-ready.
+    const five = JSON.parse(FULL_MAP);
+    delete five.vv_topup_large;
+    const r5 = computeDodoReadiness(env({
+      DODO_API_KEY: "k", DODO_ENVIRONMENT: "live_mode", DODO_PRODUCT_MAP: JSON.stringify(five),
     }));
-    expect(r6.ready).toBe(false);
-    expect(Object.values(r6.products).filter(Boolean)).toHaveLength(6);
+    expect(r5.ready).toBe(false);
+    expect(Object.values(r5.products).filter(Boolean)).toHaveLength(5);
   });
 
   it("is fully ready with a live full map", () => {
@@ -230,7 +239,6 @@ const read = (p: string) => readFileSync(resolve(process.cwd(), p), "utf8");
 describe("new-purchase provider wiring", () => {
   const billing = read("src/pages/app/AppBilling.tsx");
   const topup = read("src/components/app/TopUpModal.tsx");
-  const review = read("src/components/app/HumanReviewButton.tsx");
 
   it("AppBilling never opens Stripe checkout for a new purchase", () => {
     expect(billing).not.toContain("useStripeCheckout");
@@ -251,13 +259,11 @@ describe("new-purchase provider wiring", () => {
     expect(billing).toMatch(/setPendingPlan\((?:plan|requested) as PlanId\)/);
   });
 
-  it("top-ups and human review use Dodo or the safe onboarding state", () => {
-    for (const src of [topup, review]) {
-      expect(src).not.toContain("useStripeCheckout");
-      expect(src).toContain("isProductLiveReady");
-      expect(src).toContain("CHECKOUT_ACTIVATING_COPY");
-      expect(src).toContain("LegalComplianceGate");
-    }
+  it("top-ups use Dodo or the safe onboarding state", () => {
+    expect(topup).not.toContain("useStripeCheckout");
+    expect(topup).toContain("isProductLiveReady");
+    expect(topup).toContain("CHECKOUT_ACTIVATING_COPY");
+    expect(topup).toContain("LegalComplianceGate");
   });
 });
 
@@ -293,15 +299,16 @@ describe("checkout return truth", () => {
   });
 });
 
-// ── Human Review campaign reference contract ─────────────────────────────
+// ── Checkout reference (refId) contract ──────────────────────────────────
+// Human Review is cancelled: no active launch product may carry a refId.
 import { isRefIdEligibleProduct, isValidCampaignRefId } from "../../supabase/functions/_shared/dodo";
 
 describe("checkout refId contract", () => {
-  it("only Human Review may carry a refId", () => {
-    expect(isRefIdEligibleProduct("vv_human_review_oneoff")).toBe(true);
+  it("no active launch product may carry a refId", () => {
     for (const k of [
       "vv_starter_oneoff", "vv_growth_monthly", "vv_agency_monthly",
-      "vv_topup_small", "vv_topup_medium", "vv_topup_large", "", null, undefined, 1,
+      "vv_topup_small", "vv_topup_medium", "vv_topup_large",
+      "vv_human_review_oneoff", "", null, undefined, 1,
     ]) {
       expect(isRefIdEligibleProduct(k)).toBe(false);
     }
@@ -337,26 +344,20 @@ describe("checkout refId contract", () => {
     expect(fn).toContain("...(refId ? { refId } : {})");
   });
 
-  it("Human Review passes its campaignId; plans and top-ups pass none", () => {
-    expect(read("src/components/app/HumanReviewButton.tsx"))
-      .toContain('startCheckout("vv_human_review_oneoff", campaignId)');
+  it("plans and top-ups pass no refId", () => {
     expect(read("src/components/app/TopUpModal.tsx")).toContain("startCheckout(productKey)");
     expect(read("src/pages/app/AppBilling.tsx")).toContain("startCheckout(productKey)");
   });
-
-  it("webhook still fulfils human review from meta.refId", () => {
-    expect(read("supabase/functions/dodo-webhook/index.ts")).toContain("campaign_id: meta.refId");
-  });
 });
 
-// ── Launch manifest: seven live USD products (docs/dodo-launch-manifest.md) ──
+// ── Launch manifest: six live USD products (docs/dodo-launch-manifest.md) ──
 import { DODO_PRODUCT_CATALOG } from "../../supabase/functions/_shared/dodo";
 import { PRICE_CATALOGUE } from "@/lib/currency";
 
 describe("Dodo launch manifest (USD canonical catalogue)", () => {
-  it("covers exactly the seven launch products", () => {
+  it("covers exactly the six launch products", () => {
     expect(Object.keys(DODO_PRODUCT_CATALOG).sort()).toEqual([
-      "vv_agency_monthly", "vv_growth_monthly", "vv_human_review_oneoff",
+      "vv_agency_monthly", "vv_growth_monthly",
       "vv_starter_oneoff", "vv_topup_large", "vv_topup_medium", "vv_topup_small",
     ]);
   });
@@ -366,7 +367,6 @@ describe("Dodo launch manifest (USD canonical catalogue)", () => {
       vv_starter_oneoff: 189,
       vv_growth_monthly: 315,
       vv_agency_monthly: 629,
-      vv_human_review_oneoff: 249,
       vv_topup_small: 59,
       vv_topup_medium: 149,
       vv_topup_large: 349,
@@ -385,7 +385,6 @@ describe("Dodo launch manifest (USD canonical catalogue)", () => {
     expect(DODO_PRODUCT_CATALOG.vv_topup_small.credits).toBe(25);
     expect(DODO_PRODUCT_CATALOG.vv_topup_medium.credits).toBe(75);
     expect(DODO_PRODUCT_CATALOG.vv_topup_large.credits).toBe(200);
-    expect(DODO_PRODUCT_CATALOG.vv_human_review_oneoff.credits).toBeUndefined();
   });
 });
 

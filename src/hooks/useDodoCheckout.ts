@@ -13,8 +13,8 @@ export function useDodoCheckout() {
   const [starting, setStarting] = useState(false);
 
   /**
-   * `refId` is the only extra context allowed, and the server accepts it for
-   * Human Review only. Never a price, currency, provider product id or URL.
+   * No active launch product accepts a `refId`; the server rejects any
+   * supplied value. Never send a price, currency, provider product id or URL.
    */
   const startCheckout = useCallback(async (productKey: DodoProductKey, refId?: string) => {
     setStarting(true);

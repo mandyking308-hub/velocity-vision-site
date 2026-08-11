@@ -158,10 +158,9 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
     return true;
   }, [user, remaining, topupBalance, starterExpired, freePreviewExpired, isFreePreview, planId, load]);
 
-  // NOTE: Human Review purchases MUST go through hosted checkout —
-  // `HumanReviewButton` starts checkout (Dodo when live, otherwise the existing
-  // Stripe path) and the provider webhook inserts the `human_reviews` row via
-  // service_role after payment clears. This stub remains only to preserve the
+  // NOTE: Human Review is cancelled as a product and is no longer purchasable.
+  // Historical `human_reviews` rows were inserted by the provider webhook via
+  // service_role after payment cleared. This stub remains only to preserve the
   // public type; it does not write to the DB.
 
   const purchaseHumanReview = useCallback<CreditsContextValue["purchaseHumanReview"]>(async () => {

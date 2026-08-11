@@ -25,7 +25,6 @@ Deno.serve((req) => {
         vv_starter_oneoff: false,
         vv_growth_monthly: false,
         vv_agency_monthly: false,
-        vv_human_review_oneoff: false,
         vv_topup_small: false,
         vv_topup_medium: false,
         vv_topup_large: false,
