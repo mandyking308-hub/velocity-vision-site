@@ -8,7 +8,7 @@
  * Everything here is inert until the following server secrets exist:
  *   DODO_API_KEY        — server-side bearer key (never exposed to the client)
  *   DODO_ENVIRONMENT    — "test_mode" | "live_mode" (defaults to test_mode)
- *   DODO_PRODUCT_MAP    — JSON object: internal product key -> Dodo product id
+ *   DODO_PRODUCT_MAP    — optional JSON override: internal product key -> Dodo product id
  *   DODO_WEBHOOK_SECRET — Standard Webhooks signing secret
  */
 
@@ -20,15 +20,13 @@ export const DODO_BASE_URLS: Record<DodoMode, string> = {
 };
 
 /**
- * Internal product keys the client is allowed to reference. These mirror the
- * existing Stripe catalog keys so fulfilment semantics stay identical. The
- * client NEVER sends a Dodo product id or a price.
+ * Internal product keys the client is allowed to reference. The client NEVER
+ * sends a Dodo product id or a price.
  */
 export const DODO_ALLOWED_PRODUCT_KEYS = [
   "vv_starter_oneoff",
   "vv_growth_monthly",
   "vv_agency_monthly",
-  "vv_human_review_oneoff",
   "vv_topup_small",
   "vv_topup_medium",
   "vv_topup_large",
@@ -41,10 +39,7 @@ export function isAllowedProductKey(value: unknown): value is DodoProductKey {
     (DODO_ALLOWED_PRODUCT_KEYS as readonly string[]).includes(value);
 }
 
-/**
- * Fulfilment semantics per internal product key. Mirrors the Stripe
- * PRICE_CATALOG so credits/plan behaviour is identical regardless of provider.
- */
+/** Fulfilment semantics per active Dodo product key. */
 export const DODO_PRODUCT_CATALOG: Record<
   DodoProductKey,
   { kind: string; credits?: number; plan?: string; recurring: boolean }
@@ -52,10 +47,24 @@ export const DODO_PRODUCT_CATALOG: Record<
   vv_starter_oneoff: { kind: "plan_starter", credits: 25, plan: "starter", recurring: false },
   vv_growth_monthly: { kind: "plan_growth", credits: 80, plan: "growth", recurring: true },
   vv_agency_monthly: { kind: "plan_agency", credits: 250, plan: "agency", recurring: true },
-  vv_human_review_oneoff: { kind: "human_review", recurring: false },
   vv_topup_small: { kind: "topup_small", credits: 25, recurring: false },
   vv_topup_medium: { kind: "topup_medium", credits: 75, recurring: false },
   vv_topup_large: { kind: "topup_large", credits: 200, recurring: false },
+};
+
+/**
+ * Live Dodo product ids are public identifiers (they appear in hosted checkout
+ * links), not credentials. Keeping the canonical live mapping server-side means
+ * only the API key and webhook signing secret remain secret values to configure.
+ * DODO_PRODUCT_MAP, when supplied, remains an explicit server-side override.
+ */
+export const DODO_LIVE_PRODUCT_MAP: Record<DodoProductKey, string> = {
+  vv_starter_oneoff: "pdt_0Nl9rfgKqWKVhNkJX499V",
+  vv_growth_monthly: "pdt_0Nl9s5I0TK2OPTMHCqwSs",
+  vv_agency_monthly: "pdt_0Nl9sTQjA4USAN3YTR6IU",
+  vv_topup_small: "pdt_0Nl9t9lhGe7srn3720Esa",
+  vv_topup_medium: "pdt_0Nl9tS4qvBg4KvBo6Zkih",
+  vv_topup_large: "pdt_0Nl9tlvo5KUO8uqcu5qH7",
 };
 
 export interface DodoConfig {
@@ -98,7 +107,12 @@ export function loadDodoConfig(getEnv: (key: string) => string | undefined): Dod
   const apiKey = getEnv("DODO_API_KEY")?.trim();
   if (!apiKey) return { ok: false, reason: "missing_api_key" };
   const mode = normaliseMode(getEnv("DODO_ENVIRONMENT"));
-  const productMap = parseProductMap(getEnv("DODO_PRODUCT_MAP"));
+  const configuredMap = parseProductMap(getEnv("DODO_PRODUCT_MAP"));
+  const productMap = Object.keys(configuredMap).length > 0
+    ? configuredMap
+    : mode === "live_mode"
+      ? { ...DODO_LIVE_PRODUCT_MAP }
+      : {};
   if (Object.keys(productMap).length === 0) return { ok: false, reason: "missing_product_map" };
   return { ok: true, config: { apiKey, mode, baseUrl: DODO_BASE_URLS[mode], productMap } };
 }
@@ -309,17 +323,14 @@ export function isSafeDodoCheckoutLink(link: unknown): link is string {
 
 // ── Checkout reference (refId) contract ──────────────────────────────────
 
-/**
- * Only Human Review is fulfilled against a campaign, so it is the ONLY product
- * allowed to carry a refId. Every other product must be sent without one.
- */
-export function isRefIdEligibleProduct(key: unknown): boolean {
-  return key === "vv_human_review_oneoff";
+/** No active Dodo launch product accepts a campaign refId. */
+export function isRefIdEligibleProduct(_key: unknown): boolean {
+  return false;
 }
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-/** Pure shape guard: a campaign reference must be a canonical UUID. */
+/** Pure shape guard retained for backward-compatible tests/helpers. */
 export function isValidCampaignRefId(value: unknown): value is string {
   return typeof value === "string" && UUID_RE.test(value.trim());
 }
@@ -338,7 +349,7 @@ export interface DodoReadinessPayload {
  * never leaks a key, product id, environment string or error detail.
  * `live` is true ONLY when an API key exists AND DODO_ENVIRONMENT is
  * explicitly `live_mode` AND at least one allow-listed product is mapped.
- * `ready` FAILS CLOSED for launch: it is true only when ALL SEVEN launch
+ * `ready` FAILS CLOSED for launch: it is true only when ALL SIX launch
  * products are mapped. Per-product booleans stay available so surfaces can
  * show exactly what is still missing without leaking ids.
  */
