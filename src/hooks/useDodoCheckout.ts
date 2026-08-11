@@ -28,15 +28,13 @@ export function useDodoCheckout() {
       });
       const url = (data as any)?.checkoutUrl;
       if (error || !isSafeDodoCheckoutLink(url)) {
-        toast.info(CHECKOUT_ACTIVATING_COPY, {
-          description: "No payment was taken. We'll get you set up manually.",
-        });
+        toast.info(CHECKOUT_UNAVAILABLE_COPY, { description: CHECKOUT_UNAVAILABLE_DETAIL });
         return false;
       }
       window.location.href = url;
       return true;
     } catch {
-      toast.info(CHECKOUT_ACTIVATING_COPY, { description: "No payment was taken." });
+      toast.info(CHECKOUT_UNAVAILABLE_COPY, { description: CHECKOUT_UNAVAILABLE_DETAIL });
       return false;
     } finally {
       setStarting(false);
