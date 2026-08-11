@@ -277,7 +277,7 @@ export default function AppCampaignNew() {
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
                 {CHANNELS.map((channel) => <label key={channel} className="flex items-center gap-2 rounded border p-2 text-sm"><Checkbox checked={channels.includes(channel)} onCheckedChange={(v) => toggleChannel(channel, !!v)} />{channel}</label>)}
               </div>
-              <p className="text-xs text-muted-foreground mt-2">Generated materials are editable drafts. Velocity Vision does not publish social posts, buy media or send outreach automatically.</p>
+              <p className="text-xs text-muted-foreground mt-2">Generated materials are editable drafts. Email sends from your connected mailbox only after approval; approved social posts can be handed to your own Buffer account, where you control scheduling and publishing. Velocity Vision never posts, buys media or sends outreach automatically.</p>
             </div>
           </CardContent>
         </Card>

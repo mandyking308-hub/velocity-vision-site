@@ -62,12 +62,22 @@ export const COPILOT_TONES = [
 ];
 
 /**
- * Channels the copilot will offer. `manual` channels produce a checklist task
- * rather than anything the platform performs — the platform only sends email.
+ * Channels the copilot will offer. The platform sends email itself after
+ * approval; social channels hand off to the customer's own Buffer account
+ * (review → Send to Buffer → customer controls scheduling/publishing there).
+ * `manual` channels produce a checklist task the customer carries out outside
+ * the platform entirely.
  */
+const BUFFER_CHANNEL_HELP =
+  "We draft the posts. You review them, then Send to Buffer — you control scheduling and publishing in your own Buffer account.";
+
 export const COPILOT_CHANNELS: { id: string; label: string; manual: boolean; help: string }[] = [
   { id: "Email", label: "Email", manual: false, help: "Sent from your own connected mailbox, after you approve." },
-  { id: "LinkedIn", label: "LinkedIn (manual)", manual: true, help: "We draft the message. You post or send it yourself." },
+  { id: "LinkedIn", label: "LinkedIn (via Buffer)", manual: false, help: BUFFER_CHANNEL_HELP },
+  { id: "Instagram", label: "Instagram (via Buffer)", manual: false, help: BUFFER_CHANNEL_HELP },
+  { id: "X", label: "X / Twitter (via Buffer)", manual: false, help: BUFFER_CHANNEL_HELP },
+  { id: "Facebook", label: "Facebook (via Buffer)", manual: false, help: BUFFER_CHANNEL_HELP },
+  { id: "TikTok", label: "TikTok (via Buffer)", manual: false, help: BUFFER_CHANNEL_HELP },
   { id: "PR", label: "Press / announcement (manual)", manual: true, help: "We draft the release. You decide where it goes." },
   { id: "Paid ads", label: "Paid ads (manual)", manual: true, help: "We draft ad copy. You run it in your own ad account." },
 ];
@@ -209,8 +219,15 @@ const STEP_PURPOSES = [
 ];
 const STEP_DELAYS = [0, 3, 7];
 
+const BUFFER_HANDOFF_TASK =
+  "Review the drafted posts, then use Send to Buffer to hand them to your own Buffer account. You choose draft, queue or schedule there — nothing publishes automatically.";
+
 const MANUAL_TASK_COPY: Record<string, string> = {
-  LinkedIn: "Send the drafted LinkedIn note yourself from your own profile. Do not automate it.",
+  LinkedIn: BUFFER_HANDOFF_TASK,
+  Instagram: BUFFER_HANDOFF_TASK,
+  X: BUFFER_HANDOFF_TASK,
+  Facebook: BUFFER_HANDOFF_TASK,
+  TikTok: BUFFER_HANDOFF_TASK,
   PR: "Review the drafted announcement and place it through your own channels or PR contact.",
   "Paid ads": "Load the drafted ad copy into your own ad account and set your own budget.",
 };

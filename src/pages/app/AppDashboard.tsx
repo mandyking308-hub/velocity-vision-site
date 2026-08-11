@@ -20,6 +20,7 @@ import OutcomeFunnelPanel from "@/components/app/OutcomeFunnelPanel";
 import CampaignPreflight from "@/components/app/CampaignPreflight";
 import SendSafetyPanel from "@/components/app/SendSafetyPanel";
 import SenderStatusCard from "@/components/app/SenderStatusCard";
+import BufferReadinessCard from "@/components/app/BufferReadinessCard";
 import FollowUpReminders from "@/components/app/FollowUpReminders";
 import type { FunnelFilters, FunnelLead, FunnelOpportunity } from "@/lib/outcomeFunnel";
 import { computeSafety, DEFAULT_SENDER_STATE, type SenderState } from "@/lib/sendSafety";
@@ -314,6 +315,7 @@ export default function AppDashboard() {
           <div className="lg:col-span-2"><SendSafetyPanel s={safety} used={usedToday} scheduled={scheduledToday} /></div>
           <SenderStatusCard state={sender} health={safety.health} scheduledToday={scheduledToday} fromEmail={senderEmail} connectionId={senderConnectionId} detail={senderDetail} />
         </div>
+        <div className="mt-4"><BufferReadinessCard /></div>
       </Section>
 
       <Section title="Campaign cadence" icon={Clock} description="Cadence dates organize recurring work on eligible plans. Every run remains customer-controlled." link="/app/campaigns" linkLabel="Open campaigns">
