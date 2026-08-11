@@ -12,6 +12,8 @@ interface WorkspaceContextValue {
   currentId: string | null;
   setCurrentId: (id: string) => void;
   loading: boolean;
+  /** Re-fetches the workspace list (e.g. after provisioning a new one). */
+  refresh: () => Promise<void>;
 }
 
 const WorkspaceContext = createContext<WorkspaceContextValue>({
@@ -19,6 +21,7 @@ const WorkspaceContext = createContext<WorkspaceContextValue>({
   currentId: null,
   setCurrentId: () => {},
   loading: true,
+  refresh: async () => {},
 });
 
 const STORAGE_KEY = "vv.currentWorkspaceId";
@@ -52,13 +55,22 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     })();
   }, [user]);
 
+  const refresh = async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from("client_workspaces")
+      .select("id, name")
+      .order("created_at", { ascending: false });
+    setWorkspaces((data || []) as Workspace[]);
+  };
+
   const setCurrentId = (id: string) => {
     setCurrentIdState(id);
     localStorage.setItem(STORAGE_KEY, id);
   };
 
   return (
-    <WorkspaceContext.Provider value={{ workspaces, currentId, setCurrentId, loading }}>
+    <WorkspaceContext.Provider value={{ workspaces, currentId, setCurrentId, loading, refresh }}>
       {children}
     </WorkspaceContext.Provider>
   );
