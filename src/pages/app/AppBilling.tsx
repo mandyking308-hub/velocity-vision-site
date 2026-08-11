@@ -132,18 +132,55 @@ export default function AppBilling() {
       return;
     }
 
-    const flag = parsed.flag;
+    const flag = parsed.flag.toLowerCase();
+    const expectedPlan = PLAN_FLAG_TO_PLAN[flag];
+    const isTopup = !expectedPlan && TOPUP_FLAG_RE.test(flag);
     clearParams();
+    setShowCheckoutFeedback(true);
+    toast.success(tc("toasts.paymentReceived"));
+
+    if (!expectedPlan && !isTopup) {
+      // Generic success flag with no purchase context: refresh and stay here.
+      (async () => { await refresh(); await load(); })();
+      return;
+    }
+
     (async () => {
-      setShowCheckoutFeedback(true);
-      toast.success(tc("toasts.paymentReceived"));
-      for (let i = 0; i < 4; i++) {
-        await new Promise((r) => setTimeout(r, 1200));
+      setActivation({
+        kind: expectedPlan ? "plan" : "topup",
+        label: expectedPlan ? PLANS[expectedPlan].name : "credit top-up",
+        state: "pending",
+      });
+      // The browser return NEVER grants entitlements — the verified provider
+      // webhook is authoritative. Poll (bounded) until that provisioning is
+      // visible, then continue the journey automatically.
+      const startMs = Date.now() - 60_000; // tolerate slight clock skew
+      let activated = false;
+      for (let i = 0; i < ACTIVATION_POLL_ATTEMPTS && !activated; i++) {
+        await new Promise((r) => setTimeout(r, ACTIVATION_POLL_MS));
         await refresh();
         await load();
+        if (!user) break;
+        if (expectedPlan) {
+          const { data } = await supabase.from("user_plans").select("plan").eq("user_id", user.id).maybeSingle();
+          activated = data?.plan === expectedPlan;
+        } else {
+          const { data } = await supabase.from("credit_topups").select("created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle();
+          activated = !!data && new Date(data.created_at).getTime() >= startMs;
+        }
       }
-      if (flag === "plan_starter" || flag.startsWith("checkout=plan_starter") || flag === "starter") navigate("/app/campaigns/new", { replace: true });
-      else if (flag === "growth" || flag === "agency") navigate("/app", { replace: true });
+      if (activated && expectedPlan) {
+        setActivation(null);
+        // Plan purchases land on the dashboard — never straight into campaign
+        // creation before a workspace exists.
+        navigate("/app", { replace: true, state: { planActivated: expectedPlan } });
+      } else if (activated) {
+        // Top-ups stay on Billing and show the refreshed balance/history.
+        setActivation(null);
+      } else {
+        // Webhook slower than the bounded wait: be honest, never claim failure.
+        setActivation((a) => (a ? { ...a, state: "waiting" } : a));
+      }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
