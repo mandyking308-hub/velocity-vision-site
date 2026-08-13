@@ -30,17 +30,10 @@ export default function PaymentEnvBadge() {
   let env: "sandbox" | "live";
   try { env = getStripeEnvironment(); } catch { return null; }
 
-  if (env === "live") {
-    return (
-      <div className="w-full rounded-md border border-destructive/50 bg-destructive/10 text-destructive px-3 py-2 text-xs flex items-start gap-2">
-        <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
-        <div>
-          <div className="font-semibold uppercase tracking-wide">Live payment mode</div>
-          <div>Do not run QA self-payments here. Use sandbox / test cards unless explicitly approved.</div>
-        </div>
-      </div>
-    );
-  }
+  // Live mode is the intended production state for real customer payments.
+  // The internal QA warning must never appear on a customer billing page —
+  // only the sandbox/test indicator is surfaced.
+  if (env === "live") return null;
   return (
     <div className="w-full rounded-md border border-orange-300 bg-orange-50 text-orange-800 px-3 py-2 text-xs flex items-start gap-2">
       <FlaskConical className="h-4 w-4 mt-0.5 shrink-0" />
