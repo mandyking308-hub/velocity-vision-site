@@ -173,7 +173,7 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
       pack: entry.kind.replace("topup_", ""),
       credits: entry.credits,
       amount: (session.amount_total ?? 0) / 100,
-      currency: (sessCurrency || "usd").toLowerCase(),
+      currency: (session.currency || "usd").toLowerCase(),
       stripe_session_id: session.id,
     });
     if (topupErr && (topupErr as { code?: string }).code !== "23505") {
