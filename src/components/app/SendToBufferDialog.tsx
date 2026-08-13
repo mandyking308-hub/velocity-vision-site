@@ -26,7 +26,7 @@ interface BufferChannel {
   isQueuePaused: boolean | null;
 }
 
-type LoadState = "idle" | "loading" | "ready" | "disconnected" | "error";
+type LoadState = "idle" | "loading" | "ready" | "disconnected" | "unavailable" | "error";
 
 async function invokeError(error: unknown): Promise<string> {
   if (error instanceof FunctionsHttpError) {
@@ -71,7 +71,13 @@ export default function SendToBufferDialog({ platform, defaultText }: { platform
       .then(async ({ data, error }) => {
         if (error) {
           const code = await invokeError(error);
-          setLoadState(code === "not_connected" || code === "reconnect_required" ? "disconnected" : "error");
+          setLoadState(
+            code === "not_connected" || code === "reconnect_required"
+              ? "disconnected"
+              : code === "not_configured"
+                ? "unavailable"
+                : "error",
+          );
           return;
         }
         const list = ((data?.channels as BufferChannel[]) ?? []) as BufferChannel[];
@@ -143,6 +149,13 @@ export default function SendToBufferDialog({ platform, defaultText }: { platform
               <Link to="/app/settings">Connect Buffer in Settings</Link>
             </Button>
           </div>
+        )}
+
+        {loadState === "unavailable" && (
+          <p className="text-sm text-muted-foreground">
+            The Buffer handoff is not switched on for this workspace yet. Your post drafts stay here and can
+            still be copied into Buffer manually.
+          </p>
         )}
 
         {loadState === "loading" && <p className="text-sm text-muted-foreground">Loading Buffer channels…</p>}
