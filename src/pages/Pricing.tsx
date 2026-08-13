@@ -183,11 +183,15 @@ export default function Pricing() {
           <div className="mb-6 rounded-2xl border border-white/40 bg-white p-6 lg:p-7 shadow-card text-foreground">
             <div className="flex flex-col md:flex-row md:items-center gap-5">
               <div className="flex-1">
-                <span className="inline-block text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-accent/15 text-accent font-semibold mb-2">Free Preview · {formatPrice(0, currency)}</span>
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  <span className="inline-block text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-accent/15 text-accent font-semibold">Free Preview · {formatPrice(0, currency)}</span>
+                  <span className="inline-block text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-foreground text-background font-bold">Review mode · no live sending</span>
+                </div>
                 <h2 className="font-display font-semibold text-xl">Build and review your first complete campaign pack before you pay</h2>
                 <ul className="mt-3 grid sm:grid-cols-2 gap-x-6 gap-y-1 text-sm">
-                  {["10 welcome credits + 2/day (daily balance cap 10)", "1 workspace · up to 25 contacts", "Maximum 1 full campaign pack", "14-day preview window", "No card required. No automatic upgrade.", "No live sending or mailbox connection", "No recurring cadence", "No credit top-ups into Free Preview"].map((x) => <li key={x} className="flex gap-2"><Check size={16} className="text-accent mt-0.5 shrink-0" />{x}</li>)}
+                  {["14-day preview window", "10 welcome credits + 2/day (daily balance cap 10)", "Up to 25 contacts", "Maximum 1 full campaign pack", "1 workspace", "Full workflow in review mode", "No live sending or mailbox connection", "No credit top-ups · no automatic paid upgrade"].map((x) => <li key={x} className="flex gap-2"><Check size={16} className="text-accent mt-0.5 shrink-0" />{x}</li>)}
                 </ul>
+
               </div>
               <Button size="lg" asChild><Link to="/auth">Start Free Preview <ArrowRight size={18} /></Link></Button>
             </div>
