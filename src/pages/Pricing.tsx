@@ -167,8 +167,9 @@ export default function Pricing() {
               <p className="text-primary-foreground/80 text-lg md:text-xl mb-8 max-w-3xl mx-auto">Choose the level of campaign generation, recurring use, sending capacity and workspace access you need. Review price, Campaign Credits, billing cadence, tax treatment and delivery terms before purchase.</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button variant="hero" size="lg" asChild><Link to="/auth">Start Free Preview <ArrowRight size={18} /></Link></Button>
-                <Button variant="hero-outline" size="lg" asChild><Link to="/contact">Talk to us about onboarding</Link></Button>
+                <Button variant="hero-outline" size="lg" asChild><a href="#paid-plans">Compare paid plans</a></Button>
               </div>
+
             </motion.div>
           </div>
         </section>
