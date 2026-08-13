@@ -200,15 +200,15 @@ export default function Pricing() {
           <div className="mb-6 rounded-xl border border-accent/40 bg-accent/5 px-4 py-4 text-sm text-foreground/90 space-y-2">
             <p><strong>Billing:</strong> Starter is one-off with 30 days of workspace access. Growth and Agency renew monthly until canceled.</p>
             <p><strong>Credits:</strong> the current live credit-priced action is full campaign-pack generation. Sending, Data Vault review and activation preparation are governed separately.</p>
-            <p><strong>Delivery:</strong> paid products are delivered electronically through account/workspace access after payment and any required onboarding or compliance checks.</p>
+            <p><strong>Delivery:</strong> paid access is delivered electronically through account/workspace access immediately after payment. Legal acceptance, sender-verification and send-safety gates may apply to the specific capabilities they govern. Onboarding or setup help is optional and is never a prerequisite for checkout.</p>
             <p><strong>Refunds:</strong> <a href="https://globalsolutions.management/refunds" target="_blank" rel="noreferrer" className="underline underline-offset-4 font-semibold">read the GSM Refund Policy</a>. Product-specific terms and the identified payment provider's procedures may also apply.</p>
           </div>
 
           <div className="mb-6 rounded-xl border border-border/50 bg-white/70 px-4 py-4 text-sm text-foreground/90 space-y-1">
-            <p><strong>Launch support:</strong> complimentary onboarding and setup guidance are included.</p>
+            <p><strong>Optional launch support:</strong> complimentary onboarding and setup guidance are available on request. Every plan is fully self-serve — you do not need onboarding to buy or to start.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div id="paid-plans" className="scroll-mt-24 grid grid-cols-1 md:grid-cols-3 gap-6">
             {plans.map((plan, index) => (
               <motion.div key={plan.name} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: index * 0.06 }} className={`rounded-2xl p-6 lg:p-7 shadow-card border flex flex-col bg-white border-white/40 text-foreground ${plan.highlight ? "ring-2 ring-accent/60 shadow-elevated" : ""}`}>
                 {plan.highlight && <span className="inline-block self-start text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-accent/15 text-accent font-semibold mb-3">Recommended for recurring use</span>}
@@ -216,9 +216,15 @@ export default function Pricing() {
                 <p className="text-sm opacity-80 mb-3">{plan.tagline}</p>
                 <p><span className="text-3xl md:text-4xl font-display font-bold">{priceFor(plan.sku, currency).formatted}</span><span className="text-sm opacity-80 ml-1">{plan.unit}</span></p>
                 <p className="text-[11px] opacity-70 mb-3">{taxNotice(currency)}</p>
+                <ul className="mb-4 grid grid-cols-1 gap-1.5">
+                  {plan.glance.map((g) => (
+                    <li key={g} className="text-[11px] font-semibold uppercase tracking-wide bg-foreground/5 rounded-md px-2 py-1">{g}</li>
+                  ))}
+                </ul>
                 <p className="text-xs mb-3">Best for: <span className="font-medium">{plan.best}</span></p>
                 <p className="text-xs font-semibold text-accent mb-4">{plan.credits}</p>
                 <ul className="space-y-2 mb-6 flex-1">{plan.features.map((feature) => <li key={feature} className="flex items-start gap-2 text-sm"><Check size={16} className="text-accent shrink-0 mt-0.5" /><span className="opacity-80">{feature}</span></li>)}</ul>
+
                 <Button variant="cta" asChild><Link to={authNextForPlan(planSlug(plan.sku))}>{LIVE_CTA[plan.sku] ?? plan.cta}</Link></Button>
               </motion.div>
             ))}
