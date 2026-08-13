@@ -147,7 +147,7 @@ assert(contact.includes("/legal/privacy-policy"), "Contact form must link to the
 const services = read("src/pages/Services.tsx");
 for (const control of [
   "from one software workspace",
-  "self-serve",
+  "remain responsible for every review, approval and activation decision",
   "does not scrape contact data",
   "sell lists",
   "provide managed campaigns",
