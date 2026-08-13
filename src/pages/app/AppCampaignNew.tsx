@@ -34,6 +34,7 @@ import {
   type CadenceUnit,
 } from "@/lib/cadence";
 import UpgradeNudge from "@/components/app/UpgradeNudge";
+import { useClientCompany } from "@/hooks/useClientCompany";
 
 const GOALS: { value: CampaignGoal; label: string }[] = [
   { value: "leads", label: "Generate leads" },
@@ -65,6 +66,9 @@ export default function AppCampaignNew() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const { currentId } = useWorkspace();
+  // campaigns RLS scopes writes by company_id; omitting it made every
+  // self-serve insert fail the row-level security check.
+  const { companyId } = useClientCompany();
   const { plan, remaining, isFreePreview, starterExpired, refresh: refreshCredits } = useCredits();
   const [generating, setGenerating] = useState(false);
   const [freePackUsed, setFreePackUsed] = useState(false);
@@ -119,7 +123,16 @@ export default function AppCampaignNew() {
     channels,
     deadline,
     notes: notes.trim(),
-    outputs: ["email", "social", "press", "video", ...(channels.includes("Paid ads") ? ["paid ads"] : [])],
+    // Outputs must mirror the channels the customer actually selected. Forcing
+    // press/video here made every pack fail the blank-field quality guard when
+    // PR/Video were not chosen, so no pack could ever be saved.
+    outputs: [
+      ...(channels.includes("Email") ? ["email"] : []),
+      "social",
+      ...(channels.includes("PR") ? ["press"] : []),
+      ...(channels.includes("Video") ? ["video"] : []),
+      ...(channels.includes("Paid ads") ? ["paid ads"] : []),
+    ],
     language,
   }), [name, goal, kind, offer, audience, industry, geography, pricePoint, tone, cta, channels, deadline, notes, language]);
 
@@ -211,6 +224,7 @@ export default function AppCampaignNew() {
         brief: brief as any,
         pack: pack as any,
         workspace_id: currentId,
+        company_id: companyId,
         status: "draft",
         ...cadencePayload,
       } as any).select("id").single();

@@ -60,8 +60,8 @@ export const DODO_PRODUCT_CATALOG: Record<
  */
 export const DODO_LIVE_PRODUCT_MAP: Record<DodoProductKey, string> = {
   vv_starter_oneoff: "pdt_0Nl9rfgKqWKVhNkJX499V",
-  vv_growth_monthly: "pdt_0Nl9s5I0TK2OPTMHCqwSs",
-  vv_agency_monthly: "pdt_0Nl9sTQjA4USAN3YTR6IU",
+  vv_growth_monthly: "pdt_0Nl9s5l0TK2OPTMHCqwSs",
+  vv_agency_monthly: "pdt_0Nl9sTQjA4USAN3YTR6lU",
   vv_topup_small: "pdt_0Nl9t9lhGe7srn3720Esa",
   vv_topup_medium: "pdt_0Nl9tS4qvBg4KvBo6Zkih",
   vv_topup_large: "pdt_0Nl9tlvo5KUO8uqcu5qH7",
