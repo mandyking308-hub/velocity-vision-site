@@ -39,6 +39,17 @@ const CRMDashboard = () => {
     },
   });
 
+  const { data: campaigns } = useQuery({
+    queryKey: ["crm-dashboard-campaigns"],
+    queryFn: async () => {
+      const { data } = await supabase.from("campaigns").select("id, type, status");
+      return data ?? [];
+    },
+  });
+
+  const socialCampaigns = campaigns?.filter((c) => c.type === "social_media") ?? [];
+  const activeSocial = socialCampaigns.filter((c) => c.status === "active").length;
+
   const now = new Date();
   const thisMonth = leads?.filter((l) => new Date(l.created_at).getMonth() === now.getMonth()) ?? [];
   const activeOpps = opportunities?.filter((o) => !["won", "lost"].includes(o.stage)) ?? [];
