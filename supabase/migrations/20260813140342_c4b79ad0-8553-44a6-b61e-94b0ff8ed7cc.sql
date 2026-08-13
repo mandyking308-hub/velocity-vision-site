@@ -1,0 +1,1 @@
+ALTER TABLE public.credit_topups ADD COLUMN IF NOT EXISTS currency text;

@@ -965,6 +965,7 @@ export type Database = {
           amount: number
           created_at: string
           credits: number
+          currency: string | null
           id: string
           pack: string
           stripe_session_id: string | null
@@ -974,6 +975,7 @@ export type Database = {
           amount: number
           created_at?: string
           credits: number
+          currency?: string | null
           id?: string
           pack: string
           stripe_session_id?: string | null
@@ -983,6 +985,7 @@ export type Database = {
           amount?: number
           created_at?: string
           credits?: number
+          currency?: string | null
           id?: string
           pack?: string
           stripe_session_id?: string | null
