@@ -49,18 +49,19 @@ for (const route of [
 }
 
 const hero = read("src/components/HeroSection.tsx");
+const homeFaqSource = read("src/components/HomeFAQ.tsx");
 assert(
-  hero.includes("does not scrape contact data"),
+  homeFaqSource.includes("does not scrape contact data"),
   "Homepage must state that Velocity Vision does not scrape contact data",
 );
-assert(hero.includes("sell lists"), "Homepage must state that Velocity Vision does not sell lists");
+assert(homeFaqSource.includes("sell lists"), "Homepage must state that Velocity Vision does not sell lists");
 assert(
-  hero.includes("approve every activation"),
-  "Homepage must retain customer-controlled activation wording",
+  hero.includes("You review and approve what gets used, sent or handed off."),
+  "Homepage hero must retain customer-controlled activation wording",
 );
 assert(
-  hero.includes("Illustrative interface data"),
-  "Homepage figures must remain labelled as illustrative demo data",
+  hero.includes("Illustrative interface only. These figures are not customer results or performance claims."),
+  "Homepage figures must remain labelled as illustrative, non-result data",
 );
 assert(!hero.includes('label: "Reply rate"'), "Homepage must not present an unsourced reply-rate figure");
 assert(!hero.includes('label: "Pipeline"'), "Homepage must not present an unsourced pipeline-value figure");
@@ -74,7 +75,7 @@ const pricing = read("src/pages/Pricing.tsx");
 const teaser = read("src/components/PricingTeaser.tsx");
 const pricingSource = `${pricing}\n${teaser}`;
 assert(
-  pricingSource.includes("Automated monthly performance summary"),
+  pricingSource.includes("Outcome Funnel reporting from stored records"),
   "Growth plan must describe software-generated reporting, not a managed review service",
 );
 assert(
@@ -91,16 +92,22 @@ assert(
   "Pricing FAQ must retain the scraping/list-selling clarification",
 );
 assert(
-  pricing.includes("payment provider and applicable terms are confirmed before purchase"),
+  pricing.includes(
+    "The final transaction currency, applicable tax, payment provider and terms are confirmed before payment.",
+  ),
   "Pricing must explain how the payment provider and terms are disclosed",
 );
 assert(
-  pricing.includes("Growth and Agency Workspace renew monthly until cancelled"),
+  pricing.includes("Growth and Agency renew monthly until canceled"),
   "Pricing must state which plans renew monthly",
 );
 assert(
-  pricing.includes("paid products are delivered electronically"),
+  pricing.includes("paid access is delivered electronically"),
   "Pricing must state the electronic delivery method",
+);
+assert(
+  pricing.includes("Onboarding or setup help is optional and is never a prerequisite for checkout."),
+  "Pricing must keep onboarding optional and never a checkout prerequisite",
 );
 assert(
   pricing.includes("https://globalsolutions.management/refunds"),
@@ -139,7 +146,8 @@ assert(contact.includes("/legal/privacy-policy"), "Contact form must link to the
 
 const services = read("src/pages/Services.tsx");
 for (const control of [
-  "One self-serve workspace for governed commercial activity",
+  "from one software workspace",
+  "self-serve",
   "does not scrape contact data",
   "sell lists",
   "provide managed campaigns",
