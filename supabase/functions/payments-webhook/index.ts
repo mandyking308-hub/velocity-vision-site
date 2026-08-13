@@ -166,14 +166,19 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
       { plan: entry.plan, source: "stripe", session: session.id },
     );
   } else if (entry.kind.startsWith("topup_") && entry.credits) {
-    // Upsert-on-session so duplicate deliveries don't insert a second topup row.
-    await db().from("credit_topups").upsert({
+    // Partial unique index on stripe_session_id can't be targeted by ON CONFLICT,
+    // so insert and tolerate the duplicate-key error on retried deliveries.
+    const { error: topupErr } = await db().from("credit_topups").insert({
       user_id: userId,
       pack: entry.kind.replace("topup_", ""),
       credits: entry.credits,
       amount: (session.amount_total ?? 0) / 100,
+      currency: (session.currency || "usd").toLowerCase(),
       stripe_session_id: session.id,
-    }, { onConflict: "stripe_session_id" });
+    });
+    if (topupErr && (topupErr as { code?: string }).code !== "23505") {
+      console.error("credit_topups insert error", topupErr);
+    }
     await grantCreditsOnce(
       userId,
       entry.credits,

@@ -116,24 +116,34 @@ async function handlePaymentSucceeded(payload: Record<string, any>, mode: string
       plan: entry.plan, source: "dodo", payment: externalId,
     });
   } else if (entry.kind.startsWith("topup_") && entry.credits) {
-    await db().from("credit_topups").upsert({
+    // `credit_topups.stripe_session_id` is a PARTIAL unique index, which
+    // PostgREST upsert/ON CONFLICT cannot target — a plain insert with 23505
+    // tolerance gives the same idempotency and actually writes the row.
+    const { error: topupErr } = await db().from("credit_topups").insert({
       user_id: userId,
       pack: entry.kind.replace("topup_", ""),
       credits: entry.credits,
       amount: (payload.total_amount ?? 0) / 100,
+      currency: (payload.currency || "usd").toLowerCase(),
       stripe_session_id: `dodo:${externalId}`,
-    }, { onConflict: "stripe_session_id" });
+    });
+    if (topupErr && (topupErr as { code?: string }).code !== "23505") {
+      console.error("dodo credit_topups insert error", topupErr);
+    }
     await grantCreditsOnce(userId, entry.credits, "topup", `dodo_payment:${externalId}`, {
       pack: entry.kind, source: "dodo", payment: externalId,
     });
   } else if (entry.kind === "human_review") {
-    await db().from("human_reviews").upsert({
+    const { error: hrErr } = await db().from("human_reviews").insert({
       user_id: userId,
       campaign_id: meta.refId || null,
       status: "purchased",
       amount: (payload.total_amount ?? 0) / 100,
       stripe_session_id: `dodo:${externalId}`,
-    }, { onConflict: "stripe_session_id" });
+    });
+    if (hrErr && (hrErr as { code?: string }).code !== "23505") {
+      console.error("dodo human_reviews insert error", hrErr);
+    }
   }
 }
 
