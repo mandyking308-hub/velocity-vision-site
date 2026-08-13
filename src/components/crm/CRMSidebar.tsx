@@ -17,6 +17,7 @@ const navItems = [
   { label: "Opportunities", path: "/crm/opportunities", icon: TrendingUp },
   { label: "Tasks", path: "/crm/tasks", icon: CheckSquare },
   { label: "Campaigns", path: "/crm/campaigns", icon: Megaphone },
+  { label: "Social Media", path: "/crm/social-media", icon: Share2 },
   { label: "Campaign Perf.", path: "/crm/campaign-dashboard", icon: BarChart3 },
   { label: "Billing", path: "/crm/billing", icon: CreditCard },
   { label: "QA Testing", path: "/crm/qa", icon: Shield },
