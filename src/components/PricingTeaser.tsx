@@ -13,6 +13,7 @@ const plans: Array<{
   unit: string;
   desc: string;
   bullets: string[];
+  glance: string[];
   recurring?: boolean;
   featured?: boolean;
   cta: string;
@@ -23,6 +24,7 @@ const plans: Array<{
     sku: "vv_starter_oneoff",
     unit: "one-off",
     desc: "One-off access for one customer-controlled campaign workflow.",
+    glance: ["One-off · 30 days", "1 workspace", "Up to 20 sends/day"],
     bullets: [
       "1 workspace · 25 Campaign Credits",
       "Copilot brief, Launchpad and full campaign pack",
@@ -38,6 +40,7 @@ const plans: Array<{
     sku: "vv_growth_monthly",
     unit: "per month",
     desc: "Monthly self-serve workspace for ongoing customer-controlled activity.",
+    glance: ["Recurring monthly", "1 workspace", "Up to 50 sends/day"],
     bullets: [
       "Everything in Starter, ongoing",
       "80 Campaign Credits / month",
@@ -55,6 +58,7 @@ const plans: Array<{
     sku: "vv_agency_monthly",
     unit: "per month",
     desc: "Monthly self-serve workspace with isolated client workspaces.",
+    glance: ["Recurring monthly", "Unlimited client workspaces", "Up to 100 sends/day"],
     bullets: [
       "Everything in Growth",
       "Unlimited isolated client workspaces",
@@ -111,7 +115,10 @@ const PricingTeaser = () => {
           className="mb-8 rounded-2xl bg-hero text-primary-foreground p-6 md:p-8 shadow-elevated flex flex-col md:flex-row md:items-center gap-6"
         >
           <div className="flex-1">
-            <p className="text-[10px] uppercase tracking-widest font-bold opacity-80 mb-1">Free Preview · {formatPrice(0, currency)}</p>
+            <div className="flex flex-wrap items-center gap-2 mb-1">
+              <span className="text-[10px] uppercase tracking-widest font-bold opacity-80">Free Preview · {formatPrice(0, currency)}</span>
+              <span className="text-[10px] uppercase tracking-widest font-bold rounded-full bg-white/20 px-2 py-0.5">Review mode</span>
+            </div>
             <h3 className="font-display font-bold text-2xl mb-2">Try the full workflow first</h3>
             <div className="flex flex-wrap gap-x-5 gap-y-1.5">
               {freePreviewPoints.map((point) => (
@@ -146,6 +153,11 @@ const PricingTeaser = () => {
                 {plan.recurring ? "Recurring monthly plan" : "One-off plan"}
               </span>
               <h3 className="font-display font-semibold text-foreground mb-2">{plan.name}</h3>
+              <div className="flex flex-wrap gap-1.5 mb-3">
+                {plan.glance.map((g) => (
+                  <span key={g} className="text-[10px] font-semibold uppercase tracking-wide rounded-md bg-foreground/5 text-foreground/80 px-2 py-1">{g}</span>
+                ))}
+              </div>
               <p className="mb-2">
                 <span className="text-3xl font-display font-bold text-foreground">
                   {priceFor(plan.sku, currency).formatted}
