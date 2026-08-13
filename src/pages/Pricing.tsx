@@ -29,6 +29,7 @@ interface PlanDef {
   tagline: string;
   unit: string;
   best: string;
+  glance: string[];
   credits: string;
   features: string[];
   cta: string;
@@ -42,6 +43,7 @@ const plans: PlanDef[] = [
     tagline: "One-off campaign workspace",
     unit: "one-off",
     best: "Running a first paid campaign end to end",
+    glance: ["One-off payment", "30 days access · 1 workspace", "Live sending up to 20/day", "No recurring cadence"],
     credits: "Includes 25 Campaign Credits",
     features: [
       "1 workspace · one-off campaigns",
@@ -61,6 +63,7 @@ const plans: PlanDef[] = [
     tagline: "Recurring campaign workspace",
     unit: "per month",
     best: "Teams running complete customer-controlled campaigns continuously",
+    glance: ["Recurring monthly plan", "1 workspace", "Live sending up to 50/day", "Recurring cadence + reusable templates"],
     credits: "Includes 80 Campaign Credits / month",
     highlight: true,
     features: [
@@ -79,6 +82,7 @@ const plans: PlanDef[] = [
     tagline: "Multi-client campaign workspace",
     unit: "per month",
     best: "Agencies and fractional teams running separate client campaigns",
+    glance: ["Recurring monthly plan", "Unlimited isolated client workspaces", "Live sending up to 100/day", "Cross-client visibility · pooled credits"],
     credits: "Includes 250 pooled Campaign Credits / month",
     features: [
       "Everything in Growth",
