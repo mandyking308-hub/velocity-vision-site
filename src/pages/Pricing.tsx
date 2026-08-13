@@ -192,6 +192,7 @@ export default function Pricing() {
                   <span className="inline-block text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-foreground text-background font-bold">Review mode · no live sending</span>
                 </div>
                 <h2 className="font-display font-semibold text-xl">Build and review your first complete campaign pack before you pay</h2>
+                <p className="text-sm opacity-80 mt-1">No card required. No automatic upgrade.</p>
                 <ul className="mt-3 grid sm:grid-cols-2 gap-x-6 gap-y-1 text-sm">
                   {["14-day preview window", "10 welcome credits + 2/day (daily balance cap 10)", "Up to 25 contacts", "Maximum 1 full campaign pack", "1 workspace", "Full workflow in review mode", "No live sending or mailbox connection", "No credit top-ups · no automatic paid upgrade"].map((x) => <li key={x} className="flex gap-2"><Check size={16} className="text-accent mt-0.5 shrink-0" />{x}</li>)}
                 </ul>
