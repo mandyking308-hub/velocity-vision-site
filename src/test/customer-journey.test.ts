@@ -178,3 +178,89 @@ describe("customer journey: no cancelled products or stale CTAs", () => {
     }
   });
 });
+
+describe("public pricing presentation: self-serve, no required onboarding", () => {
+  const pricing = read("src/pages/Pricing.tsx");
+  const teaser = read("src/components/PricingTeaser.tsx");
+
+  it("pricing hero offers a plan-comparison CTA instead of an onboarding CTA", () => {
+    expect(pricing).not.toContain("Talk to us about onboarding");
+    expect(pricing).toContain("Compare paid plans");
+    expect(pricing).toContain('id="paid-plans"');
+    expect(pricing).toContain("Start Free Preview");
+  });
+
+  it("delivery wording never implies onboarding is required", () => {
+    expect(pricing).not.toContain("any required onboarding");
+    expect(pricing).toContain("delivered electronically");
+    expect(pricing).toContain("Onboarding or setup help is optional");
+    expect(pricing).toContain("Optional launch support");
+  });
+
+  it("Free Preview is presented as review mode with all eight facts", () => {
+    expect(pricing).toContain("Review mode · no live sending");
+    for (const fact of [
+      "14-day preview window",
+      "10 welcome credits + 2/day (daily balance cap 10)",
+      "Up to 25 contacts",
+      "Maximum 1 full campaign pack",
+      "1 workspace",
+      "Full workflow in review mode",
+      "No live sending or mailbox connection",
+      "No credit top-ups · no automatic paid upgrade",
+    ]) {
+      expect(pricing).toContain(fact);
+    }
+  });
+
+  it("paid plan differences are scannable on the pricing page", () => {
+    for (const g of [
+      "One-off payment",
+      "Live sending up to 20/day",
+      "Recurring monthly plan",
+      "Live sending up to 50/day",
+      "Unlimited isolated client workspaces",
+      "Live sending up to 100/day",
+    ]) {
+      expect(pricing).toContain(g);
+    }
+  });
+
+  it("homepage teaser states the full Free Preview economics", () => {
+    expect(teaser).toContain("Review mode");
+    for (const fact of [
+      "14 days · no card required",
+      "10 welcome credits +2/day (cap 10)",
+      "Up to 25 contacts",
+      "Max 1 full campaign pack",
+      "1 workspace",
+      "Full workflow in review mode",
+      "No live sending or mailbox connection",
+      "No credit top-ups",
+      "No automatic paid upgrade",
+    ]) {
+      expect(teaser).toContain(fact);
+    }
+  });
+
+  it("homepage teaser keeps direct self-serve paid CTAs and scannable differences", () => {
+    expect(teaser).toContain("Buy Starter");
+    expect(teaser).toContain("Start Growth");
+    expect(teaser).toContain("Start Agency Workspace");
+    expect(teaser).toContain("authNextForPlan(plan.slug)");
+    expect(teaser).toContain("Up to 20 sends/day");
+    expect(teaser).toContain("Up to 50 sends/day");
+    expect(teaser).toContain("Up to 100 sends/day");
+    expect(teaser).toContain("Unlimited client workspaces");
+  });
+
+  it("Free Preview cannot buy top-ups and top-up pricing is unchanged", () => {
+    expect(pricing).toContain("Free Preview cannot buy top-ups");
+    expect(TOPUP_PACKS.map((p) => `${p.credits}/${p.price}`)).toEqual([
+      "25/59",
+      "75/149",
+      "200/349",
+    ]);
+  });
+});
+
