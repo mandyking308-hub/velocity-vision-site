@@ -68,11 +68,17 @@ const plans: Array<{
 ];
 
 const freePreviewPoints = [
-  "14-day preview · no card required",
-  "1 full campaign pack · 1 workspace",
+  "14 days · no card required",
+  "10 welcome credits +2/day (cap 10)",
+  "Up to 25 contacts",
+  "Max 1 full campaign pack",
+  "1 workspace",
+  "Full workflow in review mode",
   "No live sending or mailbox connection",
+  "No credit top-ups",
   "No automatic paid upgrade",
 ];
+
 
 const PricingTeaser = () => {
   const { currency } = useCurrency();
