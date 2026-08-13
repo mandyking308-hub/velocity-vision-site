@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Building2, Users, Target, TrendingUp, DollarSign } from "lucide-react";
+import { Building2, Users, Target, TrendingUp, DollarSign, Share2 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { motion } from "framer-motion";
 
@@ -39,6 +40,17 @@ const CRMDashboard = () => {
     },
   });
 
+  const { data: campaigns } = useQuery({
+    queryKey: ["crm-dashboard-campaigns"],
+    queryFn: async () => {
+      const { data } = await supabase.from("campaigns").select("id, type, status");
+      return data ?? [];
+    },
+  });
+
+  const socialCampaigns = campaigns?.filter((c) => c.type === "social_media") ?? [];
+  const activeSocial = socialCampaigns.filter((c) => c.status === "active").length;
+
   const now = new Date();
   const thisMonth = leads?.filter((l) => new Date(l.created_at).getMonth() === now.getMonth()) ?? [];
   const activeOpps = opportunities?.filter((o) => !["won", "lost"].includes(o.stage)) ?? [];
@@ -66,6 +78,7 @@ const CRMDashboard = () => {
     { label: "Pipeline Value", value: `£${(pipelineValue / 1000).toFixed(0)}k`, icon: Building2, color: "text-accent" },
     { label: "Companies", value: companies?.length ?? 0, icon: Building2, color: "text-muted-foreground" },
     { label: "Contacts", value: contacts?.length ?? 0, icon: Users, color: "text-muted-foreground" },
+    { label: "Social Campaigns", value: socialCampaigns.length, icon: Share2, color: "text-accent" },
   ];
 
   return (
@@ -76,7 +89,7 @@ const CRMDashboard = () => {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4">
         {stats.map((stat, i) => (
           <motion.div
             key={stat.label}
@@ -93,6 +106,23 @@ const CRMDashboard = () => {
           </motion.div>
         ))}
       </div>
+
+      {/* Social media quick link */}
+      <Link
+        to="/crm/social-media"
+        className="flex items-center justify-between gap-4 bg-card border border-border/50 rounded-xl p-4 shadow-card hover:border-accent/50 transition-colors"
+      >
+        <div className="flex items-center gap-3">
+          <Share2 size={18} className="text-accent" />
+          <div>
+            <p className="font-display font-semibold text-foreground text-sm">Social Media</p>
+            <p className="text-xs text-muted-foreground">
+              {socialCampaigns.length} social campaign records · {activeSocial} active. Publishing stays in the customer's own Buffer account.
+            </p>
+          </div>
+        </div>
+        <span className="text-xs text-accent">Open</span>
+      </Link>
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

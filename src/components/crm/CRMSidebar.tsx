@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Building2, Users, Target, TrendingUp,
-  CheckSquare, LogOut, ChevronLeft, ChevronRight, Globe, Megaphone, BarChart3, Crown, CreditCard, Shield, Scale, Book, Brain, LifeBuoy, MessageSquare, Database, UserPlus
+  CheckSquare, LogOut, ChevronLeft, ChevronRight, Globe, Megaphone, BarChart3, Crown, CreditCard, Shield, Scale, Book, Brain, LifeBuoy, MessageSquare, Database, UserPlus, Share2
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
@@ -17,6 +17,7 @@ const navItems = [
   { label: "Opportunities", path: "/crm/opportunities", icon: TrendingUp },
   { label: "Tasks", path: "/crm/tasks", icon: CheckSquare },
   { label: "Campaigns", path: "/crm/campaigns", icon: Megaphone },
+  { label: "Social Media", path: "/crm/social-media", icon: Share2 },
   { label: "Campaign Perf.", path: "/crm/campaign-dashboard", icon: BarChart3 },
   { label: "Billing", path: "/crm/billing", icon: CreditCard },
   { label: "QA Testing", path: "/crm/qa", icon: Shield },
