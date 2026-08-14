@@ -42,7 +42,7 @@ export default function RecentImportsTable({ imports, readOnly = false }: { impo
                   {readOnly ? (
                     <span className="font-medium">{i.file_name}</span>
                   ) : (
-                    <Link to={`/app/n/${i.id}`} className="font-medium text-primary hover:underline">
+                    <Link to={`/app/data-vault/imports/${i.id}`} className="font-medium text-primary hover:underline">
                       {i.file_name}
                     </Link>
                   )}

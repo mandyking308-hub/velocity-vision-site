@@ -98,9 +98,11 @@ describe("demo has no protected-route dead ends", () => {
     expect(demoVault).not.toContain('to: "/auth"');
     expect(demoVault).toContain('to: "/pricing"');
   });
-  it("uses the real import detail route for the signed-in app", () => {
-    expect(table).toContain("/app/n/${i.id}");
-    expect(table).not.toContain("/app/data-vault/imports/");
+  it("uses the router-registered import detail route for the signed-in app", () => {
+    expect(table).toContain("/app/data-vault/imports/${i.id}");
+    expect(table).not.toContain("/app/n/");
+    // Proves the link target matches the route defined in the router.
+    expect(read("src/App.tsx")).toContain('path="data-vault/imports/:id"');
   });
 });
 
