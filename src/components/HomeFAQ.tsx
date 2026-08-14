@@ -7,7 +7,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 const faqs = [
   {
     q: "What is the difference between the Demo, the Free Preview and a paid plan?",
-    a: "The Demo needs no account: it is a read-only walkthrough using illustrative sample data, and nothing in it can send, publish, pay or change real records. The Free Preview is a real account in your own workspace for 14 days with no card — your own data (up to 25 contacts), one full campaign pack, 10 welcome credits plus 2 per day up to a balance of 10, in review mode with no live mailbox sending. A paid plan is what unlocks activation: governed email sending, ongoing credits, recurring cadence on Growth and Agency, and continued use beyond the preview.",
+    a: "The Demo needs no account: it is a read-only walkthrough using illustrative sample data, and nothing in it can send, publish, pay or change real records. The Free Preview is a real account in your own workspace for 14 days with no card — your own data (up to 25 contacts), one full campaign pack, 10 welcome credits plus 2 per day up to a balance of 10, in review mode with no live mailbox sending or external Buffer handoff. A paid plan is what unlocks activation: governed email sending, Buffer handoff, ongoing credits, recurring cadence on Growth and Agency, and continued use beyond the preview.",
   },
   {
     q: "What does Velocity Vision actually create?",
@@ -27,15 +27,15 @@ const faqs = [
   },
   {
     q: "How does social publishing work?",
-    a: "Connect your own Buffer account — Velocity never uses a shared Buffer account and never asks for your social-network passwords. After reviewing a generated social draft, you can hand approved text to your own Buffer channels as a draft, into your queue, or scheduled for later. Velocity never auto-publishes, and Buffer's own approval and channel settings still apply.",
+    a: "On an eligible paid plan, connect your own Buffer account — Velocity never uses a shared Buffer account and never asks for your social-network passwords. After reviewing a generated social draft, you can hand approved text to your own Buffer channels as a draft, into your queue, or scheduled for later. Free Preview keeps social content inside Velocity in review mode. Velocity never auto-publishes, and Buffer's own approval and channel settings still apply.",
   },
   {
     q: "What does activation mean?",
-    a: "Activation is customer-controlled. Approved email can move through governed sending on eligible paid plans; approved social text can be handed to Buffer; the remaining campaign assets stay under customer control for use in the channels they choose. Mailbox readiness, unsubscribe handling and daily send limits are checked again when sending.",
+    a: "Activation is customer-controlled and paid-plan gated. Approved email can move through governed sending on eligible paid plans; approved social text can be handed to Buffer on an eligible paid plan; the remaining campaign assets stay under customer control for use in the channels they choose. Mailbox readiness, unsubscribe handling and daily send limits are checked again when sending.",
   },
   {
     q: "What happens when Campaign Credits run out?",
-    a: "Campaign Credits currently fund full campaign-pack generation. When the balance is insufficient for a credit-priced AI action, that generation pauses until eligible credits are added or the plan changes. Live sending is governed separately by paid-plan and sender safety limits; Campaign Credits are not charged per email or contact sent.",
+    a: "Campaign Credits currently fund full campaign-pack generation. When the balance is insufficient for a credit-priced AI action, that generation pauses until eligible credits are added or the plan changes. Free Preview cannot buy top-ups. Live sending is governed separately by paid-plan and sender safety limits; Campaign Credits are not charged per email or contact sent.",
   },
   {
     q: "Is Velocity Vision a CRM replacement?",

@@ -9,9 +9,9 @@ import { ArrowRight } from "lucide-react";
 
 const sections = [
   { title: "Getting started", items: [
-    ["How do I start?", "Create a workspace, upload authorized business data, review the workspace flags, create a complete campaign pack, record human approval and prepare eligible records as campaign leads. Free Preview cannot send live outreach."],
+    ["How do I start?", "Create a workspace, upload authorized business data, review the workspace flags, create a complete campaign pack, record human approval and prepare eligible records as campaign leads. Free Preview cannot send live outreach or hand content to external Buffer channels."],
     ["Do I need perfectly formatted data?", "No. The workspace can surface duplicates, missing fields, invalid formats and records requiring review. Those labels support customer assessment and are not legal approval."],
-    ["What is a sensible first test?", "Use a small set of business records your organization is authorized to process, confirm source and suppression status, generate the first complete campaign pack and review the workflow before any paid live sending."],
+    ["What is a sensible first test?", "Use a small set of business records your organization is authorized to process, confirm source and suppression status, generate the first complete campaign pack and review the workflow before any paid live activation."],
   ]},
   { title: "Data Vault", items: [
     ["What does ‘eligible under checks’ mean?", "It means a record passed the current workspace-format, duplicate, blocking and quality checks. It does not establish lawful basis, consent, recipient suitability, deliverability or legal compliance."],
@@ -19,7 +19,7 @@ const sections = [
   ]},
   { title: "Campaign packs and Campaign Credits", items: [
     ["What does the full campaign-pack generator create?", "From one customer brief, the current campaign pack can prepare editable strategy, landing & offer copy, email sequences, a social pack, press release, video scripts, paid-ad copy and lead capture. Outputs remain drafts until the customer reviews them."],
-    ["How does social activation work?", "Approved social text can be handed to the customer's own Buffer account as a draft, into the queue or scheduled for later. Velocity Vision does not auto-publish social content."],
+    ["How does social activation work?", "On an eligible paid plan, approved social text can be handed to the customer's own Buffer account as a draft, into the queue or scheduled for later. Free Preview keeps social content in review mode inside Velocity. Velocity Vision does not auto-publish social content."],
     ["What uses Campaign Credits today?", "The current live credit-priced action is full campaign-pack generation. Data review, activation preparation and individual email/contact sends are not charged as Campaign Credits."],
     ["Can I regenerate a Free Preview pack?", "Free Preview is capped at one full campaign pack. It cannot generate a second full pack and does not accept credit top-ups. Compare paid plans to continue full-pack generation."],
   ]},

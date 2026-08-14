@@ -23,9 +23,21 @@ Deno.serve(async (req) => {
     const { data: { user } } = await userClient.auth.getUser();
     if (!user) return json({ error: "unauthorized" }, 401);
 
+    // SMTP/app-password connection is a live sender activation feature. Check
+    // entitlement before validating credentials or contacting an SMTP server.
+    const admin = createClient(supabaseUrl, serviceKey);
+    const { data: effectivePlan, error: planErr } = await admin.rpc("effective_plan_for_actions", { _user_id: user.id });
+    if (planErr) {
+      console.error("email-connection-save entitlement check failed", { message: planErr.message });
+      return json({ error: "entitlement_check_failed" }, 500);
+    }
+    if (!(["starter", "growth", "agency"] as string[]).includes(String(effectivePlan ?? ""))) {
+      return json({ error: "paid_plan_required", message: "Live mailbox connection is available on paid plans." }, 403);
+    }
+
     const body = await req.json();
     const {
-      id, // optional, update existing
+      id,
       provider, from_email, from_name, display_name,
       smtp_host, smtp_port, smtp_username, smtp_password,
       workspace_id, is_default,
@@ -39,9 +51,6 @@ Deno.serve(async (req) => {
     const host = smtp_host || defaults.host;
     const port = Number(smtp_port || defaults.port);
 
-    const admin = createClient(supabaseUrl, serviceKey);
-
-    // Verify creds if password provided
     let status: "connected" | "error" = "connected";
     let last_error: string | null = null;
     let last_verified_at: string | null = null;

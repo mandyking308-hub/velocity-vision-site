@@ -1,17 +1,14 @@
 /**
- * Dodo Payments checkout session creation — INERT until server secrets exist.
- *
- * This function is intentionally separate from `create-checkout` (Stripe) and
- * does not modify or share any of its code. No frontend CTA is wired to it.
+ * Dodo Payments checkout session creation.
  *
  * Security model:
  *  - Requires an authenticated Supabase user (bearer token).
  *  - Accepts ONLY an allow-listed internal product key. Never a Dodo product
- *    id, never an amount, never a currency, never a URL.
- *  - Resolves the Dodo product id server-side from DODO_PRODUCT_MAP.
+ *    id, amount, currency or arbitrary URL from the browser.
+ *  - Resolves the Dodo product id server-side.
+ *  - Free Preview cannot create a credit-top-up checkout, even by calling this
+ *    function directly instead of using the UI.
  *  - return_url / cancel_url are built from an allow-listed origin.
- *  - Returns `payments_not_configured` without any external call when the API
- *    key, environment or product mapping is absent.
  */
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -23,13 +20,29 @@ import {
   isSafeDodoCheckoutLink,
   isValidCampaignRefId,
   loadDodoConfig,
+  type DodoProductKey,
 } from "../_shared/dodo.ts";
-
 
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL")!,
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
 );
+
+/**
+ * Two historical fallback IDs differed only by lowercase-l / uppercase-I.
+ * Production normally uses DODO_PRODUCT_MAP, but fail safe if an old compiled
+ * fallback or stale override contains exactly one of those known bad values.
+ * Any genuinely different future override is left untouched.
+ */
+export function canonicalDodoProductId(productKey: DodoProductKey, mappedId: string): string {
+  if (productKey === "vv_growth_monthly" && mappedId === "pdt_0Nl9s5l0TK2OPTMHCqwSs") {
+    return "pdt_0Nl9s5I0TK2OPTMHCqwSs";
+  }
+  if (productKey === "vv_agency_monthly" && mappedId === "pdt_0Nl9sTQjA4USAN3YTR6lU") {
+    return "pdt_0Nl9sTQjA4USAN3YTR6IU";
+  }
+  return mappedId;
+}
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -48,9 +61,10 @@ Deno.serve(async (req) => {
     if (!isAllowedProductKey(productKey)) {
       return json({ error: "invalid_product_key" }, 400);
     }
+    const entry = DODO_PRODUCT_CATALOG[productKey];
 
-    // refId is accepted ONLY for Human Review, and only as a canonical UUID.
-    // Any refId on another product is rejected to keep the contract tight.
+    // No active launch product accepts a campaign reference. Keep the legacy
+    // shape guards fail-closed for compatibility with older clients/tests.
     const rawRefId = (body as Record<string, unknown>).refId;
     const hasRefId = rawRefId !== undefined && rawRefId !== null && rawRefId !== "";
     if (hasRefId && !isRefIdEligibleProduct(productKey)) {
@@ -66,6 +80,19 @@ Deno.serve(async (req) => {
       ? await supabase.auth.getUser(token)
       : { data: { user: null } };
     if (!user) return json({ error: "unauthorized" }, 401);
+
+    // Free Preview cannot buy top-ups. Enforce this server-side before any
+    // provider request so a direct API call cannot bypass the customer UI.
+    if (entry.kind.startsWith("topup_")) {
+      const { data: effectivePlan, error: planErr } = await supabase.rpc("effective_plan_for_actions", { _user_id: user.id });
+      if (planErr) {
+        console.error("dodo-create-checkout topup entitlement check failed", { message: planErr.message });
+        return json({ error: "entitlement_check_failed" }, 500);
+      }
+      if (!(["starter", "growth", "agency"] as string[]).includes(String(effectivePlan ?? ""))) {
+        return json({ error: "paid_plan_required", message: "Credit top-ups are available only on eligible paid plans." }, 403);
+      }
+    }
 
     // Ownership is derived from the validated bearer token only — never from
     // anything the client sent. No Dodo call happens before this passes.
@@ -84,10 +111,11 @@ Deno.serve(async (req) => {
     if (!cfg.ok) {
       return json({ error: "payments_not_configured", reason: cfg.reason }, 503);
     }
-    const dodoProductId = cfg.config.productMap[productKey];
-    if (!dodoProductId) {
+    const mappedProductId = cfg.config.productMap[productKey];
+    if (!mappedProductId) {
       return json({ error: "payments_not_configured", reason: "product_not_mapped" }, 503);
     }
+    const dodoProductId = canonicalDodoProductId(productKey, mappedProductId);
 
     // Customer identity comes from the authenticated account only.
     const { data: profile } = await supabase
@@ -100,10 +128,7 @@ Deno.serve(async (req) => {
     const name = [profile?.first_name, profile?.last_name]
       .filter(Boolean).join(" ").trim() || email.split("@")[0];
 
-    // The return URL carries only the safe internal purchase-result flag for
-    // this allow-listed productKey — never price, PII, product id or secret.
     const { return_url, cancel_url } = dodoReturnUrls(req.headers.get("origin"), productKey);
-    const entry = DODO_PRODUCT_CATALOG[productKey];
 
     const response = await fetch(`${cfg.config.baseUrl}/checkouts`, {
       method: "POST",
@@ -116,7 +141,6 @@ Deno.serve(async (req) => {
         customer: { email, name },
         return_url,
         cancel_url,
-        // Safe internal identifiers only — no PII, no free text.
         metadata: {
           userId: user.id,
           productKey,
@@ -135,18 +159,14 @@ Deno.serve(async (req) => {
 
     const session = await response.json();
     const checkoutUrl = session.checkout_url;
-    // Never hand the browser anything other than an official Dodo HTTPS link.
     if (!isSafeDodoCheckoutLink(checkoutUrl)) {
       console.error("dodo-create-checkout rejected an unsafe checkout link");
       return json({ error: "unsafe_checkout_url" }, 502);
     }
-    // Never expose environment/mode details to the browser — only the
-    // validated hosted link and the session id the customer just created.
     return json({
       checkoutUrl,
       sessionId: session.session_id ?? null,
     });
-
   } catch (e) {
     console.error("dodo-create-checkout error:", e);
     return json({ error: "checkout_failed" }, 500);

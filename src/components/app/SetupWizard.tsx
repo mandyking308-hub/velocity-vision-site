@@ -24,10 +24,10 @@ const STEPS: Array<{ title: string; body: string; cta: string; href: string }> =
   { title: "Upload your first contacts", body: `Free Preview supports up to ${FREE_LIMITS.maxContacts} contacts. CSV upload with quality review is included.`, cta: "Go to Data Vault", href: "/app/data-vault" },
   { title: "Review data quality", body: "Every row is scored for deliverability risk before you spend credits generating for it.", cta: "Review data", href: "/app/data-vault" },
   { title: "Generate your first campaign pack", body: `Use welcome credits to draft email, social, PR and landing assets. Free Preview allows ${FREE_LIMITS.maxCampaignPacks} full pack.`, cta: "New campaign", href: "/app/campaigns/new" },
-  { title: "Review AI outputs", body: "Every asset is a draft. Edit, approve and choose what to activate — nothing sends automatically.", cta: "Open campaigns", href: "/app/campaigns" },
-  { title: "Connect Buffer (optional)", body: "Hand approved social posts to your own Buffer account — you choose draft, queue or schedule there, and nothing publishes automatically. Skip this if you're email-only.", cta: "Buffer settings", href: "/app/settings" },
-  { title: "Decide: buy credits or upgrade", body: "When you're ready for more, top up credits or upgrade to Growth for recurring cadence and larger sending caps.", cta: "See billing", href: "/app/billing" },
-  { title: "Connect a sender only when eligible", body: "Live sending is gated. You'll be prompted to connect an inbox and complete verification when you upgrade.", cta: "Learn how", href: "/help/getting-started" },
+  { title: "Review AI outputs", body: "Every asset is a draft. Edit and review it inside Velocity — nothing sends or publishes automatically.", cta: "Open campaigns", href: "/app/campaigns" },
+  { title: "Review your social drafts", body: "Social content stays in review mode during Free Preview. Buffer connection and handoff are paid-plan activation features; you can decide whether you need them when you upgrade.", cta: "Open campaigns", href: "/app/campaigns" },
+  { title: "Choose the right paid plan when ready", body: "Starter supports one-off activation; Growth adds recurring cadence. Credit top-ups are available only after moving to an eligible paid workspace.", cta: "Compare plans", href: "/app/billing" },
+  { title: "Connect a sender only when eligible", body: "Live sending is gated. You'll be prompted to connect an inbox and complete verification when you move to a paid plan.", cta: "Learn how", href: "/help/getting-started" },
 ];
 
 export default function SetupWizard() {

@@ -15,6 +15,7 @@ import {
 } from "../_shared/buffer-shared.ts";
 
 // Sends a customer-reviewed text draft to Buffer as Draft / Queue / Schedule.
+// Paid, actively entitled workspaces only: Free Preview is review-only.
 // Never auto-publishes: the UI defaults to Draft, and Share Now is not
 // supported here at all. The chosen channel must exist in the user's own
 // current Buffer channels — arbitrary channel IDs are rejected.
@@ -41,8 +42,16 @@ Deno.serve(async (req) => {
     const post = parsed.value;
 
     const admin = createClient(supabaseUrl, serviceKey);
-    const config = loadBufferConfig();
+    const { data: effectivePlan, error: planErr } = await admin.rpc("effective_plan_for_actions", { _user_id: user.id });
+    if (planErr) {
+      console.error("buffer-create-post entitlement check failed", { message: planErr.message });
+      return json({ error: "entitlement_check_failed" }, 500);
+    }
+    if (!(["starter", "growth", "agency"] as string[]).includes(String(effectivePlan ?? ""))) {
+      return json({ error: "paid_plan_required", message: "Buffer handoff is available on paid plans." }, 403);
+    }
 
+    const config = loadBufferConfig();
     const token = await getValidAccessToken(admin, user.id, config);
     if (!token.ok) {
       const status = token.error === "not_configured" ? 503 : 400;

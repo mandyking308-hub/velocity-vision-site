@@ -24,11 +24,11 @@ export const platformManual: ManualChapter[] = [
     sections: [
       {
         title: "Product identity",
-        content: `Velocity Vision is a self-serve B2B commercial workspace operated by Global Solutions Management LLC (Delaware, USA). Customers provide their own lawfully obtained business data, prepare editable AI-assisted drafts, verify their own sender, review preflight controls, approve activation themselves, manage replies and follow-up, and track early pipeline and outcomes.\n\nVelocity Vision is software, not a full-service agency. It does not scrape contacts, sell lists, run managed campaigns, send automatically, or guarantee compliance, deliverability, replies, pipeline, sales or revenue.`,
+        content: `Velocity Vision is a self-serve B2B commercial workspace operated by Global Solutions Management LLC (Delaware, USA). Customers provide their own lawfully obtained business data, prepare editable AI-assisted drafts, verify their own sender where their paid plan permits activation, review preflight controls, approve activation themselves, manage replies and follow-up, and track early pipeline and outcomes.\n\nVelocity Vision is software, not a full-service agency. It does not scrape contacts, sell lists, run managed campaigns, send automatically, or guarantee compliance, deliverability, replies, pipeline, sales or revenue.`,
       },
       {
         title: "Core operating principles",
-        content: `**Customer control is the default.** AI outputs are drafts. Sending and activation require customer-controlled gates.\n\n**Truth before marketing.** Public copy must match actual enforcement. Unsupported features such as seat management, white-label portals, calendar sync, A/B testing or autonomous sending must not be advertised.\n\n**Fail closed.** Free Preview cannot live-send. Unknown plans do not gain sending permission. Dodo direct-purchase CTAs remain unavailable unless the corresponding live product is confirmed ready.\n\n**No fabricated proof.** Demo/sample records are illustrative. The public Work page describes configuration examples rather than invented customer case studies or results.`,
+        content: `**Customer control is the default.** AI outputs are drafts. Sending and activation require customer-controlled gates.\n\n**Truth before marketing.** Public copy must match actual enforcement. Unsupported features such as seat management, white-label portals, calendar sync, A/B testing or autonomous sending must not be advertised.\n\n**Fail closed.** Free Preview cannot live-send, connect a live mailbox for sending, hand social content to Buffer, or buy top-ups. Unknown plans do not gain sending or external activation permission. Dodo direct-purchase CTAs remain unavailable unless the corresponding live product is confirmed ready.\n\n**No fabricated proof.** Demo/sample records are illustrative. The public Work page describes configuration examples rather than invented customer case studies or results.`,
       },
       {
         title: "Main product areas",
@@ -64,15 +64,15 @@ export const platformManual: ManualChapter[] = [
     sections: [
       {
         title: "Free Preview",
-        content: `Free Preview is $0 with no card required. It provides 10 welcome Campaign Credits plus 2 per day with the configured daily balance cap, runs for 14 days, supports one workspace and up to 25 contacts, and permits one full preview campaign pack.\n\n**Critical enforcement:** Free Preview has zero live sends. The server-side sending path fails closed for an ineligible or unknown plan. The one-full-pack rule is enforced before credits are spent.`,
+        content: `Free Preview is $0 with no card required. It provides 10 welcome Campaign Credits plus 2 per day with the configured daily balance cap of 10, runs for 14 days, supports one workspace and up to 25 contacts, and permits one full preview campaign pack. The customer may use their own data and review generated campaign assets inside Velocity.\n\n**Critical enforcement:** Free Preview has zero live sends, no live sender activation, no external Buffer handoff, no credit top-up purchase and no automatic paid upgrade. The one-full-pack rule is enforced before credits are spent.`,
       },
       {
         title: "Paid plans",
-        content: `**Starter — $189 one-off**\n- 25 Campaign Credits\n- 30 days workspace access\n- 1 workspace\n- plan daily send ceiling: up to 20/day\n- one-off campaign use; no recurring cadence entitlement\n\n**Growth — $315/month**\n- 80 Campaign Credits/month\n- 1 workspace\n- plan daily send ceiling: up to 50/day\n- recurring cadence and reusable recurring templates enabled\n\n**Agency Workspace — $629/month**\n- 250 pooled Campaign Credits/month\n- unlimited isolated client workspaces\n- plan daily send ceiling: up to 100/day\n- account-wide view of send usage across client workspaces\n- cross-client pipeline/Outcome Funnel visibility from stored records\n\nDo not describe the send ceiling as an independent per-workspace cap engine, seat-management system or pooled sending-governance product.`,
+        content: `**Starter — $189 one-off**\n- 25 Campaign Credits\n- 30 days workspace access\n- 1 workspace\n- plan daily send ceiling: up to 20/day\n- one-off campaign use; no recurring cadence entitlement\n- eligible for controlled Buffer connection/handoff\n\n**Growth — $315/month**\n- 80 Campaign Credits/month\n- 1 workspace\n- plan daily send ceiling: up to 50/day\n- recurring cadence and reusable recurring templates enabled\n- eligible for controlled Buffer connection/handoff\n\n**Agency Workspace — $629/month**\n- 250 pooled Campaign Credits/month\n- unlimited isolated client workspaces\n- plan daily send ceiling: up to 100/day\n- account-wide view of send usage across client workspaces\n- cross-client pipeline/Outcome Funnel visibility from stored records\n- eligible for controlled Buffer connection/handoff\n\nDo not describe the send ceiling as an independent per-workspace cap engine, seat-management system or pooled sending-governance product.`,
       },
       {
         title: "Campaign workflow",
-        content: `The current workflow includes Data Vault review, First-Campaign Copilot, Launchpad, Preflight, governed activation, Reply Intent Command Centre, compliance precedence, referrals, out-of-office return-date handling, 24h+ waiting queues, customer-controlled meeting handoff/manual meeting recording, pipeline and Outcome Funnel.\n\nThese tools organize and assist customer activity. They do not automatically send a reply, guarantee a meeting, or manufacture outcome data.`,
+        content: `The current workflow includes Data Vault review, First-Campaign Copilot, Launchpad, Preflight, governed activation, Reply Intent Command Centre, compliance precedence, referrals, out-of-office return-date handling, 24h+ waiting queues, customer-controlled meeting handoff/manual meeting recording, pipeline and Outcome Funnel. Social assets remain review-only in Free Preview; eligible paid plans may connect the customer's own Buffer account for a customer-controlled draft/queue/schedule handoff.\n\nThese tools organize and assist customer activity. They do not automatically send a reply, publish social content, guarantee a meeting, or manufacture outcome data.`,
       },
       {
         title: "Agency Workspace",
@@ -86,19 +86,19 @@ export const platformManual: ManualChapter[] = [
     sections: [
       {
         title: "Dodo readiness model",
-        content: `New direct purchases use the Dodo readiness bridge. Public readiness exposes safe booleans only; API keys, webhook secrets, product IDs and customer IDs must never be exposed client-side.\n\nA paid CTA may switch to direct purchase only when the corresponding product is explicitly live-ready. If it is not live-ready, the public site must use a truthful contact/onboarding fallback. Changing secure Dodo settings does not require inventing a public readiness state.`,
+        content: `New direct purchases use the Dodo readiness bridge. Public readiness exposes safe booleans only; API keys, webhook secrets, product IDs and customer IDs must never be exposed client-side.\n\nA paid CTA may switch to direct purchase only when the corresponding live Dodo product is confirmed ready. For the published Starter, Growth and Agency products, checkout is self-serve; do not replace an unavailable checkout with a misleading manual/onboarding prerequisite. Fail closed with a truthful unavailable state or support route while the technical issue is resolved.`,
       },
       {
         title: "Checkout and fulfilment",
-        content: `Browser return from checkout is not fulfilment authority. Paid entitlement/credit fulfilment must come from verified provider webhooks and the existing server-side rules.\n\nHuman Review checkout carries a campaign reference only for the Human Review product; the server validates the UUID and campaign ownership before placing it in provider metadata. Other products must reject a supplied campaign reference.`,
+        content: `Browser return from checkout is not fulfilment authority. Paid entitlement/credit fulfilment must come from verified provider webhooks and the existing server-side rules.\n\nStarter, Growth, Agency and the three paid top-up packs are the active Dodo purchase surfaces. Product intent must be preserved through authentication and checkout; no browser-only return may grant entitlement.`,
       },
       {
         title: "Legacy Stripe support",
         content: `Stripe code remains for existing Stripe subscribers who need their established billing portal. It is not the public new-purchase positioning. Internal QA and documentation should refer to provider-neutral payment processing unless a test explicitly targets the legacy Stripe path.`,
       },
       {
-        title: "Top-ups and Human Review",
-        content: `Credit top-ups and Human Review must be described according to runtime readiness. When the relevant Dodo product is live-ready, the signed-in billing flow may offer direct purchase. When it is not, copy must fall back to the published contact route rather than promising instant checkout.`,
+        title: "Top-ups and cancelled Human Review",
+        content: `Credit top-ups are purchasable only by eligible paid workspaces when the corresponding Dodo product is live-ready: 25 credits/$59, 75/$149 and 200/$349. Free Preview cannot buy top-ups.\n\nHuman Review is cancelled and must not appear as a public or active Billing/Dodo purchase option. Historical/internal records may remain only where they are required for compatibility or audit history.`,
       },
     ],
   },

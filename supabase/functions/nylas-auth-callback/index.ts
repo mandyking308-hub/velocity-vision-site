@@ -1,9 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 
-// Region-aware Nylas config resolver — mirrors nylas-auth-start.
-// Production strict mode: when NYLAS_ENV !== "dev", only region-specific
-// NYLAS_US_* / NYLAS_EU_* secrets are used; generic NYLAS_CLIENT_ID /
-// NYLAS_API_KEY are ignored to prevent any sandbox fallback.
 function nylasConfig(region: string) {
   const r = (region || "us").toLowerCase() === "eu" ? "EU" : "US";
   const isProd = (Deno.env.get("NYLAS_ENV") || "production").toLowerCase() !== "dev";
@@ -49,9 +45,7 @@ function edgeRequestId(req: Request) {
 function nylasErrorDetails(payload: unknown) {
   const data = payload as Record<string, unknown> | null;
   const error = data?.error as Record<string, unknown> | string | undefined;
-  if (typeof error === "string") {
-    return { type: null, code: error, message: data?.message ?? error };
-  }
+  if (typeof error === "string") return { type: null, code: error, message: data?.message ?? error };
   return {
     type: error?.type ?? data?.type ?? null,
     code: error?.code ?? data?.code ?? null,
@@ -59,9 +53,9 @@ function nylasErrorDetails(payload: unknown) {
   };
 }
 
-// Public endpoint: Nylas redirects the user's browser here with ?code&state.
-// We exchange the code for a grant, upsert an email_connections row (auth_type = 'nylas'),
-// then redirect the user back into the app.
+// Public provider callback. The one-time state row identifies the customer.
+// Paid entitlement is rechecked before token exchange/save so a customer who
+// downgrades during an OAuth flow cannot create a live sender connection.
 Deno.serve(async (req) => {
   const url = new URL(req.url);
   const code = url.searchParams.get("code");
@@ -98,6 +92,20 @@ Deno.serve(async (req) => {
       return redirectBack({ nylas: "error", reason: "state_expired" });
     }
 
+    const { data: effectivePlan, error: planErr } = await admin.rpc("effective_plan_for_actions", { _user_id: stateRow.user_id });
+    if (planErr) {
+      console.error("nylas-auth-callback entitlement check failed", { message: planErr.message });
+      return redirectBack({ nylas: "error", reason: "entitlement_check_failed" });
+    }
+    if (!(["starter", "growth", "agency"] as string[]).includes(String(effectivePlan ?? ""))) {
+      await admin
+        .from("nylas_oauth_states")
+        .update({ consumed_at: new Date().toISOString() })
+        .eq("id", stateRow.id)
+        .is("consumed_at", null);
+      return redirectBack({ nylas: "error", reason: "paid_plan_required" });
+    }
+
     const cfg = nylasConfig(stateRow.region || "us");
     const { apiKey, clientId, apiUri, callback } = cfg;
     console.info("nylas-auth-callback diagnostics", {
@@ -111,14 +119,9 @@ Deno.serve(async (req) => {
       callback_uri_configured: Boolean(callback),
       provider_requested: stateRow.provider || null,
     });
-    if (cfg.missingProductionSecrets) {
-      return redirectBack({ nylas: "error", reason: "nylas_production_not_configured" });
-    }
-    if (!apiKey || !clientId || !callback) {
-      return redirectBack({ nylas: "error", reason: "nylas_not_configured" });
-    }
+    if (cfg.missingProductionSecrets) return redirectBack({ nylas: "error", reason: "nylas_production_not_configured" });
+    if (!apiKey || !clientId || !callback) return redirectBack({ nylas: "error", reason: "nylas_not_configured" });
 
-    // Exchange code for grant
     const tokenRes = await fetch(`${apiUri}/v3/connect/token`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -144,7 +147,6 @@ Deno.serve(async (req) => {
     const providerFromNylas: string = tokenJson.provider || stateRow.provider || "google";
     const email: string | undefined = tokenJson.email;
 
-    // Fetch grant details for a reliable email address if not returned in tokenJson.
     let fromEmail = email;
     if (!fromEmail) {
       const grantRes = await fetch(`${apiUri}/v3/grants/${grantId}`, {
@@ -163,12 +165,6 @@ Deno.serve(async (req) => {
     if (!fromEmail) return redirectBack({ nylas: "error", reason: "no_email_from_grant" });
 
     const domain = fromEmail.split("@")[1] || null;
-    // Map Nylas provider name -> local provider column value.
-    // Allowed by CHECK: gmail | outlook | icloud | imap | ews | smtp.
-    // Yahoo has no dedicated local column value; store as `imap` (Nylas
-    // fulfils Yahoo via IMAP under the hood) while preserving the real
-    // Nylas provider ("yahoo") in `nylas_provider` so the UI badges it
-    // correctly.
     const np = (providerFromNylas || "").toLowerCase();
     const localProvider =
       np === "microsoft" || np === "outlook" ? "outlook"
@@ -176,9 +172,8 @@ Deno.serve(async (req) => {
       : np === "imap" ? "imap"
       : np === "yahoo" ? "imap"
       : np === "ews" || np === "exchange" ? "ews"
-      : "gmail"; // google / gmail / unknown default
+      : "gmail";
 
-    // Upsert the connection. Prefer to update an existing Nylas row for this user+email.
     const { data: existing } = await admin
       .from("email_connections")
       .select("id")
@@ -204,7 +199,6 @@ Deno.serve(async (req) => {
       status: "connected",
       last_error: null,
       last_verified_at: new Date().toISOString(),
-      // Sending stays disabled until DNS/DKIM verification passes.
       sending_enabled: false,
     };
 

@@ -12,9 +12,10 @@ import {
 import { encryptSecret } from "../_shared/email-crypto.ts";
 
 // Public browser callback: Buffer redirects here with ?code&state. The user is
-// resolved ONLY through the one-time server-stored state row. Redirects back
-// to the app with a safe status query (?buffer=connected | ?buffer=error) —
-// never tokens, never provider error dumps.
+// resolved ONLY through the one-time server-stored state row. Paid entitlement
+// is rechecked before exchanging/saving tokens so a stale OAuth flow cannot
+// activate Buffer after a downgrade to Free Preview. Redirects back to the app
+// with a safe status query — never tokens, never provider error dumps.
 Deno.serve(async (req) => {
   const url = new URL(req.url);
   const code = url.searchParams.get("code");
@@ -34,8 +35,6 @@ Deno.serve(async (req) => {
   const admin = createClient(supabaseUrl, serviceKey);
 
   try {
-    // Buffer denial / provider error: consume the state if present, then
-    // redirect with a whitelisted reason only.
     if (errorParam) {
       if (state) {
         await admin
@@ -62,6 +61,20 @@ Deno.serve(async (req) => {
       return redirectBack(stateRow.return_to, { buffer: "error", reason: "state_expired" });
     }
 
+    const { data: effectivePlan, error: planErr } = await admin.rpc("effective_plan_for_actions", { _user_id: stateRow.user_id });
+    if (planErr) {
+      console.error("buffer-oauth-callback entitlement check failed", { message: planErr.message });
+      return redirectBack(stateRow.return_to, { buffer: "error", reason: "internal_error" });
+    }
+    if (!(["starter", "growth", "agency"] as string[]).includes(String(effectivePlan ?? ""))) {
+      await admin
+        .from("buffer_oauth_states")
+        .update({ consumed_at: new Date().toISOString() })
+        .eq("id", stateRow.id)
+        .is("consumed_at", null);
+      return redirectBack(stateRow.return_to, { buffer: "error", reason: "paid_plan_required" });
+    }
+
     // Atomic one-time consume: only the first concurrent callback wins.
     const { data: consumed } = await admin
       .from("buffer_oauth_states")
@@ -78,9 +91,6 @@ Deno.serve(async (req) => {
       return redirectBack(stateRow.return_to, { buffer: "error", reason: "buffer_not_configured" });
     }
 
-    // Exchange the authorization code (exact redirect URI + PKCE verifier).
-    // Buffer requires a form-encoded body — confidential client sends
-    // client_id + client_secret + code_verifier in the POST body only.
     const tokenRes = await fetch(BUFFER_TOKEN_URL, {
       method: "POST",
       headers: { "Content-Type": BUFFER_TOKEN_CONTENT_TYPE },
@@ -98,7 +108,6 @@ Deno.serve(async (req) => {
       return redirectBack(stateRow.return_to, { buffer: "error", reason: "token_exchange_failed" });
     }
 
-    // Upsert the user's single account-level connection (safe metadata only).
     const { data: conn, error: connErr } = await admin
       .from("buffer_connections")
       .upsert(

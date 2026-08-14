@@ -4,9 +4,13 @@ import "@testing-library/jest-dom";
 import React from "react";
 
 const fromMaybeSingle = vi.fn();
+const creditsRef = { current: { isFreePreview: false } };
 
 vi.mock("react-router-dom", () => ({
   Link: ({ to, children, ...rest }: any) => React.createElement("a", { href: to, ...rest }, children),
+}));
+vi.mock("@/contexts/CreditsContext", () => ({
+  useCredits: () => creditsRef.current,
 }));
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
@@ -19,9 +23,12 @@ vi.mock("@/integrations/supabase/client", () => ({
 import BufferReadinessCard from "@/components/app/BufferReadinessCard";
 
 describe("BufferReadinessCard", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    creditsRef.current = { isFreePreview: false };
+  });
 
-  it("shows a Connect Buffer action linking to settings when not connected", async () => {
+  it("shows a Connect Buffer action linking to settings when a paid account is not connected", async () => {
     fromMaybeSingle.mockResolvedValue({ data: null });
     render(<BufferReadinessCard />);
     const link = await screen.findByRole("link", { name: /connect buffer/i });
@@ -48,5 +55,14 @@ describe("BufferReadinessCard", () => {
     render(<BufferReadinessCard />);
     await screen.findByText(/^connected$/i);
     expect(screen.queryByText(/automatically posts|auto-publish|publishes for you/i)).not.toBeInTheDocument();
+  });
+
+  it("Free Preview shows paid activation and no Connect Buffer action", () => {
+    creditsRef.current = { isFreePreview: true };
+    render(<BufferReadinessCard />);
+    expect(screen.getByText(/paid activation/i)).toBeInTheDocument();
+    expect(screen.getByText(/review your social drafts during free preview/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /compare paid plans/i })).toHaveAttribute("href", "/pricing");
+    expect(screen.queryByRole("link", { name: /connect buffer/i })).not.toBeInTheDocument();
   });
 });

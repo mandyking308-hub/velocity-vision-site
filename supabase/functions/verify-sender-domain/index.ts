@@ -1,10 +1,6 @@
 // Real DNS verification for MX + SPF + DKIM + DMARC on a sender domain.
-// DKIM truth model: only counts as valid if the selector is either
-//   (a) a known provider selector for the configured SMTP host, OR
-//   (b) explicitly stored on the connection (dkim_selector / dkim_selectors), OR
-//   (c) explicitly submitted in this request body (selectors: []).
-// Fallback probes may surface as "detected" so the user can see what's live,
-// but they never mark DKIM valid and never enable sending on their own.
+// Sender verification can enable live sending, so it is restricted to an
+// actively entitled paid plan before any DNS checks or connection mutation.
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
@@ -44,15 +40,11 @@ async function resolveMx(name: string): Promise<{ preference: number; exchange: 
   try { return await Deno.resolveDns(name, "MX") as any; } catch (_e) { return []; }
 }
 
-// Trusted, provider-defined DKIM selectors. Only these count toward "valid" DKIM
-// unless the user has explicitly configured a selector for their connection.
 const PROVIDER_SELECTORS: Record<string, string[]> = {
   "smtp.gmail.com": ["google"],
   "smtp.office365.com": ["selector1", "selector2"],
 };
 
-// Broader probe list — used ONLY to surface "detected" DKIM records to the user.
-// Records found via this list DO NOT mark DKIM valid.
 const FALLBACK_PROBE_SELECTORS = [
   "default", "google", "selector1", "selector2", "k1", "k2",
   "mandrill", "mxvault", "sendgrid", "s1", "s2",
@@ -75,14 +67,12 @@ async function verifyDomain(
     errors, verified: false, verification_status: "needs_dns_setup", sending_enabled: false,
   };
 
-  // MX
   try {
     const mx = await resolveMx(domain);
     out.mx_records = mx.map((m) => `${m.preference} ${m.exchange}`);
     out.mx_status = mx.length > 0 ? "valid" : "missing";
   } catch (e) { out.mx_status = "error"; errors.push(`MX lookup: ${(e as Error).message}`); }
 
-  // SPF
   try {
     const txts = await resolveTxt(domain);
     const spf = txts.filter((t) => t.toLowerCase().startsWith("v=spf1"));
@@ -92,7 +82,6 @@ async function verifyDomain(
     else out.spf_status = "valid";
   } catch (e) { out.spf_status = "error"; errors.push(`SPF lookup: ${(e as Error).message}`); }
 
-  // DMARC
   try {
     const txts = await resolveTxt(`_dmarc.${domain}`);
     const dmarc = txts.filter((t) => /v=DMARC1/i.test(t));
@@ -100,9 +89,7 @@ async function verifyDomain(
     out.dmarc_status = dmarc.length > 0 ? "valid" : "missing";
   } catch (e) { out.dmarc_status = "error"; errors.push(`DMARC lookup: ${(e as Error).message}`); }
 
-  // DKIM — truth model.
   const providerKnown = smtpHost && PROVIDER_SELECTORS[smtpHost] ? PROVIDER_SELECTORS[smtpHost] : [];
-  // "Trusted" = selectors we are allowed to promote to valid.
   const trusted = Array.from(new Set([...providerKnown, ...configuredSelectors].map((s) => s.trim()).filter(Boolean)));
   const probes = Array.from(new Set([...trusted, ...FALLBACK_PROBE_SELECTORS]));
 
@@ -120,8 +107,6 @@ async function verifyDomain(
   if (out.dkim_matched_selectors.length > 0) {
     out.dkim_status = "valid";
   } else if (trusted.length === 0) {
-    // We don't know the required selector — cannot claim DKIM is valid, even if
-    // fallback probes found something (that could belong to a different provider).
     out.dkim_status = "unknown";
     errors.push(
       out.dkim_detected_selectors.length > 0
@@ -129,7 +114,6 @@ async function verifyDomain(
         : "DKIM selector required — enter the selector supplied by your email provider."
     );
   } else {
-    // We know which selector(s) SHOULD publish DKIM, and none did.
     out.dkim_status = "missing";
     errors.push(`Expected DKIM at selector(s) ${trusted.join(", ")} but no matching DKIM record was found.`);
   }
@@ -155,13 +139,21 @@ Deno.serve(async (req) => {
 
   try {
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return json({ error: "Unauthorized" }, 401);
-    }
+    if (!authHeader?.startsWith("Bearer ")) return json({ error: "Unauthorized" }, 401);
     const userClient = createClient(SUPABASE_URL, ANON, { global: { headers: { Authorization: authHeader } } });
     const { data: claims, error: claimsErr } = await userClient.auth.getClaims(authHeader.replace("Bearer ", ""));
     if (claimsErr || !claims?.claims) return json({ error: "Unauthorized" }, 401);
     const userId = claims.claims.sub as string;
+
+    const admin = createClient(SUPABASE_URL, SERVICE);
+    const { data: effectivePlan, error: planErr } = await admin.rpc("effective_plan_for_actions", { _user_id: userId });
+    if (planErr) {
+      console.error("verify-sender-domain entitlement check failed", { message: planErr.message });
+      return json({ error: "entitlement_check_failed" }, 500);
+    }
+    if (!(["starter", "growth", "agency"] as string[]).includes(String(effectivePlan ?? ""))) {
+      return json({ error: "paid_plan_required", message: "Sender verification is available on paid plans." }, 403);
+    }
 
     const body = await req.json().catch(() => ({}));
     const connectionId: string | undefined = body.connection_id;
@@ -173,8 +165,6 @@ Deno.serve(async (req) => {
     const persistSelector: string | undefined = typeof body.persist_selector === "string" && body.persist_selector.trim()
       ? body.persist_selector.trim()
       : undefined;
-
-    const admin = createClient(SUPABASE_URL, SERVICE);
 
     let target: any = null;
     if (connectionId) {
@@ -189,8 +179,6 @@ Deno.serve(async (req) => {
     if (!domain) return json({ error: "Missing domain" }, 400);
     domain = domain.trim().toLowerCase();
 
-    // If caller supplied a selector to save, persist it now so the next check
-    // (and all future ones) count it as trusted.
     if (target && persistSelector) {
       const existing: string[] = Array.isArray(target.dkim_selectors) ? target.dkim_selectors : [];
       const merged = Array.from(new Set([...existing, persistSelector]));
@@ -202,7 +190,6 @@ Deno.serve(async (req) => {
       target.dkim_selectors = merged;
     }
 
-    // Compose the trusted selector list for this run.
     const configuredSelectors: string[] = [];
     if (target?.dkim_selector) configuredSelectors.push(String(target.dkim_selector));
     if (Array.isArray(target?.dkim_selectors)) for (const s of target.dkim_selectors) if (typeof s === "string") configuredSelectors.push(s);
