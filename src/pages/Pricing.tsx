@@ -189,7 +189,13 @@ export default function Pricing() {
             <div className="flex flex-col md:flex-row md:items-center gap-5">
               <div className="flex-1">
                 <div className="flex flex-wrap items-center gap-2 mb-2">
-                  <span className="inline-block text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-accent/15 text-accent font-semibold">Free Preview · {formatPrice(0, currency)}</span>
+                  <Link
+                    to={SIGNUP_PATH}
+                    aria-label="Start the Free Preview"
+                    className="inline-block text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-accent/15 text-accent font-semibold hover:bg-accent/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 transition-colors"
+                  >
+                    Free Preview · {formatPrice(0, currency)}
+                  </Link>
                   <span className="inline-block text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-foreground text-background font-bold">Review mode · no live sending</span>
                 </div>
                 <h2 className="font-display font-semibold text-xl">Build and review your first complete campaign pack before you pay</h2>
