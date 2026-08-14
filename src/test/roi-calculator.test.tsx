@@ -179,6 +179,6 @@ describe("ROI calculator UI", () => {
   it("keeps both CTAs", () => {
     renderCalculator();
     expect(screen.getByRole("link", { name: /explore the platform/i })).toHaveAttribute("href", "/demo");
-    expect(screen.getByRole("link", { name: /start your workspace/i })).toHaveAttribute("href", "/auth");
+    expect(screen.getByRole("link", { name: /start your workspace/i })).toHaveAttribute("href", "/auth?mode=signup");
   });
 });
