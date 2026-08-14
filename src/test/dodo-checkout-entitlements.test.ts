@@ -12,9 +12,9 @@ describe("Dodo checkout authoritative entitlements", () => {
     expect(checkout).toContain("Credit top-ups are available only on eligible paid plans.");
   });
 
-  it("checks the top-up entitlement before Dodo config/provider checkout", () => {
+  it("checks the top-up entitlement before the runtime Dodo config/provider checkout", () => {
     const entitlement = checkout.indexOf('entry.kind.startsWith("topup_")');
-    const config = checkout.indexOf("loadDodoConfig");
+    const config = checkout.indexOf("const cfg = loadDodoConfig");
     const provider = checkout.indexOf('fetch(`${cfg.config.baseUrl}/checkouts`');
     expect(entitlement).toBeGreaterThan(-1);
     expect(config).toBeGreaterThan(entitlement);
