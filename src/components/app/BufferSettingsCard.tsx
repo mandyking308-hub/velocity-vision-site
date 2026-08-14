@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +7,7 @@ import { Share2, RefreshCw, Unplug } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { FunctionsHttpError } from "@supabase/supabase-js";
 import { toast } from "sonner";
+import { useCredits } from "@/contexts/CreditsContext";
 
 interface BufferConnectionRow {
   id: string;
@@ -36,6 +37,7 @@ const ERROR_COPY: Record<string, string> = {
   token_exchange_failed: "Buffer could not verify the connection. Please try again.",
   connection_save_failed: "Buffer connected but could not be saved. Please try again.",
   buffer_not_configured: "Buffer isn't configured yet.",
+  paid_plan_required: "Buffer handoff is available on paid plans.",
   internal_error: "Something went wrong connecting Buffer. Please try again.",
 };
 
@@ -53,6 +55,7 @@ async function invokeError(error: unknown): Promise<string> {
 
 export default function BufferSettingsCard() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { isFreePreview } = useCredits();
   const [state, setState] = useState<State>("loading");
   const [connection, setConnection] = useState<BufferConnectionRow | null>(null);
   const [configMissing, setConfigMissing] = useState(false);
@@ -60,13 +63,19 @@ export default function BufferSettingsCard() {
   const [busy, setBusy] = useState(false);
 
   const load = useCallback(async () => {
+    if (isFreePreview) {
+      setConnection(null);
+      setChannels(null);
+      setState("not_connected");
+      return;
+    }
     const { data } = await (supabase.from as any)("buffer_connections")
       .select("id, status, connected_at, last_error, scopes")
       .maybeSingle();
     const row = data as BufferConnectionRow | null;
     setConnection(row);
     setState(row ? (row.status === "reconnect_required" ? "reconnect_required" : "connected") : "not_connected");
-  }, []);
+  }, [isFreePreview]);
 
   useEffect(() => {
     load();
@@ -76,7 +85,9 @@ export default function BufferSettingsCard() {
   useEffect(() => {
     const status = searchParams.get("buffer");
     if (!status) return;
-    if (status === "connected") {
+    if (isFreePreview) {
+      toast.info("Buffer handoff is available on paid plans.");
+    } else if (status === "connected") {
       toast.success("Buffer connected");
       load();
     } else {
@@ -87,9 +98,13 @@ export default function BufferSettingsCard() {
     next.delete("buffer");
     next.delete("reason");
     setSearchParams(next, { replace: true });
-  }, [searchParams, setSearchParams, load]);
+  }, [searchParams, setSearchParams, load, isFreePreview]);
 
   const connect = async () => {
+    if (isFreePreview) {
+      toast.info("Buffer handoff is available on paid plans.");
+      return;
+    }
     setBusy(true);
     try {
       const { data, error } = await supabase.functions.invoke("buffer-oauth-start", {
@@ -100,6 +115,8 @@ export default function BufferSettingsCard() {
         if (code === "buffer_not_configured") {
           // Fail closed: no fake connected state.
           setConfigMissing(true);
+        } else if (code === "paid_plan_required") {
+          toast.info(ERROR_COPY.paid_plan_required);
         } else {
           toast.error("Could not start Buffer connection. Please try again.");
         }
@@ -114,6 +131,7 @@ export default function BufferSettingsCard() {
   };
 
   const refreshChannels = async () => {
+    if (isFreePreview) return;
     setBusy(true);
     try {
       const { data, error } = await supabase.functions.invoke("buffer-channels", { body: {} });
@@ -155,74 +173,86 @@ export default function BufferSettingsCard() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <Share2 className="h-6 w-6 text-primary" />
-          {state === "connected" && <Badge>Connected</Badge>}
-          {state === "reconnect_required" && <Badge variant="destructive">Reconnect required</Badge>}
+          {isFreePreview && <Badge variant="outline">Paid activation</Badge>}
+          {!isFreePreview && state === "connected" && <Badge>Connected</Badge>}
+          {!isFreePreview && state === "reconnect_required" && <Badge variant="destructive">Reconnect required</Badge>}
         </div>
         <CardTitle className="text-lg">Social publishing — Buffer</CardTitle>
         <CardDescription>
-          Send reviewed campaign post drafts to your own Buffer account as a draft, to the queue, or on a
-          schedule. Velocity never publishes automatically.
+          {isFreePreview
+            ? "Review social drafts in Velocity during Free Preview. Buffer connection and handoff unlock on paid plans."
+            : "Send reviewed campaign post drafts to your own Buffer account as a draft, to the queue, or on a schedule. Velocity never publishes automatically."}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
-        {configMissing && (
-          <p className="text-sm text-muted-foreground" role="status">
-            Buffer isn't configured yet. Check back soon.
-          </p>
-        )}
-
-        {state === "loading" && <p className="text-sm text-muted-foreground">Loading…</p>}
-
-        {(state === "not_connected" || state === "reconnect_required") && !configMissing && (
+        {isFreePreview ? (
           <div className="space-y-2">
-            {state === "reconnect_required" && (
-              <p className="text-sm text-muted-foreground">
-                {connection?.last_error || "Your Buffer connection expired. Reconnect to continue."}
-              </p>
-            )}
-            <Button onClick={connect} disabled={busy} size="sm">
-              {state === "reconnect_required" ? "Reconnect Buffer" : "Connect Buffer"}
-            </Button>
+            <p className="text-sm text-muted-foreground">
+              Your social campaign content remains available to review here. Move to Starter, Growth or Agency before connecting Buffer or handing posts to an external channel.
+            </p>
+            <Button asChild size="sm"><Link to="/pricing">Compare paid plans</Link></Button>
           </div>
-        )}
-
-        {state === "connected" && (
-          <div className="space-y-3">
-            {connection?.connected_at && (
-              <p className="text-xs text-muted-foreground">
-                Connected {new Date(connection.connected_at).toLocaleDateString()}
+        ) : (
+          <>
+            {configMissing && (
+              <p className="text-sm text-muted-foreground" role="status">
+                Buffer isn't configured yet. Check back soon.
               </p>
             )}
-            <div className="flex flex-wrap gap-2">
-              <Button variant="outline" size="sm" onClick={refreshChannels} disabled={busy}>
-                <RefreshCw className="h-3 w-3 mr-1" /> Refresh channels
-              </Button>
-              <Button variant="ghost" size="sm" onClick={disconnect} disabled={busy}>
-                <Unplug className="h-3 w-3 mr-1" /> Disconnect
-              </Button>
-            </div>
-            {channels && (
-              <div className="space-y-1">
-                {channels.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No Buffer channels found on this account.</p>
-                ) : (
-                  channels.map((c) => (
-                    <div key={c.id} className="flex items-center gap-2 text-sm">
-                      <Badge variant="outline">{c.service || "channel"}</Badge>
-                      <span>{c.displayName || c.name || c.id}</span>
-                      {c.isQueuePaused && <span className="text-xs text-muted-foreground">(queue paused)</span>}
-                    </div>
-                  ))
+
+            {state === "loading" && <p className="text-sm text-muted-foreground">Loading…</p>}
+
+            {(state === "not_connected" || state === "reconnect_required") && !configMissing && (
+              <div className="space-y-2">
+                {state === "reconnect_required" && (
+                  <p className="text-sm text-muted-foreground">
+                    {connection?.last_error || "Your Buffer connection expired. Reconnect to continue."}
+                  </p>
+                )}
+                <Button onClick={connect} disabled={busy} size="sm">
+                  {state === "reconnect_required" ? "Reconnect Buffer" : "Connect Buffer"}
+                </Button>
+              </div>
+            )}
+
+            {state === "connected" && (
+              <div className="space-y-3">
+                {connection?.connected_at && (
+                  <p className="text-xs text-muted-foreground">
+                    Connected {new Date(connection.connected_at).toLocaleDateString()}
+                  </p>
+                )}
+                <div className="flex flex-wrap gap-2">
+                  <Button variant="outline" size="sm" onClick={refreshChannels} disabled={busy}>
+                    <RefreshCw className="h-3 w-3 mr-1" /> Refresh channels
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={disconnect} disabled={busy}>
+                    <Unplug className="h-3 w-3 mr-1" /> Disconnect
+                  </Button>
+                </div>
+                {channels && (
+                  <div className="space-y-1">
+                    {channels.length === 0 ? (
+                      <p className="text-sm text-muted-foreground">No Buffer channels found on this account.</p>
+                    ) : (
+                      channels.map((c) => (
+                        <div key={c.id} className="flex items-center gap-2 text-sm">
+                          <Badge variant="outline">{c.service || "channel"}</Badge>
+                          <span>{c.displayName || c.name || c.id}</span>
+                          {c.isQueuePaused && <span className="text-xs text-muted-foreground">(queue paused)</span>}
+                        </div>
+                      ))
+                    )}
+                  </div>
                 )}
               </div>
             )}
-          </div>
-        )}
 
-        <p className="text-xs text-muted-foreground">
-          Text-only posts for now. Tokens are stored encrypted on our servers — never in your browser — and you
-          can disconnect at any time. You can also revoke access in your Buffer account settings.
-        </p>
+            <p className="text-xs text-muted-foreground">
+              Text-only posts for now. Tokens are stored encrypted on our servers — never in your browser — and you can disconnect at any time. You can also revoke access in your Buffer account settings.
+            </p>
+          </>
+        )}
       </CardContent>
     </Card>
   );
