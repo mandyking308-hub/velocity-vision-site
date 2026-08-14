@@ -63,25 +63,22 @@ export default function BufferSettingsCard() {
   const [busy, setBusy] = useState(false);
 
   const load = useCallback(async () => {
-    if (isFreePreview) {
-      setConnection(null);
-      setChannels(null);
-      setState("not_connected");
-      return;
-    }
+    // Always read the local connection metadata so a downgraded/legacy Free
+    // Preview account can still disconnect and remove encrypted tokens. Free
+    // Preview never reads external Buffer channels or starts OAuth.
     const { data } = await (supabase.from as any)("buffer_connections")
       .select("id, status, connected_at, last_error, scopes")
       .maybeSingle();
     const row = data as BufferConnectionRow | null;
     setConnection(row);
+    setChannels(null);
     setState(row ? (row.status === "reconnect_required" ? "reconnect_required" : "connected") : "not_connected");
-  }, [isFreePreview]);
+  }, []);
 
   useEffect(() => {
     load();
   }, [load]);
 
-  // Handle the safe status query returned by the OAuth callback.
   useEffect(() => {
     const status = searchParams.get("buffer");
     if (!status) return;
@@ -113,7 +110,6 @@ export default function BufferSettingsCard() {
       if (error) {
         const code = await invokeError(error);
         if (code === "buffer_not_configured") {
-          // Fail closed: no fake connected state.
           setConfigMissing(true);
         } else if (code === "paid_plan_required") {
           toast.info(ERROR_COPY.paid_plan_required);
@@ -122,9 +118,7 @@ export default function BufferSettingsCard() {
         }
         return;
       }
-      if (data?.authorizationUrl) {
-        window.location.href = data.authorizationUrl;
-      }
+      if (data?.authorizationUrl) window.location.href = data.authorizationUrl;
     } finally {
       setBusy(false);
     }
@@ -140,6 +134,10 @@ export default function BufferSettingsCard() {
         if (code === "reconnect_required" || code === "not_connected") {
           setState(code === "reconnect_required" ? "reconnect_required" : "not_connected");
           setChannels(null);
+          return;
+        }
+        if (code === "paid_plan_required") {
+          toast.info(ERROR_COPY.paid_plan_required);
           return;
         }
         toast.error("Could not load Buffer channels right now.");
@@ -190,7 +188,14 @@ export default function BufferSettingsCard() {
             <p className="text-sm text-muted-foreground">
               Your social campaign content remains available to review here. Move to Starter, Growth or Agency before connecting Buffer or handing posts to an external channel.
             </p>
-            <Button asChild size="sm"><Link to="/pricing">Compare paid plans</Link></Button>
+            <div className="flex flex-wrap gap-2">
+              <Button asChild size="sm"><Link to="/pricing">Compare paid plans</Link></Button>
+              {connection && (
+                <Button variant="ghost" size="sm" onClick={disconnect} disabled={busy}>
+                  <Unplug className="h-3 w-3 mr-1" /> Remove previous Buffer connection
+                </Button>
+              )}
+            </div>
           </div>
         ) : (
           <>
