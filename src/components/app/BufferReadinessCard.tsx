@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Share2 } from "lucide-react";
 import { useBufferConnection } from "@/hooks/useBufferConnection";
+import { useCredits } from "@/contexts/CreditsContext";
 
 /**
  * Compact social-publishing readiness status for dashboard surfaces. Reflects
@@ -13,6 +14,27 @@ import { useBufferConnection } from "@/hooks/useBufferConnection";
  */
 export default function BufferReadinessCard() {
   const state = useBufferConnection();
+  const { isFreePreview } = useCredits();
+
+  if (isFreePreview) {
+    return (
+      <Card>
+        <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <Share2 className="h-4 w-4 text-primary shrink-0" />
+            <span className="font-medium text-sm">Social publishing — Buffer</span>
+            <Badge variant="outline">Paid activation</Badge>
+          </div>
+          <p className="text-xs text-muted-foreground flex-1">
+            Review your social drafts during Free Preview. Connecting Buffer and handing posts to external channels are available after moving to a paid plan.
+          </p>
+          <Button asChild size="sm" variant="outline" className="shrink-0">
+            <Link to="/pricing">Compare paid plans</Link>
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
