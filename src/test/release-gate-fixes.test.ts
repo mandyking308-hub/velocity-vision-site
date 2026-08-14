@@ -1,7 +1,7 @@
 // Regression coverage for the pre-customer release gate fixes.
 // These assert the customer-facing contracts that were broken in the audit:
 // signup entry, homepage demo path, demo dead ends, invalid campaign route
-// and Free Preview top-up copy.
+// and Free Preview top-up copy/credit isolation.
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "fs";
 import { SIGNUP_PATH, LOGIN_PATH, signupPathWithNext, isSignupMode } from "@/lib/signupPath";
@@ -118,7 +118,6 @@ describe("demo has no protected-route dead ends", () => {
   it("uses the router-registered import detail route for the signed-in app", () => {
     expect(table).toContain("/app/data-vault/imports/${i.id}");
     expect(table).not.toContain("/app/n/");
-    // Proves the link target matches the route defined in the router.
     expect(read("src/App.tsx")).toContain('path="data-vault/imports/:id"');
   });
 });
@@ -139,14 +138,25 @@ describe("invalid campaign route", () => {
   });
 });
 
-describe("Free Preview is never offered a credit purchase", () => {
+describe("Free Preview is never offered or granted paid top-up spending", () => {
+  const credits = read("src/contexts/CreditsContext.tsx");
+  const statusCard = read("src/components/app/FreePreviewStatusCard.tsx");
+
   it("expired Free Preview copy points at plans, not Buy credits", () => {
-    const src = read("src/contexts/CreditsContext.tsx");
-    expect(src).toContain("Free Preview has ended. Choose a paid plan to continue generating.");
-    expect(src).not.toContain("Buy credits or upgrade");
+    expect(credits).toContain("Free Preview has ended. Choose a paid plan to continue generating.");
+    expect(credits).not.toContain("Buy credits or upgrade");
   });
   it("the nudge engine swaps buy-credits CTAs for a plan comparison", () => {
     const src = read("src/components/app/UpgradeNudge.tsx");
     expect(src).toContain('isFreePreview && cta.kind === "buy_credits"');
+  });
+  it("does not count historical paid top-up balance as spendable while the account is Free Preview", () => {
+    expect(credits).toContain("remaining: isFreePreview ? freeNet : planNet + paidNet");
+    expect(credits).toContain("Free Preview credits cannot be topped up. Choose a paid plan to continue generating.");
+    expect(credits).not.toContain("const usePaidTopup");
+  });
+  it("does not surface a paid top-up balance inside the Free Preview status card", () => {
+    expect(statusCard).not.toContain("topupBalance");
+    expect(statusCard).toContain("{remaining} credits");
   });
 });
