@@ -56,12 +56,23 @@ describe("public Free Preview CTAs land in create-account mode", () => {
     "src/pages/Templates.tsx",
     "src/pages/Services.tsx",
     "src/pages/ForBusinesses.tsx",
-    "src/pages/ForAgencies.tsx",
   ];
   it.each(files)("%s has no login-first signup CTA", (f) => {
     const src = read(f);
     expect(src).toContain("SIGNUP_PATH");
     expect(src).not.toContain('to="/auth"');
+  });
+});
+
+describe("ForAgencies Agency CTA preserves purchase intent", () => {
+  const src = read("src/pages/ForAgencies.tsx");
+  it("routes Start Agency Workspace through the agency paid-plan intent", () => {
+    expect(src).toContain("authNextForPlan(\"agency\")");
+    expect(src).toContain("Start Agency Workspace");
+  });
+  it("does not route the agency CTA to the generic Free Preview signup path", () => {
+    expect(src).not.toContain('to={SIGNUP_PATH}');
+    expect(src).not.toContain('to="/auth?mode=signup"');
   });
 });
 
