@@ -70,15 +70,24 @@ Deno.serve(async (req) => {
     const { data: { user } } = await userClient.auth.getUser();
     if (!user) return json({ error: "unauthorized" }, 401);
 
+    // Sender connection is a paid-plan activation feature. Enforce this before
+    // generating state or constructing any external provider authorization URL.
+    const admin = createClient(supabaseUrl, serviceKey);
+    const { data: effectivePlan, error: planErr } = await admin.rpc("effective_plan_for_actions", { _user_id: user.id });
+    if (planErr) {
+      console.error("nylas-auth-start entitlement check failed", { message: planErr.message });
+      return json({ error: "entitlement_check_failed" }, 500);
+    }
+    if (!(["starter", "growth", "agency"] as string[]).includes(String(effectivePlan ?? ""))) {
+      return json({ error: "paid_plan_required", message: "Live mailbox connection is available on paid plans." }, 403);
+    }
+
     const body = await req.json().catch(() => ({}));
     const provider = (body?.provider || "google").toString();
     const workspace_id = body?.workspace_id || null;
     const redirect_to = typeof body?.redirect_to === "string" ? body.redirect_to : null;
     const region = (body?.region || "us").toString().toLowerCase();
 
-    // Providers must be enabled on the active Nylas application (dev or
-    // production) for the region being used. Yahoo/EWS/etc. are added here
-    // only when the corresponding Nylas connector is enabled.
     if (!["google", "microsoft", "icloud", "imap", "ews", "yahoo"].includes(provider)) {
       return json({ error: "invalid_provider" }, 400);
     }
@@ -106,7 +115,6 @@ Deno.serve(async (req) => {
     const state = crypto.randomUUID().replace(/-/g, "") + crypto.randomUUID().replace(/-/g, "");
     const nonce = crypto.randomUUID();
 
-    const admin = createClient(supabaseUrl, serviceKey);
     const { error: insertErr } = await admin.from("nylas_oauth_states").insert({
       user_id: user.id,
       workspace_id,
@@ -149,9 +157,6 @@ Deno.serve(async (req) => {
         ].join(" "),
       );
     }
-    // For icloud / imap / ews, do not set explicit provider scopes — Nylas
-    // Hosted Auth applies the connector's default scopes. Passing Gmail or
-    // Microsoft Graph scopes here would break the flow.
 
     console.info("nylas-auth-start hosted auth url", {
       request_id: edgeRequestId(req),
