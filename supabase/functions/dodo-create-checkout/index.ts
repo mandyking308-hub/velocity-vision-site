@@ -30,19 +30,21 @@ const supabase = createClient(
 
 /**
  * Two historical fallback IDs differed only by lowercase-l / uppercase-I.
- * Production normally uses DODO_PRODUCT_MAP, but fail safe if an old compiled
- * fallback or stale override contains exactly one of those known bad values.
- * Any genuinely different future override is left untouched.
+ * Verified against the live Dodo product list: the real Growth/Agency ids use
+ * a lowercase `l`. Repair the known bad uppercase-I variants if a stale
+ * override or old compiled fallback supplies one. Any genuinely different
+ * future override is left untouched.
  */
 export function canonicalDodoProductId(productKey: DodoProductKey, mappedId: string): string {
-  if (productKey === "vv_growth_monthly" && mappedId === "pdt_0Nl9s5l0TK2OPTMHCqwSs") {
-    return "pdt_0Nl9s5I0TK2OPTMHCqwSs";
+  if (productKey === "vv_growth_monthly" && mappedId === "pdt_0Nl9s5I0TK2OPTMHCqwSs") {
+    return "pdt_0Nl9s5l0TK2OPTMHCqwSs";
   }
-  if (productKey === "vv_agency_monthly" && mappedId === "pdt_0Nl9sTQjA4USAN3YTR6lU") {
-    return "pdt_0Nl9sTQjA4USAN3YTR6IU";
+  if (productKey === "vv_agency_monthly" && mappedId === "pdt_0Nl9sTQjA4USAN3YTR6IU") {
+    return "pdt_0Nl9sTQjA4USAN3YTR6lU";
   }
   return mappedId;
 }
+
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
