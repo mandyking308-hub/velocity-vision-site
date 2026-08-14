@@ -118,7 +118,6 @@ const PricingTeaser = () => {
           <div className="flex-1">
             <div className="flex flex-wrap items-center gap-2 mb-1">
               <span className="text-[10px] uppercase tracking-widest font-bold opacity-80">Free Preview · {formatPrice(0, currency)}</span>
-              <span className="text-[10px] uppercase tracking-widest font-bold rounded-full bg-white/20 px-2 py-0.5">Review mode</span>
             </div>
             <h3 className="font-display font-bold text-2xl mb-2">Try the full workflow first</h3>
             <div className="flex flex-wrap gap-x-5 gap-y-1.5">
