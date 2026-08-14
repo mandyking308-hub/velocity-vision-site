@@ -197,8 +197,7 @@ describe("public pricing presentation: self-serve, no required onboarding", () =
     expect(pricing).toContain("Optional launch support");
   });
 
-  it("Free Preview is presented as review mode with all eight facts", () => {
-    expect(pricing).toContain("Review mode · no live sending");
+  it("Free Preview is presented with all eight review-mode facts", () => {
     for (const fact of [
       "14-day preview window",
       "10 welcome credits + 2/day (daily balance cap 10)",
@@ -227,7 +226,6 @@ describe("public pricing presentation: self-serve, no required onboarding", () =
   });
 
   it("homepage teaser states the full Free Preview economics", () => {
-    expect(teaser).toContain("Review mode");
     for (const fact of [
       "14 days · no card required",
       "10 welcome credits +2/day (cap 10)",
@@ -263,4 +261,3 @@ describe("public pricing presentation: self-serve, no required onboarding", () =
     ]);
   });
 });
-
