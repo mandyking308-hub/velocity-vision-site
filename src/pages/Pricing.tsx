@@ -196,7 +196,6 @@ export default function Pricing() {
                   >
                     Free Preview · {formatPrice(0, currency)}
                   </Link>
-                  <span className="inline-block text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-foreground text-background font-bold">Review mode · no live sending</span>
                 </div>
                 <h2 className="font-display font-semibold text-xl">Build and review your first complete campaign pack before you pay</h2>
                 <p className="text-sm opacity-80 mt-1">No card required. No automatic upgrade.</p>
