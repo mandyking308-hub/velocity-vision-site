@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Check } from "lucide-react";
+import { SIGNUP_PATH } from "@/lib/signupPath";
 
 const steps = [
   {
@@ -107,7 +108,7 @@ const HowItWorks = () => (
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button variant="hero" size="lg" asChild>
-                <Link to="/auth">
+                <Link to={SIGNUP_PATH}>
                   Start Free Preview <ArrowRight size={18} />
                 </Link>
               </Button>
@@ -202,7 +203,7 @@ const HowItWorks = () => (
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button variant="hero" size="lg" asChild>
-              <Link to="/auth">
+              <Link to={SIGNUP_PATH}>
                 Start Free Preview <ArrowRight size={16} />
               </Link>
             </Button>

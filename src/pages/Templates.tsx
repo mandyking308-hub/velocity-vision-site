@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Target, Rocket, Heart, Tag, RefreshCw } from "lucide-react";
+import { SIGNUP_PATH } from "@/lib/signupPath";
 
 const templates = [
   {
@@ -63,7 +64,7 @@ const Templates = () => (
               Templates are not prospect databases, legal approval, managed campaigns or guaranteed commercial methods. Customers review and approve every record, output and activation decision.
             </p>
             <Button variant="hero" size="lg" asChild>
-              <Link to="/auth">
+              <Link to={SIGNUP_PATH}>
                 Start Free Preview <ArrowRight size={18} />
               </Link>
             </Button>
@@ -93,7 +94,7 @@ const Templates = () => (
                   {template.desc}
                 </p>
                 <Button variant="outline" asChild className="self-start">
-                  <Link to="/auth">
+                  <Link to={SIGNUP_PATH}>
                     Review in Free Preview <ArrowRight size={16} />
                   </Link>
                 </Button>

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { openCookiePreferences } from "@/components/CookieBanner";
 import logoMark from "@/assets/velocity-vision-logo.png";
+import { SIGNUP_PATH } from "@/lib/signupPath";
 
 const Footer = () => (
   <footer className="bg-primary text-primary-foreground">
@@ -60,7 +61,7 @@ const Footer = () => (
             <Link to="/contact" className="text-sm text-primary-foreground/70 hover:text-accent transition-colors">
               Contact us →
             </Link>
-            <Link to="/auth" className="text-sm font-semibold text-accent hover:text-accent-warm transition-colors">
+            <Link to={SIGNUP_PATH} className="text-sm font-semibold text-accent hover:text-accent-warm transition-colors">
               Start your workspace →
             </Link>
           </div>

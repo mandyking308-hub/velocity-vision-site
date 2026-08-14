@@ -13,8 +13,10 @@ import {
   Megaphone,
   ListChecks,
   Send,
+  Play,
 } from "lucide-react";
 import { siBuffer } from "simple-icons";
+import { SIGNUP_PATH } from "@/lib/signupPath";
 
 const packTiles = [
   { icon: Target, label: "Strategy" },
@@ -48,20 +50,26 @@ const HeroSection = () => (
         </p>
         <div className="flex flex-col sm:flex-row gap-3 mb-5">
           <Link
-            to="/auth"
+            to={SIGNUP_PATH}
             className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-sm bg-white text-accent shadow-xl transition-transform hover:-translate-y-0.5"
           >
             Start Free Preview <ArrowRight size={16} />
           </Link>
           <Link
+            to="/demo"
+            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-sm border-2 border-white/70 text-primary-foreground hover:bg-white/10 transition-colors"
+          >
+            <Play size={15} /> See the live demo
+          </Link>
+          <Link
             to="/how-it-works"
-            className="inline-flex items-center justify-center px-8 py-4 rounded-full font-bold text-sm border-2 border-white/70 text-primary-foreground hover:bg-white/10 transition-colors"
+            className="inline-flex items-center justify-center px-8 py-4 rounded-full font-semibold text-sm text-primary-foreground/90 underline underline-offset-4 hover:text-primary-foreground transition-colors"
           >
             See how it works
           </Link>
         </div>
         <p className="text-xs md:text-sm text-primary-foreground/75 max-w-xl leading-relaxed">
-          You review and approve what gets used, sent or handed off. No card required for the Free Preview.
+          Demo needs no account and uses sample data. Free Preview is your own workspace for 14 days — no card required. You review and approve what gets used, sent or handed off.
         </p>
       </motion.div>
 

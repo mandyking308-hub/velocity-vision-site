@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Play } from "lucide-react";
+import { SIGNUP_PATH } from "@/lib/signupPath";
 
 const FinalCTA = () => (
   <section className="section-padding bg-hero relative overflow-hidden">
@@ -16,11 +17,14 @@ const FinalCTA = () => (
           Data. Campaign. <span className="bg-white text-accent-warm px-2 rounded-lg">Activation.</span> Replies. Pipeline.
         </p>
         <p className="text-primary-foreground/75 text-sm mb-10 max-w-xl mx-auto leading-relaxed">
-          Build the complete campaign from one brief, keep every activation under your control, and manage what comes back in the same workspace.
+          Build the complete campaign from one brief, keep every activation under your control, and manage what comes back in the same workspace. Explore the demo without an account, or start a 14-day Free Preview in your own workspace.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button size="lg" className="bg-white text-accent hover:bg-white/90 font-bold shadow-xl" asChild>
-            <Link to="/auth">Start Free Preview <ArrowRight size={18} /></Link>
+            <Link to={SIGNUP_PATH}>Start Free Preview <ArrowRight size={18} /></Link>
+          </Button>
+          <Button variant="hero-outline" size="lg" asChild>
+            <Link to="/demo"><Play size={16} /> Try the demo first</Link>
           </Button>
           <Button variant="hero-outline" size="lg" asChild>
             <Link to="/pricing">See pricing</Link>

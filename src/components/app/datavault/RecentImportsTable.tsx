@@ -11,7 +11,7 @@ export interface RecentImport {
   summary?: any;
 }
 
-export default function RecentImportsTable({ imports }: { imports: RecentImport[] }) {
+export default function RecentImportsTable({ imports, readOnly = false }: { imports: RecentImport[]; readOnly?: boolean }) {
   if (imports.length === 0) {
     return (
       <div className="text-sm text-muted-foreground text-center py-6">
@@ -39,9 +39,13 @@ export default function RecentImportsTable({ imports }: { imports: RecentImport[
             return (
               <tr key={i.id} className="border-b border-border/50 hover:bg-muted/30">
                 <td className="py-2.5">
-                  <Link to={`/app/data-vault/imports/${i.id}`} className="font-medium text-primary hover:underline">
-                    {i.file_name}
-                  </Link>
+                  {readOnly ? (
+                    <span className="font-medium">{i.file_name}</span>
+                  ) : (
+                    <Link to={`/app/n/${i.id}`} className="font-medium text-primary hover:underline">
+                      {i.file_name}
+                    </Link>
+                  )}
                 </td>
                 <td className="py-2.5 text-muted-foreground">{format(new Date(i.created_at), "d MMM, HH:mm")}</td>
                 <td className="py-2.5">{i.row_count}</td>

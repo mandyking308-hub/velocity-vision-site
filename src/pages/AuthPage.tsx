@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { safeNextPath } from "@/lib/safeNext";
+import { isSignupMode } from "@/lib/signupPath";
 import LegalAcceptanceCheckbox from "@/components/LegalAcceptanceCheckbox";
 import { recordLegalAcceptance } from "@/lib/recordLegalAcceptance";
 import { Helmet } from "react-helmet-async";
@@ -25,7 +26,10 @@ const _legalLinks = [
 ];
 
 const AuthPage = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  // Public "Start Free Preview" CTAs pass ?mode=signup so new prospects land
+  // directly in Create Account. Plain /auth links still default to Sign In.
+  const initialIsLogin = !isSignupMode(new URLSearchParams(window.location.search).get("mode"));
+  const [isLogin, setIsLogin] = useState(initialIsLogin);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");

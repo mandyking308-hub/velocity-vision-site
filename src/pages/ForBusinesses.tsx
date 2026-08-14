@@ -21,6 +21,7 @@ import {
   CheckCircle2,
   ListChecks,
 } from "lucide-react";
+import { SIGNUP_PATH } from "@/lib/signupPath";
 
 const essentials = [
   {
@@ -141,7 +142,7 @@ const ForBusinesses = () => (
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button variant="hero" size="lg" asChild>
-                <Link to="/auth">
+                <Link to={SIGNUP_PATH}>
                   Start your workspace <ArrowRight size={18} />
                 </Link>
               </Button>
@@ -274,7 +275,7 @@ const ForBusinesses = () => (
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button variant="hero" size="lg" asChild>
-              <Link to="/auth">
+              <Link to={SIGNUP_PATH}>
                 Start your workspace <ArrowRight size={18} />
               </Link>
             </Button>

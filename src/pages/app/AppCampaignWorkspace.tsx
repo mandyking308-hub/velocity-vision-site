@@ -61,6 +61,23 @@ const copy = (text: string) => {
   toast.success(i18n.t("common:toasts.copied"));
 };
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export function CampaignNotFound({ onBack, onDashboard }: { onBack: () => void; onDashboard: () => void }) {
+  return (
+    <div className="max-w-lg mx-auto text-center py-16 space-y-4">
+      <h1 className="text-xl font-semibold">Campaign not found</h1>
+      <p className="text-sm text-muted-foreground">
+        This campaign link is no longer valid, or it belongs to a workspace you do not have access to. Nothing was changed.
+      </p>
+      <div className="flex justify-center gap-2">
+        <Button onClick={onBack}>Back to campaigns</Button>
+        <Button variant="outline" onClick={onDashboard}>Go to dashboard</Button>
+      </div>
+    </div>
+  );
+}
+
 export default function AppCampaignWorkspace() {
   const { t } = useTranslation("app");
   const { id } = useParams();
@@ -70,6 +87,9 @@ export default function AppCampaignWorkspace() {
   const legal = useLegalStatus();
 
   const [c, setC] = useState<Campaign | null>(null);
+  // "loading" until the lookup settles; "missing" for a malformed id or a
+  // campaign that does not exist / is not visible to this customer.
+  const [loadState, setLoadState] = useState<"loading" | "ready" | "missing">("loading");
   const [leads, setLeads] = useState<any[]>([]);
   const [regenerating, setRegenerating] = useState(false);
   const [qualityDebug, setQualityDebug] = useState(false);
@@ -77,14 +97,19 @@ export default function AppCampaignWorkspace() {
   const [signals, setSignals] = useState<{ safeContacts: number; reviewContacts: number; senderState: any }>({ safeContacts: 0, reviewContacts: 0, senderState: null });
 
   useEffect(() => {
-    if (!id) return;
+    if (!id || !UUID_RE.test(id)) {
+      setLoadState("missing");
+      return;
+    }
+    setLoadState("loading");
     (async () => {
       const [{ data: camp }, { data: ld }] = await Promise.all([
         supabase.from("campaigns").select("id, name, status, goal, campaign_kind, brief, pack, slug, lead_form_config, lead_form_published, cadence_type, cadence_interval, cadence_unit, start_at, timezone, cadence_end_at, cadence_max_runs, next_run_at, last_run_at, runs_completed, refresh_strategy, approved_at, is_sample").eq("id", id).maybeSingle(),
         supabase.from("leads").select("id, name, email, status, created_at, last_action").eq("campaign_id", id).order("created_at", { ascending: false }),
       ]);
-      setC(camp as any);
+      setC((camp as any) ?? null);
       setLeads(ld || []);
+      setLoadState(camp ? "ready" : "missing");
     })();
   }, [id]);
 
@@ -231,6 +256,7 @@ export default function AppCampaignWorkspace() {
     toast.success("Full campaign pack copied");
   });
 
+  if (loadState === "missing") return <CampaignNotFound onBack={() => navigate("/app/campaigns")} onDashboard={() => navigate("/app")} />;
   if (!c || !cadenceFull) return <p className="text-muted-foreground">Loading…</p>;
   const pack = c.pack;
   const brief = c.brief;

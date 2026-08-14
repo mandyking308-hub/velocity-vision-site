@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { GTranslateSlot } from "@/components/GTranslate";
 import logoMark from "@/assets/velocity-vision-logo.png";
+import { SIGNUP_PATH } from "@/lib/signupPath";
 
 
 const Navbar = () => {
@@ -56,7 +57,7 @@ const Navbar = () => {
               <Link to="/pricing">{t("nav.seePricing")}</Link>
             </Button>
             <Button variant="cta" size="sm" asChild>
-              <Link to="/auth">{t("nav.startWorkspace")}</Link>
+              <Link to={SIGNUP_PATH}>{t("nav.startWorkspace")}</Link>
             </Button>
           </div>
           <button
@@ -91,7 +92,7 @@ const Navbar = () => {
               <Link to="/pricing" onClick={() => setOpen(false)}>{t("nav.seePricing")}</Link>
             </Button>
             <Button variant="cta" size="sm" asChild>
-              <Link to="/auth" onClick={() => setOpen(false)}>{t("nav.startWorkspace")}</Link>
+              <Link to={SIGNUP_PATH} onClick={() => setOpen(false)}>{t("nav.startWorkspace")}</Link>
             </Button>
           </div>
         </div>

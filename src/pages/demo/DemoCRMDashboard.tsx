@@ -14,6 +14,7 @@ import { runPreflight } from "@/lib/campaignPreflight";
 import { isUnsubscribeCapabilityReady, UNSUBSCRIBE_HANDLER_DEPLOYED } from "@/lib/systemCapabilities";
 import type { LaunchpadSignals } from "@/lib/launchpad";
 import type { FunnelLead, FunnelOpportunity } from "@/lib/outcomeFunnel";
+import { SIGNUP_PATH } from "@/lib/signupPath";
 
 const HOURS_AGO = (h: number) => new Date(Date.now() - h * 3600_000).toISOString();
 
@@ -118,7 +119,7 @@ export default function DemoCRMDashboard() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" asChild><Link to="/demo/data-vault"><Database className="h-4 w-4 mr-2" />Data Vault demo</Link></Button>
-          <Button asChild><Link to="/auth"><Rocket className="h-4 w-4 mr-2" />Start workspace</Link></Button>
+          <Button asChild><Link to={SIGNUP_PATH}><Rocket className="h-4 w-4 mr-2" />Start workspace</Link></Button>
         </div>
       </div>
 

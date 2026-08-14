@@ -5,6 +5,7 @@ import { ArrowRight, Check } from "lucide-react";
 import { useCurrency } from "@/hooks/useCurrency";
 import { formatPrice, priceFor, type SkuId } from "@/lib/currency";
 import { authNextForPlan } from "@/lib/safeNext";
+import { SIGNUP_PATH } from "@/lib/signupPath";
 
 const plans: Array<{
   name: string;
@@ -129,7 +130,7 @@ const PricingTeaser = () => {
             </div>
           </div>
           <Button asChild size="lg" className="bg-white text-accent hover:bg-white/90 font-bold shrink-0 shadow-lg">
-            <Link to="/auth">Start Free Preview <ArrowRight size={16} /></Link>
+            <Link to={SIGNUP_PATH}>Start Free Preview <ArrowRight size={16} /></Link>
           </Button>
         </motion.div>
 

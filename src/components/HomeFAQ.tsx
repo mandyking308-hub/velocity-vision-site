@@ -6,6 +6,10 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 const faqs = [
   {
+    q: "What is the difference between the Demo, the Free Preview and a paid plan?",
+    a: "The Demo needs no account: it is a read-only walkthrough using illustrative sample data, and nothing in it can send, publish, pay or change real records. The Free Preview is a real account in your own workspace for 14 days with no card — your own data (up to 25 contacts), one full campaign pack, 10 welcome credits plus 2 per day up to a balance of 10, in review mode with no live mailbox sending. A paid plan is what unlocks activation: governed email sending, ongoing credits, recurring cadence on Growth and Agency, and continued use beyond the preview.",
+  },
+  {
     q: "What does Velocity Vision actually create?",
     a: "From one customer brief, the current complete campaign pack can prepare editable strategy, landing & offer copy, email sequences, a social pack, press release, video scripts, paid-ad copy and lead capture. Customers review and control every output before use.",
   },

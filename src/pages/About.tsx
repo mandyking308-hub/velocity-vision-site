@@ -17,6 +17,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import aboutHero from "@/assets/about-hero.jpg";
+import { SIGNUP_PATH } from "@/lib/signupPath";
 
 const productCards = [
   {
@@ -215,7 +216,7 @@ const About = () => (
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button variant="hero" size="lg" asChild>
-              <Link to="/auth">
+              <Link to={SIGNUP_PATH}>
                 Start Free Preview <ArrowRight size={18} />
               </Link>
             </Button>
