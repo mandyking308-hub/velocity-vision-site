@@ -27,8 +27,8 @@ const steps = [
   },
   {
     n: "04",
-    title: "Connect and verify the customer's sender",
-    desc: "Configure the authorized mailbox or sender route and complete the applicable verification steps before any live email activation.",
+    title: "Connect and verify the customer's sender for paid activation",
+    desc: "When moving to paid email activation, configure the authorized mailbox or sender route and complete the applicable verification steps before any live send. Free Preview remains review-only and does not connect a live sender.",
   },
   {
     n: "05",
@@ -38,7 +38,7 @@ const steps = [
   {
     n: "06",
     title: "Choose channels, timing and cadence",
-    desc: "Decide how approved assets will be used: governed email sending, social handoff to the customer's own Buffer account, or customer-controlled use of the remaining assets. Configure one-off timing, or recurring cadence on Growth and Agency.",
+    desc: "Decide how approved assets will be used. Eligible paid plans can use governed email sending and customer-controlled Buffer handoff; other assets remain under customer control. Configure one-off timing, or recurring cadence on Growth and Agency.",
   },
   {
     n: "07",
@@ -199,7 +199,7 @@ const HowItWorks = () => (
             Review the product before paid activation
           </h2>
           <p className="text-primary-foreground/75 text-lg mb-6">
-            Free Preview has no live sending. Paid activation follows onboarding, applicable checks and the terms shown before purchase.
+            Free Preview has no live sending or external Buffer handoff. Paid activation is self-serve after purchase and the applicable sender, safety and legal gates; optional setup guidance is available but is never required for checkout.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button variant="hero" size="lg" asChild>
