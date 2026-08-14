@@ -42,5 +42,10 @@
     "step3": "Generate drafts",
     "step4": "Approve activation",
     "step5": "Work the replies"
+  },
+  "midCta": {
+    "title": "See the whole workflow before you sign up",
+    "body": "Open the illustrative demo environment to review Data Vault checks, campaign packs, activation controls and reply handling. No account, no data and no sending.",
+    "button": "Open the live demo"
   }
 }
