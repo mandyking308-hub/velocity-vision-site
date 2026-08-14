@@ -91,7 +91,7 @@ function NavList({ onNavigate, t, signOut, navigate }: { onNavigate?: () => void
           onClick={async () => { await signOut(); navigate("/"); }}
           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/5 transition-colors w-full"
         >
-          <LogOut className="h-4 w-4" /> Sign out
+          <LogOut className="h-4 w-4" /> Log out
         </button>
       </div>
     </div>
@@ -103,6 +103,12 @@ function Shell() {
   const navigate = useNavigate();
   const { t } = useTranslation("app");
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/");
+  };
+
   return (
     <div className="min-h-screen flex w-full bg-background">
       <Helmet>
@@ -133,6 +139,15 @@ function Shell() {
             <CreditPill />
             <Button size="sm" onClick={() => navigate("/app/campaigns/new")} className="whitespace-nowrap">
               <Plus className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">New campaign</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              aria-label="Log out"
+              className="whitespace-nowrap px-2 sm:px-3"
+            >
+              <LogOut className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Log out</span>
             </Button>
           </div>
           {/* Brand gradient underline */}
