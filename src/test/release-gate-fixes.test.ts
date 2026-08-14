@@ -79,6 +79,12 @@ describe("homepage acquisition path exposes Demo", () => {
     expect(hero).toContain('to="/demo"');
     expect(finalCta).toContain('to="/demo"');
   });
+  it("has real copy for the mid-page demo section (no raw i18n keys)", () => {
+    const marketing = JSON.parse(read("src/i18n/locales/en/marketing.json"));
+    expect(marketing.midCta?.title).toBeTruthy();
+    expect(marketing.midCta?.body).toBeTruthy();
+    expect(marketing.midCta?.button).toBeTruthy();
+  });
   it("explains Demo vs Free Preview vs paid in the FAQ", () => {
     expect(faq).toContain("difference between the Demo, the Free Preview and a paid plan");
     expect(faq).toContain("no account");
