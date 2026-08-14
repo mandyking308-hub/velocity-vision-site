@@ -92,8 +92,9 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
+    // Detail stays server-side only; the client gets a safe generic message.
     console.error("create-billing-portal-session error", e);
-    return new Response(JSON.stringify({ error: (e as Error).message }), {
+    return new Response(JSON.stringify({ error: "Could not open billing portal" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
