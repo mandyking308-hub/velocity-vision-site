@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { PLANS, PlanId, CREDIT_COSTS, CreditAction, HUMAN_REVIEW_PRICE } from "@/lib/credits";
+import { PLANS, PlanId, CREDIT_COSTS, CreditAction } from "@/lib/credits";
 import { toast } from "sonner";
 
 interface UserPlan {
@@ -65,7 +65,6 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
     return null;
   }, [user]);
 
-
   const load = useCallback(async () => {
     if (!user) { setLoading(false); return; }
     setLoading(true);
@@ -89,8 +88,9 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
     ? Math.max(0, Math.ceil((periodEnd.getTime() - Date.now()) / 86400000))
     : null;
 
-  // Compute included + used balances. Free credits (welcome + daily) are
-  // zeroed once the preview window ends, but paid top-ups remain usable.
+  // Compute included + used balances. Historical paid top-up ledger rows are
+  // retained for reconciliation, but a Free Preview account can never spend
+  // them. Free Preview spendable balance is strictly its welcome/daily bucket.
   const { included, used, topupBalance, remaining } = useMemo(() => {
     const startMs = periodStart?.getTime() ?? 0;
     let inc = 0, usedC = 0, topup = 0, topupSpent = 0, freeInc = 0, freeUsed = 0;
@@ -104,8 +104,6 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
       else if (row.reason === "free_preview_spend") freeUsed += -row.delta;
       else if (row.reason === "qa_manual_grant" || row.reason === "manual_grant") topup += row.delta;
     }
-    // When the preview window has closed, free credits are forfeit — only paid
-    // top-up balance keeps generation alive.
     const freeNet = freePreviewExpired ? 0 : Math.max(0, freeInc - freeUsed);
     const paidNet = Math.max(0, topup - topupSpent);
     const planNet = Math.max(0, inc - usedC);
@@ -113,16 +111,18 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
       included: (freePreviewExpired ? 0 : freeInc) + inc,
       used: (freePreviewExpired ? 0 : freeUsed) + usedC,
       topupBalance: paidNet,
-      remaining: planNet + paidNet + freeNet,
+      remaining: isFreePreview ? freeNet : planNet + paidNet,
     };
-  }, [ledger, periodStart, freePreviewExpired]);
+  }, [ledger, periodStart, freePreviewExpired, isFreePreview]);
 
   const consume = useCallback<CreditsContextValue["consume"]>(async (action, refId, label) => {
     if (!user) return false;
     const cost = CREDIT_COSTS[action];
     if (remaining < cost) {
-      const desc = freePreviewExpired && topupBalance <= 0
-        ? "Free Preview has ended. Choose a paid plan to continue generating."
+      const desc = isFreePreview
+        ? freePreviewExpired
+          ? "Free Preview has ended. Choose a paid plan to continue generating."
+          : "Free Preview credits cannot be topped up. Choose a paid plan to continue generating."
         : "Top up or upgrade to keep generating.";
       toast.error("You're out of Campaign Credits", { description: desc });
       return false;
@@ -131,15 +131,11 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
       toast.error("Starter access has ended", { description: "Upgrade to Growth or buy another Starter to keep generating." });
       return false;
     }
-    // Route the spend to whichever bucket is actually funding it so reporting
-    // stays clean and expired free credits can't be resurrected.
+    // Free Preview may spend only its own preview bucket. Paid workspaces use
+    // the normal plan/top-up accounting path; authoritative campaign-pack
+    // reservations remain enforced server-side.
     const useFree = isFreePreview && !freePreviewExpired;
-    const usePaidTopup = !useFree && isFreePreview && topupBalance >= cost;
-    const reason = useFree
-      ? "free_preview_spend"
-      : usePaidTopup
-        ? "paid_topup_spend"
-        : `spend_${action}`;
+    const reason = useFree ? "free_preview_spend" : `spend_${action}`;
     const { error } = await supabase.from("credit_ledger").insert({
       user_id: user.id,
       delta: -cost,
@@ -150,23 +146,21 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
         label: label ?? action,
         cost,
         tier: isFreePreview ? "free_preview" : planId,
-        bucket: useFree ? "free_preview" : usePaidTopup ? "paid_topup" : "plan",
+        bucket: useFree ? "free_preview" : "plan",
       },
     });
     if (error) { toast.error("Could not record credit usage"); return false; }
     await load();
     return true;
-  }, [user, remaining, topupBalance, starterExpired, freePreviewExpired, isFreePreview, planId, load]);
+  }, [user, remaining, starterExpired, freePreviewExpired, isFreePreview, planId, load]);
 
   // NOTE: Human Review is cancelled as a product and is no longer purchasable.
   // Historical `human_reviews` rows were inserted by the provider webhook via
   // service_role after payment cleared. This stub remains only to preserve the
   // public type; it does not write to the DB.
-
   const purchaseHumanReview = useCallback<CreditsContextValue["purchaseHumanReview"]>(async () => {
     toast.error("Use the Buy button to start checkout.");
   }, []);
-
 
   const value: CreditsContextValue = {
     loading, plan: planId, planConfig, periodStart, periodEnd, starterExpired,
