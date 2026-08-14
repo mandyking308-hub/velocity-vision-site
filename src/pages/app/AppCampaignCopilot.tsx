@@ -164,7 +164,7 @@ export default function AppCampaignCopilot() {
             return;
           }
           if (status === 402 || /insufficient_credits|starter_expired|no_plan/.test(code)) {
-            setError(`A full campaign pack costs ${CREDIT_COSTS.full_campaign_pack} credits. Top up, upgrade, or try the sample path. Your brief has been saved.`);
+            setError(`A full campaign pack costs ${CREDIT_COSTS.full_campaign_pack} credits. Choose a paid plan or try the sample path. Your brief has been saved.`);
             setBusy(false);
             await refreshCredits();
             return;

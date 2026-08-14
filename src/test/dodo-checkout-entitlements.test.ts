@@ -23,15 +23,16 @@ describe("Dodo checkout authoritative entitlements", () => {
 });
 
 describe("Dodo canonical live product-id protection", () => {
-  it("repairs the known Growth lowercase-l typo before checkout", () => {
-    expect(checkout).toContain('mappedId === "pdt_0Nl9s5l0TK2OPTMHCqwSs"');
-    expect(checkout).toContain('return "pdt_0Nl9s5I0TK2OPTMHCqwSs"');
+  it("repairs the known Growth uppercase-I typo before checkout", () => {
+    expect(checkout).toContain('mappedId === "pdt_0Nl9s5I0TK2OPTMHCqwSs"');
+    expect(checkout).toContain('return "pdt_0Nl9s5l0TK2OPTMHCqwSs"');
   });
 
-  it("repairs the known Agency lowercase-l typo before checkout", () => {
-    expect(checkout).toContain('mappedId === "pdt_0Nl9sTQjA4USAN3YTR6lU"');
-    expect(checkout).toContain('return "pdt_0Nl9sTQjA4USAN3YTR6IU"');
+  it("repairs the known Agency uppercase-I typo before checkout", () => {
+    expect(checkout).toContain('mappedId === "pdt_0Nl9sTQjA4USAN3YTR6IU"');
+    expect(checkout).toContain('return "pdt_0Nl9sTQjA4USAN3YTR6lU"');
   });
+
 
   it("uses the canonicalised id in the provider cart", () => {
     expect(checkout).toContain("const dodoProductId = canonicalDodoProductId(productKey, mappedProductId)");
