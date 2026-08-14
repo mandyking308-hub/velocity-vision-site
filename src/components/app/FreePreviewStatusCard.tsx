@@ -13,7 +13,7 @@ import { FREE_LIMITS } from "@/lib/credits";
 import UpgradeNudge from "./UpgradeNudge";
 
 export default function FreePreviewStatusCard() {
-  const { isFreePreview, freePreviewExpired, freePreviewDaysLeft, remaining, topupBalance } = useCredits();
+  const { isFreePreview, freePreviewExpired, freePreviewDaysLeft, remaining } = useCredits();
   const { user } = useAuth();
   const { currentId } = useWorkspace();
   const [contactCount, setContactCount] = useState(0);
@@ -58,7 +58,7 @@ export default function FreePreviewStatusCard() {
               <div>
                 <div className="text-sm font-semibold">Free Preview</div>
                 <div className="text-xs text-muted-foreground">
-                  {days} day{days === 1 ? "" : "s"} left · {remaining} credits{topupBalance > 0 ? ` (${topupBalance} paid)` : ""}
+                  {days} day{days === 1 ? "" : "s"} left · {remaining} credits
                 </div>
               </div>
             </div>
