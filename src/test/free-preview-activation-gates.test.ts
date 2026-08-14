@@ -29,6 +29,11 @@ describe("Free Preview Buffer UI gates", () => {
     expect(settings).toContain('to="/pricing">Compare paid plans');
   });
 
+  it("still lets a downgraded Free Preview account remove an old Buffer connection", () => {
+    expect(settings).toContain("Remove previous Buffer connection");
+    expect(settings).toContain('supabase.functions.invoke("buffer-disconnect"');
+  });
+
   it("labels Buffer as paid activation on the dashboard", () => {
     expect(readiness).toContain("Paid activation");
     expect(readiness).toContain("Connecting Buffer and handing posts to external channels are available after moving to a paid plan");
@@ -56,5 +61,26 @@ describe("authoritative Buffer paid-plan gates", () => {
     expect(source).toContain("effective_plan_for_actions");
     expect(source).toContain('"starter", "growth", "agency"');
     expect(source).toContain("paid_plan_required");
+  });
+});
+
+describe("customer guidance matches the activation rules", () => {
+  const homeFaq = read("src/components/HomeFAQ.tsx");
+  const help = read("src/pages/Help.tsx");
+  const gettingStarted = read("src/pages/help/GettingStarted.tsx");
+
+  it.each([
+    ["home FAQ", homeFaq],
+    ["Help Centre", help],
+    ["Getting Started", gettingStarted],
+  ])("%s says Free Preview social remains review-only and Buffer is paid", (_label, source) => {
+    expect(source).toMatch(/Free Preview[\s\S]{0,500}(review mode|review-only|keeps social content)/i);
+    expect(source).toMatch(/(paid plan|eligible paid plan)[\s\S]{0,500}Buffer|Buffer[\s\S]{0,500}(paid plan|eligible paid plan)/i);
+  });
+
+  it("keeps top-ups paid-only in the guidance", () => {
+    expect(homeFaq).toContain("Free Preview cannot buy top-ups");
+    expect(help).toContain("Credit top-ups are only for eligible paid workspaces");
+    expect(gettingStarted).toContain("Credit top-ups are only for eligible paid workspaces");
   });
 });
