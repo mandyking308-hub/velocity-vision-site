@@ -10,8 +10,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export function CreditPill() {
-  const { remaining, included, topupBalance } = useCredits();
-  const total = included + topupBalance;
+  const { remaining, included, topupBalance, isFreePreview } = useCredits();
+  const total = isFreePreview ? included : included + topupBalance;
   return (
     <Link to="/app/billing" className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card hover:bg-muted text-xs font-medium">
       <Sparkles className="h-3.5 w-3.5 text-accent" />
@@ -21,9 +21,12 @@ export function CreditPill() {
 }
 
 export default function CreditMeter() {
-  const { included, used, topupBalance, remaining, periodEnd, planConfig, starterExpired } = useCredits();
+  const { included, used, topupBalance, remaining, periodEnd, planConfig, starterExpired, isFreePreview } = useCredits();
   const [open, setOpen] = useState(false);
-  const total = included + topupBalance;
+  // Free Preview has no purchasable or spendable top-up bucket. Historical
+  // top-up ledger rows may still exist for reconciliation, but they must not
+  // change the customer-visible preview allowance.
+  const total = isFreePreview ? included : included + topupBalance;
   const pct = total > 0 ? Math.min(100, (used / total) * 100) : 0;
   const state = usageState(used, total);
   const nextReset = periodEnd ? periodEnd.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) : "—";
@@ -46,19 +49,25 @@ export default function CreditMeter() {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button size="sm" variant="outline" onClick={() => setOpen(true)}>Buy credits</Button>
-              <Button size="sm" asChild><Link to="/app/billing">Upgrade</Link></Button>
+              {isFreePreview ? (
+                <Button size="sm" asChild><Link to="/pricing">Compare paid plans</Link></Button>
+              ) : (
+                <>
+                  <Button size="sm" variant="outline" onClick={() => setOpen(true)}>Buy credits</Button>
+                  <Button size="sm" asChild><Link to="/app/billing">Upgrade</Link></Button>
+                </>
+              )}
             </div>
           </div>
           <Progress value={pct} />
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>{used} used this cycle</span>
-            <span>{topupBalance > 0 && `+${topupBalance} top-up`}</span>
+            {!isFreePreview && <span>{topupBalance > 0 && `+${topupBalance} top-up`}</span>}
           </div>
           {nudgeReason && <UpgradeNudge reason={nudgeReason} variant="inline" />}
         </CardContent>
       </Card>
-      <TopUpModal open={open} onOpenChange={setOpen} />
+      {!isFreePreview && <TopUpModal open={open} onOpenChange={setOpen} />}
     </>
   );
 }
