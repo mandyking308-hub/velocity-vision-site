@@ -3,14 +3,42 @@ import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { decryptSecret } from "../_shared/email-crypto.ts";
 import { smtpSend } from "../_shared/smtp-send.ts";
 
-// Cron-driven. Picks scheduled emails whose scheduled_for is in the past and sends them.
+// Cron-driven scheduled customer email worker.
+// Critical rule: a queued message is NOT authority to send later. Paid plan,
+// legal state, sender ownership/readiness, contact safety and the current daily
+// ceiling are rechecked at delivery time. There is deliberately no platform-
+// sender fallback for customer outreach: it must use the customer's own ready
+// SMTP sender. Nylas scheduled sending remains unsupported.
+
+const REQUIRED_LEGAL_SLUGS = [
+  "terms-of-service",
+  "client-services-agreement",
+  "privacy-policy",
+  "data-processing-agreement",
+  "acceptable-use-policy",
+  "marketing-compliance-policy",
+  "cookie-policy",
+  "platform-security-policy",
+  "service-level-agreement",
+  "subprocessors",
+];
+const CURRENT_LEGAL_VERSIONS: Record<string, string> = {
+  "terms-of-service": "5.0",
+  "client-services-agreement": "6.0",
+  "privacy-policy": "8.0",
+  "data-processing-agreement": "7.0",
+  "acceptable-use-policy": "8.0",
+  "marketing-compliance-policy": "10.0",
+  "cookie-policy": "8.0",
+  "platform-security-policy": "9.0",
+  "service-level-agreement": "9.0",
+  "subprocessors": "1.0",
+};
+const PLAN_DAILY_CAP: Record<string, number> = { starter: 20, growth: 50, agency: 100 };
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
-  // Shared-secret check — only the configured pg_cron job (or an operator with the
-  // CRON_SECRET) may invoke this endpoint. Without this anyone with the URL could
-  // trigger early delivery of all queued mail. The service-role key is also accepted
-  // so the cron job can authenticate with the existing vault-held service-role secret.
   const cronSecret = Deno.env.get("CRON_SECRET");
   const queueToken = Deno.env.get("EMAIL_QUEUE_CRON_TOKEN");
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -27,9 +55,7 @@ Deno.serve(async (req) => {
     });
   }
 
-
-  const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-
+  const admin = createClient(Deno.env.get("SUPABASE_URL")!, serviceKey!);
   const { data: due } = await admin
     .from("email_sends")
     .select("*")
@@ -37,81 +63,54 @@ Deno.serve(async (req) => {
     .lte("scheduled_for", new Date().toISOString())
     .limit(25);
 
-  // Delivery via the project's verified platform sender (same live path used by the
-  // contact form). Used when the workspace mailbox cannot send by SMTP itself.
-  async function deliverViaPlatform(s: any) {
-    const { data, error } = await admin.functions.invoke("send-transactional-email", {
-      body: {
-        templateName: "scheduled-outreach",
-        recipientEmail: s.recipient_email,
-        // Derived from the row id, so provider retries can never duplicate a send.
-        idempotencyKey: `scheduled-send-${s.id}`,
-        templateData: {
-          subject: s.subject,
-          body: s.body,
-          recipientName: s.recipient_name ?? null,
-          senderName: "Velocity Vision",
-        },
-      },
-    });
-    if (error) throw new Error(`platform_send_failed: ${String((error as Error).message).slice(0, 300)}`);
-    if (!data?.success) throw new Error(`platform_send_rejected: ${data?.reason ?? data?.error ?? "unknown"}`);
-    return data;
-  }
-
   const results: any[] = [];
   for (const s of due || []) {
-    // Atomic claim: only the worker that flips scheduled -> sending processes this row.
-    const { data: claimed } = await admin
+    const preflight = await scheduledSendPreflight(admin, s);
+    if (!preflight.ok) {
+      await admin.from("email_sends").update({ status: "failed", error: preflight.reason }).eq("id", s.id).eq("status", "scheduled");
+      results.push({ id: s.id, ok: false, error: preflight.code });
+      continue;
+    }
+
+    // Atomic claim. The database trigger independently rechecks paid
+    // entitlement on scheduled -> sending, so a downgrade between preflight
+    // and this write still fails closed.
+    const { data: claimed, error: claimErr } = await admin
       .from("email_sends")
       .update({ status: "sending" })
       .eq("id", s.id)
       .eq("status", "scheduled")
       .select("id");
-    if (!claimed || claimed.length === 0) {
-      results.push({ id: s.id, ok: false, error: "already_claimed" });
+    if (claimErr || !claimed || claimed.length === 0) {
+      results.push({ id: s.id, ok: false, error: claimErr ? "claim_rejected" : "already_claimed" });
       continue;
     }
 
     try {
-      const { data: conn } = s.connection_id
-        ? await admin.from("email_connections").select("*").eq("id", s.connection_id).single()
-        : { data: null };
+      const conn = preflight.connection;
+      const { data: secret } = await admin
+        .from("email_connection_secrets")
+        .select("encrypted_password")
+        .eq("connection_id", conn.id)
+        .maybeSingle();
+      if (!secret?.encrypted_password) throw new Error("sender_secret_missing");
+      const smtpPassword = await decryptSecret(secret.encrypted_password);
 
-      // Can this mailbox send by its own SMTP credentials?
-      let smtpPassword: string | null = null;
-      if (conn && conn.auth_type === "smtp" && conn.sending_enabled === true && conn.smtp_host) {
-        const { data: secret } = await admin
-          .from("email_connection_secrets")
-          .select("encrypted_password")
-          .eq("connection_id", conn.id)
-          .maybeSingle();
-        if (secret?.encrypted_password) smtpPassword = await decryptSecret(secret.encrypted_password);
-      }
-
-      let channel: string;
-      if (smtpPassword) {
-        await smtpSend(
-          { host: conn.smtp_host, port: conn.smtp_port, username: conn.smtp_username, password: smtpPassword },
-          { fromEmail: conn.from_email, fromName: conn.from_name, to: s.recipient_email, subject: s.subject, body: s.body },
-        );
-        channel = "smtp";
-      } else {
-        // No usable mailbox SMTP credential (OAuth/Nylas mailbox, sending disabled,
-        // or no connection): deliver through the verified platform sender instead.
-        await deliverViaPlatform(s);
-        channel = "platform";
-      }
+      await smtpSend(
+        { host: conn.smtp_host, port: conn.smtp_port, username: conn.smtp_username, password: smtpPassword },
+        { fromEmail: conn.from_email, fromName: conn.from_name, to: s.recipient_email, subject: s.subject, body: s.body },
+      );
 
       const sentAt = new Date().toISOString();
       await admin.from("email_sends").update({ status: "sent", sent_at: sentAt, error: null }).eq("id", s.id);
       if (s.lead_id) {
         await admin.from("leads").update({
-          last_email_sent_at: sentAt, last_email_subject: s.subject,
+          last_email_sent_at: sentAt,
+          last_email_subject: s.subject,
           last_action: `Email sent: ${s.subject}`,
         }).eq("id", s.lead_id);
       }
-      results.push({ id: s.id, ok: true, channel });
+      results.push({ id: s.id, ok: true, channel: "smtp" });
     } catch (e) {
       const msg = (e as Error).message;
       console.error("[email-process-queue] send failed", s.id, msg);
@@ -119,5 +118,80 @@ Deno.serve(async (req) => {
       results.push({ id: s.id, ok: false, error: "send_failed" });
     }
   }
-  return new Response(JSON.stringify({ processed: results.length, results }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+
+  return new Response(JSON.stringify({ processed: results.length, results }), {
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
 });
+
+async function scheduledSendPreflight(admin: any, s: any): Promise<
+  { ok: true; connection: any } | { ok: false; code: string; reason: string }
+> {
+  if (!s.user_id) return { ok: false, code: "missing_user", reason: "Scheduled send has no customer owner." };
+
+  const { data: effectivePlan, error: planErr } = await admin.rpc("effective_plan_for_actions", { _user_id: s.user_id });
+  if (planErr || !effectivePlan || !(String(effectivePlan) in PLAN_DAILY_CAP)) {
+    return { ok: false, code: "plan_send_not_permitted", reason: "Active paid plan required at delivery time." };
+  }
+  const cap = PLAN_DAILY_CAP[String(effectivePlan)];
+
+  const { data: legalRows } = await admin
+    .from("legal_acceptances")
+    .select("document_versions, accepted_at")
+    .eq("user_id", s.user_id)
+    .order("accepted_at", { ascending: false })
+    .limit(1);
+  const versions = (legalRows?.[0]?.document_versions ?? {}) as Record<string, string>;
+  const missing = REQUIRED_LEGAL_SLUGS.filter((slug) => versions[slug] !== CURRENT_LEGAL_VERSIONS[slug]);
+  if (missing.length > 0) {
+    return { ok: false, code: "legal_not_current", reason: "Current legal terms must be accepted before delivery." };
+  }
+
+  if (!s.connection_id) {
+    return { ok: false, code: "connection_required", reason: "A customer sender connection is required." };
+  }
+  const { data: conn } = await admin.from("email_connections").select("*").eq("id", s.connection_id).maybeSingle();
+  if (!conn || conn.user_id !== s.user_id) {
+    return { ok: false, code: "connection_forbidden", reason: "Sender connection does not belong to this customer." };
+  }
+  if (s.workspace_id && conn.workspace_id && s.workspace_id !== conn.workspace_id) {
+    return { ok: false, code: "workspace_mismatch", reason: "Sender belongs to a different workspace." };
+  }
+  if (conn.status !== "connected" || conn.sending_enabled !== true) {
+    return { ok: false, code: "sender_not_ready", reason: "Sender is not currently ready for delivery." };
+  }
+  if (conn.auth_type !== "smtp" || !conn.smtp_host || !conn.smtp_username) {
+    return { ok: false, code: "scheduled_sender_unsupported", reason: "Scheduled delivery currently requires a ready SMTP sender." };
+  }
+
+  if (s.lead_id) {
+    const { data: lead } = await admin.from("leads").select("id, contact_id, workspace_id").eq("id", s.lead_id).maybeSingle();
+    if (!lead) return { ok: false, code: "lead_missing", reason: "Lead no longer exists." };
+    if (s.workspace_id && lead.workspace_id && s.workspace_id !== lead.workspace_id) {
+      return { ok: false, code: "workspace_mismatch", reason: "Lead belongs to a different workspace." };
+    }
+    if (lead.contact_id) {
+      const { data: contact } = await admin.from("contacts").select("quality_status").eq("id", lead.contact_id).maybeSingle();
+      const q = String(contact?.quality_status ?? "").toLowerCase();
+      if (q === "blocked" || q === "suppressed") {
+        return { ok: false, code: "recipient_blocked", reason: "Recipient is blocked or suppressed." };
+      }
+      if (q === "risky") {
+        return { ok: false, code: "recipient_risky", reason: "Recipient requires renewed customer review." };
+      }
+    }
+  }
+
+  const todayStart = new Date();
+  todayStart.setUTCHours(0, 0, 0, 0);
+  const { count: sentToday } = await admin.from("email_sends")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", s.user_id)
+    .eq("status", "sent")
+    .gte("sent_at", todayStart.toISOString());
+  if ((sentToday ?? 0) >= cap) {
+    return { ok: false, code: "daily_cap_reached", reason: `Daily send cap of ${cap} reached for the current plan.` };
+  }
+
+  return { ok: true, connection: conn };
+}
