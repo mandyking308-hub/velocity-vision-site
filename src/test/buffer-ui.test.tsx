@@ -6,12 +6,16 @@ import React from "react";
 const invoke = vi.fn();
 const fromMaybeSingle = vi.fn();
 const searchParamsRef = { current: new URLSearchParams() };
+const creditsRef = { current: { isFreePreview: false } };
 
 vi.mock("react-router-dom", () => ({
   useSearchParams: () => [searchParamsRef.current, vi.fn()],
   Link: ({ to, children, ...rest }: any) => React.createElement("a", { href: to, ...rest }, children),
 }));
-vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
+vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn(), info: vi.fn() } }));
+vi.mock("@/contexts/CreditsContext", () => ({
+  useCredits: () => creditsRef.current,
+}));
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
     functions: { invoke: (...a: unknown[]) => invoke(...a) },
@@ -34,9 +38,10 @@ describe("BufferSettingsCard", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     searchParamsRef.current = new URLSearchParams();
+    creditsRef.current = { isFreePreview: false };
   });
 
-  it("shows Connect Buffer when not connected", async () => {
+  it("shows Connect Buffer when a paid account is not connected", async () => {
     fromMaybeSingle.mockResolvedValue({ data: null });
     render(<BufferSettingsCard />);
     expect(await screen.findByRole("button", { name: /connect buffer/i })).toBeInTheDocument();
@@ -47,8 +52,6 @@ describe("BufferSettingsCard", () => {
     invoke.mockResolvedValue({ data: null, error: new Error("Edge Function returned a non-2xx status code") });
     render(<BufferSettingsCard />);
     fireEvent.click(await screen.findByRole("button", { name: /connect buffer/i }));
-    // No configuration error code is readable from a generic invoke error in
-    // the mock, so at minimum: no success toast and still not connected.
     await waitFor(() => expect(invoke).toHaveBeenCalledWith("buffer-oauth-start", expect.anything()));
     expect(toast.success).not.toHaveBeenCalled();
     expect(screen.queryByText(/^connected$/i)).not.toBeInTheDocument();
@@ -83,19 +86,39 @@ describe("BufferSettingsCard", () => {
     await waitFor(() => expect(invoke).toHaveBeenCalledWith("buffer-disconnect", expect.anything()));
     expect(await screen.findByRole("button", { name: /connect buffer/i })).toBeInTheDocument();
   });
+
+  it("Free Preview shows paid activation and never offers Connect Buffer", async () => {
+    creditsRef.current = { isFreePreview: true };
+    fromMaybeSingle.mockResolvedValue({ data: null });
+    render(<BufferSettingsCard />);
+    expect(await screen.findByText(/paid activation/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /compare paid plans/i })).toHaveAttribute("href", "/pricing");
+    expect(screen.queryByRole("button", { name: /^connect buffer$/i })).not.toBeInTheDocument();
+    expect(invoke).not.toHaveBeenCalledWith("buffer-oauth-start", expect.anything());
+  });
+
+  it("Free Preview can remove a previous Buffer connection after downgrade", async () => {
+    creditsRef.current = { isFreePreview: true };
+    fromMaybeSingle.mockResolvedValue({
+      data: { id: "c1", status: "connected", connected_at: "2026-08-01T00:00:00Z", last_error: null, scopes: null },
+    });
+    invoke.mockResolvedValue({ data: { ok: true }, error: null });
+    render(<BufferSettingsCard />);
+    fireEvent.click(await screen.findByRole("button", { name: /remove previous buffer connection/i }));
+    await waitFor(() => expect(invoke).toHaveBeenCalledWith("buffer-disconnect", expect.anything()));
+  });
 });
 
 describe("SendToBufferDialog", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    creditsRef.current = { isFreePreview: false };
   });
 
-  it("disconnected path points the customer to Connect Buffer in Settings", async () => {
+  it("disconnected path does not offer channel selection", async () => {
     invoke.mockResolvedValue({ data: null, error: new Error("non-2xx") });
     render(<SendToBufferDialog platform="LinkedIn" defaultText="Draft text" />);
     fireEvent.click(screen.getByRole("button", { name: /send to buffer/i }));
-    // Generic invoke error -> error state (not disconnected). Either way the
-    // dialog must NOT offer channel selection.
     await waitFor(() => expect(invoke).toHaveBeenCalledWith("buffer-channels", expect.anything()));
     expect(screen.queryByLabelText(/buffer channel/i)).not.toBeInTheDocument();
   });
@@ -109,20 +132,16 @@ describe("SendToBufferDialog", () => {
     render(<SendToBufferDialog platform="LinkedIn" defaultText="My reviewed post" />);
     fireEvent.click(screen.getByRole("button", { name: /send to buffer/i }));
 
-    // Channels loaded; LinkedIn channel preselected via service hint.
     expect(await screen.findByDisplayValue("My reviewed post")).toBeInTheDocument();
     const draftBtn = screen.getByRole("button", { name: /^draft$/i });
     expect(draftBtn).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByRole("button", { name: /^queue$/i })).toHaveAttribute("aria-pressed", "false");
 
-    // No datetime field in Draft mode; appears in Schedule mode.
     expect(screen.queryByLabelText(/schedule for/i)).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /^schedule$/i }));
     expect(screen.getByLabelText(/schedule for/i)).toBeInTheDocument();
-    // Past/blank schedule time must not be sendable.
     expect(screen.getByRole("button", { name: /scheduled in buffer/i })).toBeDisabled();
 
-    // Back to Draft and send.
     fireEvent.click(screen.getByRole("button", { name: /^draft$/i }));
     fireEvent.click(screen.getByRole("button", { name: /saved to buffer draft/i }));
     await waitFor(() =>
@@ -150,5 +169,15 @@ describe("SendToBufferDialog", () => {
       }),
     );
     await waitFor(() => expect(toast.success).toHaveBeenCalledWith("Added to Buffer queue"));
+  });
+
+  it("Free Preview cannot load channels or hand a post to Buffer", () => {
+    creditsRef.current = { isFreePreview: true };
+    render(<SendToBufferDialog platform="LinkedIn" defaultText="Preview draft" />);
+    fireEvent.click(screen.getByRole("button", { name: /buffer handoff — paid plans/i }));
+    expect(screen.getByText(/buffer handoff is available on paid plans/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /compare paid plans/i })).toHaveAttribute("href", "/pricing");
+    expect(invoke).not.toHaveBeenCalledWith("buffer-channels", expect.anything());
+    expect(invoke).not.toHaveBeenCalledWith("buffer-create-post", expect.anything());
   });
 });
