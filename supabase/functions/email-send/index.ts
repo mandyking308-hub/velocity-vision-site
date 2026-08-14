@@ -4,10 +4,11 @@ import { decryptSecret } from "../_shared/email-crypto.ts";
 import { smtpSend } from "../_shared/smtp-send.ts";
 
 // Provider-agnostic send engine.
-// Every non-test send must satisfy:
-//   auth, ownership, workspace match, legal compliance, sender readiness,
-//   contact safety, warm-up/plan daily cap, hourly rate limit.
-// Controlled test mode is narrowly scoped to the operator's own address.
+// Every customer send — including controlled tests and existing send-row
+// retries — requires an active paid entitlement before any sender or provider
+// path is reached. Internal founder/admin testing is kept separate.
+// Real outreach additionally satisfies ownership, workspace, legal, sender,
+// contact-safety, daily-cap and hourly-rate gates below.
 
 const PERSONAL_MAILBOX_DOMAINS = new Set([
   "gmail.com", "googlemail.com",
@@ -47,16 +48,10 @@ const CURRENT_LEGAL_VERSIONS: Record<string, string> = {
 // Canonical server-side daily ceilings. Kept in lockstep with
 // src/lib/sendSafety.ts (PLAN_DAILY_CEILING). Warm-up and sender health may
 // reduce the effective ceiling; nothing may exceed it.
-// Free Preview is 0: the preview tier can explore the whole workflow but may
-// never make a real (non controlled-test) send.
 const WARMUP_DAILY_CAP: Record<string, number> = {
   free_preview: 0, starter: 20, growth: 50, agency: 100,
 };
-// Warm-up-only senders (custom domain not yet fully verified) are additionally
-// held to this reduced allowance.
 const WARMUP_WARMING_CAP = 20;
-
-
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -76,6 +71,33 @@ Deno.serve(async (req) => {
     if (!user) return json({ error: "unauthorized" }, 401);
 
     const admin = createClient(supabaseUrl, serviceKey);
+
+    // This check deliberately occurs BEFORE loading an existing send row,
+    // connection or provider credential. Without it, a downgraded Free Preview
+    // account that retained an old sender/send row could use test_mode to skip
+    // the normal runSendGates() plan check.
+    const { data: internalRole } = await admin
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .in("role", ["admin", "founder"])
+      .limit(1)
+      .maybeSingle();
+    const isInternalOperator = internalRole?.role === "admin" || internalRole?.role === "founder";
+    if (!isInternalOperator) {
+      const { data: effectivePlan, error: planErr } = await admin.rpc("effective_plan_for_actions", { _user_id: user.id });
+      if (planErr) {
+        console.error("[email-send] entitlement check failed", { message: planErr.message });
+        return json({ error: "entitlement_check_failed" }, 500);
+      }
+      if (!(["starter", "growth", "agency"] as string[]).includes(String(effectivePlan ?? ""))) {
+        return json({
+          error: "plan_send_not_permitted",
+          reason: "Live email sending, including controlled sender tests, is available only on an active paid plan.",
+        }, 403);
+      }
+    }
+
     const body = await req.json();
     const requestedTestMode = body?.test_mode === true;
 
@@ -127,8 +149,8 @@ Deno.serve(async (req) => {
       return json({ error: "sender_not_connected" }, 409);
     }
 
-    // Controlled test mode: only when the caller explicitly asks AND the
-    // recipient is the operator's own address (or configured EMAIL_TEST_RECIPIENT).
+    // Controlled test mode: paid customer or internal operator only (enforced
+    // above), and only to the caller's own address/configured test recipient.
     const testRecipient = (Deno.env.get("EMAIL_TEST_RECIPIENT") || "").toLowerCase();
     const recipient = (sendRow.recipient_email || "").toLowerCase();
     const userEmail = (user.email || "").toLowerCase();
@@ -139,7 +161,6 @@ Deno.serve(async (req) => {
       (recipient === userEmail || (testRecipient && recipient === testRecipient));
 
     if (!isControlledTest) {
-      // Real send — apply full gate stack.
       const gate = await runSendGates(admin, user.id, conn, sendRow);
       if (!gate.ok) {
         await fail(admin, sendRow.id, gate.reason);
@@ -212,7 +233,6 @@ async function runSendGates(admin: any, userId: string, conn: any, sendRow: any)
     return { ok: false, code: "sender_not_ready",
       reason: "Sender is not ready to send. Complete sender setup.", status: 409 };
   }
-  // Custom-domain Nylas or SMTP without sending_enabled = warm-up only.
   const warmupOnly = !canFull;
 
   // 3. Contact safety when targeting a lead.
@@ -238,9 +258,9 @@ async function runSendGates(admin: any, userId: string, conn: any, sendRow: any)
     }
   }
 
-  // 4. Plan gate + daily warm-up / plan cap.
-  //    Fails closed: an unknown or missing plan cannot send, and free_preview
-  //    is never allowed to fall back to a paid tier's allowance.
+  // 4. Plan gate + daily warm-up / plan cap. The early effective entitlement
+  // check above already blocks expired/downgraded customers; this raw plan read
+  // determines the applicable daily ceiling for entitled customers.
   const { data: plan } = await admin.from("user_plans")
     .select("plan").eq("user_id", userId).maybeSingle();
   const planId = String(plan?.plan || "").toLowerCase();
@@ -259,13 +279,11 @@ async function runSendGates(admin: any, userId: string, conn: any, sendRow: any)
     .eq("user_id", userId)
     .eq("status", "sent")
     .gte("sent_at", todayStart.toISOString());
-  // Warm-up may only reduce the plan ceiling, never raise it.
   const effectiveCap = warmupOnly ? Math.min(cap, WARMUP_WARMING_CAP) : cap;
   if ((sentToday ?? 0) >= effectiveCap) {
     return { ok: false, code: "daily_cap_reached",
       reason: `Daily send cap of ${effectiveCap} reached for your plan/warm-up.`, status: 429 };
   }
-
 
   return { ok: true };
 }
