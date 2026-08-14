@@ -16,6 +16,7 @@ import { planSlug } from "@/lib/planIntent";
 import { useDodoReadiness } from "@/hooks/useDodoReadiness";
 import { isAnyTopUpLiveReady } from "@/lib/dodoReadiness";
 import { authNextForPlan } from "@/lib/safeNext";
+import { SIGNUP_PATH } from "@/lib/signupPath";
 
 const LIVE_CTA: Record<string, string> = {
   vv_starter_oneoff: "Buy Starter",
@@ -170,7 +171,7 @@ export default function Pricing() {
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-primary-foreground mb-5">Published plans for the complete campaign workspace</h1>
               <p className="text-primary-foreground/80 text-lg md:text-xl mb-8 max-w-3xl mx-auto">Choose the level of campaign generation, recurring use, sending capacity and workspace access you need. Review price, Campaign Credits, billing cadence, tax treatment and delivery terms before purchase.</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button variant="hero" size="lg" asChild><Link to="/auth">Start Free Preview <ArrowRight size={18} /></Link></Button>
+                <Button variant="hero" size="lg" asChild><Link to={SIGNUP_PATH}>Start Free Preview <ArrowRight size={18} /></Link></Button>
                 <Button variant="hero-outline" size="lg" asChild><a href="#paid-plans">Compare paid plans</a></Button>
               </div>
 
@@ -198,7 +199,7 @@ export default function Pricing() {
                 </ul>
 
               </div>
-              <Button size="lg" asChild><Link to="/auth">Start Free Preview <ArrowRight size={18} /></Link></Button>
+              <Button size="lg" asChild><Link to={SIGNUP_PATH}>Start Free Preview <ArrowRight size={18} /></Link></Button>
             </div>
           </div>
 

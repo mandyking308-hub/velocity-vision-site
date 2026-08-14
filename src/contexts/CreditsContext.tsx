@@ -122,7 +122,7 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
     const cost = CREDIT_COSTS[action];
     if (remaining < cost) {
       const desc = freePreviewExpired && topupBalance <= 0
-        ? "Free Preview has ended. Buy credits or upgrade to continue generating."
+        ? "Free Preview has ended. Choose a paid plan to continue generating."
         : "Top up or upgrade to keep generating.";
       toast.error("You're out of Campaign Credits", { description: desc });
       return false;

@@ -19,6 +19,7 @@ import {
   Megaphone,
   Send,
 } from "lucide-react";
+import { SIGNUP_PATH } from "@/lib/signupPath";
 
 const workspaceControls = [
   {
@@ -115,7 +116,7 @@ const ForAgencies = () => (
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button variant="hero" size="lg" asChild>
-                <Link to="/auth">
+                <Link to={SIGNUP_PATH}>
                   Start Agency Workspace <ArrowRight size={18} />
                 </Link>
               </Button>

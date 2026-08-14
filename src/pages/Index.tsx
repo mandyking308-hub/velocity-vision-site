@@ -14,6 +14,7 @@ import CampaignChannelsStrip from "@/components/CampaignChannelsStrip";
 import EmailIntegrationsStrip from "@/components/EmailIntegrationsStrip";
 import SecurityTrust from "@/components/SecurityTrust";
 import GlobalStrip from "@/components/GlobalStrip";
+import MidPageCTA from "@/components/MidPageCTA";
 import HomeFAQ from "@/components/HomeFAQ";
 import FinalCTA from "@/components/FinalCTA";
 
@@ -64,6 +65,7 @@ const Index = () => (
           <SixSteps />
         </div>
       </div>
+      <MidPageCTA />
       <ControlFlow />
       <GovernanceSection />
       <WorkflowSavings />

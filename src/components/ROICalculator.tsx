@@ -16,6 +16,7 @@ import {
   parseScenarioInput,
   type RoiPlanId,
 } from "@/lib/roiScenario";
+import { SIGNUP_PATH } from "@/lib/signupPath";
 
 const ROICalculator = () => {
   const { currency } = useCurrency();
@@ -241,7 +242,7 @@ const ROICalculator = () => {
                   </Link>
                 </Button>
                 <Button variant="hero-outline" size="lg" className="w-full" asChild>
-                  <Link to="/auth">
+                  <Link to={SIGNUP_PATH}>
                     Start your workspace <ArrowRight size={18} />
                   </Link>
                 </Button>

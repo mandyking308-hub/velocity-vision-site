@@ -49,6 +49,7 @@ import {
   WandSparkles,
   Clapperboard,
 } from "lucide-react";
+import { SIGNUP_PATH } from "@/lib/signupPath";
 
 const capabilityCards = [
   {
@@ -511,7 +512,7 @@ export default function PremiumHomepage() {
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Button asChild size="lg" className="bg-white font-bold text-[#10228c] hover:bg-white/90">
-                <Link to="/auth">Start free</Link>
+                <Link to={SIGNUP_PATH}>Start free</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="border-white/40 bg-white/5 font-bold text-white hover:bg-white/10 hover:text-white">
                 <Link to="/how-it-works"><Play size={15} /> See how it works</Link>
@@ -745,7 +746,7 @@ export default function PremiumHomepage() {
               <p className="mt-2 text-sm text-white/75">Find. Create. Approve. Send. Publish through Buffer. Follow up.</p>
             </div>
             <div className="mt-6 flex flex-wrap items-center gap-3 lg:mt-0 lg:justify-end">
-              <Button asChild size="lg" className="bg-white font-black text-[#172bbd] hover:bg-white/90"><Link to="/auth">Start free</Link></Button>
+              <Button asChild size="lg" className="bg-white font-black text-[#172bbd] hover:bg-white/90"><Link to={SIGNUP_PATH}>Start free</Link></Button>
               <div className="text-[10px] leading-relaxed text-white/65">14-day preview · no card required<br />Growth from {currentGrowth}/month</div>
             </div>
           </div>

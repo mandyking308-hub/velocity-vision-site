@@ -8,6 +8,7 @@ import DataHealthPanel from "@/components/app/datavault/DataHealthPanel";
 import PreviewStep from "@/components/app/datavault/PreviewStep";
 import ImportReport from "@/components/app/datavault/ImportReport";
 import { Users, Building2, FolderUp, CheckCircle2, AlertTriangle, AlertOctagon, Ban, Copy, Upload, ArrowRight } from "lucide-react";
+import { SIGNUP_PATH } from "@/lib/signupPath";
 
 const DEMO_ROWS = [
   { row_number: 1, mapped_fields: { full_name: "Maya Patel", email: "maya@northwave.io", company_name: "Northwave" }, validation_status: "valid" as const, duplicate_status: "none" as const, issues: [] },
@@ -52,7 +53,7 @@ export default function DemoDataVault() {
           <div className="font-bold">Velocity · Data Vault demo</div>
           <div className="flex gap-2">
             <Button asChild variant="outline"><Link to="/demo/crm">Demo dashboard</Link></Button>
-            <Button asChild><Link to="/auth">Start your workspace</Link></Button>
+            <Button asChild><Link to={SIGNUP_PATH}>Start your workspace</Link></Button>
           </div>
         </div>
       </header>
@@ -63,7 +64,7 @@ export default function DemoDataVault() {
             <h1 className="text-3xl font-bold tracking-tight">Data Vault</h1>
             <p className="text-muted-foreground mt-1">This illustrates how uploaded business records are mapped, deduplicated and flagged for customer review.</p>
           </div>
-          <Button asChild size="lg"><Link to="/auth"><Upload className="h-4 w-4 mr-2" />Start Free Preview</Link></Button>
+          <Button asChild size="lg"><Link to={SIGNUP_PATH}><Upload className="h-4 w-4 mr-2" />Start Free Preview</Link></Button>
         </div>
 
         <VaultSummaryCards stats={stats} />
@@ -71,7 +72,7 @@ export default function DemoDataVault() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <Card className="lg:col-span-2">
             <CardHeader><CardTitle className="text-base">Illustrative imports</CardTitle></CardHeader>
-            <CardContent><RecentImportsTable imports={imports as any} /></CardContent>
+            <CardContent><RecentImportsTable imports={imports as any} readOnly /></CardContent>
           </Card>
           <Card>
             <CardHeader><CardTitle className="text-base">Illustrative data health</CardTitle></CardHeader>
@@ -94,8 +95,8 @@ export default function DemoDataVault() {
           blocked: 9,
           safe_to_send: 208,
           recommended: [
-            { title: "Review 18 risky contacts", to: "/auth" },
-            { title: "Review eligible contacts for activation", to: "/auth" },
+            { title: "Review 18 risky contacts in your own Free Preview workspace", to: SIGNUP_PATH },
+            { title: "Compare paid plans for activation and sending", to: "/pricing" },
           ],
         }} />
 
@@ -105,7 +106,7 @@ export default function DemoDataVault() {
               <div className="text-lg font-semibold">Try the workflow with your own authorized data</div>
               <div className="text-sm opacity-90">Free Preview supports up to 25 contacts. Data review does not spend Campaign Credits; workspace flags are operational review aids, not legal approval.</div>
             </div>
-            <Button asChild variant="secondary" size="lg"><Link to="/auth">Start Free Preview <ArrowRight className="h-4 w-4 ml-1" /></Link></Button>
+            <Button asChild variant="secondary" size="lg"><Link to={SIGNUP_PATH}>Start Free Preview <ArrowRight className="h-4 w-4 ml-1" /></Link></Button>
           </CardContent>
         </Card>
       </main>

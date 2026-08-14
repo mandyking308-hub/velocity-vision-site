@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Check } from "lucide-react";
+import { SIGNUP_PATH } from "@/lib/signupPath";
 
 const bullets = [
   "Data Vault for companies, contacts and segments",
@@ -41,7 +42,7 @@ const PlatformPositioning = () => (
           ))}
         </ul>
         <Button variant="cta" size="lg" asChild>
-          <Link to="/auth">Start your workspace <ArrowRight size={18} /></Link>
+          <Link to={SIGNUP_PATH}>Start your workspace <ArrowRight size={18} /></Link>
         </Button>
       </motion.div>
 

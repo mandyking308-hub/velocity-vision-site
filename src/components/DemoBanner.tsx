@@ -2,6 +2,7 @@ import { X, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useDemo } from "@/contexts/DemoContext";
 import { Button } from "@/components/ui/button";
+import { SIGNUP_PATH } from "@/lib/signupPath";
 
 const DemoBanner = () => {
   const { isDemoMode, exitDemoMode } = useDemo();
@@ -15,7 +16,7 @@ const DemoBanner = () => {
       </p>
       <div className="flex items-center gap-2 shrink-0">
         <Button size="sm" variant="outline" className="h-7 text-xs bg-white/20 border-white/30 text-accent-foreground hover:bg-white/30" asChild>
-          <Link to="/auth">
+          <Link to={SIGNUP_PATH}>
             Open the real app <ArrowRight size={12} />
           </Link>
         </Button>

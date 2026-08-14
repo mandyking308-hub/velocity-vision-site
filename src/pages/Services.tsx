@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import servicesHero from "@/assets/services-hero.jpg";
+import { SIGNUP_PATH } from "@/lib/signupPath";
 
 const capabilities = [
   {
@@ -195,7 +196,7 @@ const Services = () => (
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button variant="hero" size="lg" asChild>
-              <Link to="/auth">
+              <Link to={SIGNUP_PATH}>
                 Start your workspace <ArrowRight size={18} />
               </Link>
             </Button>
