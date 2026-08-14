@@ -2,8 +2,9 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { getValidAccessToken, listAllChannels, loadBufferConfig } from "../_shared/buffer.ts";
 
-// Returns the connected Buffer account's channels (safe metadata only) for the
-// authenticated user. Tokens never leave the server.
+// Returns the connected Buffer account's channels (safe metadata only) for an
+// authenticated, actively entitled paid user. Free Preview is review-only.
+// Tokens never leave the server.
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
@@ -23,8 +24,16 @@ Deno.serve(async (req) => {
     if (!user) return json({ error: "unauthorized" }, 401);
 
     const admin = createClient(supabaseUrl, serviceKey);
-    const config = loadBufferConfig();
+    const { data: effectivePlan, error: planErr } = await admin.rpc("effective_plan_for_actions", { _user_id: user.id });
+    if (planErr) {
+      console.error("buffer-channels entitlement check failed", { message: planErr.message });
+      return json({ error: "entitlement_check_failed" }, 500);
+    }
+    if (!(["starter", "growth", "agency"] as string[]).includes(String(effectivePlan ?? ""))) {
+      return json({ error: "paid_plan_required", message: "Buffer handoff is available on paid plans." }, 403);
+    }
 
+    const config = loadBufferConfig();
     const token = await getValidAccessToken(admin, user.id, config);
     if (!token.ok) {
       const status = token.error === "not_configured" ? 503 : 400;
