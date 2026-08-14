@@ -199,7 +199,13 @@ export default function Pricing() {
                 </ul>
 
               </div>
-              <Button size="lg" asChild><Link to={SIGNUP_PATH}>Start Free Preview <ArrowRight size={18} /></Link></Button>
+              <Button
+                size="lg"
+                asChild
+                className="bg-accent text-accent-foreground hover:bg-accent/90 border border-accent shadow-md font-semibold"
+              >
+                <Link to={SIGNUP_PATH}>Start Free Preview <ArrowRight size={18} /></Link>
+              </Button>
             </div>
           </div>
 
