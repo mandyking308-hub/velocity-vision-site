@@ -10,9 +10,10 @@ import {
   safeReturnTo,
 } from "../_shared/buffer-shared.ts";
 
-// Starts the Buffer OAuth Authorization Code + PKCE flow. Authenticated
-// Velocity users only. Returns ONLY the authorization URL — the PKCE verifier
-// and state stay server-side in buffer_oauth_states.
+// Starts the Buffer OAuth Authorization Code + PKCE flow. Authenticated,
+// actively entitled paid Velocity users only. Free Preview stays review-only.
+// Returns ONLY the authorization URL — the PKCE verifier and state stay
+// server-side in buffer_oauth_states.
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
@@ -31,6 +32,16 @@ Deno.serve(async (req) => {
     const { data: { user } } = await userClient.auth.getUser();
     if (!user) return json({ error: "unauthorized" }, 401);
 
+    const admin = createClient(supabaseUrl, serviceKey);
+    const { data: effectivePlan, error: planErr } = await admin.rpc("effective_plan_for_actions", { _user_id: user.id });
+    if (planErr) {
+      console.error("buffer-oauth-start entitlement check failed", { message: planErr.message });
+      return json({ error: "entitlement_check_failed" }, 500);
+    }
+    if (!(["starter", "growth", "agency"] as string[]).includes(String(effectivePlan ?? ""))) {
+      return json({ error: "paid_plan_required", message: "Buffer handoff is available on paid plans." }, 403);
+    }
+
     // Fail closed with a safe, configuration-only message.
     const config = loadBufferConfig();
     if (!config.configured) {
@@ -44,7 +55,6 @@ Deno.serve(async (req) => {
     const verifier = generateCodeVerifier();
     const challenge = await pkceChallengeS256(verifier);
 
-    const admin = createClient(supabaseUrl, serviceKey);
     const { error: insertErr } = await admin.from("buffer_oauth_states").insert({
       user_id: user.id,
       state,
