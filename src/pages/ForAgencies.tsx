@@ -20,6 +20,7 @@ import {
   Send,
 } from "lucide-react";
 import { SIGNUP_PATH } from "@/lib/signupPath";
+import { authNextForPlan } from "@/lib/safeNext";
 
 const workspaceControls = [
   {
@@ -116,7 +117,7 @@ const ForAgencies = () => (
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button variant="hero" size="lg" asChild>
-                <Link to={SIGNUP_PATH}>
+                <Link to={authNextForPlan("agency")}>
                   Start Agency Workspace <ArrowRight size={18} />
                 </Link>
               </Button>
